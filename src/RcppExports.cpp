@@ -13,7 +13,7 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 
 // ptv
 arma::mat ptv(arma::mat x, double df, bool lower);
-RcppExport SEXP _simsamplesize_ptv(SEXP xSEXP, SEXP dfSEXP, SEXP lowerSEXP) {
+RcppExport SEXP _SimTOST_ptv(SEXP xSEXP, SEXP dfSEXP, SEXP lowerSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -26,7 +26,7 @@ END_RCPP
 }
 // ptvdf
 arma::mat ptvdf(arma::mat x, arma::mat df, bool lower);
-RcppExport SEXP _simsamplesize_ptvdf(SEXP xSEXP, SEXP dfSEXP, SEXP lowerSEXP) {
+RcppExport SEXP _SimTOST_ptvdf(SEXP xSEXP, SEXP dfSEXP, SEXP lowerSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -39,7 +39,7 @@ END_RCPP
 }
 // test_2x2_dom
 arma::mat test_2x2_dom(int n, arma::vec muT, arma::vec muR, arma::mat SigmaW, arma::rowvec lequi_tol, arma::rowvec uequi_tol, arma::rowvec alpha, double sigmaB, arma::vec dropout, arma::vec Eper, arma::vec Eco, arma::uvec typey, bool adseq, int k, int arm_seed);
-RcppExport SEXP _simsamplesize_test_2x2_dom(SEXP nSEXP, SEXP muTSEXP, SEXP muRSEXP, SEXP SigmaWSEXP, SEXP lequi_tolSEXP, SEXP uequi_tolSEXP, SEXP alphaSEXP, SEXP sigmaBSEXP, SEXP dropoutSEXP, SEXP EperSEXP, SEXP EcoSEXP, SEXP typeySEXP, SEXP adseqSEXP, SEXP kSEXP, SEXP arm_seedSEXP) {
+RcppExport SEXP _SimTOST_test_2x2_dom(SEXP nSEXP, SEXP muTSEXP, SEXP muRSEXP, SEXP SigmaWSEXP, SEXP lequi_tolSEXP, SEXP uequi_tolSEXP, SEXP alphaSEXP, SEXP sigmaBSEXP, SEXP dropoutSEXP, SEXP EperSEXP, SEXP EcoSEXP, SEXP typeySEXP, SEXP adseqSEXP, SEXP kSEXP, SEXP arm_seedSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -64,7 +64,7 @@ END_RCPP
 }
 // test_2x2_rom
 arma::mat test_2x2_rom(int n, arma::vec muT, arma::vec muR, arma::mat SigmaW, arma::rowvec lequi_tol, arma::rowvec uequi_tol, arma::rowvec alpha, double sigmaB, arma::vec dropout, arma::vec Eper, arma::vec Eco, arma::uvec typey, bool adseq, int k, int arm_seed);
-RcppExport SEXP _simsamplesize_test_2x2_rom(SEXP nSEXP, SEXP muTSEXP, SEXP muRSEXP, SEXP SigmaWSEXP, SEXP lequi_tolSEXP, SEXP uequi_tolSEXP, SEXP alphaSEXP, SEXP sigmaBSEXP, SEXP dropoutSEXP, SEXP EperSEXP, SEXP EcoSEXP, SEXP typeySEXP, SEXP adseqSEXP, SEXP kSEXP, SEXP arm_seedSEXP) {
+RcppExport SEXP _SimTOST_test_2x2_rom(SEXP nSEXP, SEXP muTSEXP, SEXP muRSEXP, SEXP SigmaWSEXP, SEXP lequi_tolSEXP, SEXP uequi_tolSEXP, SEXP alphaSEXP, SEXP sigmaBSEXP, SEXP dropoutSEXP, SEXP EperSEXP, SEXP EcoSEXP, SEXP typeySEXP, SEXP adseqSEXP, SEXP kSEXP, SEXP arm_seedSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -89,7 +89,7 @@ END_RCPP
 }
 // test_par_dom
 arma::mat test_par_dom(int n, arma::vec muT, arma::vec muR, arma::mat SigmaT, arma::mat SigmaR, arma::rowvec lequi_tol, arma::rowvec uequi_tol, arma::rowvec alpha, arma::vec dropout, arma::uvec typey, bool adseq, int k, int arm_seedT, int arm_seedR, double TART, double TARR, bool vareq);
-RcppExport SEXP _simsamplesize_test_par_dom(SEXP nSEXP, SEXP muTSEXP, SEXP muRSEXP, SEXP SigmaTSEXP, SEXP SigmaRSEXP, SEXP lequi_tolSEXP, SEXP uequi_tolSEXP, SEXP alphaSEXP, SEXP dropoutSEXP, SEXP typeySEXP, SEXP adseqSEXP, SEXP kSEXP, SEXP arm_seedTSEXP, SEXP arm_seedRSEXP, SEXP TARTSEXP, SEXP TARRSEXP, SEXP vareqSEXP) {
+RcppExport SEXP _SimTOST_test_par_dom(SEXP nSEXP, SEXP muTSEXP, SEXP muRSEXP, SEXP SigmaTSEXP, SEXP SigmaRSEXP, SEXP lequi_tolSEXP, SEXP uequi_tolSEXP, SEXP alphaSEXP, SEXP dropoutSEXP, SEXP typeySEXP, SEXP adseqSEXP, SEXP kSEXP, SEXP arm_seedTSEXP, SEXP arm_seedRSEXP, SEXP TARTSEXP, SEXP TARRSEXP, SEXP vareqSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -116,7 +116,7 @@ END_RCPP
 }
 // test_par_rom
 arma::mat test_par_rom(int n, arma::vec muT, arma::vec muR, arma::mat SigmaT, arma::mat SigmaR, arma::rowvec lequi_tol, arma::rowvec uequi_tol, arma::rowvec alpha, arma::vec dropout, arma::uvec typey, bool adseq, int k, int arm_seedT, int arm_seedR, double TART, double TARR, bool vareq);
-RcppExport SEXP _simsamplesize_test_par_rom(SEXP nSEXP, SEXP muTSEXP, SEXP muRSEXP, SEXP SigmaTSEXP, SEXP SigmaRSEXP, SEXP lequi_tolSEXP, SEXP uequi_tolSEXP, SEXP alphaSEXP, SEXP dropoutSEXP, SEXP typeySEXP, SEXP adseqSEXP, SEXP kSEXP, SEXP arm_seedTSEXP, SEXP arm_seedRSEXP, SEXP TARTSEXP, SEXP TARRSEXP, SEXP vareqSEXP) {
+RcppExport SEXP _SimTOST_test_par_rom(SEXP nSEXP, SEXP muTSEXP, SEXP muRSEXP, SEXP SigmaTSEXP, SEXP SigmaRSEXP, SEXP lequi_tolSEXP, SEXP uequi_tolSEXP, SEXP alphaSEXP, SEXP dropoutSEXP, SEXP typeySEXP, SEXP adseqSEXP, SEXP kSEXP, SEXP arm_seedTSEXP, SEXP arm_seedRSEXP, SEXP TARTSEXP, SEXP TARRSEXP, SEXP vareqSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -145,17 +145,17 @@ END_RCPP
 RcppExport SEXP _rcpp_module_boot_test();
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_simsamplesize_ptv", (DL_FUNC) &_simsamplesize_ptv, 3},
-    {"_simsamplesize_ptvdf", (DL_FUNC) &_simsamplesize_ptvdf, 3},
-    {"_simsamplesize_test_2x2_dom", (DL_FUNC) &_simsamplesize_test_2x2_dom, 15},
-    {"_simsamplesize_test_2x2_rom", (DL_FUNC) &_simsamplesize_test_2x2_rom, 15},
-    {"_simsamplesize_test_par_dom", (DL_FUNC) &_simsamplesize_test_par_dom, 17},
-    {"_simsamplesize_test_par_rom", (DL_FUNC) &_simsamplesize_test_par_rom, 17},
+    {"_SimTOST_ptv", (DL_FUNC) &_SimTOST_ptv, 3},
+    {"_SimTOST_ptvdf", (DL_FUNC) &_SimTOST_ptvdf, 3},
+    {"_SimTOST_test_2x2_dom", (DL_FUNC) &_SimTOST_test_2x2_dom, 15},
+    {"_SimTOST_test_2x2_rom", (DL_FUNC) &_SimTOST_test_2x2_rom, 15},
+    {"_SimTOST_test_par_dom", (DL_FUNC) &_SimTOST_test_par_dom, 17},
+    {"_SimTOST_test_par_rom", (DL_FUNC) &_SimTOST_test_par_rom, 17},
     {"_rcpp_module_boot_test", (DL_FUNC) &_rcpp_module_boot_test, 0},
     {NULL, NULL, 0}
 };
 
-RcppExport void R_init_simsamplesize(DllInfo *dll) {
+RcppExport void R_init_SimTOST(DllInfo *dll) {
     R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
     R_useDynamicSymbols(dll, FALSE);
 }

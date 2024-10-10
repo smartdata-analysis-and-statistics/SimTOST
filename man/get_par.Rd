@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_par.R
 \name{get_par}
 \alias{get_par}
-\title{get_par}
+\title{Parameter Configuration for Endpoints and Comparators}
 \usage{
 get_par(
   mu_list,
@@ -14,21 +14,39 @@ get_par(
 )
 }
 \arguments{
-\item{mu_list}{list of mu vectors, each element corresponds to a comparator with a mu vector of size number of endpoints.}
+\item{mu_list}{A list of mean (\eqn{\mu}) vectors. Each element in the list represents a comparator, with the corresponding \eqn{\mu} vector having a length equal to the number of endpoints.}
 
-\item{varcov_list}{list of var-cov matrices, each element corresponds to a comparator with a varcov matrix of size number of endpoints X number of endpoints.}
+\item{varcov_list}{A list of variance-covariance matrices. Each element corresponds to a comparator, with a matrix of size \eqn{(n \times n)}, where \eqn{n} is the number of endpoints.}
 
-\item{TAR_list}{list of allocation rates, each element corresponds to a comparator with a allocation number(integer or not).}
+\item{TAR_list}{A list of treatment allocation rates (TARs) for each comparator. Each element contains a numeric value (can be fractional or integer) representing the allocation rate for the respective comparator.}
 
-\item{type_y}{vector with the type of enpoints: primarly endpoint(1), otherwise (2).}
+\item{type_y}{A numeric vector specifying the type of each endpoint. Use \code{1} for primary endpoints and \code{2} for secondary or other endpoints.}
 
-\item{arm_names}{vector with the names of the arms.}
+\item{arm_names}{(Optional) A character vector containing names of the arms. If not provided, default names (e.g., T1, T2, ...) will be generated.}
 
-\item{y_names}{vector with the names of the endpoints.}
+\item{y_names}{(Optional) A character vector containing names of the endpoints. If not provided, default names (e.g., y1, y2, ...) will be generated.}
 }
 \value{
-named list with arm_names of mu, varcov and TAR to been passed to our function
+A named list with the following components:
+\describe{
+\item{\code{mu}}{A list of mean vectors, named according to \code{arm_names}.}
+\item{\code{varcov}}{A list of variance-covariance matrices, named according to \code{arm_names}.}
+\item{\code{tar}}{A list of treatment allocation rates (TARs), named according to \code{arm_names}.}
+\item{\code{type_y}}{A vector specifying the type of each endpoint.}
+\item{\code{weight_seq}}{A weight sequence calculated from \code{type_y}, used for endpoint weighting.}
+\item{\code{y_names}}{A vector of names for the endpoints, named as per \code{y_names}.}
+}
+
+#' @details
+This function ensures that all input parameters (\code{mu_list}, \code{varcov_list}, and \code{TAR_list}) are consistent across comparators and endpoints. It performs checks for positive semi-definiteness of variance-covariance matrices and automatically assigns default names for arms and endpoints if not provided.
 }
 \description{
-Function to pass the parameters of endpoints and comparators in a list form required as input in the calopt function
+Constructs and returns a list of key parameters (mean vectors, variance-covariance matrices, and allocation rates) required for input into the \code{calopt} function. This function ensures that the parameters for each endpoint and comparator are consistent, properly named, and formatted.
+}
+\examples{
+mu_list <- list(c(0.1, 0.2), c(0.15, 0.25))
+varcov_list <- list(matrix(c(1, 0.5, 0.5, 1), ncol = 2), matrix(c(1, 0.3, 0.3, 1), ncol = 2))
+TAR_list <- list(0.5, 0.5)
+get_par(mu_list, varcov_list, TAR_list, type_y = c(1, 2), arm_names = c("Arm1", "Arm2"))
+
 }

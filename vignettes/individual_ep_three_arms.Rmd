@@ -59,7 +59,7 @@ Finally, we utilize the `calopt()` function to compute the necessary sample size
 
 Note that in this example, we have explicitly specified the number of cores as 1 only for the vignette specifications. However, it's important to highlight that the `calopt()` function has the capability to automatically identify the number of cores available on the user's computer and parallelize the computation accordingly, thereby enhancing the speed of sample size computation.
 ```{r }
-library(simsamplesize)
+library(SimTOST)
 AUCinf_1comp <- calopt(power = 0.9, # target power
                        alpha = 0.05,
                        arm_names = arm_names,

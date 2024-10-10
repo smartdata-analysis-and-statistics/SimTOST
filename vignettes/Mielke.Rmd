@@ -23,15 +23,17 @@ We here reproduce the examples of @mielke_sample_2018. In these examples, the mi
 In the first example, we have $k=m=5$, $\sigma = 0.3$ and $\rho = 0$. We can estimate the sample size using the functions provided by @mielke_sample_2018: 
 
 ```{r, eval = FALSE}
+library(SimTOST)
+
 # Calculate required sample size for 80 % power 
-simsamplesize::N_Mielke(power = 0.8, Nmax = 1000, m = 5, k = 5, rho = 0, sigma = 0.3, 
+N_Mielke(power = 0.8, Nmax = 1000, m = 5, k = 5, rho = 0, sigma = 0.3, 
          true.diff =  log(1.05), equi.tol = log(1.25), design = "parallel", 
          alpha = 0.05, adjust = "no", seed = 1234, nsim = 10000)
 ```
 For 80\% power, 68 subjects per sequence (136 in total) would have been required. We can conduct the same analysis using `calopt`:
 
 ```{r, eval = FALSE}
-simsamplesize::calopt(power = 0.8, # target power
+calopt(power = 0.8, # target power
        alpha = 0.05,
        mu_list = list("R" = rep(log(1.00), 5),
                       "T" = rep(log(1.05), 5)),
@@ -53,7 +55,7 @@ In the second example, we have $k=m=5$, $\sigma = 0.3$ and $\rho = 0.8$. We can 
 
 ```{r, eval = FALSE}
 # Required sample size for 5 out of 5 tests with high correlation (rho=0.8)
-simsamplesize::N_Mielke(power = 0.8, Nmax = 1000, m = 5, k = 5, rho = 0.8, sigma = 0.3, 
+N_Mielke(power = 0.8, Nmax = 1000, m = 5, k = 5, rho = 0.8, sigma = 0.3, 
          true.diff =  log(1.05), equi.tol = log(1.25), design = "parallel", 
          alpha = 0.05, adjust = "no", seed = 1234, nsim = 10000)
 ```
@@ -61,7 +63,7 @@ For 80\% power, 52 subjects per sequence (104 in total) would have been required
 
 ```{r, eval = FALSE}
 # Same example, but high correlation
-simsamplesize::calopt(power = 0.8, # target power
+calopt(power = 0.8, # target power
        alpha = 0.05,
        mu_list = list("R" = rep(1.00, 5),
                       "T" = rep(1.05, 5)),

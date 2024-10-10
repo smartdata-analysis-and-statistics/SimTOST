@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 require(kableExtra)
 ```
 
-This vignette illustrates the use of `simsamplesize` to estimate the sample size for equivalence trials with two arms and one endpoint. Consider we are interested in establishing equivalence between a new treatment (T) and a reference treatment (R). We adopt the two one-sided tests (TOST) approach described by @schuirmann_comparison_1987 and @shieh_assessing_2022 to test the equivalence of the group means. This requires to consider whether the endpoint of interest is normally distributed and whether the treatment groups have a common variance. In the sections below, we illustrate the implementation of this test for the parallel group and crossover design. 
+This vignette illustrates the use of `SimTOST` to estimate the sample size for equivalence trials with two arms and one endpoint. Consider we are interested in establishing equivalence between a new treatment (T) and a reference treatment (R). We adopt the two one-sided tests (TOST) approach described by @schuirmann_comparison_1987 and @shieh_assessing_2022 to test the equivalence of the group means. This requires to consider whether the endpoint of interest is normally distributed and whether the treatment groups have a common variance. In the sections below, we illustrate the implementation of this test for the parallel group and crossover design. 
 
 # Parallel Design
 In a parallel design subjects are randomly assigned to one treatment group. 
@@ -35,7 +35,7 @@ Alternative hypothesis: the two treatments are equivalent
 $$H_1: E_L<\mu_T-\mu_R < E_U$$
 To demonstrate average equivalence between two treatment means, the TOST procedure rejects the null hypothesis of incomparability if the ordinary 100(1–2$\alpha$)\% equal-tailed confidence interval of mean difference is entirely included in the equivalence range.
 
-In order to determine the minimum sample size to reject $H_0$, `simsamplesize` simulates trials of a fixed sample size $N_T + N_R$, where
+In order to determine the minimum sample size to reject $H_0$, `SimTOST` simulates trials of a fixed sample size $N_T + N_R$, where
 
 $$X_{iT} \sim \text{Normal} \left(\mu_T, \sigma_T^2 \right) \quad , \quad i = 1, \ldots, N_T$$
 $$X_{iR} \sim \text{Normal} \left(\mu_R, \sigma_R^2 \right) \quad , \quad i = 1, \ldots, N_R$$
@@ -132,7 +132,7 @@ sum(sign)/nsim
 In this case, we find a power of 87\%, which is not sufficient. We can use the function `simsamplesize::calopt` to determine the minimum sample size to attain a power of 90\%.
 
 ```{r}
-library(simsamplesize)
+library(SimTOST)
 
 result <- calopt(mu_list = list(96,92),
                  sigma_list = list(18,18),
