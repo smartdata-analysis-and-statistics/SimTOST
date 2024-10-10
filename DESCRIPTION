@@ -1,0 +1,51 @@
+Package: SimTOST
+Title: Sample size estimation for bioequivalence trials through simulation.
+Version: 0.0.1
+Authors@R: c(
+    person(given = "Thomas", 
+           family = "Debray", 
+           email = "tdebray@fromdatatowisdom.com", 
+           role = c("aut", "cre"),
+           comment= c(ORCID = "0000-0002-1790-2719")),
+    person(given = "Johanna", 
+           family = "Muñoz", 
+           email = "johanna.munoz@fromdatatowisdom.com", 
+           role = c("aut")),
+    person(given = "Dewi",
+           family = "Amaliah",
+           email = "dewi.amaliah@fromdatatowisdom.com",
+           role = c("aut")),
+    person(given = "Wei",
+           family = "Wei",
+           email = "wei.wei@biogen.com",
+           role = c("ctb")),
+    person(given = "Marian",
+           family = "Mitroiu",
+           email = "marian.mitroiu@biogen.com",
+           role = c("ctb")),
+    person("Biogen Inc", role = c("cph", "fnd"))
+    )
+Description: SimTOST is an R package designed to estimate sample size for bioequivalence studies using a simulation-based approach that implements the Two One-Sided Tests (TOST) procedure. By simulating trial scenarios, the package offers a flexible framework for calculating power and determining the appropriate sample size for bioequivalence tests. SimTOST allows users to model variability, effect sizes, and other key parameters, making it suitable for planning studies under different conditions. The package is ideal for researchers and statisticians in the pharmaceutical industry, providing robust tools for designing well-powered bioequivalence trials.
+License: Apache License 2.0
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Imports: 
+    MASS,
+    matrixcalc,
+    parallel,
+    data.table,
+    shiny,
+    Rcpp (>= 1.0.13)
+Suggests: 
+    knitr,
+    rmarkdown,
+    testthat (>= 3.0.0),
+    tinytest,
+    ggplot2,
+    kableExtra,
+    tibble,
+    PowerTOST
+VignetteBuilder: knitr
+Config/testthat/edition: 3
+LinkingTo: Rcpp, RcppArmadillo

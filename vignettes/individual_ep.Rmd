@@ -1,0 +1,350 @@
+---
+title: "Sample Size Calculation for Trials with 2 arms and 1 endpoint"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Sample Size Calculation for Trials with 2 arms and 1 endpoint}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+bibliography: '`r system.file("references.bib", package="simsamplesize")`'
+---
+
+```{r, include = FALSE, message = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+
+require(kableExtra)
+```
+
+This vignette illustrates the use of `simsamplesize` to estimate the sample size for equivalence trials with two arms and one endpoint. Consider we are interested in establishing equivalence between a new treatment (T) and a reference treatment (R). We adopt the two one-sided tests (TOST) approach described by @schuirmann_comparison_1987 and @shieh_assessing_2022 to test the equivalence of the group means. This requires to consider whether the endpoint of interest is normally distributed and whether the treatment groups have a common variance. In the sections below, we illustrate the implementation of this test for the parallel group and crossover design. 
+
+# Parallel Design
+In a parallel design subjects are randomly assigned to one treatment group. 
+
+The distribution of PK measures e.g., AUC and Cmax are often positively skewed instead of normal, that lead to the violation of homogeneity of variances assumption. Therefore, the logarithmic transformation is usually considered in order to achieve the normality of data and additive model with relatively homogeneous variances.
+
+## Testing the Difference of Means (DOM)
+A simple situation arises when the endpoint of interest is Normally distributed. Consider that $\mu_T$ is the *true* mean response of the active treatment, and $\mu_R$ is the *true* mean response of the control treatment, and that $\sigma_T$ and $\sigma_R$ are their corresponding standard deviations.
+
+To establish individual equivalence between the two treatments, $\mu_T - \mu_R$, needs to lie within a reasonable range around zero. The null hypotheses of the individual equivalence test are expressed as follows:
+
+$$H_0: \mu_T - \mu_R \le E_L ~~ \text{or}~~ \mu_T - \mu_R \ge E_U$$
+
+Alternative hypothesis: the two treatments are equivalent
+$$H_1: E_L<\mu_T-\mu_R < E_U$$
+To demonstrate average equivalence between two treatment means, the TOST procedure rejects the null hypothesis of incomparability if the ordinary 100(1–2$\alpha$)\% equal-tailed confidence interval of mean difference is entirely included in the equivalence range.
+
+In order to determine the minimum sample size to reject $H_0$, `simsamplesize` simulates trials of a fixed sample size $N_T + N_R$, where
+
+$$X_{iT} \sim \text{Normal} \left(\mu_T, \sigma_T^2 \right) \quad , \quad i = 1, \ldots, N_T$$
+$$X_{iR} \sim \text{Normal} \left(\mu_R, \sigma_R^2 \right) \quad , \quad i = 1, \ldots, N_R$$
+
+### Equal Variance across Treatment Groups
+If $\sigma_T = \sigma_R$ and $N_T = N_R$, we can calculate the following two test statistics [@lakens_equivalence_2017]:
+
+$$T_{\text{L}} = \frac{(\bar X_T - \bar X_R) - E_L}{S/\sqrt{M}}$$
+
+$$T_{\text{U}} = \frac{E_U - (\bar X_T - \bar X_R)}{S/\sqrt{M}}$$
+
+where the sample means are calculated as follows:
+
+$$\bar X_T = \frac{1}{N_T}\sum_{i=1}^{N_T}X_{iT} \quad , \quad \bar X_R =  \frac{1}{N_R}\sum_{i=1}^{N_R}X_{iR}$$
+
+The pooled variance $S^2$ is calculated as follows [@lakens_equivalence_2017]:
+
+$$S^2 = \frac{(N_T-1)\;S_T^2+(N_R-1)\; S_R^2}{N_T+N_R-2} $$
+where
+
+$$S_T^2 = \sum_{i=1}^{N_T}\frac{X_{iT} - \bar X_T}{N_T - 1} \quad, \quad S_R^2 = \sum_{i=1}^{N_R}\frac{X_{iR} - \bar X_R}{N_R - 1}$$
+
+
+and where
+
+$$M = \frac{1}{1/N_T + 1/N_R} $$
+
+Bioequivalence tests are often defined in terms of $100(1-2\alpha)\%$ confidence sets. Thus it will be concluded that $\mu_T$ and $\mu_R$ are equivalent if [@schuirmann_comparison_1987]:
+
+$$T_{\text{L}} >= t_{1-\alpha, \; v} \quad \text{and} \quad T_{\text{U}} >= t_{1-\alpha, \; v}$$
+where $t_{1-\alpha, \; v}$ is the $(1-\alpha)$-percentile of the central t-distribution with $v = N_T + N_R -2$ degrees of freedom.
+
+
+### Unequal Variance across Treatment Groups
+It is generally recommended to assume unequal variances across treatment groups whenever $N_T \neq N_R$ or $\sigma_T \neq \sigma_R$ [@welch_significance_1938]. The equivalence test not assuming equal variances is then based on the following two test statistics [@lakens_equivalence_2017]:
+
+$$T_{\text{L}} = \frac{(\bar X_T - \bar X_R) - E_L}{\sqrt{\frac{S_T^2}{N_T}+\frac{S_R^2}{N_R}}}$$
+
+$$T_{\text{U}} = \frac{E_U - (\bar X_T - \bar X_R)}{\sqrt{\frac{S_T^2}{N_T}+\frac{S_R^2}{N_R}}}$$
+
+It will be concluded that $\mu_T$ and $\mu_R$ are equivalent if:
+
+$$T_{\text{L}} >= t_{1-\alpha, \; v} \quad \text{and} \quad T_{\text{U}} >= t_{1-\alpha, \; v}$$
+where $t_{1-\alpha, \; v}$ is the $(1-\alpha)$-percentile of the central t-distribution with
+
+$$ v=\frac{\left(\frac{S_T^2}{N_T}+\frac{S_R^2}{N_R} \right)^2}{\frac{\left(s_T^2/N_T \right)^2}{N_T -1} + \frac{\left(s_R^2/N_R\right)^2}{N_R -1}} $$
+degrees of freedom [@welch_significance_1938].
+
+### Example
+Suppose we would like to conduct a clinical trial that aims to demonstrate that a new treatment (T) is equivalent to a control treatment (R) with respect to a single outcome. Consider that $\mu_T = 96$ and $\mu_R = 92$, with a common standard deviation of $\sigma_T = \sigma_R =  18$.
+
+We adopt the $\pm 20%$ rule to define the equivalence bounds in terms of the reference mean value, such that $E_L=0.2\times 92 = -18.4$ and $E_U=0.2 \times 92 = 18.4$. We use a one-sided significance level of 0.05, which means a 90\% confidence interval is used to evaluate the average bioequivalence.
+
+In the example code below, we simulate 10,000 trials and assess the power when the total sample size is 50 patients:
+
+```{r, eval=FALSE}
+set.seed(1234)
+mu_R <- 92
+mu_T <- 96
+sigma_T <- sigma_R <- 18
+N_T <- N_R <- 25
+
+lequi.tol <- -0.2*mu_R
+uequi.tol <- 0.2*mu_R
+
+nsim <- 10000
+alpha <- 0.05
+
+sign <- rep(NA, nsim)
+for (sim in 1:nsim) {
+  x_T <- rnorm(n = N_T, mean = mu_T, sd = sigma_T)
+  x_R <- rnorm(n = N_R, mean = mu_R, sd = sigma_R)
+  
+  xbar_T <- mean(x_T)
+  xbar_R <- mean(x_R)
+  
+  df <- N_T + N_R - 2
+  S <- sqrt(((N_T - 1)*var(x_T) + (N_R - 1)*var(x_R))/df)
+  M <- 1/((1/N_T) + (1/N_R))
+  
+  # Calculate the test statistics
+  tlb <- ((xbar_T - xbar_R) - lequi.tol)/(S/sqrt(M))
+  tub <- (uequi.tol - (xbar_T - xbar_R))/(S/sqrt(M))
+  tref <- qt(1 - alpha, df = df)
+  
+  # Determine whether to reject H0
+  sign[sim] <- (tlb >= tref & tub >= tref)
+}
+
+# Power
+sum(sign)/nsim
+```
+
+In this case, we find a power of 87\%, which is not sufficient. We can use the function `simsamplesize::calopt` to determine the minimum sample size to attain a power of 90\%.
+
+```{r}
+library(simsamplesize)
+
+result <- calopt(mu_list = list(96,92),
+                 sigma_list = list(18,18),
+                 arm_names = c("T","R"),
+                 dtype = "parallel",
+                 lequi.tol = -18.4, # E_L
+                 uequi.tol = 18.4,  # E_U
+                 lognorm = FALSE, # distribution assumption
+                 ctype = "DOM", # comparison type
+                 vareq = TRUE, # variance assumption
+                 power = 0.9, # target power
+                 alpha = 0.05,
+                 ncores = 1,
+                 nsim = 50, # Number of simulations
+                 seed = 1234) 
+```
+
+Briefly, the search algorithm of `calopt()` estimates the power for different choices of the sample size. We can inspect the corresponding findings as follows: 
+
+```{r}
+kable(result$table.iter)
+```
+
+In the table above, the columns `n_T` and `n_R` depict the number of patients in the treatment and control arm. The achieved power for a specific sample size is quantified by `power`, and the corresponding 95\% confidence interval is contained by `power_LCI` and `power_UCI`. We can see the the the achieved power is closest to the target power (0.90) when the total sample size is `r result$response$n_total`. We can  extract the relevant data as follows:
+
+```{r}
+kable(result$response)
+```
+
+Note that in order to obtain robust results, the number of simulations (`nsim`) should be increased to 10000 or more. When updating the code above accordingly, we then find a total sample size of 56 patients ($N_T = N_R = 28$).
+
+In the [PowerTOST](https://CRAN.R-project.org/package=PowerTOST) package, we can do the same calculation using the following code:
+
+```{r}
+result_ptost <- PowerTOST::sampleN.TOST(logscale = FALSE, 
+                                        theta0 = 96 - 92, # assumed difference
+                                        theta1 = -18.4, # equivalence limit
+                                        theta2 = 18.4, # equivalence limit
+                                        targetpower = 0.9, 
+                                        CV = 18, 
+                                        design = "parallel",
+                                        print = FALSE)
+result_ptost
+```
+
+We find that the minimum sample size according to PowerTOST is `r result_ptost["Sample size"]`. 
+
+
+## Testing the Ratio of Means (ROM)
+The distribution of PK measures such as AUC and Cmax is often positively skewed instead of normal, which may lead to the violation of the Normality assumption [@chow_design_2009, chap. 6]. In such situation, it may not be appropriate to test the difference of means. Therefore, to reduce the skewness and achieve an additive model with relatively homogeneous variances, a log-transformation on AUC or Cmax is usually considered [@chmp_guideline_2010]. The null hypothesis (stating non-equivalence) is then defined as the following two one-side tests [@schuirmann_comparison_1987]:
+
+$$H_0: \frac{\mu_T}{\mu_R} \le E_L ~~ \text{or}~~ \frac{\mu_T}{\mu_R} \ge E_U$$
+The alternative hypothesis is defined as:
+$$H_1: E_L<\frac{\mu_T}{\mu_R} < E_U$$
+
+
+The United States Food and Drug Administration and the European Community typically use $E_U = 1.25$ and $E_L = 0.80 = 1/1.25$ for AUC. For Cmax,the United States again uses $E_U = 1.25$ and $E_L = 0.80$, but Europe uses the less restrictive limits $E_U = 1.43$ and $E_L = 0.70 = 1/1.43$ [@berger_bioequivalence_1996].
+
+If we assume that the PK measure is Normally distributed on the log scale, we can reformulate the hypotheses as folows [ @chow_design_2009]:
+
+
+$$H_0: \log(\mu_T) - \log(\mu_R) \le \log(E_L) ~~ \text{or}~~ \log(\mu_T) - \log(\mu_R) \ge \log(E_U)$$
+$$H_1: \log(E_L)<\log(\mu_T)-\log(\mu_R) < \log(E_U)$$
+where $\mu_T$ and $\mu_R$ represent the geometric means of the PK measure.
+
+### Use of geometric mean and coefficient of variation
+
+Estimation of the sample size is relatively straightforward when we know the  geometric mean of the PK measure. For data that are Normally distributed on the log scale, the geometric mean $\mu_{\text{GM}}$ of the random variable $Y$ is defined as follows:
+
+$$\mu = \exp \left( \text{Mean}(\log(Y))\right) $$
+For lognormal data, the geometric coefficient of variation (GCV) is the natural measure of variability and is defined as follows:
+
+$$\text{GCV} = \sqrt{\exp\left(\text{Var}(\log(Y))\right) – 1}$$
+We can then generate realizations on the lognormal scale:
+
+$$X_{iT} \sim \text{Normal} \left(\log(\mu_{T}), \left(\log(\text{GCV}_T +1) \right)^2 \right) \quad , \quad i = 1, \ldots, N_T$$
+$$X_{iR} \sim \text{Normal} \left(\log(\mu_{R}),  \left(\log(\text{GCV}_R +1) \right)^2 \right) \quad , \quad i = 1, \ldots, N_R$$
+As an example, suppose we would like to conduct a clinical trial that aims to demonstrate that a new treatment (T) is equivalent to a control treatment (R) with respect to a single outcome. Consider that the response variable follows a lognormal distribution, and that the geometric means are  $\mu_{\text{GM},T} = 96$ and $\mu_{\text{GM},R} = 92$, with a common coefficient of variation of $18/92$. As usual in bioequivalence, $\alpha = 0.05$ is employed (we will assess the study by a 100(1−2$\alpha$)=90\% confidence interval) and the bioequivalence-limits are `theta1 = 0.80` and `theta2 = 1.25`. We can implement this test as follows using [PowerTOST](https://CRAN.R-project.org/package=PowerTOST):
+
+```{r}
+result_ptost <- PowerTOST::sampleN.TOST(alpha = 0.05,
+                                        logscale = TRUE,
+                                        theta0 = 96/92, # expected ratio of means
+                                        theta1 = 0.8,
+                                        theta2 = 1.25,
+                                        targetpower = 0.9,
+                                        CV = as.numeric(18/92), #geometric coefficient of variation
+                                        design = "parallel",
+                                        print = FALSE)
+
+kable(result_ptost)
+```
+
+The required sample size obtained via `PowerTOST` is `r result_ptost["Sample size"]`. 
+
+
+### Use of arithmetic mean and standard deviation
+We simulate data from the arithmetic mean $m$ and standard deviation $s$ of the PK measure as follows:
+
+$$X_{iT} \sim \text{Normal} \left(\log(m_T) - \frac{1}{2}\log \left(1+\frac{s_T^2}{m_T^2}\right), \;\log\left(1+ \frac{s_T^2}{m_T^2} \right) \right) \quad , \quad i = 1, \ldots, N_T$$
+$$X_{iR} \sim \text{Normal} \left(\log(m_R) - \frac{1}{2}\log \left(1+\frac{s_R^2}{m_R^2}\right),\; \log\left(1+ \frac{s_R^2}{m_R^2} \right) \right) \quad , \quad i = 1, \ldots, N_R$$
+
+Suppose again we would like to conduct a clinical trial that aims to demonstrate that a new treatment (T) is equivalent to a control treatment (R) with respect to a single outcome. Consider again that the arithmetic means are  $m_T = 96$ and $m_R = 92$, with a common standard deviation of $s_T = s_R =  18$. However, we now assume that the response variable $Y$ follows a lognormal instead of a Normal distribution.
+
+If we use PowerTOST, we first have to calculate the geometric mean and coefficient of variation:
+
+```{r}
+m_R <- 92
+m_T <- 96
+stdev <- 18
+
+# Estimate mu_R and mu_T
+mu_R <- exp(log(m_R) - 0.5 * log(1 + stdev**2/m_R**2))
+mu_T <- exp(log(m_T) - 0.5 * log(1 + stdev**2/m_T**2))
+
+# Estimate the variance of the log-transformed data
+sigmasq_x <- log(1 + (stdev**2)/(m_R**2))
+
+# Derive geometric coefficient of variation
+GCV <- sqrt(exp(sigmasq_x) - 1)
+```
+
+We find that $\mu_T =$ `r round(mu_T,2)`, $\mu_R =$ `r round(mu_R,2)` and the geometric coefficient of variation is `r round(GCV,2)`.
+
+We adopt the $80\%/125\%$ rule to define the equivalence bounds in terms of the reference mean value, and use a one-sided significance level of 0.05 to evaluate the average bioequivalence.
+
+
+```{r}
+ss <- PowerTOST::sampleN.TOST(alpha = 0.05,
+                              logscale = TRUE,
+                              theta0 = mu_T/mu_R, # expected ratio of means
+                              theta1 = 0.8,
+                              theta2 = 1.25,
+                              targetpower = 0.9,
+                              CV = GCV, #geometric coefficient of variation
+                              design = "parallel",
+                              print = FALSE)
+kable(ss)
+```
+
+We will use the `calopt()` function to calculate the required sample size based on stochastic simulations of the trial.  Initially, we require the mean and standard deviation of each arm provided in lists (denoted as *mu_list* and *sigma_list*, respectively). Given that we are assessing a single endpoint (y), each element in the mean list should have a length of 1, similarly, each element in the sigma list should also have a length of 1. Additionally, users have the option to specify the names of the arms in *arm_names* parameter to ensure the order in which the arms are listed in the mu_list and sigma_list.
+
+We also need to specify the lower and upper equivalence boundaries, in this case we set that the lower equivalence boundary ($E_L$) should be 80% (*lequi.tol* = 0.8) of reference mean and the upper equivalence boundary ($E_U$) should be 125% (*uequi.tol* = 1.25) of the reference mean in the original scale.
+
+Next, we specify in the parameters function the design type (*dtype* = "parallel") along with assumptions about the distribution of the outcome (*lognorm* = TRUE). Then we specify how the comparison will be done, by using the ratio of means of the outcome as the metric (*ctype* = "ROM") and by using a test that assumes equal variance across the treatment groups (*vareq* = TRUE). We need to define the power and alpha level. In this case, we use a power of 90\% (*power* = 0.9) and a one-sided alpha level of 5\% (*alpha* = 0.05).
+
+```{r }
+ss <- calopt(mu_list = list("Test" = 96, "Control" = 92),
+             sigma_list = list("Test" = 18, "Control" = 18),
+             lequi.tol = 0.8, 
+             uequi.tol = 1.25, # bioequivalence limits
+             dtype = "parallel",
+             lognorm = TRUE, # distribution assumption
+             ctype = "ROM", # comparison type
+             vareq = TRUE, # variance assumption
+             power = 0.9, # target power
+             alpha = 0.05,
+             ncores = 1,
+             nsim = 50, # Number of simulations
+             seed = 1234) # Random seed
+
+kable(ss$response)
+```
+
+We can see the the the achieved power is closest to target power (0.9) when we include `r ss$response$n_T` patients per arm, or  `r ss$response$n_total` in total. 
+
+Note that in order to obtain robust results, the number of simulations should be increased. For example, when executing the code above using 100000 simulations, we find that a total sample size of 42 patients yields a power of 0.901 (95\% confidence interval: 0.900 to 0.912).
+
+Consider now that the true standard deviation of the response variable differs between the treatment arms, with $\sigma_T = 19$ and $\sigma_R =  18$. We proceed as before to calculate the sample size but adjust the `vareq` argument to indicate that  Welch's *t* test [@welch_significance_1938] should be used to determine the sample size:
+
+```{r}
+N_ineq <- calopt(mu_list = list("Test" = 96, "Control" = 92),
+                 sigma_list = list("Test" = 19, "Control" = 18),
+                 lequi.tol = 0.8, 
+                 uequi.tol = 1.25, # bioequivalence limits
+                 dtype = "parallel",
+                 lognorm = TRUE, # distribution assumption
+                 ctype = "ROM", # comparison type
+                 vareq = FALSE, # variance assumption
+                 power = 0.9, # target power
+                 alpha = 0.05,
+                 ncores = 1,
+                 nsim = 50,
+                 seed = 1234)
+
+kable(N_ineq$response)
+```
+
+Based on the table above, the sample size required to get `r round(N_ineq$response[["power"]]*100, 2)` of power is `r N_ineq$response[["n_total"]]`. If we increase `nsim` to 100000, we find that a total sample size of 44 patients yields a power of 0.906 (95\% confidence interval: 0.901 to 0.918).
+
+It should be noted that for this specification, i.e, variance unequal assumption, we will not have a comparison with `PowerTOST` result as it only takes equal variance assumption. Hence, one of the strengths of `simsamplesize` package is that it considers more various assumptions, including variance inequality. 
+
+## At crossover later on
+
+In this example, consider we have crossover design, instead of parallel design.
+
+```{r, eval = FALSE}
+N_ineq <- calopt(mu_list = list("Test" = 96, "Control" = 92),
+                 sigma_list = list("Test" = 19, "Control" = 18),
+                 lequi.tol = 0.8, 
+                 uequi.tol = 1.25, # bioequivalence limits
+                 dtype = "2x2",
+                 lognorm = TRUE, # distribution assumption
+                 ctype = "ROM", # comparison type
+                 vareq = FALSE, # variance assumption
+                 power = 0.9, # target power
+                 alpha = 0.05,
+                 ncores = 1,
+                 nsim = 50,
+                 seed = 1234)
+
+kable(N_ineq$response)
+```
+
+# References

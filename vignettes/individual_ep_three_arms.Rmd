@@ -1,0 +1,128 @@
+---
+title: "Sample Size Calculation for 3 Arms 1 Endpoint"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Sample Size Calculation for 3 Arms 1 Endpoint}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+This vignette focuses on sample size calculation examples of three arms and one endpoint. Specifically we calculate the sample size for testing equivalence in a parallel
+trial in which compare the mean of the AUCinf endpoint in a new treatment (SB2) with the mean of a reference drug (Remicade) in two different locations ("RemEU","RemUSA"). 
+
+We consider that the endpoint is lognormal distributed with the assumption of equivalence variance between arms, and we expected to find the sample size for a power of 90\% and a alpha level of 5\%. We use a margin of equivalence for the ratio of $E_L$=80\% and $E_U$ = 125\% of the reference on the original scale.  
+
+
+```{r setup}
+data <- data.table::data.table(arm = c("SB2","EU_Remicade","USA_Remicade"),
+                               mean = c(37162.0,37705.0,37702.8), 
+                               sd = c(11113.62172,12332.41615,12113.72))
+```
+
+
+## AUCinf equivalent to EU Remicade
+
+In this example, we calculate the sample size when the new treatment (SB2) is expected to be only equivalent to the reference remicade in Europe (RemEU). 
+
+Null hypothesis: no equivalence 
+$$H_0: \frac{\mu_{SB2}}{\mu_{RemEU}} \le E_L ~~ or~~ \frac{\mu_{SB2}}{\mu_{RemEU}} \ge E_U$$
+
+Alternative hypothesis: equivalence
+$$H_1: E_L<\frac{\mu_{SB2}}{\mu_{RemEU}} < E_U$$
+
+We need to organize the mean vector and standard deviation vector of each arm (SB2, EU Remicade, USA Remicade) into lists. Since we are evaluating a single endpoint, the mean list (`mu\_list`) contains three vector elements of length 1, and the standard deviation list (`sigma_list`) contains three 1x1 matrix elements.
+
+```{r}
+
+mu_list <- as.list(data$mean) # Save mu's in a list 
+sigma_list <- as.list(data$sd) # Save sigma's in a list
+
+```
+
+Next, we define the comparison parameters, including the lower and upper equivalence boundaries and the list of comparators. In this case, we only compare two arms, therefore the list of comparators consists of only one element that describes the arms being compared, which are SB2 and RemEU.
+
+```{r}
+lequi.tol <- 0.8
+uequi.tol <- 1/0.8
+arm_names <- data$arm
+list_comparator <- list(c("SB2","EU_Remicade"))
+```
+
+Finally, we utilize the `calopt()` function to compute the necessary sample size based on stochastic simulations of the trial. This function requires several parameters, such as the target power, confidence level, and design specifications. By default, the function adopts a parallel design type, employs a test based on the rate of means (ROM), assumes equal variances, and considers the endpoint to follow a lognormal distribution.
+
+Note that in this example, we have explicitly specified the number of cores as 1 only for the vignette specifications. However, it's important to highlight that the `calopt()` function has the capability to automatically identify the number of cores available on the user's computer and parallelize the computation accordingly, thereby enhancing the speed of sample size computation.
+```{r }
+library(simsamplesize)
+AUCinf_1comp <- calopt(power = 0.9, # target power
+                       alpha = 0.05,
+                       arm_names = arm_names,
+                       list_comparator = list_comparator,
+                       mu_list = mu_list,
+                       sigma_list = sigma_list,
+                       lequi.tol = lequi.tol, 
+                       uequi.tol = uequi.tol, # bioequivalence limits
+                       ncores=1,
+                       nsim = 50)
+
+AUCinf_1comp$response
+```
+
+Based on the table, the required sample size for this trial setting is `r AUCinf_1comp$response$n_total` or `r AUCinf_1comp$response$n_SB2`for each arm. 
+
+
+## AUCinf equivalent to US Remicade and EU Remicade
+
+
+Here, we calculate the sample size for multiple arms and one endpoint, this scenario could happends when the equivalence should be granted across the multiple references, eg. distinct trial localizations. In this case we calculate the sample size required for equivalence of SB2 with the European reference (RemEU) and at the same time equivalence of SB2 with the USA reference (RemUS).
+
+
+Null hypothesis: no equivalence 
+$$H_0: \frac{\mu_{SB2}}{\mu_{RemEU}} \le E_L ~~ or~~ \frac{\mu_{SB2}}{\mu_{RemEU}} \ge E_U~~ or~~ \frac{\mu_{SB2}}{\mu_{RemUSA}} \le E_L ~~ or~~ \frac{\mu_{SB2}}{\mu_{RemUSA}} \ge E_U$$
+
+Alternative hypothesis: equivalence
+$$H_1: E_L<\frac{\mu_{SB2}}{\mu_{RemEU}} < E_U~~ and~~E_L<\frac{\mu_{SB2}}{\mu_{RemUSA}} < E_U$$
+
+In this case, it's important to note that our function make alpha adjustment for multiple comparisons within comparators, but we do not currently account for any adjustments between comparators, even when simultaneously comparing SB2 with both reference arms (RemEU, RemEU). Specifically, we reject the null hypothesis if any of the ratio of means (ROM) falls outside the equivalence boundaries. Please be aware that the program is still in development to incorporate alpha adjustments between comparators.
+
+We proceed as the initial example but modifying the comparator's list `list_comparator`.Here the list consist of two elements that specify the simultaneus comparison between SB2 vs RemEU and SB2 vs RemUSA. 
+```{r}
+list_comparator <- list(c("SB2","EU_Remicade"),c("SB2","USA_Remicade"))
+```
+
+Then we pass these values into the `calopt()` function to calculate the required sample size for the multiple comparison. 
+
+```{r }
+AUCinf_2comp <- calopt(power = 0.9, # target power
+                       alpha = 0.05,
+                       arm_names = arm_names,
+                       list_comparator = list_comparator,
+                       mu_list = mu_list,
+                       sigma_list = sigma_list,
+                       lequi.tol = lequi.tol, 
+                       uequi.tol = uequi.tol, # bioequivalence limits
+                       ncores=1,
+                       nsim = 50)
+
+AUCinf_2comp$response
+```
+
+Based on the table, the required sample size for this trial setting is `r AUCinf_2comp$response$n_total` or `r AUCinf_2comp$response$n_SB2` for each arm, as we observe now it is required additional `r AUCinf_2comp$response$n_SB2 - AUCinf_1comp$response$n_SB2` patients per arm to achieve the equivalence in both reference arms compared to the case when equivalence is required to only one arm (`r AUCinf_1comp$response$n_SB2`).
+
+The package is equipped with the plot.simms() function, which is useful for creating a plot of the relationship between sample size (x-axis) and achieved power (y-axis) for all combinations of outcomes and comparators. In this example, we want to make the plot of the `AUCinf_2comp` object. 
+
+```{r, fig.height=4, fig.width = 10, out.width = "95%"}
+plot.simss(AUCinf_2comp)
+```
+
+
+
+
+
+
