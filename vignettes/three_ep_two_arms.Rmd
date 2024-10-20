@@ -6,7 +6,7 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
   %\VignetteEncoding{UTF-8}
-bibliography: '`r system.file("references.bib", package="simsamplesize")`'
+bibliography: '`r system.file("references.bib", package="SimTOST")`'
 ---
 
 ```{r, include = FALSE}
@@ -97,7 +97,7 @@ uequi.tol <- c(AUCinf = 1.25, AUClast = 1.25, Cmax = 1.25)
 By default, it is required that all $k=m$ co-primary endpoints have to be equivalent:
 
 ```{r}
-library(simsamplesize)
+library(SimTOST)
 
 N_ss <- calopt(power = 0.9, # target power
                alpha = 0.05,
@@ -180,7 +180,7 @@ Also, we can specify the number of tests across endpoints that are required to b
 Next, we proceed to run the function to calculate the sample size using the `calopt` function. We may also need to specify the function arguments to comply with the settings, such as `vareq`, `dtype`, `ctype`, `rho`, `adjust`, `k`, and `rho`. For brevity, we set these parameters to the default values of the function.
 
 ```{r}
-library(simsamplesize)
+library(SimTOST)
 
 output_mult <-  calopt(power = 0.9, # target power
                        alpha = 0.05,

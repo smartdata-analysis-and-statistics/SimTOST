@@ -26,7 +26,7 @@ Thew want to calculate the sample size for a significance level of 0.05. Accordi
 In our case, we assume that treatment and reference have the same within subject variance and include it on the sigma_list parameter
 
 ```{r, eval = FALSE}
-library(simsamplesize)
+library(SimTOST)
 
 calopt(power = 0.8, # target power
        alpha = 0.05,
@@ -131,7 +131,7 @@ kable(N_pt)
 
 
 ```{r, eval = FALSE}
-#Using `PowerTOST`, the required sample size is `r N_pt["Sample size"]`. In this case, the required sample size  is smaller than the result from `simsamplesize`. Our algorithm selects the sample size that achieve in average at least the target power 90\%, in this case a sample size of `r N_ss$response[["n_total"]]` with a power of  `r N_ss$response[["power"]]`. But by inspecting the iteration table, we observe that with a sample size of 22, we can obtain a target power inside the confidence interval of the calculated power.
+#Using `PowerTOST`, the required sample size is `r N_pt["Sample size"]`. In this case, the required sample size  is smaller than the result from `SimTOST`. Our algorithm selects the sample size that achieve in average at least the target power 90\%, in this case a sample size of `r N_ss$response[["n_total"]]` with a power of  `r N_ss$response[["power"]]`. But by inspecting the iteration table, we observe that with a sample size of 22, we can obtain a target power inside the confidence interval of the calculated power.
 ```
 
 
@@ -143,7 +143,7 @@ kable(N_pt)
 
 
 ```{r, eval = FALSE}
-# Using `PowerTOST`, the required sample size is `r N_pt["Sample size"]`. In this case, the required sample size  is equal to the result from `simsamplesize`.
+# Using `PowerTOST`, the required sample size is `r N_pt["Sample size"]`. In this case, the required sample size  is equal to the result from `SimTOST`.
 ```
 
 

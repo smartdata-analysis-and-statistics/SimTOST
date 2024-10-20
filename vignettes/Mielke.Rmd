@@ -6,7 +6,7 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
   %\VignetteEncoding{UTF-8}
-bibliography: '`r system.file("references.bib", package="simsamplesize")`'
+bibliography: '`r system.file("references.bib", package="SimTOST")`'
 ---
 
 ```{r, include = FALSE}
@@ -106,7 +106,7 @@ N_Mielke(power = 0.8, Nmax = 1000, m = 5, k = 5, rho = 0, sigma = sigma,
 We find that 47 subjects per sequence are needed, and thus 94 subjects per study or 470 in total.
 
 ```{r, eval = FALSE}
-simsamplesize::calopt(power = 0.8, # target power
+SimTOST::calopt(power = 0.8, # target power
        alpha = 0.05,
        mu_list = list("R" = c(log(1), log(1), log(1), log(1), log(1)),
                       "T" = c(log(0.8884), log(0.9882), log(0.8661), log(0.9591), log(0.8850))),

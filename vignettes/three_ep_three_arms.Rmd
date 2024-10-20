@@ -5,7 +5,7 @@ vignette: >
   %\VignetteIndexEntry{Sample Size Calculation for Trials with 3 arms and 3 endpoints}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
-bibliography: '`r system.file("references.bib", package="simsamplesize")`'
+bibliography: '`r system.file("references.bib", package="SimTOST")`'
 ---
 
 ```{r, include = FALSE}
@@ -63,7 +63,7 @@ In this example, we would like to demonstrate bio-equivalence of SB2 versus EU-I
 
 ```{r}
 
-library(simsamplesize)
+library(SimTOST)
 
  # arms to be compared
 list_comparator <- list(EMA = c("SB2", "EUREF"),
@@ -106,7 +106,7 @@ In this example, we assume the equality of variance (`vareq = TRUE`), Ratio of M
 
 
 ```{r}
-library(simsamplesize)
+library(SimTOST)
 output_1 <- calopt(power = 0.9, # target power
                    alpha = 0.05,
                    mu_list = mu_list,

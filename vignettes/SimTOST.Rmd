@@ -1,11 +1,11 @@
 ---
-title: "SimSampleSize"
+title: "SimTOST"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{SimSampleSize}
+  %\VignetteIndexEntry{SimTOST}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
-bibliography: '`r system.file("references.bib", package="simsamplesize")`'
+bibliography: '`r system.file("references.bib", package="SimTOST")`'
 editor_options: 
   markdown: 
     wrap: sentence
@@ -18,13 +18,13 @@ knitr::opts_chunk$set(
 )
 ```
 
-The `simsampleasize` is an R package to facilitate sample size estimation for clinical trials.
+The `SimTOST` is an R package to facilitate sample size estimation for clinical trials.
 It uses a simulation-based approach to empirically determine the sample size for multi-arm trials with one or more endpoints.
 The vignettes below illustrate the use of the R package using published data from a randomized, phase I pharmacokinetic study comparing SB2 versus Remicade in healthy subjects [@shin_randomized_2015].
 
 ## Example Data
 
-In this section, we will briefly explain a trial, [NCT01922336](https://clinicaltrials.gov/study/NCT01922336#study-overview), as an illustrative example, in which its sample size can be calculated using `simsampleasize` package.
+In this section, we will briefly explain a trial, [NCT01922336](https://clinicaltrials.gov/study/NCT01922336#study-overview), as an illustrative example, in which its sample size can be calculated using `SimTOST` package.
 This Phase 1 clinical study, designed as a single-blind, parallel-group, single-dose trial, evaluates the pharmacokinetics, safety, and immunogenicity of a biosimilar drug (SB2) w.r.t. two infliximab reference products: EU-sourced Remicade (EU-INF) and US-sourced Remicade (US-INF).
 Subjects receive a 5 mg/kg dose via intravenous infusion, with premedication administered to prevent infusion-related reactions.
 The study spans 10 weeks.
@@ -86,7 +86,7 @@ Each vignette will focus on a specific scenario as explained as follows:
 |                                                     |                                                                                                                                                                                                                                                                                                                                          |
 | |                                                   | In this vignette, we will use this trial as the use case. In the first example, we only care about the comparison of SB2 vs EU Remicade and SB2 vs US Remicade. In the second example, we set the situation as in Example 1, however we define a different lower and upper equivalence.                                                  |
 +-----------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| [2 arms, 3 endpoints](three_ep_two_arms.html)       | In this vignette, we will show the example of using `simsamplesize` package for 2 arms and 3 endpoints trial. We will also use this trial as illustrative example. There are 5 situations considered, as follows:                                                                                                                        |
+| [2 arms, 3 endpoints](three_ep_two_arms.html)       | In this vignette, we will show the example of using `SimTOST` package for 2 arms and 3 endpoints trial. We will also use this trial as illustrative example. There are 5 situations considered, as follows:                                                                                                                        |
 |                                                     |                                                                                                                                                                                                                                                                                                                                          |
 |                                                     | 1.  Common SD assumption for each biosimilar, Ratio of Means (ROM) as parameter tested, parallel design, and lognormal distribution assumption, no multiplicity adjustment, and assume that equivalence is only needed for one of the endpoints.                                                                                         |
 |                                                     |                                                                                                                                                                                                                                                                                                                                          |
