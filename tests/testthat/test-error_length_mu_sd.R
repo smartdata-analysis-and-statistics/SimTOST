@@ -16,7 +16,7 @@ test_that("error difference lenght of mu and sigma", {
   # Same treatment allocation rate
   TAR = c(1,1,1) # we assume same allocation rate in both arms
 
-  expect_error(simsamplesize::calopt( mu_list = mu_list,
+  expect_error(SimTOST::calopt( mu_list = mu_list,
                                       sigma_list = sigma_list,
                                       varcov_list = NA,
                                       power = 0.9,

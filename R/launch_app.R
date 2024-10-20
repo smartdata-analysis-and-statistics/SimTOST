@@ -12,6 +12,6 @@
 #' @export
 
 launch_app <- function(){
-  appDir <- system.file("app", package = "simsamplesize")
+  appDir <- system.file("app", package = "SimTOST")
   shiny::runApp(appDir, display.mode = "normal")
 }

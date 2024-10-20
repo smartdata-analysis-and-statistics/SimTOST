@@ -7,6 +7,6 @@
 # * https://testthat.r-lib.org/reference/test_package.html#special-files
 
 library(testthat)
-library(simsamplesize)
+library(SimTOST)
 
-test_check("simsamplesize")
+test_check("SimTOST")
