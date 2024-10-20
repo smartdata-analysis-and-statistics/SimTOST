@@ -11,7 +11,7 @@
 #' @return mat(vector) with the cumulative distribution function (p-values)
 #' @export
 ptv <- function(x, df, lower) {
-    .Call('_SimTOST_ptv', PACKAGE = 'SimTOST', x, df, lower)
+    .Call('_SimTOST_ptv', x, df, lower)
 }
 
 #' @title Calculate p-values using t-distribution with Variable Degrees of Freedom
@@ -27,7 +27,7 @@ ptv <- function(x, df, lower) {
 #' The result is returned as a 1xN matrix, where N is the number of elements in `x`.
 #' @export
 ptvdf <- function(x, df, lower) {
-    .Call('_SimTOST_ptvdf', PACKAGE = 'SimTOST', x, df, lower)
+    .Call('_SimTOST_ptvdf', x, df, lower)
 }
 
 #' test_2x2_dom_cpp
@@ -52,7 +52,7 @@ ptvdf <- function(x, df, lower) {
 #' @return mat(vector) with ptost and other simulated statistics such as mean (mu) and standard deviation(std) per sequence (0,1)-endpoint
 #' @export
 test_2x2_dom <- function(n, muT, muR, SigmaW, lequi_tol, uequi_tol, alpha, sigmaB, dropout, Eper, Eco, typey, adseq, k, arm_seed) {
-    .Call('_SimTOST_test_2x2_dom', PACKAGE = 'SimTOST', n, muT, muR, SigmaW, lequi_tol, uequi_tol, alpha, sigmaB, dropout, Eper, Eco, typey, adseq, k, arm_seed)
+    .Call('_SimTOST_test_2x2_dom', n, muT, muR, SigmaW, lequi_tol, uequi_tol, alpha, sigmaB, dropout, Eper, Eco, typey, adseq, k, arm_seed)
 }
 
 #' test_2x2_rom_cpp
@@ -77,7 +77,7 @@ test_2x2_dom <- function(n, muT, muR, SigmaW, lequi_tol, uequi_tol, alpha, sigma
 #' @return mat(vector) with ptost and other simulated statistics such as mean (mu) and standard deviation(std) per sequence (0,1)-endpoint
 #' @export
 test_2x2_rom <- function(n, muT, muR, SigmaW, lequi_tol, uequi_tol, alpha, sigmaB, dropout, Eper, Eco, typey, adseq, k, arm_seed) {
-    .Call('_SimTOST_test_2x2_rom', PACKAGE = 'SimTOST', n, muT, muR, SigmaW, lequi_tol, uequi_tol, alpha, sigmaB, dropout, Eper, Eco, typey, adseq, k, arm_seed)
+    .Call('_SimTOST_test_2x2_rom', n, muT, muR, SigmaW, lequi_tol, uequi_tol, alpha, sigmaB, dropout, Eper, Eco, typey, adseq, k, arm_seed)
 }
 
 #' test_par_dom_cpp
@@ -131,6 +131,6 @@ test_par_dom <- function(n, muT, muR, SigmaT, SigmaR, lequi_tol, uequi_tol, alph
 #' @return mat(vector) with ptost and other simulated statistics such as mean (mu) and standard deviation(std) per sequence (0,1)-endpoint
 #' @export
 test_par_rom <- function(n, muT, muR, SigmaT, SigmaR, lequi_tol, uequi_tol, alpha, dropout, typey, adseq, k, arm_seedT, arm_seedR, TART, TARR, vareq) {
-    .Call('_SimTOST_test_par_rom', PACKAGE = 'SimTOST', n, muT, muR, SigmaT, SigmaR, lequi_tol, uequi_tol, alpha, dropout, typey, adseq, k, arm_seedT, arm_seedR, TART, TARR, vareq)
+    .Call('_SimTOST_test_par_rom', n, muT, muR, SigmaT, SigmaR, lequi_tol, uequi_tol, alpha, dropout, typey, adseq, k, arm_seedT, arm_seedR, TART, TARR, vareq)
 }
 
