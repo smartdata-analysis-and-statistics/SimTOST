@@ -2,7 +2,7 @@
 % Please edit documentation in R/calopt.R
 \name{calopt}
 \alias{calopt}
-\title{Sample Size Calculation for Target Power}
+\title{Sample Size Calculation for Bioequivalence and Multi-Endpoint Studies}
 \usage{
 calopt(
   mu_list,
@@ -27,7 +27,7 @@ calopt(
   list_uequi.tol = NA,
   dtype = "parallel",
   ctype = "ROM",
-  vareq = T,
+  vareq = TRUE,
   lognorm = T,
   k = NA,
   adjust = "no",
@@ -58,7 +58,7 @@ calopt(
 
 \item{Eco}{vector of size 2, carry over effect of arm c(Reference, Treatment).}
 
-\item{rho}{correlation parameter to fix on all the pair of endpoints, used along with sigma_list to calculate the varcov list in case neither cor_mat or var-cov list is not provided.}
+\item{rho}{Correlation parameter applied uniformly across all endpoint pairs, used with sigma_list to calculate varcov if cor_mat or varcov_list are not provided.}
 
 \item{TAR}{vector of allocation rates with allocation rates of the arm, default is equivalent rate.}
 
@@ -88,7 +88,7 @@ calopt(
 
 \item{ctype}{comparison dtype ("DOM"(Difference of means), "ROM"(Ratio of means))}
 
-\item{vareq}{variance equivalence assumption (FALSE, TRUE)}
+\item{vareq}{Logical indicating whether variances are assumed equal across arms (default = FALSE).}
 
 \item{lognorm}{Is data log-normally distributed? (TRUE, FALSE)}
 
@@ -106,7 +106,7 @@ calopt(
 
 \item{seed}{main seed}
 
-\item{ncores}{number of cores used for the calculation if not provided it will use number of cores detected - 1}
+\item{ncores}{Number of processing cores for parallel computation; defaults to the total detected cores minus one.}
 
 \item{step.power}{initial step size is 2^step.power}
 
@@ -128,7 +128,7 @@ An object simss that contains the following elements :
 }
 }
 \description{
-Sample size calculation given a target power (using uniroot.integer modified)----
+This function calculates the required sample size to achieve a target power in studies with multiple endpoints and treatment arms. The function leverages modified root-finding algorithms to estimate sample size while considering correlation structures, variance assumptions, and equivalence bounds across endpoints. It is especially useful for bioequivalence trials or multi-arm trials with complex endpoint structures.
 }
 \examples{
 

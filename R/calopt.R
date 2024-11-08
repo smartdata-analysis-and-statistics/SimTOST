@@ -1,5 +1,5 @@
-#' @title Sample Size Calculation for Target Power
-#' @description  Sample size calculation given a target power (using uniroot.integer modified)----
+#' @title Sample Size Calculation for Bioequivalence and Multi-Endpoint Studies
+#' @description This function calculates the required sample size to achieve a target power in studies with multiple endpoints and treatment arms. The function leverages modified root-finding algorithms to estimate sample size while considering correlation structures, variance assumptions, and equivalence bounds across endpoints. It is especially useful for bioequivalence trials or multi-arm trials with complex endpoint structures.
 #'
 #' @param mu_list Named list of arithmetic means per treatment arm. Each element contains a vector (i.e., one per treatment arm) with the expected outcomes for all endpoints of interest.
 #' @param varcov_list list of var-cov matrices, each element corresponds to a comparator with a varcov matrix of size number of endpoints X number of endpoints.
@@ -8,7 +8,7 @@
 #' @param sigmaB number between subject variance only for 2x2 design.
 #' @param Eper  vector of size 2, effect of period on c(0,1).
 #' @param Eco vector of size 2, carry over effect of arm c(Reference, Treatment).
-#' @param rho correlation parameter to fix on all the pair of endpoints, used along with sigma_list to calculate the varcov list in case neither cor_mat or var-cov list is not provided.
+#' @param rho Correlation parameter applied uniformly across all endpoint pairs, used with sigma_list to calculate varcov if cor_mat or varcov_list are not provided.
 #' @param TAR vector of allocation rates with allocation rates of the arm, default is equivalent rate.
 #' @param arm_names Optional vector with the treatment names. If not supplied, it will be derived from mu_list.
 #' @param ynames_list Optional list of vectors with Endpoint names on each arm. When not all endpoint names are provided for each arm, arbitrary names (assigned by vector order) are used.
@@ -21,7 +21,7 @@
 #' @param uequi.tol upper equivalence bounds (e.g., -0.5) expressed in raw scale units (e.g., scalepoints) of endpoint repeated on all endpoints and comparators
 #' @param list_lequi.tol list of lower equivalence bounds (e.g., -0.5) expressed in raw scale units (e.g., scalepoints) of endpoint in comparator
 #' @param list_uequi.tol list of upper equivalence bounds (e.g., -0.5) expressed in raw scale units (e.g., scalepoints) of endpoint in comparator
-#' @param vareq variance equivalence assumption (FALSE, TRUE)
+#' @param vareq Logical indicating whether variances are assumed equal across arms (default = FALSE).
 #' @param dtype design type ("parallel","2x2")
 #' @param lognorm Is data log-normally distributed? (TRUE, FALSE)
 #' @param k Vector with the number of endpoints that must be successful (integer) for global bioequivalence for each comparator. If no k vector is provided, it will be set to the total number of endpoints on each comparator.
@@ -36,7 +36,7 @@
 #' @param lower initial value of N to be searched (default=2)
 #' @param upper max value of N to be searched (default=500)
 #' @param seed main seed
-#' @param ncores number of cores used for the calculation if not provided it will use number of cores detected - 1
+#' @param ncores Number of processing cores for parallel computation; defaults to the total detected cores minus one.
 #'
 #' @return An object simss that contains the following elements :
 #' \describe{
@@ -52,6 +52,10 @@
 #' Mielke, J., Jones, B., Jilma, B., & König, F. (2018). Sample size for multiple hypothesis testing in biosimilar development. Statistics in Biopharmaceutical Research, 10(1), 39-49.
 #'
 #' Berger, R. L., & Hsu, J. C. (1996). Bioequivalence trials, intersection-union tests and equivalence confidence sets. Statistical Science, 283-302.
+#'
+#' @author
+#' Johanna Muñoz \email{johanna.munoz@fromdatatowisdom.com}
+#'
 #' @examples
 #'
 #' mu_list <- list(SB2 = c(AUCinf = 38703, AUClast = 36862, Cmax = 127.0),
@@ -116,7 +120,7 @@ calopt <- function( mu_list,
                     list_uequi.tol=NA,
                     dtype="parallel",
                     ctype = "ROM",
-                    vareq=T,
+                    vareq = TRUE,
                     lognorm=T,
                     k=NA,
                     adjust="no",
