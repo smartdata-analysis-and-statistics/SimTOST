@@ -15,7 +15,7 @@ test_that("differences across lenght of mu, varcov and tar", {
   # Same treatment allocation rate
   TAR = c(1,1) # we assume same allocation rate in both arms
 
-  expect_error(SimTOST::calopt( mu_list = mu_list,
+  expect_error(SimTOST::estSampleSize( mu_list = mu_list,
                                       sigma_list = sigma_list,
                                       varcov_list = NA,
                                       TAR=TAR,

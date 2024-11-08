@@ -37,6 +37,7 @@
 #' @param upper max value of N to be searched (default=500)
 #' @param seed main seed
 #' @param ncores Number of processing cores for parallel computation; defaults to the total detected cores minus one.
+#' @param optimization_method Character. Method for determining the required sample size: "fast" (using modified root-finding algorithms) or "step-by-step". Defaults to "fast".
 #'
 #' @return An object simss that contains the following elements :
 #' \describe{
@@ -80,25 +81,25 @@
 #'                          FDA = c("AUClast", "Cmax"))
 #'
 #'# Run the simulation
-#'result <- calopt(power = 0.9, # target power
-#'                 alpha = 0.05,
-#'                 mu_list = mu_list,
-#'                 sigma_list = sigma_list,
-#'                 lequi.tol = lequi.tol,
-#'                 uequi.tol = uequi.tol,
-#'                 list_comparator = list_comparator,
-#'                 list_y_comparator = list_y_comparator,
-#'                 adjust = "no",
-#'                 dtype = "parallel",
-#'                 ctype = "ROM",
-#'                 vareq = FALSE,
-#'                 lognorm = TRUE,
-#'                 ncores = 1,
-#'                 nsim = 50,
-#'                 seed = 1234)
+#'estSampleSize(power = 0.9, # target power
+#'              alpha = 0.05,
+#'              mu_list = mu_list,
+#'              sigma_list = sigma_list,
+#'              lequi.tol = lequi.tol,
+#'              uequi.tol = uequi.tol,
+#'              list_comparator = list_comparator,
+#'              list_y_comparator = list_y_comparator,
+#'              adjust = "no",
+#'              dtype = "parallel",
+#'              ctype = "ROM",
+#'              vareq = FALSE,
+#'              lognorm = TRUE,
+#'              ncores = 1,
+#'              nsim = 50,
+#'              seed = 1234)
 #'
 #' @export
-calopt <- function( mu_list,
+estSampleSize <- function(mu_list,
                     varcov_list=NA,
                     sigma_list=NA,
                     cor_mat=NA,
@@ -133,7 +134,8 @@ calopt <- function( mu_list,
                     step.power=6,
                     step.up=TRUE,
                     pos.side=FALSE,
-                    maxiter = 1000
+                    maxiter = 1000,
+                    optimization_method = "fast"
 ){
 
   # is mu provided?
@@ -388,16 +390,16 @@ calopt <- function( mu_list,
   }
 
   if (all(is.na(list_lequi.tol),is.na(list_uequi.tol)) & any(!is.na(c(lequi.tol,uequi.tol)))){
-    warning("It will be used the same tolerance boundaries (lequi.tol,uequi.tol) across the comparators ")
+    warning("Using the same tolerance boundaries (lequi.tol, uequi.tol) across all comparators.")
     list_lequi.tol <- list()
     list_uequi.tol <- list()
-      if(any(lequi.tol>=uequi.tol)){
-        warning("some lequitol>=uequi.tol, so reference values will be used")
+      if (any(lequi.tol >= uequi.tol)) {
+        warning("Inconsistent tolerance bounds: some values in lequi.tol are greater than or equal to uequi.tol. Reference values will be used instead.")
         lequi.tol <- NA
         uequi.tol <- NA
       }
       if ((length(lequi.tol) != length(uynames)) | (length(uequi.tol) != length(uynames))) {
-        warning("Insufficient number of tolerance values supplied (One needed for each endpoint), so reference values will be used")
+        warning("Insufficient number of tolerance values provided: one value per endpoint is required. Reference values will be used instead.")
         lequi.tol <- NA
         uequi.tol <- NA
       }
@@ -512,24 +514,48 @@ calopt <- function( mu_list,
 
   param.d <- list(nsim=nsim,power=power,alpha=alpha,dtype=dtype,ctype=ctype,lognorm=lognorm,vareq=vareq,k=k,adjust=adjust,dropout=dropout,list_lequi.tol=list_lequi.tol, list_uequi.tol=list_uequi.tol)
 
-  if(is.na(ncores)){
-    ncores <- parallel::detectCores() - 1}
+  if(is.na(ncores)) {
+    ncores <- parallel::detectCores() - 1
+  }
 
 
-  opt.response <- uniroot.integer.mod(function(x) (power_cal(n=x,nsim=nsim,param=param,param.d=param.d,seed=seed,ncores=ncores)),
-                                      power = power,
-                                      lower = lower,
-                                      upper = upper,
-                                      step.power = step.power,
-                                      step.up = step.up,
-                                      pos.side = pos.side,
-                                      maxiter = maxiter)
+  if (optimization_method == "fast") {
+    opt.response <- uniroot.integer.mod(function(x) (power_cal(n=x,nsim=nsim,param=param,param.d=param.d,seed=seed,ncores=ncores)),
+                                        power = power,
+                                        lower = lower,
+                                        upper = upper,
+                                        step.power = step.power,
+                                        step.up = step.up,
+                                        pos.side = pos.side,
+                                        maxiter = maxiter)
 
-  table.test <- data.table::as.data.table(opt.response$table.test)
+    table.test <- data.table::as.data.table(opt.response$table.test)
+  } else if (optimization_method == "step-by-step") {
+    table.test <- NULL
+    for (n in lower:upper) { # increase one by one until the desired power or the
+      # maximal sample size is reached
+
+      powercal <- power_cal(n=n,nsim=nsim,param=param,param.d=param.d,seed=seed,ncores=ncores)
+      if( any(is.na(powercal))){
+        powercal <- 0
+      }
+      if (powercal$power > power){
+        table.test <- rbind(table.test,powercal$output.test)
+        break
+      }
+      table.test <- rbind(table.test,powercal$output.test)
+    }
+
+    table.test <- data.table::as.data.table(table.test)
+  } else {
+    stop ("Invalid search way")
+  }
+
 
   # Calculate totaly test across all comparators= power
   qnam <- colnames(table.test)[grep("^totaly",colnames(table.test))]
   table.test$totaly <- apply(table.test[,qnam,with=FALSE], 1, prod)
+
 
   # Get a summary across all the n_iter with confidence interval power
   n_iter <- NULL
@@ -546,18 +572,26 @@ calopt <- function( mu_list,
   sumcol <- colnames(summary)[grep("^(n_|power)",colnames(summary))]
   table.iter <- summary[,sumcol,with=FALSE]
 
-  if (is.null(opt.response$power)){
-    response <- NA
-  }else{
-    response <- table.iter[n_iter==opt.response$power["n_iter"],]
-  }
+  if (optimization_method == "fast") {
+    if (is.null(opt.response$power)){
+      response <- NA
+    } else{
+      response <- table.iter[n_iter == opt.response$power["n_iter"],]
+    }
 
-  out <- list( response = response,
-               table.iter = table.iter,
-               table.test = table.test,
-               param.u =param.u,
-               param = param,
-               param.d = param.d)
+    out <- list( response = response,
+                 table.iter = table.iter,
+                 table.test = table.test,
+                 param.u = param.u,
+                 param = param,
+                 param.d = param.d)
+  } else if (optimization_method == "step-by-step") {
+    out <- list(   response = table.iter[n_iter == n,],
+                   table.iter = table.iter,
+                   table.test = table.test,
+                   param = param,
+                   param.d = param.d)
+  }
 
   class(out) <- "simss"
   return(out)

@@ -102,7 +102,7 @@ calsbs(
 
 \item{seed}{main seed}
 
-\item{ncores}{number of cores used for the calculation if not provided it will use number of cores detected - 1}
+\item{ncores}{Number of processing cores for parallel computation; defaults to the total detected cores minus one.}
 }
 \value{
 An object simss that contains the following elements :
@@ -118,52 +118,49 @@ An object simss that contains the following elements :
 \description{
 Alternative way to estimate the sample size calculation given a target power (step by step)----
 }
-\examples{
-
-mu_list <- list(SB2 = c(AUCinf = 38703, AUClast = 36862, Cmax = 127.0),
-                EUREF = c(AUCinf = 39360, AUClast = 37022, Cmax = 126.2),
-                USREF = c(AUCinf = 39270, AUClast = 37368, Cmax = 129.2))
-
-sigma_list <- list(SB2 = c(AUCinf = 11114, AUClast = 9133, Cmax = 16.9),
-                   EUREF = c(AUCinf = 12332, AUClast = 9398, Cmax = 17.9),
-                   USREF = c(AUCinf = 10064, AUClast = 8332, Cmax = 18.8))
-
-# Equivalent boundaries
-lequi.tol <- c(AUCinf = 0.8, AUClast = 0.8, Cmax = 0.8)
-uequi.tol <- c(AUCinf = 1.25, AUClast = 1.25, Cmax = 1.25)
-
-
-# arms to be compared
-list_comparator <- list(EMA = c("SB2", "EUREF"),
-                        FDA = c("SB2", "USREF"))
-
-# Endpoints to be compared
-list_y_comparator <- list(EMA = c("AUCinf", "Cmax"),
-                         FDA = c("AUClast", "Cmax"))
-
-# Run the simulation
-result <- calsbs(power = 0.9, # target power
-                alpha = 0.05,
-                mu_list = mu_list,
-                sigma_list = sigma_list,
-                lequi.tol = lequi.tol,
-                uequi.tol = uequi.tol,
-                list_comparator = list_comparator,
-                list_y_comparator = list_y_comparator,
-                adjust = "no",
-                dtype = "parallel",
-                ctype = "ROM",
-                vareq = FALSE,
-                lognorm = TRUE,
-                ncores = 1,
-                lower= 4,
-                upper = 100,
-                nsim = 50,
-                seed = 1234)
-
-}
 \references{
 Mielke, J., Jones, B., Jilma, B., & König, F. (2018). Sample size for multiple hypothesis testing in biosimilar development. Statistics in Biopharmaceutical Research, 10(1), 39-49.
 
 Berger, R. L., & Hsu, J. C. (1996). Bioequivalence trials, intersection-union tests and equivalence confidence sets. Statistical Science, 283-302.
+}
+\author{
+Johanna Muñoz \email{johanna.munoz@fromdatatowisdom.com}
+
+#' @examples
+
+mu_list <- list(SB2 = c(AUCinf = 38703, AUClast = 36862, Cmax = 127.0),
+EUREF = c(AUCinf = 39360, AUClast = 37022, Cmax = 126.2),
+USREF = c(AUCinf = 39270, AUClast = 37368, Cmax = 129.2))
+
+sigma_list <- list(SB2 = c(AUCinf = 11114, AUClast = 9133, Cmax = 16.9),
+EUREF = c(AUCinf = 12332, AUClast = 9398, Cmax = 17.9),
+USREF = c(AUCinf = 10064, AUClast = 8332, Cmax = 18.8))Equivalent boundaries
+
+lequi.tol <- c(AUCinf = 0.8, AUClast = 0.8, Cmax = 0.8)
+uequi.tol <- c(AUCinf = 1.25, AUClast = 1.25, Cmax = 1.25)arms to be compared
+
+list_comparator <- list(EMA = c("SB2", "EUREF"),
+FDA = c("SB2", "USREF"))Endpoints to be compared
+
+list_y_comparator <- list(EMA = c("AUCinf", "Cmax"),
+FDA = c("AUClast", "Cmax"))Run the simulation
+
+result <- calsbs(power = 0.9, # target power
+alpha = 0.05,
+mu_list = mu_list,
+sigma_list = sigma_list,
+lequi.tol = lequi.tol,
+uequi.tol = uequi.tol,
+list_comparator = list_comparator,
+list_y_comparator = list_y_comparator,
+adjust = "no",
+dtype = "parallel",
+ctype = "ROM",
+vareq = FALSE,
+lognorm = TRUE,
+ncores = 1,
+lower= 4,
+upper = 100,
+nsim = 50,
+seed = 1234)
 }

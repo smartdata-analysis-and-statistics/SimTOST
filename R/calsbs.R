@@ -32,7 +32,7 @@
   #' @param lower initial value of N to be searched (default=2)
   #' @param upper max value of N to be searched (default=500)
   #' @param seed main seed
-  #' @param ncores number of cores used for the calculation if not provided it will use number of cores detected - 1
+  #' @param ncores Number of processing cores for parallel computation; defaults to the total detected cores minus one.
   #'
   #' @return An object simss that contains the following elements :
   #' \describe{
@@ -48,7 +48,11 @@
   #' Mielke, J., Jones, B., Jilma, B., & König, F. (2018). Sample size for multiple hypothesis testing in biosimilar development. Statistics in Biopharmaceutical Research, 10(1), 39-49.
   #'
   #' Berger, R. L., & Hsu, J. C. (1996). Bioequivalence trials, intersection-union tests and equivalence confidence sets. Statistical Science, 283-302.
-  #' @examples
+  #'
+  #' @author
+  #' Johanna Muñoz \email{johanna.munoz@fromdatatowisdom.com}
+  #'
+  #' #' @examples
   #'
   #' mu_list <- list(SB2 = c(AUCinf = 38703, AUClast = 36862, Cmax = 127.0),
   #'                 EUREF = c(AUCinf = 39360, AUClast = 37022, Cmax = 126.2),
@@ -378,11 +382,11 @@
     }
 
     if (all(is.na(list_lequi.tol),is.na(list_uequi.tol)) & any(!is.na(c(lequi.tol,uequi.tol)))){
-      warning("It will be used the same tolerance boundaries (lequi.tol,uequi.tol) across the comparators ")
+      warning("Using the same tolerance boundaries (lequi.tol, uequi.tol) across all comparators.")
       list_lequi.tol <- list()
       list_uequi.tol <- list()
-      if(any(lequi.tol>=uequi.tol)){
-        warning("some lequitol>=uequi.tol, so reference values will be used")
+      if (any(lequi.tol >= uequi.tol)) {
+        warning("Inconsistent tolerance bounds: some values in lequi.tol are greater than or equal to uequi.tol. Reference values will be used instead.")
         lequi.tol <- NA
         uequi.tol <- NA
       }
@@ -502,7 +506,7 @@
 
     param.d <- list(nsim=nsim,power=power,alpha=alpha,dtype=dtype,ctype=ctype,lognorm=lognorm,vareq=vareq,k=k,adjust=adjust,dropout=dropout,list_lequi.tol=list_lequi.tol, list_uequi.tol=list_uequi.tol)
 
-    if(is.na(ncores)){
+    if (is.na(ncores)){
       ncores <- parallel::detectCores() - 1}
 
 

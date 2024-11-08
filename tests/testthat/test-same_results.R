@@ -33,7 +33,7 @@ testthat::test_that("Return expected result", {
   uequi.tol <- c(AUCinf = 1.25, AUClast = 1.25, Cmax = 1.25)
 
   # Pass the user parameters into a list of parameters and calculate the sample size
-  res_cal <- SimTOST::calopt( mu_list = mu_list,
+  res_cal <- SimTOST::estSampleSize( mu_list = mu_list,
                                     sigma_list = sigma_list,
                                     power = 0.9,
                                     dtype = "parallel",

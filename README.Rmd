@@ -40,7 +40,7 @@ devtools::install_github("smartdata-analysis-and-statistics/SimTOST")
 
 ## Example
 
-The main features of this package is `calopt` function which can be used to calculate sample size for individual and multiple endpoints. 
+The main features of this package is `estSampleSize` function which can be used to calculate sample size for individual and multiple endpoints. 
 
 The example of using the functionality of this package can be found in these vignettes:
 

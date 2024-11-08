@@ -16,7 +16,7 @@
 #   # Same treatment allocation rate
 #   TAR = c(1,1,1) # we assume same allocation rate in both arms
 #
-#   expect_error(SimTOST::calopt( mu_list = mu_list,
+#   expect_error(SimTOST::estSampleSize( mu_list = mu_list,
 #                                     sigma_list = sigma_list,
 #                                     power = 0.9,
 #                                     dtype = "parallel",
