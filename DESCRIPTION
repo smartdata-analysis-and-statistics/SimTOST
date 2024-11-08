@@ -25,7 +25,7 @@ Authors@R: c(
            role = c("ctb")),
     person("Biogen Inc", role = c("cph", "fnd"))
     )
-Description: SimTOST is an R package for estimating sample size in bioequivalence studies using the Two One-Sided Tests (TOST) procedure. The package leverages simulation-based methods, allowing users to investigate multiple hypotheses, treatments, and correlated endpoints. 
+Description: SimTOST is an R package designed for bioequivalence studies, providing simulation-based sample size estimation for the Two One-Sided Tests (TOST) procedure. With flexible options for testing multiple hypotheses, treatments, and correlated endpoints, SimTOST enables robust planning of bioequivalence trials by accommodating complex study designs.
 License: Apache License 2.0
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -48,3 +48,5 @@ Suggests:
 VignetteBuilder: knitr
 Config/testthat/edition: 3
 LinkingTo: Rcpp, RcppArmadillo
+URL: https://github.com/smartdata-analysis-and-statistics/SimTOST
+BugReports: https://github.com/smartdata-analysis-and-statistics/SimTOST/issues
