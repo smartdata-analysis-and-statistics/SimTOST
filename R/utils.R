@@ -45,7 +45,7 @@ sim_data <- function(n,
 #'
 #' @param n sample size
 #' @param nsim number of simulated studies
-#' @param param list of parameters (mean,sd,tar) from shiny app input
+#' @param param list of parameters (mean,sd,tar)
 #' @param seed main seed
 #' @param ncores number of cores
 #' @param param.d design parameters
@@ -141,7 +141,7 @@ power_cal <- function(n,nsim,param,param.d,seed,ncores){
 #' @param nsim number of simulated studies
 #' @param n sample size
 #' @param comp index comparator
-#' @param param list of parameters (mean,sd,tar) from shiny app input
+#' @param param list of parameters (mean,sd,tar)
 #' @param arm_seed seed for each endpoint to get consistent in simulations across all comparators
 #' @param ncores number of cores used for the calculation
 #' @param param.d design parameters

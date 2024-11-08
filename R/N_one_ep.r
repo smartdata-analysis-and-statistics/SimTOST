@@ -1,11 +1,10 @@
-# teststatistic - generates the test statistics as described in the paper
-## by Kong, Kohberger, Koch (2004)
-## The type-1 error rate adjustment as proposed by
-## Lehmann, Roman (2005)
-
-#' @title Simulated Test Statistic for Given Settings Using Mielke's Method
+#' @title Simulated Test Statistic for Given Settings in Noninferiority/Equivalence Trials
 #'
-#' @description This function simulates a test statistic for a given setting using Mielke's method, accounting for multiple endpoints, correlation structure, and study design.
+#' @description This function simulates test statistics for multiple hypothesis testing in the context of biosimilar development, using the approach described by Mielke et al. (2018). It calculates the necessary sample size for meeting equivalence criteria across multiple endpoints, considering correlation structures, and applying multiplicity adjustments.
+#'
+#' @details Following the methodology by Mielke et al. (2018), this function is designed for multiple endpoint clinical trials where success is defined as meeting equivalence criteria on at least a subset of tests. The function simulates test statistics based on multivariate normal distribution assumptions and supports k-out-of-m success criteria for regulatory approval. Additionally, Type I error control is achieved through multiplicity adjustments as proposed by Lehmann and Romano (2005) to ensure rigorous error rate management.
+#'
+#' The approach is particularly relevant for biosimilar studies where sample size estimation must account for multiple comparisons across endpoints, doses, or populations, as regulatory agencies often require equivalence across all relevant comparisons. This method provides a framework for estimating power and sample size, even when equivalence is not required on all endpoints.
 #'
 #' @param N Integer. The number of subjects per sequence.
 #' @param m Integer. The number of endpoints.
@@ -18,37 +17,47 @@
 #' @param alpha Numeric. The significance level.
 #' @param adjust Character. The method for multiplicity adjustment. Options are "no" for no adjustment, "bon" for Bonferroni correction, or "k" for k-adjustment.
 #'
+#' @references
+#'
+#' Kong, L., Kohberger, R. C. & Koch, G. G. Type I Error and Power in Noninferiority/Equivalence Trials with Correlated Multiple Endpoints: An Example from Vaccine Development Trials. Journal of Biopharmaceutical Statistics 14, 893–907 (2004).
+#'
+#' Lehmann, E. L. & Romano, J. P. Generalizations of the Familywise Error Rate. The Annals of Statistics 33, 1138–1154 (2005).
+#'
+#' Mielke, J., Jones, B., Jilma, B. & König, F. Sample Size for Multiple Hypothesis Testing in Biosimilar Development. Statistics in Biopharmaceutical Research 10, 39–49 (2018).
+#'
 #' @return A realization of the simulated test statistic for the given setting. If values are provided as a single number (constant for all endpoints), a vector is created.
 #'
 #' @keywords internal
-sign_Mielke <- function(N, m, k, R, sigma, true.diff, equi.tol=log(1.25), design, alpha=0.05, adjust="no") {
-  if (length(true.diff)==1) {
-    true.diff <- true.diff * rep(1,m)
+sign_Mielke <- function(N, m, k, R, sigma, true.diff, equi.tol = log(1.25),
+                        design, alpha = 0.05, adjust = "no") {
+  if (length(true.diff) == 1) {
+    true.diff <- true.diff * rep(1, m)
   }
-  if (length(sigma)==1) {
-    sigma <- sigma * rep(1,m)
+  if (length(sigma) == 1) {
+    sigma <- sigma * rep(1, m)
   }
-  if (length(equi.tol)==1) {
-    equi.tol <- equi.tol * rep(1,m)
+  if (length(equi.tol) == 1) {
+    equi.tol <- equi.tol * rep(1, m)
   }
-  # generate data and calculate cholesky decomposition
+  # generate data and calculate Cholesky decomposition
   test.raw <- stats::rnorm(m)
   T.matrix <- chol(R)
+
   # adjustment for type 1-error rate
-  if (adjust=="k") {
+  if (adjust == "k") {
     alpha <- k*alpha/m
-  } else if (adjust=="bon") {
+  } else if (adjust == "bon") {
     alpha <- alpha/m
-  } else if (adjust=="no") {
+  } else if (adjust == "no") {
     alpha <- alpha
   } # calculate the test statistics (as stated in the paper)
-  if (design=="parallel") {
-    Z1 <- t(T.matrix) %*% test.raw+sqrt(N/2)/sigma * (equi.tol-true.diff)
-    Z2 <- -t(T.matrix) %*% test.raw+sqrt(N/2)/sigma * (equi.tol+true.diff)
+  if (design == "parallel") {
+    Z1 <- t(T.matrix) %*% test.raw + sqrt(N/2)/sigma * (equi.tol - true.diff)
+    Z2 <- -t(T.matrix) %*% test.raw + sqrt(N/2)/sigma * (equi.tol + true.diff)
   }
-  if (design=="22co") {
-    Z1 <- t(T.matrix) %*% test.raw+sqrt(2*N)/sigma * (equi.tol-true.diff)
-    Z2 <- -t(T.matrix) %*% test.raw+sqrt(2*N)/sigma * (equi.tol+true.diff)
+  if (design == "22co") {
+    Z1 <- t(T.matrix) %*% test.raw + sqrt(2*N)/sigma * (equi.tol - true.diff)
+    Z2 <- -t(T.matrix) %*% test.raw + sqrt(2*N)/sigma * (equi.tol + true.diff)
   }
   min.Z <- apply(cbind(Z1,Z2),1,min)
   #decide for each endpoints
@@ -56,8 +65,8 @@ sign_Mielke <- function(N, m, k, R, sigma, true.diff, equi.tol=log(1.25), design
   critic <- stats::qnorm(1 - alpha)
   # decide how many endpoints are successful and if
   # that number is higher than the requested number k reject H0
-  test.dec <- (sum(min.Z > critic)>=k)
-  return(dec=test.dec)
+  test.dec <- (sum(min.Z > critic) >= k)
+  return(dec = test.dec)
 }
 
 #' @title Power Calculation for Hypothesis Testing Using Mielke's Method
@@ -133,27 +142,39 @@ power_dom <- function(seed, mu_test, mu_control, sigma_test, sigma_control,
   sum(sign)/nsim
 }
 
-#' @title N_Mielke
+#' @title Sample Size Estimation for Multiple Hypothesis Testing Using Mielke's Method
 #'
-#' @description Sample size estimation for Multiple Hypothesis Testing (Mielke)
+#' @description Estimates the required sample size to achieve a specified power level for multiple hypothesis testing, using the approach described by Mielke et al. (2018). This function is particularly useful for bioequivalence or biosimilar studies with multiple correlated endpoints, where a minimum number of endpoints must meet equivalence criteria.
 #'
-#' @param power Desired power
-#' @param Nmax Maximal sample size
-#' @param m Number of endpoints (integer)
-#' @param k Number of endpoints that must be successful (integer)
-#' @param rho Correlation (this program assumes a constant correlation between the endpoints)
-#' @param sigma Standard deviation of the endpoints (can be a vector of length m or a single value. If it is a single value, it is assumed that the standard deviation is constant for all endpoints). In case of the 2x2 crossover design, it is assumed that the input is the within-subject variance, in case of a parallel groups design, it is the standard deviation of the endpoint in the treatment group and it is assumed that this is identical for test and reference
-#' @param true.diff Assumed true difference between test and reference (can be a vector of length m or a single value, see above)
-#' @param equi.tol Equivalence margins, positive number, the interval is (-equi.tol, +equi.tol)
-#' @param design Study design ("22co" for a 2x2 crossover design and "parallel" for a parallel groups design)
-#' @param alpha Significance level
-#' @param adjust Should an adjustment for multiplicity be applied ("no": no adjustment. "bon": Bonferroni, "k": k-adjustment)
-#' @param seed Random Seed
-#' @param nsim Number of iterations for power calculations (default: 10000)
+#' @references
 #'
-#' @return A vector with the achieved power (first entry) and the required sample size per sequence (second entry)
+#' Mielke, J., Jones, B., Jilma, B. & König, F. Sample Size for Multiple Hypothesis Testing in Biosimilar Development. Statistics in Biopharmaceutical Research 10, 39–49 (2018).
+#'
+#'
+#' @param power Numeric. Desired statistical power.
+#' @param Nmax Integer. Maximum allowable sample size.
+#' @param m Integer. Total number of endpoints.
+#' @param k Integer. Number of endpoints that must meet the success criteria for overall study success.
+#' @param rho Numeric. Constant correlation coefficient among endpoints.
+#' @param sigma Numeric or vector. Standard deviation of each endpoint. If a single value is provided, it is assumed to be constant across all endpoints. In a 2x2 crossover design, this is the within-subject standard deviation; in a parallel design, it represents the treatment group’s standard deviation, assumed to be the same for both test and reference.
+#' @param true.diff Numeric or vector. Assumed true difference between test and reference for each endpoint. If a single value is provided, it is applied uniformly across all endpoints.
+#' @param equi.tol Numeric. Equivalence margin; the equivalence interval is defined as (-equi.tol, +equi.tol).
+#' @param design Character. Study design, either "22co" for a 2x2 crossover design or "parallel" for a parallel groups design.
+#' @param alpha Numeric. Significance level for the hypothesis test.
+#' @param adjust Character. Method for multiplicity adjustment; options are "no" (no adjustment), "bon" (Bonferroni adjustment), and "k" (k-adjustment).
+#' @param seed Integer. Random seed for reproducibility.
+#' @param nsim Integer. Number of simulations to run for power estimation (default: 10,000).
+#'
+#' @details This function uses the method proposed by Mielke et al. (2018) to estimate the sample size required to achieve the desired power level in studies with multiple correlated endpoints. The function iteratively increases sample size until the target power is reached or the maximum allowable sample size (Nmax) is exceeded. The approach accounts for endpoint correlation and supports adjustments for multiple testing using various correction methods.
+#'
+#' @return A named vector containing:
+#' \describe{
+#'   \item{"power.a"}{Achieved power with the estimated sample size.}
+#'   \item{"SS"}{Required sample size per sequence to achieve the target power.}
+#' }
 #' @export
-N_Mielke <- function(power, Nmax, m, k, rho, sigma, true.diff, equi.tol, design, alpha, adjust="no", seed = NULL, nsim = 10000) {
+N_Mielke <- function(power, Nmax, m, k, rho, sigma, true.diff, equi.tol,
+                     design, alpha, adjust="no", seed = NULL, nsim = 10000) {
 
   if (!is.null(seed)) {
     set.seed(seed)

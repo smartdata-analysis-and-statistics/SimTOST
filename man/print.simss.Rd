@@ -15,5 +15,5 @@
 Display the summary results of the sample size estimation
 }
 \author{
-Thomas Debray \href{mailto:thomas.debray@gmail.com}{thomas.debray@gmail.com}
+Thomas Debray \email{thomas.debray@gmail.com}
 }

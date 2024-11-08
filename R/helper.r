@@ -2,7 +2,8 @@
 #'
 #' @param x An object of class "simss"
 #' @param ...  Optional arguments to be passed from or to other methods.
-#' @author Thomas Debray <thomas.debray@gmail.com>
+#' @author
+#' Thomas Debray \email{thomas.debray@gmail.com}
 #' @method print simss
 #' @export
 print.simss <- function(x, ...) {

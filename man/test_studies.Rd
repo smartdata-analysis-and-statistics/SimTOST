@@ -13,7 +13,7 @@ test_studies(nsim, n, comp, param, param.d, arm_seed, ncores)
 
 \item{comp}{index comparator}
 
-\item{param}{list of parameters (mean,sd,tar) from shiny app input}
+\item{param}{list of parameters (mean,sd,tar)}
 
 \item{param.d}{design parameters}
 

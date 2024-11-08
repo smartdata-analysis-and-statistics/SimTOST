@@ -2,7 +2,7 @@
 % Please edit documentation in R/N_one_ep.r
 \name{N_Mielke}
 \alias{N_Mielke}
-\title{N_Mielke}
+\title{Sample Size Estimation for Multiple Hypothesis Testing Using Mielke's Method}
 \usage{
 N_Mielke(
   power,
@@ -21,35 +21,45 @@ N_Mielke(
 )
 }
 \arguments{
-\item{power}{Desired power}
+\item{power}{Numeric. Desired statistical power.}
 
-\item{Nmax}{Maximal sample size}
+\item{Nmax}{Integer. Maximum allowable sample size.}
 
-\item{m}{Number of endpoints (integer)}
+\item{m}{Integer. Total number of endpoints.}
 
-\item{k}{Number of endpoints that must be successful (integer)}
+\item{k}{Integer. Number of endpoints that must meet the success criteria for overall study success.}
 
-\item{rho}{Correlation (this program assumes a constant correlation between the endpoints)}
+\item{rho}{Numeric. Constant correlation coefficient among endpoints.}
 
-\item{sigma}{Standard deviation of the endpoints (can be a vector of length m or a single value. If it is a single value, it is assumed that the standard deviation is constant for all endpoints). In case of the 2x2 crossover design, it is assumed that the input is the within-subject variance, in case of a parallel groups design, it is the standard deviation of the endpoint in the treatment group and it is assumed that this is identical for test and reference}
+\item{sigma}{Numeric or vector. Standard deviation of each endpoint. If a single value is provided, it is assumed to be constant across all endpoints. In a 2x2 crossover design, this is the within-subject standard deviation; in a parallel design, it represents the treatment group’s standard deviation, assumed to be the same for both test and reference.}
 
-\item{true.diff}{Assumed true difference between test and reference (can be a vector of length m or a single value, see above)}
+\item{true.diff}{Numeric or vector. Assumed true difference between test and reference for each endpoint. If a single value is provided, it is applied uniformly across all endpoints.}
 
-\item{equi.tol}{Equivalence margins, positive number, the interval is (-equi.tol, +equi.tol)}
+\item{equi.tol}{Numeric. Equivalence margin; the equivalence interval is defined as (-equi.tol, +equi.tol).}
 
-\item{design}{Study design ("22co" for a 2x2 crossover design and "parallel" for a parallel groups design)}
+\item{design}{Character. Study design, either "22co" for a 2x2 crossover design or "parallel" for a parallel groups design.}
 
-\item{alpha}{Significance level}
+\item{alpha}{Numeric. Significance level for the hypothesis test.}
 
-\item{adjust}{Should an adjustment for multiplicity be applied ("no": no adjustment. "bon": Bonferroni, "k": k-adjustment)}
+\item{adjust}{Character. Method for multiplicity adjustment; options are "no" (no adjustment), "bon" (Bonferroni adjustment), and "k" (k-adjustment).}
 
-\item{seed}{Random Seed}
+\item{seed}{Integer. Random seed for reproducibility.}
 
-\item{nsim}{Number of iterations for power calculations (default: 10000)}
+\item{nsim}{Integer. Number of simulations to run for power estimation (default: 10,000).}
 }
 \value{
-A vector with the achieved power (first entry) and the required sample size per sequence (second entry)
+A named vector containing:
+\describe{
+\item{"power.a"}{Achieved power with the estimated sample size.}
+\item{"SS"}{Required sample size per sequence to achieve the target power.}
+}
 }
 \description{
-Sample size estimation for Multiple Hypothesis Testing (Mielke)
+Estimates the required sample size to achieve a specified power level for multiple hypothesis testing, using the approach described by Mielke et al. (2018). This function is particularly useful for bioequivalence or biosimilar studies with multiple correlated endpoints, where a minimum number of endpoints must meet equivalence criteria.
+}
+\details{
+This function uses the method proposed by Mielke et al. (2018) to estimate the sample size required to achieve the desired power level in studies with multiple correlated endpoints. The function iteratively increases sample size until the target power is reached or the maximum allowable sample size (Nmax) is exceeded. The approach accounts for endpoint correlation and supports adjustments for multiple testing using various correction methods.
+}
+\references{
+Mielke, J., Jones, B., Jilma, B. & König, F. Sample Size for Multiple Hypothesis Testing in Biosimilar Development. Statistics in Biopharmaceutical Research 10, 39–49 (2018).
 }

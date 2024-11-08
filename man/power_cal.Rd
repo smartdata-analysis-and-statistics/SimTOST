@@ -11,7 +11,7 @@ power_cal(n, nsim, param, param.d, seed, ncores)
 
 \item{nsim}{number of simulated studies}
 
-\item{param}{list of parameters (mean,sd,tar) from shiny app input}
+\item{param}{list of parameters (mean,sd,tar)}
 
 \item{param.d}{design parameters}
 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/N_one_ep.r
 \name{sign_Mielke}
 \alias{sign_Mielke}
-\title{Simulated Test Statistic for Given Settings Using Mielke's Method}
+\title{Simulated Test Statistic for Given Settings in Noninferiority/Equivalence Trials}
 \usage{
 sign_Mielke(
   N,
@@ -42,6 +42,18 @@ sign_Mielke(
 A realization of the simulated test statistic for the given setting. If values are provided as a single number (constant for all endpoints), a vector is created.
 }
 \description{
-This function simulates a test statistic for a given setting using Mielke's method, accounting for multiple endpoints, correlation structure, and study design.
+This function simulates test statistics for multiple hypothesis testing in the context of biosimilar development, using the approach described by Mielke et al. (2018). It calculates the necessary sample size for meeting equivalence criteria across multiple endpoints, considering correlation structures, and applying multiplicity adjustments.
+}
+\details{
+Following the methodology by Mielke et al. (2018), this function is designed for multiple endpoint clinical trials where success is defined as meeting equivalence criteria on at least a subset of tests. The function simulates test statistics based on multivariate normal distribution assumptions and supports k-out-of-m success criteria for regulatory approval. Additionally, Type I error control is achieved through multiplicity adjustments as proposed by Lehmann and Romano (2005) to ensure rigorous error rate management.
+
+The approach is particularly relevant for biosimilar studies where sample size estimation must account for multiple comparisons across endpoints, doses, or populations, as regulatory agencies often require equivalence across all relevant comparisons. This method provides a framework for estimating power and sample size, even when equivalence is not required on all endpoints.
+}
+\references{
+Kong, L., Kohberger, R. C. & Koch, G. G. Type I Error and Power in Noninferiority/Equivalence Trials with Correlated Multiple Endpoints: An Example from Vaccine Development Trials. Journal of Biopharmaceutical Statistics 14, 893–907 (2004).
+
+Lehmann, E. L. & Romano, J. P. Generalizations of the Familywise Error Rate. The Annals of Statistics 33, 1138–1154 (2005).
+
+Mielke, J., Jones, B., Jilma, B. & König, F. Sample Size for Multiple Hypothesis Testing in Biosimilar Development. Statistics in Biopharmaceutical Research 10, 39–49 (2018).
 }
 \keyword{internal}

@@ -35,7 +35,6 @@ Imports:
     matrixcalc,
     parallel,
     data.table,
-    shiny,
     Rcpp (>= 1.0.13)
 Suggests: 
     knitr,
