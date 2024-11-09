@@ -41,7 +41,7 @@ A named list with the following components:
 This function ensures that all input parameters (\code{mu_list}, \code{varcov_list}, and \code{TAR_list}) are consistent across comparators and endpoints. It performs checks for positive semi-definiteness of variance-covariance matrices and automatically assigns default names for arms and endpoints if not provided.
 }
 \description{
-Constructs and returns a list of key parameters (mean vectors, variance-covariance matrices, and allocation rates) required for input into the \code{estSampleSize} function. This function ensures that the parameters for each endpoint and comparator are consistent, properly named, and formatted.
+Constructs and returns a list of key parameters (mean vectors, variance-covariance matrices, and allocation rates) required for input into the \code{sampleSize} function. This function ensures that the parameters for each endpoint and comparator are consistent, properly named, and formatted.
 }
 \examples{
 mu_list <- list(c(0.1, 0.2), c(0.15, 0.25))

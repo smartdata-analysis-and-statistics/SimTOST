@@ -172,9 +172,18 @@ power_dom <- function(seed, mu_test, mu_control, sigma_test, sigma_control,
 #'   \item{"power.a"}{Achieved power with the estimated sample size.}
 #'   \item{"SS"}{Required sample size per sequence to achieve the target power.}
 #' }
+#'
+#' @examples
+#' # Example 1 from Mielke
+#' sampleSize_Mielke(power = 0.8, Nmax = 1000, m = 5, k = 5, rho = 0,
+#'                   sigma = 0.3, true.diff =  log(1.05), equi.tol = log(1.25),
+#'                   design = "parallel", alpha = 0.05, adjust = "no",
+#'                   seed = 1234, nsim = 100)
+#'
 #' @export
-N_Mielke <- function(power, Nmax, m, k, rho, sigma, true.diff, equi.tol,
-                     design, alpha, adjust="no", seed = NULL, nsim = 10000) {
+sampleSize_Mielke <- function(power, Nmax, m, k, rho, sigma, true.diff,
+                              equi.tol, design, alpha, adjust = "no",
+                              seed = NULL, nsim = 10000) {
 
   if (!is.null(seed)) {
     set.seed(seed)

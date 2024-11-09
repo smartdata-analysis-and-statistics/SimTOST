@@ -8,5 +8,5 @@
 #' @title Sample Size Estimation via Simulation
 #' @references
 #' Mielke, J., Jones, B., Jilma, B. & König, F. Sample Size for Multiple Hypothesis Testing in Biosimilar Development. \emph{Statistics in Biopharmaceutical Research} 10, 39–49 (2018).
-#' @seealso \link{estSampleSize}
+#' @seealso \link{sampleSize}
 "_PACKAGE"

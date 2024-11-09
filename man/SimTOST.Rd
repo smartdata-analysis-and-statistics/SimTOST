@@ -16,7 +16,7 @@ and assessing type-I error for various statistical scenarios.
 Mielke, J., Jones, B., Jilma, B. & König, F. Sample Size for Multiple Hypothesis Testing in Biosimilar Development. \emph{Statistics in Biopharmaceutical Research} 10, 39–49 (2018).
 }
 \seealso{
-\link{estSampleSize}
+\link{sampleSize}
 }
 \author{
 \strong{Maintainer}: Thomas Debray \email{tdebray@fromdatatowisdom.com} (\href{https://orcid.org/0000-0002-1790-2719}{ORCID})

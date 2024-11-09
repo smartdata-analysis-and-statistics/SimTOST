@@ -1,5 +1,5 @@
 #' @title Parameter Configuration for Endpoints and Comparators
-#' @description Constructs and returns a list of key parameters (mean vectors, variance-covariance matrices, and allocation rates) required for input into the `estSampleSize` function. This function ensures that the parameters for each endpoint and comparator are consistent, properly named, and formatted.
+#' @description Constructs and returns a list of key parameters (mean vectors, variance-covariance matrices, and allocation rates) required for input into the `sampleSize` function. This function ensures that the parameters for each endpoint and comparator are consistent, properly named, and formatted.
 #'
 #' @param mu_list A list of mean (\eqn{\mu}) vectors. Each element in the list represents a comparator, with the corresponding \eqn{\mu} vector having a length equal to the number of endpoints.
 #' @param varcov_list A list of variance-covariance matrices. Each element corresponds to a comparator, with a matrix of size \eqn{(n \times n)}, where \eqn{n} is the number of endpoints.

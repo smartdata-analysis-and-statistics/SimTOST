@@ -6,8 +6,8 @@
 #' @param sigma_list  list of sigma vectors, each element corresponds to a comparator with a sigma vector of size number of endpoints.
 #' @param cor_mat matrix specifying the correlation matrix between endpoints, used along with sigma_list  to calculate the varcov list in case it is not provided.
 #' @param sigmaB number between subject variance only for 2x2 design.
-#' @param Eper  vector of size 2, effect of period on c(0,1).
-#' @param Eco vector of size 2, carry over effect of arm c(Reference, Treatment).
+#' @param Eper Vector of length 2, specifying the period effect in `dtype = "2x2"` design, applied to c(Period 0, Period 1).
+#' @param Eco Vector of length 2, specifying the carry-over effect for each arm in `dtype = "2x2"` design, applied to c(Reference, Treatment).
 #' @param rho Correlation parameter applied uniformly across all endpoint pairs, used with sigma_list to calculate varcov if cor_mat or varcov_list are not provided.
 #' @param TAR vector of allocation rates with allocation rates of the arm, default is equivalent rate.
 #' @param arm_names Optional vector with the treatment names. If not supplied, it will be derived from mu_list.
@@ -81,7 +81,7 @@
 #'                          FDA = c("AUClast", "Cmax"))
 #'
 #'# Run the simulation
-#'estSampleSize(power = 0.9, # target power
+#'sampleSize(power = 0.9, # target power
 #'              alpha = 0.05,
 #'              mu_list = mu_list,
 #'              sigma_list = sigma_list,
@@ -99,14 +99,8 @@
 #'              seed = 1234)
 #'
 #' @export
-estSampleSize <- function(mu_list,
-                    varcov_list=NA,
-                    sigma_list=NA,
-                    cor_mat=NA,
-                    sigmaB =NA,
-                    Eper = c(0,0),
-                    Eco = c(0,0),
-                    rho=0,
+sampleSize <- function(mu_list, varcov_list=NA, sigma_list=NA, cor_mat=NA,
+                       sigmaB =NA, Eper = c(0,0), Eco = c(0,0), rho=0,
                     TAR=NA,
                     arm_names=NA,
                     ynames_list=NA,
@@ -458,14 +452,20 @@ estSampleSize <- function(mu_list,
   }
 
 
-  if(dtype=="parallel"){
-    if(length(arm_names)!=length(dropout)){
-      warning("Incorrect number of dropout supplied (One needed for each arm),so it will be assigned a dropout=0")
+  if (dtype == "parallel") {
+    if (length(arm_names) != length(dropout)) {
+      warning("The number of dropout values provided does not match the number of arms specified in 'arm_names'. A default dropout rate of 0 will be assigned to each arm.")
       dropout <- rep(0,length(arm_names))
     }
-    if(is.null(names(dropout))){
-      names(dropout) <- arm_names}
-  }else{
+    if (is.null(names(dropout))) {
+      names(dropout) <- arm_names
+    }
+
+    # Check if dtype is "parallel" and Eper or Eco are non-default
+    if ((any(Eper != c(0, 0)) || any(Eco != c(0, 0)))) {
+      warning("Eper and Eco are only applicable for dtype = '2x2'. Non-default values for Eper or Eco will be ignored in parallel design.")
+    }
+  } else {
     if(length(dropout)!=2){
       warning("Incorrect number of dropout supplied (One needed for each sequence),so it will be assigned a dropout=0")
       dropout <- rep(0,2)
