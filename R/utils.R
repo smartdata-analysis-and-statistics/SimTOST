@@ -1,24 +1,29 @@
-#' @title sim_data
-#' @description Generate data for parallel design
+#' @title Generate Simulated Endpoint Data for Parallel Group Design
 #'
-#' @param n sample size
-#' @param mu.arithmetic arithmetic mean of endpoints
-#' @param mu.geometric geometric mean of endpoints
-#' @param Sigma variance covariance on what?? raw or transformed data
-#' @param CV Coefficient of variation of what??
-#' @param seed seed
-#' @param dist assumed distribution : "normal" or "lognormal"
+#' @description Generate simulated endpoint data for a parallel design, with options for normal and lognormal distributions.
 #'
-#' @return Simulated endpoints for parallel design
-#' @keywords internal
+#' @author
+#' Thomas Debray \email{tdebray@fromdatatowisdom.com}
 #'
-sim_data <- function(n,
-                     mu.arithmetic,
-                     mu.geometric = NULL,
-                     Sigma,
-                     CV = NULL, # Vector of size (mu.arithmetic)
-                     seed,
-                     dist = "normal") {
+#' @param n Integer. The sample size for the generated data.
+#' @param mu.arithmetic Numeric vector. The arithmetic mean of the endpoints on the original scale.
+#' @param mu.geometric Numeric vector. The geometric mean of the endpoints on the original scale. Only used if `dist = "lognormal"`.
+#' @param Sigma Matrix. Variance-covariance matrix of the raw data on the original scale. If `dist = "lognormal"`, this matrix is transformed to the log scale.
+#' @param CV Numeric vector. Coefficient of variation (CV) of the raw data. Only used when `dist = "lognormal"`, where it is transformed to the log scale.
+#' @param seed Integer. Seed for random number generation, ensuring reproducibility.
+#' @param dist Character. Assumed distribution of the endpoints: either `"normal"` or `"lognormal"`.
+#'
+#' @return A matrix of simulated endpoint values for a parallel design, with dimensions `n` by the number of variables in `mu.arithmetic` or `mu.geometric`.
+#'
+#' @export
+#'
+simParallelEndpoints <- function(n,
+                                 mu.arithmetic,
+                                 mu.geometric = NULL,
+                                 Sigma,
+                                 CV = NULL, # Vector of size (mu.arithmetic)
+                                 seed,
+                                 dist = "normal") {
 
   if (dist == "normal") {
     dmu <- mu.arithmetic
@@ -29,8 +34,7 @@ sim_data <- function(n,
   } else if (dist == "lognormal" & !is.null(mu.geometric)) {
     dsigma <- log(1 + CV**2)
     dmu   <- log(mu.geometric)
-  }
-  else {
+  } else {
     stop("Invalid distribution")
   }
 
@@ -40,7 +44,7 @@ sim_data <- function(n,
   return(MASS::mvrnorm(n = n, mu = dmu, Sigma = dsigma))
 }
 
-#' @title power_cal
+#' @title Calculate the power across all comparators
 #' @description  Internal function to calculate the power across all comparators
 #'
 #' @param n sample size
@@ -63,30 +67,33 @@ power_cal <- function(n,nsim,param,param.d,seed,ncores){
     size_ndrop[size_ndrop < 2] <- 2
     n_drop <- sum(size)-sum(size_ndrop)
 
-  }else{
+  } else if (param.d$dtype == "2x2") {
     # expected
-    size = NULL
-    size_drop = NULL
-    for( j in 1:length(param$list_comparator)){
+    size <- NULL
+    size_drop <- NULL
+    for (j in seq(length(param$list_comparator))) {
       comp <- param$list_comparator[[j]]
-      ns0i <- ceiling(n/2)
-      ns1i <- n - ns0i
-      ns0i <- ifelse(ns0i<2, 2, ns0i)
-      ns1i <- ifelse(ns1i<2, 2, ns1i)
+      ns0i <- ceiling(n/2) # n/2 per sequence
+      ns1i <- n - ns0i # n/2 per sequence
+      ns0i <- ifelse(ns0i < 2, 2, ns0i)
+      ns1i <- ifelse(ns1i < 2, 2, ns1i)
       # no drop out
-      ns0 <- ceiling((1-param.d$dropout[1])*ns0i)
-      ns0 <- ifelse(ns0<2, 2, ns0)
-      ns1 <- ceiling((1-param.d$dropout[2])*ns1i)
-      ns1 <- ifelse(ns1<2 ,2, ns1)
+      ns0 <- ceiling((1 - param.d$dropout[1])*ns0i)
+      ns0 <- ifelse(ns0 < 2, 2, ns0)
+      ns1 <- ceiling((1 - param.d$dropout[2])*ns1i)
+      ns1 <- ifelse(ns1 < 2 ,2, ns1)
+
       # Expected per sequence
       sizej <- c(ns0i, ns1i)
       # Drop out per sequence
-      size_dropj <- c(ns0i-ns0, ns1i-ns1)
-      names(sizej) <- names(size_dropj) <- paste0(c("seq0_","seq1_"),paste0(comp,collapse="vs"))
+      size_dropj <- c(ns0i - ns0, ns1i - ns1)
+      names(sizej) <- names(size_dropj) <- paste0(c("seq0_","seq1_"), paste0(comp, collapse = "vs"))
       size <- c(size,sizej)
       size_drop <- c(size_drop,size_dropj)
     }
     n_drop <- sum(size_drop)
+  } else {
+    stop("Invalid design type")
   }
 
   arm_names <- param$arm_names
@@ -96,18 +103,20 @@ power_cal <- function(n,nsim,param,param.d,seed,ncores){
   set.seed(seed)
 
   # Draw a unique random seed for each arm in each simulation
-  if(param.d$dtype == "parallel"){
+  if (param.d$dtype == "parallel") {
     arm_seed <- matrix(sample(x = seq((length(arm_names)*nsim*100)),
                               size = length(arm_names)*nsim,
                               replace = FALSE),
                        ncol = length(arm_names))
     colnames(arm_seed) <- arm_names
-  }else{
+  } else if (param.d$dtype == "2x2") {
     # Not same seed because the indiviudals change on each 2x2 study
     arm_seed <- matrix(sample(x = seq((length(param$list_comparator)*nsim*100)),
                               size = length(arm_names)*nsim,
                               replace = FALSE),
                        ncol = length(param$list_comparator))
+  } else {
+    stop("Invalid design type")
   }
 
   test_listcomp <- do.call("rbind",lapply(1:length(param$list_comparator),test_studies,nsim=nsim,n=n,param=param,param.d=param.d,arm_seed=arm_seed,ncores=ncores))

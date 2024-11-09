@@ -1,9 +1,12 @@
 #' Display the summary results of the sample size estimation
+#' @details
+#' This function displays the summary results of the sample size estimation.
+#'
 #'
 #' @param x An object of class "simss"
 #' @param ...  Optional arguments to be passed from or to other methods.
 #' @author
-#' Thomas Debray \email{thomas.debray@gmail.com}
+#' Thomas Debray \email{tdebray@fromdatatowisdom.com}
 #' @method print simss
 #' @export
 print.simss <- function(x, ...) {
@@ -19,7 +22,5 @@ print.simss <- function(x, ...) {
   message(cat(paste0("The total required sample size to achieve ",100*power,"% power is ",sst," sample units.\n")))
   print(x$response[,-1], row.names = FALSE)
 }
-
-
 
 

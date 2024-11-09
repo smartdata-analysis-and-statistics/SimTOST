@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{power_cal}
 \alias{power_cal}
-\title{power_cal}
+\title{Calculate the power across all comparators}
 \usage{
 power_cal(n, nsim, param, param.d, seed, ncores)
 }

@@ -490,7 +490,12 @@ sampleSize <- function(mu_list, varcov_list=NA, sigma_list=NA, cor_mat=NA,
 
   # Save endopoints related information on a parameter list
 
-  param <- list(mu = mu_list, varcov = varcov_list, sigmaB=sigmaB, TAR_list = TAR_list, type_y = type_y, weight_seq = weight_seq, arm_names=arm_names,  ynames_list =ynames_list, list_comparator = list_comparator, list_y_comparator= list_y_comparator,sigmaB=sigmaB,Eper=Eper,Eco=Eco)
+  param <- list(mu = mu_list, varcov = varcov_list, sigmaB = sigmaB,
+                TAR_list = TAR_list, type_y = type_y, weight_seq = weight_seq,
+                arm_names = arm_names,  ynames_list = ynames_list,
+                list_comparator = list_comparator,
+                list_y_comparator = list_y_comparator,sigmaB = sigmaB,
+                Eper = Eper, Eco = Eco)
 
   # Parameters related to design ----
 

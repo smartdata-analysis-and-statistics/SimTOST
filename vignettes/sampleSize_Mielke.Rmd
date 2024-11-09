@@ -88,10 +88,10 @@ ss <- sampleSize(power = 0.8, alpha = 0.05,
 ss
 ```
 
-# Example 3
+# Multiple PK Studies
 In the Zarzio example, we have the following:
 
-```{r, eval = FALSE}
+```{r, eval = TRUE}
 # Calculate the standard deviation and the mean using the 
 # reported confidence intervals
 sigma <- c(sqrt(40)*(log(0.8884)-log(0.8249))/qt(0.95, df=40-2), 
@@ -105,28 +105,25 @@ mu.ratio <- c(88.84, 98.82, 86.61, 95.91, 88.5)/100
 mu <- log(mu.ratio)
 
 # Required sample size for all tests to be successful 
-N_Mielke(power = 0.8, Nmax = 1000, m = 5, k = 5, rho = 0, sigma = sigma, 
-         true.diff = mu, equi.tol = log(1.25), design = "22co", alpha = 0.05, 
-         nsim = 10000)
+ssMielke <- sampleSize_Mielke(power = 0.8, Nmax = 1000, m = 5, k = 5, rho = 0, 
+                              sigma = sigma, true.diff = mu, 
+                              equi.tol = log(1.25), design = "22co", 
+                              alpha = 0.05, nsim = 10000)
+ssMielke 
 ```
-We find that 47 subjects per sequence are needed, and thus 94 subjects per study or 470 in total.
+We find that `r ssMielke["SS"]` subjects per sequence are needed, and thus `r ssMielke["SS"]*2` subjects per study or `r ssMielke["SS"]*10` in total.
 
-```{r, eval = FALSE}
-simsamplesize::calopt(power = 0.8, # target power
-       alpha = 0.05,
-       mu_list = list("R" = c(log(1), log(1), log(1), log(1), log(1)),
-                      "T" = c(log(0.8884), log(0.9882), log(0.8661), log(0.9591), log(0.8850))),
-       sigma_list = list("R" = sigma,
-                         "T" = sigma),
-       lequi.tol = rep(log(0.80), 5),
-       uequi.tol = rep(log(1.25), 5),
-       dtype="2x2",
-       ctype = "DOM", 
-       lognorm = FALSE,
-       adjust = "no",
-       ncores = 1,
-       nsim = 10000,
-       seed = 1234)
+```{r, eval = TRUE}
+ss <- sampleSize(power = 0.8, alpha = 0.05,
+                 mu_list = list("R" = c(log(1), log(1), log(1), log(1), log(1)),
+                                "T" = c(log(0.8884), log(0.9882), log(0.8661), 
+                                        log(0.9591), log(0.8850))),
+                 sigma_list = list("R" = sigma, "T" = sigma),
+                 lequi.tol = rep(log(0.80), 5),
+                 uequi.tol = rep(log(1.25), 5),
+                 dtype ="2x2", ctype = "DOM", lognorm = FALSE, adjust = "no",
+                 ncores = 1, nsim = 10000, seed = 1234)
+ss
 ```
 
 # Example 4
