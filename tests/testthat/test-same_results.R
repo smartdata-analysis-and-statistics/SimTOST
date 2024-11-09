@@ -33,19 +33,13 @@ testthat::test_that("Return expected result", {
   uequi.tol <- c(AUCinf = 1.25, AUClast = 1.25, Cmax = 1.25)
 
   # Pass the user parameters into a list of parameters and calculate the sample size
-  res_cal <- SimTOST::estSampleSize( mu_list = mu_list,
-                                    sigma_list = sigma_list,
-                                    power = 0.9,
-                                    dtype = "parallel",
-                                    ctype = "ROM",
-                                    vareq = T,
-                                    lognorm = T,
-                                    k=3,
-                                    list_comparator = list_comparator,
-                                    list_y_comparator = list_y_comparator,
-                                    lequi.tol = lequi.tol,
-                                    uequi.tol = uequi.tol,
-                                    ncores=1)
+  res_cal <- sampleSize(mu_list = mu_list, sigma_list = sigma_list,
+                        power = 0.9, dtype = "parallel", ctype = "ROM",
+                        vareq = T, lognorm = T, k = 3,
+                        list_comparator = list_comparator,
+                        list_y_comparator = list_y_comparator,
+                        lequi.tol = lequi.tol, uequi.tol = uequi.tol,
+                        ncores = 1)
 
   expect_equal(res_cal$response[["n_total"]], 150, tolerance = 6)
 })

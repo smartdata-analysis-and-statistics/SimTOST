@@ -6,8 +6,8 @@
 #' @param sigma_list  list of sigma vectors, each element corresponds to a comparator with a sigma vector of size number of endpoints.
 #' @param cor_mat matrix specifying the correlation matrix between endpoints, used along with sigma_list  to calculate the varcov list in case it is not provided.
 #' @param sigmaB number between subject variance only for 2x2 design.
-#' @param Eper Vector of length 2, specifying the period effect in `dtype = "2x2"` design, applied to c(Period 0, Period 1).
-#' @param Eco Vector of length 2, specifying the carry-over effect for each arm in `dtype = "2x2"` design, applied to c(Reference, Treatment).
+#' @param Eper Optional. Vector of length 2 specifying the period effect in a `dtype = "2x2"` design, applied to c(Period 0, Period 1). Defaults to `c(0, 0)` if not provided. Ignored for `dtype = "parallel"`.
+#' @param Eco Optional. Vector of length 2 specifying the carry-over effect for each arm in a `dtype = "2x2"` design, applied to c(Reference, Treatment). Defaults to `c(0, 0)` if not provided. Ignored for `dtype = "parallel"`.
 #' @param rho Correlation parameter applied uniformly across all endpoint pairs, used with sigma_list to calculate varcov if cor_mat or varcov_list are not provided.
 #' @param TAR vector of allocation rates with allocation rates of the arm, default is equivalent rate.
 #' @param arm_names Optional vector with the treatment names. If not supplied, it will be derived from mu_list.
@@ -81,26 +81,16 @@
 #'                          FDA = c("AUClast", "Cmax"))
 #'
 #'# Run the simulation
-#'sampleSize(power = 0.9, # target power
-#'              alpha = 0.05,
-#'              mu_list = mu_list,
-#'              sigma_list = sigma_list,
-#'              lequi.tol = lequi.tol,
-#'              uequi.tol = uequi.tol,
-#'              list_comparator = list_comparator,
-#'              list_y_comparator = list_y_comparator,
-#'              adjust = "no",
-#'              dtype = "parallel",
-#'              ctype = "ROM",
-#'              vareq = FALSE,
-#'              lognorm = TRUE,
-#'              ncores = 1,
-#'              nsim = 50,
-#'              seed = 1234)
+#'sampleSize(power = 0.9, alpha = 0.05, mu_list = mu_list,
+#'           sigma_list = sigma_list, lequi.tol = lequi.tol,
+#'           uequi.tol = uequi.tol, list_comparator = list_comparator,
+#'           list_y_comparator = list_y_comparator, adjust = "no",
+#'           dtype = "parallel", ctype = "ROM", vareq = FALSE,
+#'           lognorm = TRUE, ncores = 1, nsim = 50, seed = 1234)
 #'
 #' @export
 sampleSize <- function(mu_list, varcov_list=NA, sigma_list=NA, cor_mat=NA,
-                       sigmaB =NA, Eper = c(0,0), Eco = c(0,0), rho=0,
+                       sigmaB =NA, Eper, Eco, rho=0,
                     TAR=NA,
                     arm_names=NA,
                     ynames_list=NA,
@@ -131,6 +121,10 @@ sampleSize <- function(mu_list, varcov_list=NA, sigma_list=NA, cor_mat=NA,
                     maxiter = 1000,
                     optimization_method = "fast"
 ){
+
+  # Assign default values for Eper and Eco
+  if (missing(Eper)) Eper <- c(0, 0)
+  if (missing(Eco)) Eco <- c(0, 0)
 
   # is mu provided?
   if (all(is.na(mu_list))) {
@@ -462,7 +456,7 @@ sampleSize <- function(mu_list, varcov_list=NA, sigma_list=NA, cor_mat=NA,
     }
 
     # Check if dtype is "parallel" and Eper or Eco are non-default
-    if ((any(Eper != c(0, 0)) || any(Eco != c(0, 0)))) {
+    if (any(Eper != c(0, 0)) || any(Eco != c(0, 0))) {
       warning("Eper and Eco are only applicable for dtype = '2x2'. Non-default values for Eper or Eco will be ignored in parallel design.")
     }
   } else {
