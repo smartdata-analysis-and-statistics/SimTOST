@@ -1,7 +1,12 @@
 ---
 title: "Sample Size for Multiple Hypothesis Testing in Biosimilar Development"
 author: "Thomas Debray"
-output: rmarkdown::html_vignette
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output: 
+  html_document:
+    fig_caption: yes
+    fig_width: 9
+    fig_height: 6
 vignette: >
   %\VignetteIndexEntry{Sample Size for Multiple Hypothesis Testing in Biosimilar Development}
   %\VignetteEngine{knitr::rmarkdown}
@@ -10,15 +15,20 @@ bibliography: 'references.bib'
 link-citations: yes
 ---
 
-```{r, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
-)
-require(kableExtra)
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(comment = "#>", collapse = TRUE)
+options(rmarkdown.html_vignette.check_title = FALSE) #title of doc does not match vignette title
+doc.cache <- T #for cran; change to F
 ```
 
-We here reproduce the examples of @mielke_sample_2018. In these examples, the minimal sample size is estimated to give at least 80\% power for the rejection of $k$ out of $m$ tests at a one-sided significance level of $\alpha = 0.05$ in a parallel groups design. It is assumed that the sample size, the true difference between T and R and the standard deviation of the tests is equal in each test.
+We here reproduce the examples of @mielke_sample_2018. As a first step, we load the R package.
+
+```{r, echo = T, message=F}
+library(SimTOST)
+```
+
+
 
 # Multiple Independent Co-Primary Endpoints
 The first example assumes a ratio of 1.05 between the effect sizes of the test and reference products. @mielke_sample_2018 conducts a difference-of-means test on the log scale, with $\delta = \log(1.05)$. It is assumed that the standard deviation of the log-transformed response variable is $\sigma = 0.3$, and that all tests are independent ($\rho = 0$). Below, we estimate the sample size to demonstrate that the test and reference product are equivalent with respect to all $m=5$ endpoints.
