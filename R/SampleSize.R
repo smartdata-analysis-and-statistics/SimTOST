@@ -9,7 +9,7 @@
 #' @param Eper Optional. Vector of length 2 specifying the period effect in a `dtype = "2x2"` design, applied to c(Period 0, Period 1). Defaults to `c(0, 0)` if not provided. Ignored for `dtype = "parallel"`.
 #' @param Eco Optional. Vector of length 2 specifying the carry-over effect for each arm in a `dtype = "2x2"` design, applied to c(Reference, Treatment). Defaults to `c(0, 0)` if not provided. Ignored for `dtype = "parallel"`.
 #' @param rho Correlation parameter applied uniformly across all endpoint pairs, used with sigma_list to calculate varcov if cor_mat or varcov_list are not provided.
-#' @param TAR vector of allocation rates with allocation rates of the arm, default is equivalent rate.
+#' @param TAR Numeric vector. Treatment allocation rate for each arm, where the length of `TAR` specifies the number of arms. The default is an equal allocation ratio across all arms.
 #' @param arm_names Optional vector with the treatment names. If not supplied, it will be derived from mu_list.
 #' @param ynames_list Optional list of vectors with Endpoint names on each arm. When not all endpoint names are provided for each arm, arbitrary names (assigned by vector order) are used.
 #' @param type_y vector with the type of endpoints: primary endpoint(1), otherwise (2).
@@ -22,23 +22,22 @@
 #' @param list_lequi.tol list of lower equivalence bounds (e.g., -0.5) expressed in raw scale units (e.g., scalepoints) of endpoint in comparator
 #' @param list_uequi.tol list of upper equivalence bounds (e.g., -0.5) expressed in raw scale units (e.g., scalepoints) of endpoint in comparator
 #' @param vareq Logical indicating whether variances are assumed equal across arms (default = FALSE).
-#' @param dtype design type ("parallel","2x2")
+#' @param dtype Character. Design type for the trial: `"parallel"` (default) for parallel group design or `"2x2"` for crossover design (applicable only for trials with 2 arms).
 #' @param lognorm Is data log-normally distributed? (TRUE, FALSE)
 #' @param k Vector with the number of endpoints that must be successful (integer) for global bioequivalence for each comparator. If no k vector is provided, it will be set to the total number of endpoints on each comparator.
-#' @param adjust alpha adjustment ( "k", "bon","sid","no","seq")
-#' @param ctype comparison dtype ("DOM"(Difference of means), "ROM"(Ratio of means))
+#' @param adjust Character. Method for alpha adjustment: `"k"` (K-fold), `"bon"` (Bonferroni), `"sid"` (Sidak), `"no"` (no adjustment, default), or `"seq"` (sequential adjustment).
+#' @param ctype Character. Specifies the type of hypothesis test for comparison: `"DOM"` for Difference of Means or `"ROM"` for Ratio of Means.
 #' @param dropout vector with proportion of total population with dropout per arm
-#' @param step.power initial step size is 2^step.power
-#' @param step.up if TRUE steps up from 'lower', if FALSE steps down from 'upper'
-#' @param pos.side if TRUE finds integer, i, closest to the root such that f(i) >0
-#' @param maxiter maximum number of iterations
 #' @param nsim number of simulated studies (default=5000)
-#' @param lower initial value of N to be searched (default=2)
-#' @param upper max value of N to be searched (default=500)
 #' @param seed main seed
-#' @param ncores Number of processing cores for parallel computation; defaults to the total detected cores minus one.
+#' @param ncores Integer. Number of processing cores to use for parallel computation. Defaults to one less than the total number of detected cores.
 #' @param optimization_method Character. Method for determining the required sample size: "fast" (using modified root-finding algorithms) or "step-by-step". Defaults to "fast".
-#'
+#' @param lower Integer. Initial value of `N` for the search range. Defaults to 2.
+#' @param upper Integer. Maximum value of `N` for the search range. Defaults to 500.
+#' @param step.power Numeric. The initial step size for the sample size search, defined as `2^step.power`. Relevant when `optimization_method` is `"fast"`.
+#' @param step.up Logical. If `TRUE` (default), the sample size search increments upward from the `lower` limit; if `FALSE`, it decrements downward from the `upper` limit. Used only when `optimization_method` is `"fast"`.
+#' @param pos.side Logical. If `TRUE`, finds the smallest integer, `i`, closest to the root such that `f(i) > 0`. Used only when `optimization_method` is `"fast"`.
+#' @param maxiter Integer. Maximum number of iterations allowed for finding the sample size. Defaults to 1000. Used only when `optimization_method` is `"fast"`.
 #' @return An object simss that contains the following elements :
 #' \describe{
 #'  \item{"response"}{ array with the sample sizes for each arm and aproximated achieved power with confidence intervals}
@@ -67,10 +66,9 @@
 #'                    EUREF = c(AUCinf = 12332, AUClast = 9398, Cmax = 17.9),
 #'                    USREF = c(AUCinf = 10064, AUClast = 8332, Cmax = 18.8))
 #'
-#'# Equivalent boundaries
-#'lequi.tol <- c(AUCinf = 0.8, AUClast = 0.8, Cmax = 0.8)
-#'uequi.tol <- c(AUCinf = 1.25, AUClast = 1.25, Cmax = 1.25)
-#'
+#' # Equivalent boundaries
+#' lequi.tol <- c(AUCinf = 0.8, AUClast = 0.8, Cmax = 0.8)
+#' uequi.tol <- c(AUCinf = 1.25, AUClast = 1.25, Cmax = 1.25)
 #'
 #' # arms to be compared
 #' list_comparator <- list(EMA = c("SB2", "EUREF"),
@@ -89,8 +87,8 @@
 #'           lognorm = TRUE, ncores = 1, nsim = 50, seed = 1234)
 #'
 #' @export
-sampleSize <- function(mu_list, varcov_list=NA, sigma_list=NA, cor_mat=NA,
-                       sigmaB =NA, Eper, Eco, rho=0,
+sampleSize <- function(mu_list, varcov_list = NA, sigma_list = NA, cor_mat = NA,
+                       sigmaB =NA, Eper, Eco, rho = 0,
                     TAR=NA,
                     arm_names=NA,
                     ynames_list=NA,
@@ -111,15 +109,15 @@ sampleSize <- function(mu_list, varcov_list=NA, sigma_list=NA, cor_mat=NA,
                     adjust="no",
                     dropout = NA,
                     nsim=5000,
-                    lower=2,
-                    upper=500,
                     seed=1234,
                     ncores=NA,
+                    optimization_method = "fast",
+                    lower=2,
+                    upper=500,
                     step.power=6,
                     step.up=TRUE,
                     pos.side=FALSE,
-                    maxiter = 1000,
-                    optimization_method = "fast"
+                    maxiter = 1000
 ){
 
   # Assign default values for Eper and Eco
@@ -141,13 +139,6 @@ sampleSize <- function(mu_list, varcov_list=NA, sigma_list=NA, cor_mat=NA,
     }
   }
 
-  # Derive the names of the endpoints in each arm
-  #
-  # Example output for a trial with 2 treatments and 3 outcomes:
-  # $SB2
-  # [1] "AUCinf"  "AUClast" "Cmax"
-  # $EUREF
-  # [1] "AUCinf"  "AUClast" "Cmax"
   if (any(is.na(ynames_list))) {
 
     # Try to derive the ynames from mu_list
@@ -172,6 +163,9 @@ sampleSize <- function(mu_list, varcov_list=NA, sigma_list=NA, cor_mat=NA,
     mu <- t(as.matrix(mu_list[[i]]))
     mu_list[[i]] <- mu
   }
+
+  # Check the sample size limits
+  validate_sample_size_limits(lower = lower, upper = upper)
 
 
   # Varcov specfication
@@ -268,20 +262,8 @@ sampleSize <- function(mu_list, varcov_list=NA, sigma_list=NA, cor_mat=NA,
   len_mu <- lapply(mu_list,length)
   len_cvar <- lapply(varcov_list,ncol)
 
-
-
   # test positive defined varcov
-  positive <- function(x) {
-    resp <- base::tryCatch({matrixcalc::is.positive.semi.definite(round(x,3))},
-                           error = function(e) {FALSE})
-  }
-
-
-  lis_pdef <- unlist(lapply(varcov_list, positive))
-
-  if (!all(lis_pdef)) {
-    stop("All 'varcov' matrices must be symmetric and positive definite.")
-  }
+  validate_positive_definite(varcov_list)
 
   # Define weights according to type of endpoint,i.e. primary, secondary
 
@@ -596,3 +578,5 @@ sampleSize <- function(mu_list, varcov_list=NA, sigma_list=NA, cor_mat=NA,
   return(out)
 
 }
+
+

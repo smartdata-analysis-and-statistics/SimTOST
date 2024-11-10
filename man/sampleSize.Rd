@@ -33,15 +33,15 @@ sampleSize(
   adjust = "no",
   dropout = NA,
   nsim = 5000,
-  lower = 2,
-  upper = 500,
   seed = 1234,
   ncores = NA,
+  optimization_method = "fast",
+  lower = 2,
+  upper = 500,
   step.power = 6,
   step.up = TRUE,
   pos.side = FALSE,
-  maxiter = 1000,
-  optimization_method = "fast"
+  maxiter = 1000
 )
 }
 \arguments{
@@ -61,7 +61,7 @@ sampleSize(
 
 \item{rho}{Correlation parameter applied uniformly across all endpoint pairs, used with sigma_list to calculate varcov if cor_mat or varcov_list are not provided.}
 
-\item{TAR}{vector of allocation rates with allocation rates of the arm, default is equivalent rate.}
+\item{TAR}{Numeric vector. Treatment allocation rate for each arm, where the length of \code{TAR} specifies the number of arms. The default is an equal allocation ratio across all arms.}
 
 \item{arm_names}{Optional vector with the treatment names. If not supplied, it will be derived from mu_list.}
 
@@ -85,9 +85,9 @@ sampleSize(
 
 \item{list_uequi.tol}{list of upper equivalence bounds (e.g., -0.5) expressed in raw scale units (e.g., scalepoints) of endpoint in comparator}
 
-\item{dtype}{design type ("parallel","2x2")}
+\item{dtype}{Character. Design type for the trial: \code{"parallel"} (default) for parallel group design or \code{"2x2"} for crossover design (applicable only for trials with 2 arms).}
 
-\item{ctype}{comparison dtype ("DOM"(Difference of means), "ROM"(Ratio of means))}
+\item{ctype}{Character. Specifies the type of hypothesis test for comparison: \code{"DOM"} for Difference of Means or \code{"ROM"} for Ratio of Means.}
 
 \item{vareq}{Logical indicating whether variances are assumed equal across arms (default = FALSE).}
 
@@ -95,29 +95,29 @@ sampleSize(
 
 \item{k}{Vector with the number of endpoints that must be successful (integer) for global bioequivalence for each comparator. If no k vector is provided, it will be set to the total number of endpoints on each comparator.}
 
-\item{adjust}{alpha adjustment ( "k", "bon","sid","no","seq")}
+\item{adjust}{Character. Method for alpha adjustment: \code{"k"} (K-fold), \code{"bon"} (Bonferroni), \code{"sid"} (Sidak), \code{"no"} (no adjustment, default), or \code{"seq"} (sequential adjustment).}
 
 \item{dropout}{vector with proportion of total population with dropout per arm}
 
 \item{nsim}{number of simulated studies (default=5000)}
 
-\item{lower}{initial value of N to be searched (default=2)}
-
-\item{upper}{max value of N to be searched (default=500)}
-
 \item{seed}{main seed}
 
-\item{ncores}{Number of processing cores for parallel computation; defaults to the total detected cores minus one.}
-
-\item{step.power}{initial step size is 2^step.power}
-
-\item{step.up}{if TRUE steps up from 'lower', if FALSE steps down from 'upper'}
-
-\item{pos.side}{if TRUE finds integer, i, closest to the root such that f(i) >0}
-
-\item{maxiter}{maximum number of iterations}
+\item{ncores}{Integer. Number of processing cores to use for parallel computation. Defaults to one less than the total number of detected cores.}
 
 \item{optimization_method}{Character. Method for determining the required sample size: "fast" (using modified root-finding algorithms) or "step-by-step". Defaults to "fast".}
+
+\item{lower}{Integer. Initial value of \code{N} for the search range. Defaults to 2.}
+
+\item{upper}{Integer. Maximum value of \code{N} for the search range. Defaults to 500.}
+
+\item{step.power}{Numeric. The initial step size for the sample size search, defined as \code{2^step.power}. Relevant when \code{optimization_method} is \code{"fast"}.}
+
+\item{step.up}{Logical. If \code{TRUE} (default), the sample size search increments upward from the \code{lower} limit; if \code{FALSE}, it decrements downward from the \code{upper} limit. Used only when \code{optimization_method} is \code{"fast"}.}
+
+\item{pos.side}{Logical. If \code{TRUE}, finds the smallest integer, \code{i}, closest to the root such that \code{f(i) > 0}. Used only when \code{optimization_method} is \code{"fast"}.}
+
+\item{maxiter}{Integer. Maximum number of iterations allowed for finding the sample size. Defaults to 1000. Used only when \code{optimization_method} is \code{"fast"}.}
 }
 \value{
 An object simss that contains the following elements :
@@ -146,7 +146,6 @@ sigma_list <- list(SB2 = c(AUCinf = 11114, AUClast = 9133, Cmax = 16.9),
 # Equivalent boundaries
 lequi.tol <- c(AUCinf = 0.8, AUClast = 0.8, Cmax = 0.8)
 uequi.tol <- c(AUCinf = 1.25, AUClast = 1.25, Cmax = 1.25)
-
 
 # arms to be compared
 list_comparator <- list(EMA = c("SB2", "EUREF"),

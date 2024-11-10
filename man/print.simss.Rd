@@ -18,5 +18,5 @@ Display the summary results of the sample size estimation
 This function displays the summary results of the sample size estimation.
 }
 \author{
-Thomas Debray \email{thomas.debray@gmail.com}
+Thomas Debray \email{tdebray@fromdatatowisdom.com}
 }

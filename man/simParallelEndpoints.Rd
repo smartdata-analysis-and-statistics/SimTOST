@@ -36,5 +36,5 @@ A matrix of simulated endpoint values for a parallel design, with dimensions \co
 Generate simulated endpoint data for a parallel design, with options for normal and lognormal distributions.
 }
 \author{
-Thomas Debray \email{thomas.debray@gmail.com}
+Thomas Debray \email{tdebray@fromdatatowisdom.com}
 }

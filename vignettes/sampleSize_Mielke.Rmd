@@ -55,7 +55,7 @@ ss <- sampleSize(power = 0.8, alpha = 0.05,
                  lequi.tol = rep(log(0.80), 5),
                  uequi.tol = rep(log(1.25), 5),
                  dtype = "parallel", ctype = "DOM", lognorm = FALSE, 
-                 adjust = "no",ncores = 1, nsim = 10000, seed = 1234)
+                 adjust = "no", ncores = 1, nsim = 10000, seed = 1234)
 ss
 ```     
 
@@ -121,7 +121,7 @@ ss <- sampleSize(power = 0.8, alpha = 0.05,
                  sigma_list = list("R" = sigma, "T" = sigma),
                  lequi.tol = rep(log(0.80), 5),
                  uequi.tol = rep(log(1.25), 5),
-                 dtype ="2x2", ctype = "DOM", lognorm = FALSE, adjust = "no",
+                 dtype = "2x2", ctype = "DOM", lognorm = FALSE, adjust = "no",
                  ncores = 1, nsim = 10000, seed = 1234)
 ss
 ```
@@ -130,21 +130,21 @@ ss
 
 In the Zarzio example, the required sample size to demonstrate equivalence for 3 out of 5 tests is as follows:
 
-```{r, eval = FALSE}
+```{r, eval = TRUE}
 # No adjustment
-N_Mielke(power = 0.8, Nmax = 1000, m = 5, k = 3, rho = 0, sigma = sigma, 
-         true.diff = mu, equi.tol = log(1.25), design = "22co", alpha = 0.05,
-         adjust = "no", nsim = 10000)
+sampleSize_Mielke(power = 0.8, Nmax = 1000, m = 5, k = 3, rho = 0, 
+                  sigma = sigma, true.diff = mu, equi.tol = log(1.25), 
+                  design = "22co", alpha = 0.05, adjust = "no", nsim = 10000)
 
 # k-adjustment 
-N_Mielke(power = 0.8, Nmax = 1000, m = 5, k = 3, rho = 0, sigma = sigma, 
-         true.diff = mu, equi.tol = log(1.25), design = "22co", alpha = 0.05,
-         adjust = "k", nsim = 10000)
+sampleSize_Mielke(power = 0.8, Nmax = 1000, m = 5, k = 3, rho = 0, 
+                  sigma = sigma, true.diff = mu, equi.tol = log(1.25), 
+                  design = "22co", alpha = 0.05, adjust = "k", nsim = 10000)
 
 # Bonferroni adjustment 
-N_Mielke(power = 0.8, Nmax = 1000, m = 5, k = 3, rho = 0, sigma = sigma, 
-         true.diff = mu, equi.tol = log(1.25), design = "22co", alpha = 0.05,
-         adjust = "bon", nsim = 10000)
+sampleSize_Mielke(power = 0.8, Nmax = 1000, m = 5, k = 3, rho = 0, 
+                  sigma = sigma, true.diff = mu, equi.tol = log(1.25), 
+                  design = "22co", alpha = 0.05, adjust = "bon", nsim = 10000)
 ```
 Without any adjustment, we find 18 subjects per study (hence 90 for the complete trial). When adopting k-adjustment, we find 22 subjects per study (hence 110 in total). Finally, when adopting Bonferroni adjustment we find 34 subjects per study (and thus 170 in total).
 
