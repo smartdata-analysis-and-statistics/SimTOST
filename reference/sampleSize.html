@@ -95,15 +95,15 @@
 <span>  adjust <span class="op">=</span> <span class="st">"no"</span>,</span>
 <span>  dropout <span class="op">=</span> <span class="cn">NA</span>,</span>
 <span>  nsim <span class="op">=</span> <span class="fl">5000</span>,</span>
-<span>  lower <span class="op">=</span> <span class="fl">2</span>,</span>
-<span>  upper <span class="op">=</span> <span class="fl">500</span>,</span>
 <span>  seed <span class="op">=</span> <span class="fl">1234</span>,</span>
 <span>  ncores <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>  optimization_method <span class="op">=</span> <span class="st">"fast"</span>,</span>
+<span>  lower <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  upper <span class="op">=</span> <span class="fl">500</span>,</span>
 <span>  step.power <span class="op">=</span> <span class="fl">6</span>,</span>
 <span>  step.up <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  pos.side <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  maxiter <span class="op">=</span> <span class="fl">1000</span>,</span>
-<span>  optimization_method <span class="op">=</span> <span class="st">"fast"</span></span>
+<span>  maxiter <span class="op">=</span> <span class="fl">1000</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -144,7 +144,7 @@
 
 
 <dt id="arg-tar">TAR<a class="anchor" aria-label="anchor" href="#arg-tar"></a></dt>
-<dd><p>vector of allocation rates with allocation rates of the arm, default is equivalent rate.</p></dd>
+<dd><p>Numeric vector. Treatment allocation rate for each arm, where the length of <code>TAR</code> specifies the number of arms. The default is an equal allocation ratio across all arms.</p></dd>
 
 
 <dt id="arg-arm-names">arm_names<a class="anchor" aria-label="anchor" href="#arg-arm-names"></a></dt>
@@ -192,11 +192,11 @@
 
 
 <dt id="arg-dtype">dtype<a class="anchor" aria-label="anchor" href="#arg-dtype"></a></dt>
-<dd><p>design type ("parallel","2x2")</p></dd>
+<dd><p>Character. Design type for the trial: <code>"parallel"</code> (default) for parallel group design or <code>"2x2"</code> for crossover design (applicable only for trials with 2 arms).</p></dd>
 
 
 <dt id="arg-ctype">ctype<a class="anchor" aria-label="anchor" href="#arg-ctype"></a></dt>
-<dd><p>comparison dtype ("DOM"(Difference of means), "ROM"(Ratio of means))</p></dd>
+<dd><p>Character. Specifies the type of hypothesis test for comparison: <code>"DOM"</code> for Difference of Means or <code>"ROM"</code> for Ratio of Means.</p></dd>
 
 
 <dt id="arg-vareq">vareq<a class="anchor" aria-label="anchor" href="#arg-vareq"></a></dt>
@@ -212,7 +212,7 @@
 
 
 <dt id="arg-adjust">adjust<a class="anchor" aria-label="anchor" href="#arg-adjust"></a></dt>
-<dd><p>alpha adjustment ( "k", "bon","sid","no","seq")</p></dd>
+<dd><p>Character. Method for alpha adjustment: <code>"k"</code> (K-fold), <code>"bon"</code> (Bonferroni), <code>"sid"</code> (Sidak), <code>"no"</code> (no adjustment, default), or <code>"seq"</code> (sequential adjustment).</p></dd>
 
 
 <dt id="arg-dropout">dropout<a class="anchor" aria-label="anchor" href="#arg-dropout"></a></dt>
@@ -223,40 +223,40 @@
 <dd><p>number of simulated studies (default=5000)</p></dd>
 
 
-<dt id="arg-lower">lower<a class="anchor" aria-label="anchor" href="#arg-lower"></a></dt>
-<dd><p>initial value of N to be searched (default=2)</p></dd>
-
-
-<dt id="arg-upper">upper<a class="anchor" aria-label="anchor" href="#arg-upper"></a></dt>
-<dd><p>max value of N to be searched (default=500)</p></dd>
-
-
 <dt id="arg-seed">seed<a class="anchor" aria-label="anchor" href="#arg-seed"></a></dt>
 <dd><p>main seed</p></dd>
 
 
 <dt id="arg-ncores">ncores<a class="anchor" aria-label="anchor" href="#arg-ncores"></a></dt>
-<dd><p>Number of processing cores for parallel computation; defaults to the total detected cores minus one.</p></dd>
-
-
-<dt id="arg-step-power">step.power<a class="anchor" aria-label="anchor" href="#arg-step-power"></a></dt>
-<dd><p>initial step size is 2^step.power</p></dd>
-
-
-<dt id="arg-step-up">step.up<a class="anchor" aria-label="anchor" href="#arg-step-up"></a></dt>
-<dd><p>if TRUE steps up from 'lower', if FALSE steps down from 'upper'</p></dd>
-
-
-<dt id="arg-pos-side">pos.side<a class="anchor" aria-label="anchor" href="#arg-pos-side"></a></dt>
-<dd><p>if TRUE finds integer, i, closest to the root such that f(i) &gt;0</p></dd>
-
-
-<dt id="arg-maxiter">maxiter<a class="anchor" aria-label="anchor" href="#arg-maxiter"></a></dt>
-<dd><p>maximum number of iterations</p></dd>
+<dd><p>Integer. Number of processing cores to use for parallel computation. Defaults to one less than the total number of detected cores.</p></dd>
 
 
 <dt id="arg-optimization-method">optimization_method<a class="anchor" aria-label="anchor" href="#arg-optimization-method"></a></dt>
 <dd><p>Character. Method for determining the required sample size: "fast" (using modified root-finding algorithms) or "step-by-step". Defaults to "fast".</p></dd>
+
+
+<dt id="arg-lower">lower<a class="anchor" aria-label="anchor" href="#arg-lower"></a></dt>
+<dd><p>Integer. Initial value of <code>N</code> for the search range. Defaults to 2.</p></dd>
+
+
+<dt id="arg-upper">upper<a class="anchor" aria-label="anchor" href="#arg-upper"></a></dt>
+<dd><p>Integer. Maximum value of <code>N</code> for the search range. Defaults to 500.</p></dd>
+
+
+<dt id="arg-step-power">step.power<a class="anchor" aria-label="anchor" href="#arg-step-power"></a></dt>
+<dd><p>Numeric. The initial step size for the sample size search, defined as <code>2^step.power</code>. Relevant when <code>optimization_method</code> is <code>"fast"</code>.</p></dd>
+
+
+<dt id="arg-step-up">step.up<a class="anchor" aria-label="anchor" href="#arg-step-up"></a></dt>
+<dd><p>Logical. If <code>TRUE</code> (default), the sample size search increments upward from the <code>lower</code> limit; if <code>FALSE</code>, it decrements downward from the <code>upper</code> limit. Used only when <code>optimization_method</code> is <code>"fast"</code>.</p></dd>
+
+
+<dt id="arg-pos-side">pos.side<a class="anchor" aria-label="anchor" href="#arg-pos-side"></a></dt>
+<dd><p>Logical. If <code>TRUE</code>, finds the smallest integer, <code>i</code>, closest to the root such that <code>f(i) &gt; 0</code>. Used only when <code>optimization_method</code> is <code>"fast"</code>.</p></dd>
+
+
+<dt id="arg-maxiter">maxiter<a class="anchor" aria-label="anchor" href="#arg-maxiter"></a></dt>
+<dd><p>Integer. Maximum number of iterations allowed for finding the sample size. Defaults to 1000. Used only when <code>optimization_method</code> is <code>"fast"</code>.</p></dd>
 
 </dl></div>
     <div id="value">
@@ -305,7 +305,6 @@
 <span class="r-in"><span><span class="co"># Equivalent boundaries</span></span></span>
 <span class="r-in"><span><span class="va">lequi.tol</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>AUCinf <span class="op">=</span> <span class="fl">0.8</span>, AUClast <span class="op">=</span> <span class="fl">0.8</span>, Cmax <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">uequi.tol</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>AUCinf <span class="op">=</span> <span class="fl">1.25</span>, AUClast <span class="op">=</span> <span class="fl">1.25</span>, Cmax <span class="op">=</span> <span class="fl">1.25</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># arms to be compared</span></span></span>
 <span class="r-in"><span><span class="va">list_comparator</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>EMA <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SB2"</span>, <span class="st">"EUREF"</span><span class="op">)</span>,</span></span>
