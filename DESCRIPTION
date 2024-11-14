@@ -1,6 +1,6 @@
 Package: SimTOST
 Title: Sample size estimation for bioequivalence trials through simulation
-Version: 0.1.0
+Version: 0.2.0
 Authors@R: c(
     person(given = "Thomas", 
            family = "Debray", 
@@ -49,6 +49,4 @@ VignetteBuilder: knitr
 Config/testthat/edition: 3
 LinkingTo: Rcpp, RcppArmadillo
 URL: https://github.com/smartdata-analysis-and-statistics/SimTOST,
-https://smartdata-analysis-and-statistics.github.io/SimTOST/
-
-
+https: //smartdata-analysis-and-statistics.github.io/SimTOST/
