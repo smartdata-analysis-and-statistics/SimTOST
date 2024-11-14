@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SimTOST</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.0</span>
       </span>
     </div>
 
@@ -103,7 +103,8 @@
 <span>  step.power <span class="op">=</span> <span class="fl">6</span>,</span>
 <span>  step.up <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  pos.side <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  maxiter <span class="op">=</span> <span class="fl">1000</span></span>
+<span>  maxiter <span class="op">=</span> <span class="fl">1000</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -257,6 +258,10 @@
 
 <dt id="arg-maxiter">maxiter<a class="anchor" aria-label="anchor" href="#arg-maxiter"></a></dt>
 <dd><p>Integer. Maximum number of iterations allowed for finding the sample size. Defaults to 1000. Used only when <code>optimization_method</code> is <code>"fast"</code>.</p></dd>
+
+
+<dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
+<dd><p>Logical. If <code>TRUE</code>, the function displays progress and informational messages during execution. Defaults to <code>FALSE</code>.</p></dd>
 
 </dl></div>
     <div id="value">
