@@ -52,8 +52,9 @@ ss <- sampleSize(power = 0.8, alpha = 0.05,
                                 "T" = rep(log(1.05), 5)),
                  sigma_list = list("R" = rep(0.3, 5),
                                    "T" = rep(0.3, 5)),
-                 lequi.tol = rep(log(0.80), 5),
-                 uequi.tol = rep(log(1.25), 5),
+                 list_comparator = list(c("R", "T")),
+                 lequi.tol = rep(log(0.80), 5),                 
+                 uequi.tol = rep(log(1.25), 5),  
                  dtype = "parallel", ctype = "DOM", lognorm = FALSE, 
                  adjust = "no", ncores = 1, nsim = 10000, seed = 1234)
 ss

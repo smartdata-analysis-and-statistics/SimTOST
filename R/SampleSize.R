@@ -38,6 +38,7 @@
 #' @param step.up Logical. If `TRUE` (default), the sample size search increments upward from the `lower` limit; if `FALSE`, it decrements downward from the `upper` limit. Used only when `optimization_method` is `"fast"`.
 #' @param pos.side Logical. If `TRUE`, finds the smallest integer, `i`, closest to the root such that `f(i) > 0`. Used only when `optimization_method` is `"fast"`.
 #' @param maxiter Integer. Maximum number of iterations allowed for finding the sample size. Defaults to 1000. Used only when `optimization_method` is `"fast"`.
+#' @param verbose Logical. If `TRUE`, the function displays progress and informational messages during execution. Defaults to `FALSE`.
 #' @return An object simss that contains the following elements :
 #' \describe{
 #'  \item{"response"}{ array with the sample sizes for each arm and aproximated achieved power with confidence intervals}
@@ -117,46 +118,37 @@ sampleSize <- function(mu_list, varcov_list = NA, sigma_list = NA, cor_mat = NA,
                     step.power=6,
                     step.up=TRUE,
                     pos.side=FALSE,
-                    maxiter = 1000
+                    maxiter = 1000, verbose = FALSE
 ){
 
   # Assign default values for Eper and Eco
-  if (missing(Eper)) Eper <- c(0, 0)
-  if (missing(Eco)) Eco <- c(0, 0)
+  if (missing(Eper)) {
+    Eper <- c(0, 0)
+    info_msg("Eper not provided. Defaulting to c(0, 0).", verbose)
+  }
+  if (missing(Eco)) {
+    Eco <- c(0, 0)
+    info_msg("Eco not provided. Defaulting to c(0, 0).", verbose)
+  }
 
   # is mu provided?
   if (all(is.na(mu_list))) {
     stop("mu_list must be provided")
   }
 
-  # Parameters endpoints -----
-  n <- length(mu_list) # number of arms
+  # Derive the Number of Arms
+  n <- length(mu_list)
 
-  # Derive the arm names
-  if (any(is.na(arm_names))) {
-    if (!is.null(names(mu_list))) {
-      arm_names <- names(mu_list)
-    }
-  }
+  # Derive the Arm Names
+  arm_names <- derive_arm_names(arm_names = arm_names, mu_list = mu_list,
+                                verbose = verbose)
 
-  if (any(is.na(ynames_list))) {
+  # Derive the Endpoint Names
+  ynames_list <- derive_endpoint_names(ynames_list = ynames_list,
+                                       mu_list = mu_list, verbose = verbose)
 
-    # Try to derive the ynames from mu_list
-    ynames_list <- lapply(mu_list, function(x) names(x))
-
-    if (length(names(ynames_list)) == 0 | any(sapply(ynames_list, is.null))) {
-      #warning("no all endpoints names provided for each arm, so arbitrary names are assigned")
-      ynames_list <- lapply(mu_list, function(x) paste0("y", 1:length(x)))
-    }
-  }
-
-
-  # Treatment allocation rate
-  if (any(is.na(TAR))) {
-    TAR <- rep(1,n)
-  }
-
-  TAR_list <- as.list(TAR)
+  # Derive the Treatment Allocation Rate
+  TAR_list <- derive_allocation_rate(TAR = TAR, n_arms = n, verbose = verbose)
 
 
   for (i in 1:n) {
@@ -280,11 +272,6 @@ sampleSize <- function(mu_list, varcov_list = NA, sigma_list = NA, cor_mat = NA,
     weight_seq[weight_seq == x] <- weight[x]
   }
   names(weight_seq) <- uynames
-
-  # Give to list the arm names
-  if (any(is.na(arm_names))) {
-    arm_names <- paste0("A",rep(1:n))
-  }
 
   #if (len_mu[[1]] == 1){
   #  mu_list <- lapply(mu_list,FUN = function(x){array(unlist(x))})
@@ -470,13 +457,16 @@ sampleSize <- function(mu_list, varcov_list = NA, sigma_list = NA, cor_mat = NA,
   }
 
 
-  # Save endopoints related information on a parameter list
+  # Save endpoints related information on a parameter list
 
   param <- list(mu = mu_list, varcov = varcov_list, sigmaB = sigmaB,
                 TAR_list = TAR_list, type_y = type_y, weight_seq = weight_seq,
                 arm_names = arm_names,  ynames_list = ynames_list,
                 list_comparator = list_comparator,
-                list_y_comparator = list_y_comparator,sigmaB = sigmaB,
+                list_y_comparator = list_y_comparator,
+                list_lequi.tol = list_lequi.tol,
+                list_uequi.tol = list_uequi.tol,
+                sigmaB = sigmaB,
                 Eper = Eper, Eco = Eco)
 
   # Parameters related to design ----
@@ -577,6 +567,102 @@ sampleSize <- function(mu_list, varcov_list = NA, sigma_list = NA, cor_mat = NA,
   class(out) <- "simss"
   return(out)
 
+}
+
+#' Derive or Assign Arm Names
+#'
+#' This function checks if `arm_names` is provided. If `arm_names` is missing, it attempts to derive names
+#' from `mu_list`. If `mu_list` does not contain names, it assigns default names ("A1", "A2", etc.) to each arm.
+#' Informational messages are displayed if `verbose` is set to `TRUE`.
+#'
+#' @author Thomas Debray \email{tdebray@fromdatatowisdom.com}
+#'
+#' @param arm_names Optional vector of arm names.
+#' @param mu_list Named list of means per treatment arm, from which arm names may be derived.
+#' @param verbose Logical, if `TRUE`, displays messages about the derivation process.
+#'
+#' @return A vector of arm names.
+derive_arm_names <- function(arm_names, mu_list, verbose = FALSE) {
+
+  # Check if arm_names is missing and attempt to derive from mu_list
+  if (any(is.na(arm_names))) {
+    if (!is.null(names(mu_list))) {
+      arm_names <- names(mu_list)
+      info_msg(paste("Arm names derived from mu_list: ", paste(arm_names, collapse = ", ")), verbose)
+    } else {
+      arm_names <- paste0("A",seq(mu_list))
+      info_msg(paste("Arm names not provided and could not be derived from mu_list. Assigning default names: ", paste(arm_names, collapse = ", ")), verbose)
+    }
+  } else {
+    info_msg(paste("Using user-provided arm names: ", paste(arm_names, collapse = ", ")), verbose)
+  }
+
+  return(arm_names)
+}
+
+#' Derive Endpoint Names
+#'
+#' @author Thomas Debray \email{tdebray@fromdatatowisdom.com}
+#'
+#' This function derives endpoint names (`ynames_list`) from `mu_list` if `ynames_list`
+#' is missing. If `ynames_list` is already provided, it confirms the names to the user when
+#' `verbose` is set to `TRUE`.
+#'
+#' @param ynames_list Optional list of vectors with endpoint names for each arm.
+#' @param mu_list Named list of means per treatment arm, where names can be used as endpoint names.
+#' @param verbose Logical, if `TRUE`, displays messages about the derivation process.
+#'
+#' @return A list of endpoint names for each arm.
+derive_endpoint_names <- function(ynames_list, mu_list, verbose = FALSE) {
+
+  # Check if ynames_list is missing and attempt to derive from mu_list
+  if (any(is.na(ynames_list))) {
+
+    # Try to derive the ynames from mu_list
+    ynames_list <- lapply(mu_list, function(x) names(x))
+    info_msg("Attempting to derive endpoint names (ynames_list) from mu_list.", verbose)
+
+    # Check if ynames were successfully derived
+    if (length(names(ynames_list)) == 0 || any(sapply(ynames_list, is.null))) {
+      info_msg("Not all endpoint names were provided. Assigning arbitrary names (y1, y2, etc.) to endpoints for each arm.", verbose)
+      ynames_list <- lapply(mu_list, function(x) paste0("y", 1:length(x)))
+    } else {
+      info_msg("Endpoint names derived from mu_list.", verbose)
+    }
+  } else {
+    info_msg("Using user-provided endpoint names (ynames_list).", verbose)
+  }
+
+  return(ynames_list)
+}
+
+#' Derive Treatment Allocation Rate (TAR)
+#'
+#' This function checks if `TAR` (treatment allocation rate) is provided. If `TAR` is missing, it assigns a default
+#' equal allocation rate across all arms. It then converts `TAR` to a list format for further use.
+#' Informational messages are displayed if `verbose` is set to `TRUE`.
+#'
+#' @author Thomas Debray \email{tdebray@fromdatatowisdom.com}
+#'
+#' @param TAR Optional numeric vector specifying the allocation rate for each treatment arm. If missing, a default equal allocation rate is assigned.
+#' @param n_arms Integer specifying the number of treatment arms.
+#' @param verbose Logical, if `TRUE`, displays messages about the status of `TAR` derivation or assignment.
+#'
+#' @return A list representing the treatment allocation rate for each arm.
+derive_allocation_rate <- function(TAR, n_arms, verbose = FALSE) {
+
+  # Check if TAR is missing and assign default if necessary
+  if (any(is.na(TAR))) {
+    TAR <- rep(1, n_arms)  # Default equal allocation across all arms
+    info_msg(paste("TAR not provided. Assigning equal allocation rate across all arms: ", paste(TAR, collapse = ":")), verbose)
+  } else {
+    info_msg(paste("Using user-provided TAR: ", paste(TAR, collapse = ":")), verbose)
+  }
+
+  # Convert TAR to list format
+  TAR_list <- as.list(TAR)
+
+  return(TAR_list)
 }
 
 

@@ -17,3 +17,6 @@ NULL. If the checks pass, the function returns nothing. If the checks fail, it s
 \description{
 Validates that the upper and lower limits are numeric and that the upper limit is greater than the lower limit.
 }
+\author{
+Thomas Debray \email{tdebray@fromdatatowisdom.com}
+}

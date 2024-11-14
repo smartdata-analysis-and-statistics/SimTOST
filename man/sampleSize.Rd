@@ -41,7 +41,8 @@ sampleSize(
   step.power = 6,
   step.up = TRUE,
   pos.side = FALSE,
-  maxiter = 1000
+  maxiter = 1000,
+  verbose = FALSE
 )
 }
 \arguments{
@@ -118,6 +119,8 @@ sampleSize(
 \item{pos.side}{Logical. If \code{TRUE}, finds the smallest integer, \code{i}, closest to the root such that \code{f(i) > 0}. Used only when \code{optimization_method} is \code{"fast"}.}
 
 \item{maxiter}{Integer. Maximum number of iterations allowed for finding the sample size. Defaults to 1000. Used only when \code{optimization_method} is \code{"fast"}.}
+
+\item{verbose}{Logical. If \code{TRUE}, the function displays progress and informational messages during execution. Defaults to \code{FALSE}.}
 }
 \value{
 An object simss that contains the following elements :

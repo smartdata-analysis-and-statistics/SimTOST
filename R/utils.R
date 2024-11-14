@@ -437,4 +437,16 @@ mcsapply <- function (X, FUN, ..., simplify = TRUE, USE.NAMES = TRUE) {
   else answer
 }
 
+#' Helper function for conditional messages
+#'
+#' This function displays a message if the `verbose` parameter is set to `TRUE`.
+#' It is useful for providing optional feedback to users during function execution.
+#' @author Thomas Debray \email{tdebray@fromdatatowisdom.com}
+#' @param message A character string containing the message to display.
+#' @param verbose Logical, if `TRUE`, the message is displayed; if `FALSE`, the message is suppressed.
+#'
+#' @return NULL (invisible). This function is used for side effects (displaying messages).
+info_msg <- function(message, verbose) {
+  if (verbose) message(message)
+}
 

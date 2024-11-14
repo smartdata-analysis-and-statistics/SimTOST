@@ -15,3 +15,6 @@ NULL. If all matrices pass, the function returns nothing. If any matrix fails, i
 \description{
 Validates that all matrices in a list are symmetric and positive semi-definite.
 }
+\author{
+Thomas Debray \email{tdebray@fromdatatowisdom.com}
+}
