@@ -4,6 +4,7 @@
 <url><loc>/articles/index.html</loc></url>
 <url><loc>/articles/intopkg.html</loc></url>
 <url><loc>/articles/sampleSize_Mielke.html</loc></url>
+<url><loc>/articles/sampleSize_crossover.html</loc></url>
 <url><loc>/authors.html</loc></url>
 <url><loc>/index.html</loc></url>
 <url><loc>/news/index.html</loc></url>
@@ -34,5 +35,6 @@
 <url><loc>/reference/uniroot.integer.mod.html</loc></url>
 <url><loc>/reference/validate_positive_definite.html</loc></url>
 <url><loc>/reference/validate_sample_size_limits.html</loc></url>
+<url><loc>/reference/validate_tar.html</loc></url>
 </urlset>
 

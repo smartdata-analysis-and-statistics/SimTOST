@@ -35,6 +35,9 @@
       <a href="../articles/intopkg.html">Introduction</a>
     </li>
     <li>
+      <a href="../articles/sampleSize_crossover.html">Bioequivalence Tests for AUC and Cmax in a 2x2 Cross-Over Design (Log-Normal Data)</a>
+    </li>
+    <li>
       <a href="../articles/sampleSize_Mielke.html">Sample Size for Multiple Hypothesis Testing in Biosimilar Development</a>
     </li>
   </ul></li>
@@ -57,7 +60,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Sample Size Calculation for Bioequivalence and Multi-Endpoint Studies</h1>
-    <small class="dont-index">Source: <a href="https://github.com/smartdata-analysis-and-statistics/SimTOST/blob/main/R/sampleSize.R" class="external-link"><code>R/sampleSize.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/smartdata-analysis-and-statistics/SimTOST/blob/main/R/SampleSize.R" class="external-link"><code>R/SampleSize.R</code></a></small>
     <div class="hidden name"><code>sampleSize.Rd</code></div>
     </div>
 
@@ -75,7 +78,7 @@
 <span>  <span class="va">Eper</span>,</span>
 <span>  <span class="va">Eco</span>,</span>
 <span>  rho <span class="op">=</span> <span class="fl">0</span>,</span>
-<span>  TAR <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>  TAR <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  arm_names <span class="op">=</span> <span class="cn">NA</span>,</span>
 <span>  ynames_list <span class="op">=</span> <span class="cn">NA</span>,</span>
 <span>  type_y <span class="op">=</span> <span class="cn">NA</span>,</span>
@@ -145,7 +148,7 @@
 
 
 <dt id="arg-tar">TAR<a class="anchor" aria-label="anchor" href="#arg-tar"></a></dt>
-<dd><p>Numeric vector. Treatment allocation rate for each arm, where the length of <code>TAR</code> specifies the number of arms. The default is an equal allocation ratio across all arms.</p></dd>
+<dd><p>Numeric vector. Treatment allocation rates for each arm, where the order of values corresponds to the order of <code>arm_names</code>. The length of <code>TAR</code> must match the number of arms. If not provided, a default equal allocation rate is assigned across all arms.</p></dd>
 
 
 <dt id="arg-arm-names">arm_names<a class="anchor" aria-label="anchor" href="#arg-arm-names"></a></dt>
