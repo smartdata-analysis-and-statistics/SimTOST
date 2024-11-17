@@ -89,65 +89,6 @@ ss <- sampleSize(power = 0.8, alpha = 0.05,
 ss
 ```
 
-# Multiple PK Studies
-In the Zarzio example, we have the following:
-
-```{r, eval = TRUE}
-# Calculate the standard deviation and the mean using the 
-# reported confidence intervals
-sigma <- c(sqrt(40)*(log(0.8884)-log(0.8249))/qt(0.95, df=40-2), 
-           sqrt(26)*(log(0.9882)-log(0.9576))/qt(0.95, df=26-2), 
-           sqrt(28)*(log(0.8661)-log(0.7863))/qt(0.95, df=28-2), 
-           sqrt(28)*(log(0.9591)-log(0.8873))/qt(0.95, df=28-2), 
-           sqrt(24)*(log(0.885)-log(0.8155))/qt(0.95, df=24-2)
-           )
-
-mu.ratio <- c(88.84, 98.82, 86.61, 95.91, 88.5)/100 
-mu <- log(mu.ratio)
-
-# Required sample size for all tests to be successful 
-ssMielke <- sampleSize_Mielke(power = 0.8, Nmax = 1000, m = 5, k = 5, rho = 0, 
-                              sigma = sigma, true.diff = mu, 
-                              equi.tol = log(1.25), design = "22co", 
-                              alpha = 0.05, nsim = 10000)
-ssMielke 
-```
-We find that `r ssMielke["SS"]` subjects per sequence are needed, and thus `r ssMielke["SS"]*2` subjects per study or `r ssMielke["SS"]*10` in total.
-
-```{r, eval = TRUE}
-ss <- sampleSize(power = 0.8, alpha = 0.05,
-                 mu_list = list("R" = c(log(1), log(1), log(1), log(1), log(1)),
-                                "T" = c(log(0.8884), log(0.9882), log(0.8661), 
-                                        log(0.9591), log(0.8850))),
-                 sigma_list = list("R" = sigma, "T" = sigma),
-                 lequi.tol = rep(log(0.80), 5),
-                 uequi.tol = rep(log(1.25), 5),
-                 dtype = "2x2", ctype = "DOM", lognorm = FALSE, adjust = "no",
-                 ncores = 1, nsim = 10000, seed = 1234)
-ss
-```
-
-# Example 4
-
-In the Zarzio example, the required sample size to demonstrate equivalence for 3 out of 5 tests is as follows:
-
-```{r, eval = TRUE}
-# No adjustment
-sampleSize_Mielke(power = 0.8, Nmax = 1000, m = 5, k = 3, rho = 0, 
-                  sigma = sigma, true.diff = mu, equi.tol = log(1.25), 
-                  design = "22co", alpha = 0.05, adjust = "no", nsim = 10000)
-
-# k-adjustment 
-sampleSize_Mielke(power = 0.8, Nmax = 1000, m = 5, k = 3, rho = 0, 
-                  sigma = sigma, true.diff = mu, equi.tol = log(1.25), 
-                  design = "22co", alpha = 0.05, adjust = "k", nsim = 10000)
-
-# Bonferroni adjustment 
-sampleSize_Mielke(power = 0.8, Nmax = 1000, m = 5, k = 3, rho = 0, 
-                  sigma = sigma, true.diff = mu, equi.tol = log(1.25), 
-                  design = "22co", alpha = 0.05, adjust = "bon", nsim = 10000)
-```
-Without any adjustment, we find 18 subjects per study (hence 90 for the complete trial). When adopting k-adjustment, we find 22 subjects per study (hence 110 in total). Finally, when adopting Bonferroni adjustment we find 34 subjects per study (and thus 170 in total).
 
 
 # References

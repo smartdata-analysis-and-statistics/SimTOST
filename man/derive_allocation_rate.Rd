@@ -4,12 +4,13 @@
 \alias{derive_allocation_rate}
 \title{Derive Treatment Allocation Rate (TAR)}
 \usage{
-derive_allocation_rate(TAR, n_arms, verbose = FALSE)
+derive_allocation_rate(TAR = NULL, arm_names, verbose = FALSE)
 }
 \arguments{
-\item{TAR}{Optional numeric vector specifying the allocation rate for each treatment arm. If missing, a default equal allocation rate is assigned.}
+\item{TAR}{Optional numeric vector specifying the allocation rate for each treatment arm. If missing, a default
+equal allocation rate is assigned.}
 
-\item{n_arms}{Integer specifying the number of treatment arms.}
+\item{arm_names}{Character vector specifying the names of the treatment arms. Used to name the elements of \code{TAR}.}
 
 \item{verbose}{Logical, if \code{TRUE}, displays messages about the status of \code{TAR} derivation or assignment.}
 }
@@ -18,8 +19,8 @@ A list representing the treatment allocation rate for each arm.
 }
 \description{
 This function checks if \code{TAR} (treatment allocation rate) is provided. If \code{TAR} is missing, it assigns a default
-equal allocation rate across all arms. It then converts \code{TAR} to a list format for further use.
-Informational messages are displayed if \code{verbose} is set to \code{TRUE}.
+equal allocation rate across all arms and ensures the \code{TAR} values correspond to the specified \code{arm_names}. It then
+converts \code{TAR} to a named list for further use. Informational messages are displayed if \code{verbose} is set to \code{TRUE}.
 }
 \author{
 Thomas Debray \email{tdebray@fromdatatowisdom.com}

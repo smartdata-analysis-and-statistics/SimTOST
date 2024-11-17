@@ -39,6 +39,7 @@ testthat::test_that("Return expected result", {
                         list_comparator = list_comparator,
                         list_y_comparator = list_y_comparator,
                         lequi.tol = lequi.tol, uequi.tol = uequi.tol,
+                        seed = 1234,
                         ncores = 1)
 
   expect_equal(res_cal$response[["n_total"]], 150, tolerance = 6)

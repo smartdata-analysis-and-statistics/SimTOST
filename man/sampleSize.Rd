@@ -13,7 +13,7 @@ sampleSize(
   Eper,
   Eco,
   rho = 0,
-  TAR = NA,
+  TAR = NULL,
   arm_names = NA,
   ynames_list = NA,
   type_y = NA,
@@ -62,7 +62,7 @@ sampleSize(
 
 \item{rho}{Correlation parameter applied uniformly across all endpoint pairs, used with sigma_list to calculate varcov if cor_mat or varcov_list are not provided.}
 
-\item{TAR}{Numeric vector. Treatment allocation rate for each arm, where the length of \code{TAR} specifies the number of arms. The default is an equal allocation ratio across all arms.}
+\item{TAR}{Numeric vector. Treatment allocation rates for each arm, where the order of values corresponds to the order of \code{arm_names}. The length of \code{TAR} must match the number of arms. If not provided, a default equal allocation rate is assigned across all arms.}
 
 \item{arm_names}{Optional vector with the treatment names. If not supplied, it will be derived from mu_list.}
 

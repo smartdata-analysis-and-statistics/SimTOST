@@ -9,7 +9,7 @@
 #' @param Eper Optional. Vector of length 2 specifying the period effect in a `dtype = "2x2"` design, applied to c(Period 0, Period 1). Defaults to `c(0, 0)` if not provided. Ignored for `dtype = "parallel"`.
 #' @param Eco Optional. Vector of length 2 specifying the carry-over effect for each arm in a `dtype = "2x2"` design, applied to c(Reference, Treatment). Defaults to `c(0, 0)` if not provided. Ignored for `dtype = "parallel"`.
 #' @param rho Correlation parameter applied uniformly across all endpoint pairs, used with sigma_list to calculate varcov if cor_mat or varcov_list are not provided.
-#' @param TAR Numeric vector. Treatment allocation rate for each arm, where the length of `TAR` specifies the number of arms. The default is an equal allocation ratio across all arms.
+#' @param TAR Numeric vector. Treatment allocation rates for each arm, where the order of values corresponds to the order of `arm_names`. The length of `TAR` must match the number of arms. If not provided, a default equal allocation rate is assigned across all arms.
 #' @param arm_names Optional vector with the treatment names. If not supplied, it will be derived from mu_list.
 #' @param ynames_list Optional list of vectors with Endpoint names on each arm. When not all endpoint names are provided for each arm, arbitrary names (assigned by vector order) are used.
 #' @param type_y vector with the type of endpoints: primary endpoint(1), otherwise (2).
@@ -89,8 +89,7 @@
 #'
 #' @export
 sampleSize <- function(mu_list, varcov_list = NA, sigma_list = NA, cor_mat = NA,
-                       sigmaB =NA, Eper, Eco, rho = 0,
-                    TAR=NA,
+                       sigmaB =NA, Eper, Eco, rho = 0, TAR = NULL,
                     arm_names=NA,
                     ynames_list=NA,
                     type_y=NA,
@@ -121,6 +120,9 @@ sampleSize <- function(mu_list, varcov_list = NA, sigma_list = NA, cor_mat = NA,
                     maxiter = 1000, verbose = FALSE
 ){
 
+  # Derive the Number of Arms
+  n <- length(mu_list)
+
   # Assign default values for Eper and Eco
   if (missing(Eper)) {
     Eper <- c(0, 0)
@@ -136,8 +138,10 @@ sampleSize <- function(mu_list, varcov_list = NA, sigma_list = NA, cor_mat = NA,
     stop("mu_list must be provided")
   }
 
-  # Derive the Number of Arms
-  n <- length(mu_list)
+  # Conduct validations
+  validate_sample_size_limits(lower = lower, upper = upper)
+  validate_tar(TAR = TAR, n_arms = n)
+
 
   # Derive the Arm Names
   arm_names <- derive_arm_names(arm_names = arm_names, mu_list = mu_list,
@@ -148,7 +152,8 @@ sampleSize <- function(mu_list, varcov_list = NA, sigma_list = NA, cor_mat = NA,
                                        mu_list = mu_list, verbose = verbose)
 
   # Derive the Treatment Allocation Rate
-  TAR_list <- derive_allocation_rate(TAR = TAR, n_arms = n, verbose = verbose)
+  TAR_list <- derive_allocation_rate(TAR = TAR, arm_names = arm_names,
+                                     verbose = verbose)
 
 
   for (i in 1:n) {
@@ -156,8 +161,7 @@ sampleSize <- function(mu_list, varcov_list = NA, sigma_list = NA, cor_mat = NA,
     mu_list[[i]] <- mu
   }
 
-  # Check the sample size limits
-  validate_sample_size_limits(lower = lower, upper = upper)
+
 
 
   # Varcov specfication
@@ -639,23 +643,28 @@ derive_endpoint_names <- function(ynames_list, mu_list, verbose = FALSE) {
 #' Derive Treatment Allocation Rate (TAR)
 #'
 #' This function checks if `TAR` (treatment allocation rate) is provided. If `TAR` is missing, it assigns a default
-#' equal allocation rate across all arms. It then converts `TAR` to a list format for further use.
-#' Informational messages are displayed if `verbose` is set to `TRUE`.
+#' equal allocation rate across all arms and ensures the `TAR` values correspond to the specified `arm_names`. It then
+#' converts `TAR` to a named list for further use. Informational messages are displayed if `verbose` is set to `TRUE`.
+#'
+#' @param TAR Optional numeric vector specifying the allocation rate for each treatment arm. If missing, a default
+#' equal allocation rate is assigned.
+#' @param arm_names Character vector specifying the names of the treatment arms. Used to name the elements of `TAR`.
+#' @param verbose Logical, if `TRUE`, displays messages about the status of `TAR` derivation or assignment.
 #'
 #' @author Thomas Debray \email{tdebray@fromdatatowisdom.com}
 #'
-#' @param TAR Optional numeric vector specifying the allocation rate for each treatment arm. If missing, a default equal allocation rate is assigned.
-#' @param n_arms Integer specifying the number of treatment arms.
-#' @param verbose Logical, if `TRUE`, displays messages about the status of `TAR` derivation or assignment.
-#'
 #' @return A list representing the treatment allocation rate for each arm.
-derive_allocation_rate <- function(TAR, n_arms, verbose = FALSE) {
+derive_allocation_rate <- function(TAR = NULL, arm_names, verbose = FALSE) {
+
+  n_arms <- length(arm_names)
 
   # Check if TAR is missing and assign default if necessary
-  if (any(is.na(TAR))) {
+  if (any(is.na(TAR)) | is.null(TAR)) {
     TAR <- rep(1, n_arms)  # Default equal allocation across all arms
+    names(TAR) <- arm_names  # Assign names to correspond with arm names
     info_msg(paste("TAR not provided. Assigning equal allocation rate across all arms: ", paste(TAR, collapse = ":")), verbose)
   } else {
+    names(TAR) <- arm_names  # Ensure TAR values are named to match arm names
     info_msg(paste("Using user-provided TAR: ", paste(TAR, collapse = ":")), verbose)
   }
 

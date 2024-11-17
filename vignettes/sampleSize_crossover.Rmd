@@ -1,0 +1,49 @@
+---
+title: "Bioequivalence Tests for AUC and Cmax in a 2x2 Cross-Over Design (Log-Normal Data)"
+author: "Thomas Debray"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output: 
+  html_document:
+    fig_caption: yes
+    fig_width: 9
+    fig_height: 6
+vignette: >
+  %\VignetteIndexEntry{Bioequivalence Tests for AUC and Cmax in a 2x2 Cross-Over Design (Log-Normal Data)}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+bibliography: 'references.bib'
+link-citations: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(comment = "#>", collapse = TRUE)
+options(rmarkdown.html_vignette.check_title = FALSE) #title of doc does not match vignette title
+doc.cache <- T #for cran; change to F
+```
+
+In the examples below, we illustrate the use of `SimTOST` for 2x2 cross-over trials. As a first step, we load the package.
+
+```{r, echo = T, message=F}
+library(SimTOST)
+```
+
+In the first example, we consider that the true ratio of the test to the reference product is 1.02 for AUC and 1.03 for Cmax. Based on previous experiments, it is assumed that the standard deviation for AUC = 0.25 and the standard deviation for Cmax = 0.3. The equivalence limits for the means ratio are set at 0.80 and 1.25. The significance level is 0.05. The sample size will be determined at a power of 0.8. The correlation between AUC and Cmax is estimated to be 0.25. 
+
+
+```{r, eval = TRUE}
+ss <- sampleSize(power = 0.8, alpha = 0.05,
+                 mu_list = list("R" = c(AUC = 1.00, Cmax = 1.00),
+                                "T" = c(AUC = 1.02, Cmax = 1.03)),
+                 sigma_list = list("R" = c(AUC = 0.25, Cmax = 0.3),
+                                   "T" = c(AUC = 0.25, Cmax = 0.3)),
+                 list_comparator = list("T_vs_R" = c("R", "T")),
+                 rho = 0.25,
+                 list_lequi.tol = list("T_vs_R" = c(AUC = 0.8, Cmax = 0.8)),
+                 list_uequi.tol = list("T_vs_R" = c(AUC = 1.25, Cmax = 1.25)),
+                 dtype = "2x2", ctype = "ROM", lognorm = TRUE, 
+                 adjust = "no", ncores = 1, nsim = 10000, seed = 1234)
+ss
+```
+The total sample size is `r ss$response$n_total` subjects.
+

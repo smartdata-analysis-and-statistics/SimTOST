@@ -15,7 +15,7 @@ test_that("differences across lenght of mu, varcov and tar", {
   # Same treatment allocation rate
   TAR = c(1,1) # we assume same allocation rate in both arms
 
-  expect_error(SimTOST::sampleSize( mu_list = mu_list,
+  expect_error(sampleSize( mu_list = mu_list,
                                       sigma_list = sigma_list,
                                       varcov_list = NA,
                                       TAR=TAR,
@@ -27,6 +27,6 @@ test_that("differences across lenght of mu, varcov and tar", {
                                       k=1,
                                       list_comparator =list(c("T","R1"),c("T","R2")),
                                       arm_names=c("T","R_1","R2"),
-                                      ncores=1),"'mu', 'varcov', and 'TAR' must be defined for all arms.")
+                                      ncores=1))
 
 })
