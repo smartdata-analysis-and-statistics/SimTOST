@@ -331,7 +331,9 @@ sampleSize <- function(mu_list, varcov_list = NA, sigma_list = NA, cor_mat = NA,
   # list equivalence boundaries
 
   # check if list or equitol vector are not provided
-  if (all(all(is.na(lequi.tol)),all(is.na(uequi.tol)),all(is.na(list_lequi.tol)),all(is.na(list_uequi.tol)))){
+  if ((all(is.na(lequi.tol))&all(is.na(uequi.tol)))&
+      (all(is.na(list_lequi.tol))&all(is.na(list_uequi.tol)))
+      ){
     warning("No boundaries were provided so standard values will be used")
 
   }
@@ -388,6 +390,14 @@ sampleSize <- function(mu_list, varcov_list = NA, sigma_list = NA, cor_mat = NA,
 
     }
 
+  }
+
+
+  for (i in 1:length(list_comparator)){
+    muend <-  mu_list[[list_comparator[[i]][[2]]]]
+    if (is.null(names(list_lequi.tol[[i]]))|is.null(names(list_uequi.tol[[i]]))){
+      names(list_lequi.tol[[i]])<- names(list_uequi.tol[[i]])<-colnames(muend)
+    }
   }
 
   # check list equitol
