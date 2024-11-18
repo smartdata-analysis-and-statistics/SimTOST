@@ -35,10 +35,10 @@
       <a href="../articles/intopkg.html">Introduction</a>
     </li>
     <li>
-      <a href="../articles/sampleSize_crossover.html">Bioequivalence Tests for AUC and Cmax in a 2x2 Cross-Over Design (Log-Normal Data)</a>
+      <a href="../articles/sampleSize_crossover.html">Bioequivalence Tests in a 2x2 Cross-Over Design</a>
     </li>
     <li>
-      <a href="../articles/sampleSize_Mielke.html">Sample Size for Multiple Hypothesis Testing in Biosimilar Development</a>
+      <a href="../articles/sampleSize_parallel.html">Bioequivalence Tests in a Parallel Trial Design</a>
     </li>
   </ul></li>
 <li>
@@ -314,22 +314,26 @@
 <span class="r-in"><span><span class="va">lequi.tol</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>AUCinf <span class="op">=</span> <span class="fl">0.8</span>, AUClast <span class="op">=</span> <span class="fl">0.8</span>, Cmax <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">uequi.tol</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>AUCinf <span class="op">=</span> <span class="fl">1.25</span>, AUClast <span class="op">=</span> <span class="fl">1.25</span>, Cmax <span class="op">=</span> <span class="fl">1.25</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># arms to be compared</span></span></span>
+<span class="r-in"><span><span class="co"># Arms to be compared</span></span></span>
 <span class="r-in"><span><span class="va">list_comparator</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>EMA <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SB2"</span>, <span class="st">"EUREF"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                        FDA <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SB2"</span>, <span class="st">"USREF"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Endpoints to be compared</span></span></span>
 <span class="r-in"><span><span class="va">list_y_comparator</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>EMA <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AUCinf"</span>, <span class="st">"Cmax"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                         FDA <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AUClast"</span>, <span class="st">"Cmax"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                          FDA <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AUClast"</span>, <span class="st">"Cmax"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Equivalence boundaries for each comparison</span></span></span>
+<span class="r-in"><span><span class="va">lequi_lower</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>AUCinf <span class="op">=</span> <span class="fl">0.80</span>, AUClast <span class="op">=</span> <span class="fl">0.80</span>, Cmax <span class="op">=</span> <span class="fl">0.80</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">lequi_upper</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>AUCinf <span class="op">=</span> <span class="fl">1.25</span>, AUClast <span class="op">=</span> <span class="fl">1.25</span>, Cmax <span class="op">=</span> <span class="fl">1.25</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Run the simulation</span></span></span>
 <span class="r-in"><span><span class="fu">sampleSize</span><span class="op">(</span>power <span class="op">=</span> <span class="fl">0.9</span>, alpha <span class="op">=</span> <span class="fl">0.05</span>, mu_list <span class="op">=</span> <span class="va">mu_list</span>,</span></span>
-<span class="r-in"><span>          sigma_list <span class="op">=</span> <span class="va">sigma_list</span>, lequi.tol <span class="op">=</span> <span class="va">lequi.tol</span>,</span></span>
-<span class="r-in"><span>          uequi.tol <span class="op">=</span> <span class="va">uequi.tol</span>, list_comparator <span class="op">=</span> <span class="va">list_comparator</span>,</span></span>
-<span class="r-in"><span>          list_y_comparator <span class="op">=</span> <span class="va">list_y_comparator</span>, adjust <span class="op">=</span> <span class="st">"no"</span>,</span></span>
-<span class="r-in"><span>          dtype <span class="op">=</span> <span class="st">"parallel"</span>, ctype <span class="op">=</span> <span class="st">"ROM"</span>, vareq <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
-<span class="r-in"><span>          lognorm <span class="op">=</span> <span class="cn">TRUE</span>, ncores <span class="op">=</span> <span class="fl">1</span>, nsim <span class="op">=</span> <span class="fl">50</span>, seed <span class="op">=</span> <span class="fl">1234</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Using the same tolerance boundaries (lequi.tol, uequi.tol) across all comparators.</span>
+<span class="r-in"><span>           sigma_list <span class="op">=</span> <span class="va">sigma_list</span>, list_comparator <span class="op">=</span> <span class="va">list_comparator</span>,</span></span>
+<span class="r-in"><span>           list_y_comparator <span class="op">=</span> <span class="va">list_y_comparator</span>,</span></span>
+<span class="r-in"><span>           list_lequi.tol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"EMA"</span> <span class="op">=</span> <span class="va">lequi_lower</span>, <span class="st">"FDA"</span> <span class="op">=</span> <span class="va">lequi_lower</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>           list_uequi.tol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"EMA"</span> <span class="op">=</span> <span class="va">lequi_upper</span>, <span class="st">"FDA"</span> <span class="op">=</span> <span class="va">lequi_upper</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>           adjust <span class="op">=</span> <span class="st">"no"</span>, dtype <span class="op">=</span> <span class="st">"parallel"</span>, ctype <span class="op">=</span> <span class="st">"ROM"</span>, vareq <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
+<span class="r-in"><span>           lognorm <span class="op">=</span> <span class="cn">TRUE</span>, ncores <span class="op">=</span> <span class="fl">1</span>, nsim <span class="op">=</span> <span class="fl">50</span>, seed <span class="op">=</span> <span class="fl">1234</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Given a 90%  target power with 100(1-2*0.05)% confidence level.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> The total required sample size to achieve 90% power is 138 sample units.</span>
@@ -337,7 +341,6 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>  n_drop n_SB2 n_EUREF n_USREF n_total power power_LCI power_UCI</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;num&gt; &lt;num&gt;   &lt;num&gt;   &lt;num&gt;   &lt;num&gt; &lt;num&gt;     &lt;num&gt;     &lt;num&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       0    46      46      46     138   0.9 0.7740882 0.9625954</span>
-<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
