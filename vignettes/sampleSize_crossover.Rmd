@@ -1,5 +1,5 @@
 ---
-title: "Bioequivalence Tests in a 2x2 Cross-Over Design"
+title: "Bioequivalence Tests for 2x2 Cross-Over Trial Designs with Log-Normal Data"
 author: "Thomas Debray"
 date: "`r format(Sys.time(), '%B %d, %Y')`"
 output: 
@@ -8,7 +8,7 @@ output:
     fig_width: 9
     fig_height: 6
 vignette: >
-  %\VignetteIndexEntry{Bioequivalence Tests in a 2x2 Cross-Over Design}
+  %\VignetteIndexEntry{Bioequivalence Tests for 2x2 Cross-Over Trial Designs with Log-Normal Data}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 bibliography: 'references.bib'
@@ -29,7 +29,7 @@ In the examples below, we illustrate the use of `SimTOST` for 2x2 cross-over tri
 library(SimTOST)
 ```
 
-# Bioequivalence Tests for AUC and Cmax (Log-Normal Data)
+# Bioequivalence Tests for AUC and Cmax
 In the first example, we consider Example 1 from the PASS Sample Size Software [Chapter 351](https://www.ncss.com/wp-content/themes/ncss/pdf/Procedures/PASS/Bioequivalence_Tests_for_AUC_and_Cmax_in_a_2x2_Cross-Over_Design-Log-Normal_Data.pdf). We aim to estimate the sample size required to demonstrate bioequivalence between a test and reference product for two pharmacokinetic parameters: the area under the curve (AUC) and the maximum concentration (Cmax). We assume a 2x2 cross-over design. The true ratio of the test to the reference product is assumed to be 1.02 for AUC and 1.03 for Cmax. Based on previous experiments, it is assumed that the standard deviation for $\log(AUC)$ = 0.25 and the standard deviation for $\log(Cmax = 0.3)$. The equivalence limits for the means ratio are set at 0.80 and 1.25. 
 
 The significance level is set to 5\%, and the sample size is calculated to achieve 80\% power. Additionally, the correlation between AUC and Cmax is assumed to be 0.25. A difference-of-means test on the log scale is employed to determine bioequivalence. In the PASS software, this scenario yielded a total sample size of $n=37$ patients. In **SimTOST**, we can estimate the sample size using the [sampleSize()](../reference/sampleSize.html) function.

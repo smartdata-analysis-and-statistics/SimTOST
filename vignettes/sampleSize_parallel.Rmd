@@ -1,5 +1,5 @@
 ---
-title: "Bioequivalence Tests in a Parallel Trial Design"
+title: "Bioequivalence Tests for Parallel Trial Designs with Log-Normal Data"
 author: "Thomas Debray"
 date: "`r format(Sys.time(), '%B %d, %Y')`"
 output: 
@@ -8,7 +8,7 @@ output:
     fig_width: 9
     fig_height: 6
 vignette: >
-  %\VignetteIndexEntry{Bioequivalence Tests in a Parallel Trial Design}
+  %\VignetteIndexEntry{Bioequivalence Tests for Parallel Trial Designs with Log-Normal Data}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 bibliography: 'references.bib'
@@ -22,8 +22,7 @@ options(rmarkdown.html_vignette.check_title = FALSE) #title of doc does not matc
 doc.cache <- T #for cran; change to F
 ```
 
-
-In the examples below, we demonstrate the use of **SimTOST** for parallel trial designs. To begin, we first load the package.
+In the following examples, we demonstrate the use of **SimTOST** for parallel trial designs with data assumed to follow a normal distribution on the log scale. We start by loading the package.
 
 ```{r, echo = T, message=F}
 library(SimTOST)
@@ -78,7 +77,7 @@ In the first approach, we calculate the required sample size for 80% power using
 
 ```{r, eval = TRUE}
 ssMielke <- sampleSize_Mielke(power = 0.8, Nmax = 1000, m = 5, k = 5, rho = 0.8, 
-                              sigma = 0.3, true.diff =  log(1.05), 
+                              sigma = 0.3, true.diff = log(1.05), 
                               equi.tol = log(1.25), design = "parallel", 
                               alpha = 0.05, adjust = "no", seed = 1234, 
                               nsim = 10000)
@@ -90,11 +89,11 @@ For 80\% power, `r ssMielke["SS"]` subjects per sequence (`r ssMielke["SS"] * 2`
 Alternatively, the sample size calculation can be performed using the [sampleSize()](../reference/sampleSize.html) function. This method assumes that effect sizes are normally distributed on the log scale and uses a difference-of-means test (`ctype = "DOM"`) with user-specified values for `mu_list`, `sigma_list`, and the correlation `rho`. 
 
 ```{r}
-mu_r <- c(AUC = log(1.00), Cmax = log(1.00))
-mu_t <- c(AUC = log(1.02), Cmax = log(1.03))
-sigma <- c(AUC = 0.25, Cmax = 0.3)
-lequi_lower <- c(AUC = log(0.80), Cmax = log(0.80))
-lequi_upper <- c(AUC = log(1.25), Cmax = log(1.25))
+mu_r <- setNames(rep(log(1.00), 5), paste0("y", 1:5))
+mu_t <- setNames(rep(log(1.05), 5), paste0("y", 1:5))
+sigma <- setNames(rep(0.3, 5), paste0("y", 1:5))
+lequi_lower <- setNames(rep(log(0.8), 5), paste0("y", 1:5))
+lequi_upper <- setNames(rep(log(1.25), 5), paste0("y", 1:5))
 
 ss <- sampleSize(power = 0.8, alpha = 0.05,
                  mu_list = list("R" = mu_r, "T" = mu_t),
