@@ -20,8 +20,6 @@ knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_chunk$set(comment = "#>", collapse = TRUE)
 options(rmarkdown.html_vignette.check_title = FALSE) #title of doc does not match vignette title
 doc.cache <- T #for cran; change to F
-
-library(dplyr)
 ```
 
 
@@ -43,7 +41,6 @@ sigma <- c(AUC = 0.25, Cmax = 0.3)
 lequi_lower <- c(AUC = log(0.80), Cmax = log(0.80))
 lequi_upper <- c(AUC = log(1.25), Cmax = log(1.25))
 
-
 ss <- sampleSize(power = 0.8, alpha = 0.05,
                  mu_list = list("R" = mu_r, "T" = mu_t),
                  sigma_list = list("R" = sigma, "T" = sigma),
@@ -55,7 +52,7 @@ ss <- sampleSize(power = 0.8, alpha = 0.05,
                  adjust = "no", ncores = 1, nsim = 10000, seed = 1234)
 ss
 ```
-The total sample size is `r ss$response %>% pull(n_total)` subjects.
+The total sample size is `r ss$response$n_total` subjects.
 
 
 

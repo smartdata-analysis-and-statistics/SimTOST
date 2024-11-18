@@ -71,22 +71,26 @@
 #' lequi.tol <- c(AUCinf = 0.8, AUClast = 0.8, Cmax = 0.8)
 #' uequi.tol <- c(AUCinf = 1.25, AUClast = 1.25, Cmax = 1.25)
 #'
-#' # arms to be compared
+#' # Arms to be compared
 #' list_comparator <- list(EMA = c("SB2", "EUREF"),
 #'                         FDA = c("SB2", "USREF"))
 #'
-#'# Endpoints to be compared
-#'list_y_comparator <- list(EMA = c("AUCinf", "Cmax"),
-#'                          FDA = c("AUClast", "Cmax"))
+#' # Endpoints to be compared
+#' list_y_comparator <- list(EMA = c("AUCinf", "Cmax"),
+#'                           FDA = c("AUClast", "Cmax"))
+#'
+#' # Equivalence boundaries for each comparison
+#' lequi_lower <- c(AUCinf = 0.80, AUClast = 0.80, Cmax = 0.80)
+#' lequi_upper <- c(AUCinf = 1.25, AUClast = 1.25, Cmax = 1.25)
 #'
 #'# Run the simulation
-#'sampleSize(power = 0.9, alpha = 0.05, mu_list = mu_list,
-#'           sigma_list = sigma_list, lequi.tol = lequi.tol,
-#'           uequi.tol = uequi.tol, list_comparator = list_comparator,
-#'           list_y_comparator = list_y_comparator, adjust = "no",
-#'           dtype = "parallel", ctype = "ROM", vareq = FALSE,
-#'           lognorm = TRUE, ncores = 1, nsim = 50, seed = 1234)
-#'
+#' sampleSize(power = 0.9, alpha = 0.05, mu_list = mu_list,
+#'            sigma_list = sigma_list, list_comparator = list_comparator,
+#'            list_y_comparator = list_y_comparator,
+#'            list_lequi.tol = list("EMA" = lequi_lower, "FDA" = lequi_lower),
+#'            list_uequi.tol = list("EMA" = lequi_upper, "FDA" = lequi_upper),
+#'            adjust = "no", dtype = "parallel", ctype = "ROM", vareq = FALSE,
+#'            lognorm = TRUE, ncores = 1, nsim = 50, seed = 1234)
 #' @export
 sampleSize <- function(mu_list, varcov_list = NA, sigma_list = NA, cor_mat = NA,
                        sigmaB =NA, Eper, Eco, rho = 0, TAR = NULL,

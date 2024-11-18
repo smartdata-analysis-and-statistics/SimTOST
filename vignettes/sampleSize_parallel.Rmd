@@ -20,8 +20,6 @@ knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_chunk$set(comment = "#>", collapse = TRUE)
 options(rmarkdown.html_vignette.check_title = FALSE) #title of doc does not match vignette title
 doc.cache <- T #for cran; change to F
-
-library(dplyr)
 ```
 
 
@@ -69,11 +67,14 @@ ss <- sampleSize(power = 0.8, alpha = 0.05,
                  adjust = "no", ncores = 1, nsim = 10000, seed = 1234)
 ss
 ```     
-For 80\% power, a total of `r ss$response %>% pull(n_total)` would be required. 
+For 80\% power, a total of `r ss$response$n_total` would be required. 
 
 
 # Multiple Correlated Co-Primary Endpoints
-In the second example, we have $k=m=5$, $\sigma = 0.3$ and $\rho = 0.8$. Again, we can estimate the sample size using the functions provided by @mielke_sample_2018: 
+In the second example, we have $k=m=5$, $\sigma = 0.3$ and $\rho = 0.8$. This example is also adapted from @mielke_sample_2018, who employed a difference-of-means test on the log scale. The sample size calculation can again be conducted using two approaches, both of which are illustrated below.
+
+## Approach 1: Using sampleSize_Mielke
+In the first approach, we calculate the required sample size for 80% power using the [sampleSize_Mielke()](../reference/sampleSize_Mielke.html) function. This method directly follows the approach described in @mielke_sample_2018, assuming a difference-of-means test on the log-transformed scale with specified parameters.
 
 ```{r, eval = TRUE}
 ssMielke <- sampleSize_Mielke(power = 0.8, Nmax = 1000, m = 5, k = 5, rho = 0.8, 
@@ -83,20 +84,25 @@ ssMielke <- sampleSize_Mielke(power = 0.8, Nmax = 1000, m = 5, k = 5, rho = 0.8,
                               nsim = 10000)
 ssMielke
 ```
-For 80\% power, `r ssMielke["SS"]` subjects per sequence (`r ssMielke["SS"] * 2` in total) would have been required. 
+For 80\% power, `r ssMielke["SS"]` subjects per sequence (`r ssMielke["SS"] * 2` in total) would be been required. 
 
-We can perform the same analysis using [sampleSize()](../reference/sampleSize.html). In this case, we provide estimates for $\mu$ and $\sigma$ on the original scale, assuming they follow a normal distribution on the log scale (`lognorm = TRUE`). Instead of testing the difference of log-transformed means, we now test the ratio of the (untransformed) means.
+## Approach 2: Using sampleSize
+Alternatively, the sample size calculation can be performed using the [sampleSize()](../reference/sampleSize.html) function. This method assumes that effect sizes are normally distributed on the log scale and uses a difference-of-means test (`ctype = "DOM"`) with user-specified values for `mu_list`, `sigma_list`, and the correlation `rho`. 
 
-```{r, eval = TRUE}
+```{r}
+mu_r <- c(AUC = log(1.00), Cmax = log(1.00))
+mu_t <- c(AUC = log(1.02), Cmax = log(1.03))
+sigma <- c(AUC = 0.25, Cmax = 0.3)
+lequi_lower <- c(AUC = log(0.80), Cmax = log(0.80))
+lequi_upper <- c(AUC = log(1.25), Cmax = log(1.25))
+
 ss <- sampleSize(power = 0.8, alpha = 0.05,
-                 mu_list = list("R" = rep(1.00, 5),
-                                "T" = rep(1.05, 5)),
-                 sigma_list = list("R" = rep(0.3, 5),
-                                   "T" = rep(0.3, 5)),
+                 mu_list = list("R" = mu_r, "T" = mu_t),
+                 sigma_list = list("R" = sigma, "T" = sigma),
                  rho = 0.8, # high correlation between the endpoints
-                 lequi.tol = rep(0.8, 5),
-                 uequi.tol = rep(1.25, 5),
-                 dtype = "parallel", ctype = "ROM", lognorm = TRUE, 
+                 list_lequi.tol = list("T_vs_R" = lequi_lower),
+                 list_uequi.tol = list("T_vs_R" = lequi_upper),
+                 dtype = "parallel", ctype = "DOM", lognorm = FALSE, 
                  adjust = "no", ncores = 1, k = 5, nsim = 10000, seed = 1234)
 ss
 ```
