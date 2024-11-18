@@ -1,5 +1,5 @@
 ---
-title: "Bioequivalence Tests for AUC and Cmax in a 2x2 Cross-Over Design (Log-Normal Data)"
+title: "Bioequivalence Tests in a 2x2 Cross-Over Design"
 author: "Thomas Debray"
 date: "`r format(Sys.time(), '%B %d, %Y')`"
 output: 
@@ -8,19 +8,22 @@ output:
     fig_width: 9
     fig_height: 6
 vignette: >
-  %\VignetteIndexEntry{Bioequivalence Tests for AUC and Cmax in a 2x2 Cross-Over Design (Log-Normal Data)}
+  %\VignetteIndexEntry{Bioequivalence Tests in a 2x2 Cross-Over Design}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 bibliography: 'references.bib'
 link-citations: yes
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include=FALSE, message = FALSE, warning = FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_chunk$set(comment = "#>", collapse = TRUE)
 options(rmarkdown.html_vignette.check_title = FALSE) #title of doc does not match vignette title
 doc.cache <- T #for cran; change to F
+
+library(dplyr)
 ```
+
 
 In the examples below, we illustrate the use of `SimTOST` for 2x2 cross-over trials. As a first step, we load the package.
 
@@ -28,22 +31,35 @@ In the examples below, we illustrate the use of `SimTOST` for 2x2 cross-over tri
 library(SimTOST)
 ```
 
-In the first example, we consider that the true ratio of the test to the reference product is 1.02 for AUC and 1.03 for Cmax. Based on previous experiments, it is assumed that the standard deviation for AUC = 0.25 and the standard deviation for Cmax = 0.3. The equivalence limits for the means ratio are set at 0.80 and 1.25. The significance level is 0.05. The sample size will be determined at a power of 0.8. The correlation between AUC and Cmax is estimated to be 0.25. 
+# Bioequivalence Tests for AUC and Cmax (Log-Normal Data)
+In the first example, we consider Example 1 from the PASS Sample Size Software [Chapter 351](https://www.ncss.com/wp-content/themes/ncss/pdf/Procedures/PASS/Bioequivalence_Tests_for_AUC_and_Cmax_in_a_2x2_Cross-Over_Design-Log-Normal_Data.pdf). We aim to estimate the sample size required to demonstrate bioequivalence between a test and reference product for two pharmacokinetic parameters: the area under the curve (AUC) and the maximum concentration (Cmax). We assume a 2x2 cross-over design. The true ratio of the test to the reference product is assumed to be 1.02 for AUC and 1.03 for Cmax. Based on previous experiments, it is assumed that the standard deviation for $\log(AUC)$ = 0.25 and the standard deviation for $\log(Cmax = 0.3)$. The equivalence limits for the means ratio are set at 0.80 and 1.25. 
 
+The significance level is set to 5\%, and the sample size is calculated to achieve 80\% power. Additionally, the correlation between AUC and Cmax is assumed to be 0.25. A difference-of-means test on the log scale is employed to determine bioequivalence. In the PASS software, this scenario yielded a total sample size of $n=37$ patients. In **SimTOST**, we can estimate the sample size using the [sampleSize()](../reference/sampleSize.html) function.
 
 ```{r, eval = TRUE}
+mu_r <- c(AUC = log(1.00), Cmax = log(1.00))
+mu_t <- c(AUC = log(1.02), Cmax = log(1.03))
+sigma <- c(AUC = 0.25, Cmax = 0.3)
+lequi_lower <- c(AUC = log(0.80), Cmax = log(0.80))
+lequi_upper <- c(AUC = log(1.25), Cmax = log(1.25))
+
+
 ss <- sampleSize(power = 0.8, alpha = 0.05,
-                 mu_list = list("R" = c(AUC = 1.00, Cmax = 1.00),
-                                "T" = c(AUC = 1.02, Cmax = 1.03)),
-                 sigma_list = list("R" = c(AUC = 0.25, Cmax = 0.3),
-                                   "T" = c(AUC = 0.25, Cmax = 0.3)),
+                 mu_list = list("R" = mu_r, "T" = mu_t),
+                 sigma_list = list("R" = sigma, "T" = sigma),
                  list_comparator = list("T_vs_R" = c("R", "T")),
                  rho = 0.25,
-                 list_lequi.tol = list("T_vs_R" = c(AUC = 0.8, Cmax = 0.8)),
-                 list_uequi.tol = list("T_vs_R" = c(AUC = 1.25, Cmax = 1.25)),
-                 dtype = "2x2", ctype = "ROM", lognorm = TRUE, 
+                 list_lequi.tol = list("T_vs_R" = lequi_lower),
+                 list_uequi.tol = list("T_vs_R" = lequi_upper),
+                 dtype = "2x2", ctype = "DOM", lognorm = FALSE, 
                  adjust = "no", ncores = 1, nsim = 10000, seed = 1234)
 ss
 ```
-The total sample size is `r ss$response$n_total` subjects.
+The total sample size is `r ss$response %>% pull(n_total)` subjects.
 
+
+
+
+
+
+# References

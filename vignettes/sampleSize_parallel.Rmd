@@ -1,0 +1,104 @@
+---
+title: "Bioequivalence Tests in a Parallel Trial Design"
+author: "Thomas Debray"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output: 
+  html_document:
+    fig_caption: yes
+    fig_width: 9
+    fig_height: 6
+vignette: >
+  %\VignetteIndexEntry{Bioequivalence Tests in a Parallel Trial Design}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+bibliography: 'references.bib'
+link-citations: yes
+---
+
+```{r setup, include=FALSE, message = FALSE, warning = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(comment = "#>", collapse = TRUE)
+options(rmarkdown.html_vignette.check_title = FALSE) #title of doc does not match vignette title
+doc.cache <- T #for cran; change to F
+
+library(dplyr)
+```
+
+
+In the examples below, we demonstrate the use of **SimTOST** for parallel trial designs. To begin, we first load the package.
+
+```{r, echo = T, message=F}
+library(SimTOST)
+```
+
+# Multiple Independent Co-Primary Endpoints
+We here consider a bio-equivalence trial with 2 treatment arms and $m=5$ endpoints. The sample size is calculated to ensure that the test and reference products are equivalent with respect to all 5 endpoints. The true ratio between the test and reference products is assumed to be 1.05. It is assumed that the standard deviation of the log-transformed response variable is $\sigma = 0.3$, and that all tests are independent ($\rho = 0$). The equivalence limits are set at 0.80 and 1.25. The significance level is 0.05. The sample size is determined at a power of 0.8. 
+
+This example is adapted from @mielke_sample_2018, who employed a difference-of-means test on the log scale. The sample size calculation can be conducted using two approaches, both of which are illustrated below.
+
+## Approach 1: Using sampleSize_Mielke
+In the first approach, we calculate the required sample size for 80% power using the [sampleSize_Mielke()](../reference/sampleSize_Mielke.html) function. This method directly follows the approach described in @mielke_sample_2018, assuming a difference-of-means test on the log-transformed scale with specified parameters.
+
+```{r, eval = TRUE}
+ssMielke <- sampleSize_Mielke(power = 0.8, Nmax = 1000, m = 5, k = 5, rho = 0, 
+                              sigma = 0.3, true.diff = log(1.05), 
+                              equi.tol = log(1.25), design = "parallel", 
+                              alpha = 0.05, adjust = "no", seed = 1234, 
+                              nsim = 10000)
+ssMielke
+```
+For 80\% power, `r ssMielke["SS"]` subjects per sequence (`r ssMielke["SS"] * 2` in total) would have been required. 
+
+## Approach 2: Using sampleSize
+Alternatively, the sample size calculation can be performed using the [sampleSize()](../reference/sampleSize.html) function. This method assumes that effect sizes are normally distributed on the log scale and uses a difference-of-means test (`ctype = "DOM"`) with user-specified values for `mu_list` and `sigma_list`. Unlike the first approach, this method allows for greater flexibility in specifying parameter distributions.
+
+```{r, eval = TRUE}
+mu_r <- setNames(rep(log(1.00), 5), paste0("y", 1:5))
+mu_t <- setNames(rep(log(1.05), 5), paste0("y", 1:5))
+sigma <- setNames(rep(0.3, 5), paste0("y", 1:5))
+lequi_lower <- setNames(rep(log(0.8), 5), paste0("y", 1:5))
+lequi_upper <- setNames(rep(log(1.25), 5), paste0("y", 1:5))
+
+ss <- sampleSize(power = 0.8, alpha = 0.05,
+                 mu_list = list("R" = mu_r, "T" = mu_t),
+                 sigma_list = list("R" = sigma, "T" = sigma),
+                 list_comparator = list(c("R", "T")),
+                 list_lequi.tol = list("T_vs_R" = lequi_lower),
+                 list_uequi.tol = list("T_vs_R" = lequi_upper),
+                 dtype = "parallel", ctype = "DOM", lognorm = FALSE, 
+                 adjust = "no", ncores = 1, nsim = 10000, seed = 1234)
+ss
+```     
+For 80\% power, a total of `r ss$response %>% pull(n_total)` would be required. 
+
+
+# Multiple Correlated Co-Primary Endpoints
+In the second example, we have $k=m=5$, $\sigma = 0.3$ and $\rho = 0.8$. Again, we can estimate the sample size using the functions provided by @mielke_sample_2018: 
+
+```{r, eval = TRUE}
+ssMielke <- sampleSize_Mielke(power = 0.8, Nmax = 1000, m = 5, k = 5, rho = 0.8, 
+                              sigma = 0.3, true.diff =  log(1.05), 
+                              equi.tol = log(1.25), design = "parallel", 
+                              alpha = 0.05, adjust = "no", seed = 1234, 
+                              nsim = 10000)
+ssMielke
+```
+For 80\% power, `r ssMielke["SS"]` subjects per sequence (`r ssMielke["SS"] * 2` in total) would have been required. 
+
+We can perform the same analysis using [sampleSize()](../reference/sampleSize.html). In this case, we provide estimates for $\mu$ and $\sigma$ on the original scale, assuming they follow a normal distribution on the log scale (`lognorm = TRUE`). Instead of testing the difference of log-transformed means, we now test the ratio of the (untransformed) means.
+
+```{r, eval = TRUE}
+ss <- sampleSize(power = 0.8, alpha = 0.05,
+                 mu_list = list("R" = rep(1.00, 5),
+                                "T" = rep(1.05, 5)),
+                 sigma_list = list("R" = rep(0.3, 5),
+                                   "T" = rep(0.3, 5)),
+                 rho = 0.8, # high correlation between the endpoints
+                 lequi.tol = rep(0.8, 5),
+                 uequi.tol = rep(1.25, 5),
+                 dtype = "parallel", ctype = "ROM", lognorm = TRUE, 
+                 adjust = "no", ncores = 1, k = 5, nsim = 10000, seed = 1234)
+ss
+```
+
+# References
