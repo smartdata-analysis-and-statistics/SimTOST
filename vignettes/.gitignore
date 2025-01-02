@@ -1,2 +1,7 @@
 *.html
 *.R
+*.tex
+*.bbl
+*.blg
+*.log
+*.gz
