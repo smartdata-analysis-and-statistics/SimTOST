@@ -114,12 +114,14 @@ nQuery	& Adaptive trials &	Comprehensive power and sample size functionality, in
 
 This paper presents the \proglang{R} package \pkg{SimTOST}, which is intended for use by clinical trial statisticians with a basic understanding of \proglang{R}, clinical trial design, and sample size calculation. \pkg{SimTOST} was developed to streamline sample size estimation for Phase 1 randomized bioequivalence trials. Major features of the software include the evaluation of multiple treatment arms, evaluation of multiple (co-)primary endpoints, configuration of distributional assumptions, customization of trial success criteria, adjustment for multiplicity, and empirical assessment of power and the type I error rate. Unlike conventional methods, \pkg{SimTOST} addresses the particular complexities of biosimilar trials, in that it can deal appropriately with multiple hypotheses, treatments, and correlated endpoints with flexibility and accuracy. We are not aware of any existing software/\proglang{R} package that is aimed specifically at sample size estimation for bioequivalence trials, that can also handle multiple endpoints, testing of multiple hypotheses, and crossover designs.
 
-The rest of this paper is structured as follows: Section~\ref{sec:bioequivalence} reviews the distinguishing features of biosimilar trials and summarises the key methods developed for sample size estimation for bioequivalence studies. In Section 3, the principal functionality of the \pkg{SimTOST} package is presented. In Section 4, several advanced features of the package are described, including multiple hypothesis testing. Section 5 presents a worked example to illustrate application of the software to a complex, but real-world situation encountered in the bioequivalence field: trials with three arms, three correlated co-primary endpoints, and two different reference products. Finally, Section 6 provides discussion, future directions, and conclusions.
+The rest of this paper is structured as follows: Section~\ref{sec:bioequivalence} reviews the distinguishing features of biosimilar trials and summarises the key methods developed for sample size estimation for bioequivalence studies. In Section~\ref{sec:pkgSimTOST}, the principal functionality of the \pkg{SimTOST} package is presented. In Section 4, several advanced features of the package are described, including multiple hypothesis testing. Section 5 presents a worked example to illustrate application of the software to a complex, but real-world situation encountered in the bioequivalence field: trials with three arms, three correlated co-primary endpoints, and two different reference products. Finally, Section 6 provides discussion, future directions, and conclusions.
 
 \section{Bioequivalence} \label{sec:bioequivalence}
 
 \subsection{Biosimilar versus conventional trial designs}
-Biosimilar trials differ from conventional clinical trials in both their objectives and the choice of comparator arms. The primary goal of a biosimilar trial is to demonstrate (bio)equivalence, whereas conventional trials often aim to establish superiority or non-inferiority. Furthermore, in biosimilar trials, the comparator is a reference medicinal product -- a previously approved drug -- rather than the standard of care, placebo, sham, or other alternative treatments typically used in conventional trials.
+When two formulations of the same drug or two drug products are claimed to be bioequivalent, it is assumed that they provide the same therapeutic effect, are therapeutically equivalent, and can be used interchangeably. Bioequivalence is a critical concept in biosimilar trials, as it establishes that the new product performs similarly to a reference product in terms of efficacy and safety.
+
+Biosimilar trials differ from conventional clinical trials in both their objectives and their choice of comparator arms. While conventional trials typically aim to establish superiority or non-inferiority, the primary goal of a biosimilar trial is to demonstrate (bio)equivalence. Additionally, the comparator in a biosimilar trial is a reference medicinal product —- a previously approved drug —- rather than the standard of care, placebo, sham, or other alternatives commonly used in conventional trials.
 
 Two medicinal products are considered bioequivalent if they meet specific criteria. These products must be either:
 
@@ -134,12 +136,57 @@ Unlike conventional trials, biosimilar trials may involve more than one referenc
 
 Figure~\ref{fig:exampletrial} illustrates an example of this approach, where a new treatment is compared to two different reference treatments across three outcomes, meeting the diverse requirements of multiple regulatory authorities.
 
-
 \begin{figure}[t!]
 \centering
 \includegraphics[width=\textwidth]{fig_manuscript_01.png}
 \caption{\label{fig:exampletrial} Example trial illustrating comparisons for three outcomes (AUCInf, AUClast, and Cmax) between a new treatment and reference products designated by different regulatory bodies (USA and EU).}
 \end{figure}
+
+\subsection{Bioequivalence studies: key methodological considerations}
+Designing and analyzing a bioequivalence study requires careful attention to two critical methodological aspects: (i) the measurement of pharmacokinetic parameters, which serve as the primary outcomes for comparing treatments; and (ii) the statistical methods used to evaluate and compare these outcomes.
+
+The selection of pharmacokinetic (PK) parameters to estimate depends on trial characteristics, such as the sampling period. As outlined by \cite{CHMP2010}, in biosimilar studies aiming to demonstrate bioequivalence after a single dose, the actual sampling times should be utilized, and the following PK parameters should be evaluated:
+
+\begin{itemize}
+\item AUCInf (Area Under the Curve to Infinity): Total drug exposure over time, including extrapolated data beyond the last measurable concentration.
+\item AUClast (Area Under the Curve to Last Time Point): Drug exposure calculated up to the last measurable concentration.
+\item Cmax (Maximum Concentration): Peak plasma concentration, reflecting the highest level of drug exposure.
+\item Residual Area: The proportion of AUC that is extrapolated beyond the observed data, providing insight into the elimination phase.
+\item tmax (Time to Maximum Concentration): The time taken to reach the peak plasma concentration, indicating the rate of absorption.
+\end{itemize}
+
+For biosimilar trials, equivalence testing methods are required when the objective of a statistical test is to demonstrate that the size of a difference in an endpoint of interest between two (or more) trial arms is not meaningful (i.e., not clinically relevant). For the base case of evaluating whether a new pharmaceutical product is `equivalent' to the reference product, the Two One-Sided Tests (TOST) procedure is deployed, in which the null hypothesis of `new product is worse by a clinically relevant amount' is compared with the alternative hypothesis of `difference between products is too small to be clinically relevant' \citep{schuirmann_comparison_1987, shieh_assessing_2022}.
+
+The TOST procedure involves evaluating two one-sided hypotheses to assess equivalence. The first null hypothesis is defined as:
+%
+\begin{equation} \label{eq:TOST_01}
+H_{01}: \mu_T - \mu_R \leq \theta_1,
+\end{equation}
+%
+with its corresponding alternative hypothesis:
+%
+\begin{equation} \label{eq:TOST_11}
+H_{11}: \mu_T - \mu_R > \theta_1.
+\end{equation}
+%
+
+Similarly, the second null hypothesis is defined as:
+%
+\begin{equation} \label{eq:TOST_01}
+H_{02}: \mu_T - \mu_R \geq \theta_2,
+\end{equation}
+%
+with its corresponding alternative hypothesis:
+%
+\begin{equation} \label{eq:TOST_11}
+H_{12}: \mu_T - \mu_R < \theta_2.
+\end{equation}
+%
+Equivalence between $\mu_T$ and $\mu_R$ is established, if and only if, both $H_{01}$ and $H_{02}$ are rejected at the chosen significance level $\alpha$.
+
+\section{The SimTOST package} \label{sec:pkgSimTOST}
+
+
 
 
 \begin{leftbar}
