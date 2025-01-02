@@ -5,6 +5,10 @@
 %% recommended packages
 \usepackage{orcidlink,thumbpdf,lmodern}
 
+%% sideways tables
+%\usepackage{rotating}
+
+
 %% another package (only for this demo article)
 \usepackage{framed}
 
@@ -83,11 +87,60 @@ library("MASS")
 
 Sample size estimation is a critical aspect of clinical trial design, as it ensures sufficient statistical power to detect meaningful effects while minimizing unnecessary resource use and participant burden. However, sample size estimation becomes particularly complex when multiple endpoints, treatments, and hypotheses are involved. These challenges are frequently encountered in bioequivalence trials, for which pharmacokinetic parameters, bioequivalence criteria, and reference products often vary across regulatory bodies.
 
-Existing software solutions, both simple and advanced, often fall short of addressing the intricacies of bioequivalence trial designs. For instance, the \proglang{R} package \pkg{pwr} (Champely, 2020) provides basic power calculations for tests involving proportions, means, one-way ANOVA, and the general linear model, as well as effect size computation. However, its capabilities are limited to handling only the simplest biosimilar trial designs. Similarly, \pkg{Rpact} is designed for confirmatory adaptive clinical trials with continuous, binary, and survival endpoints, but it cannot adequately handle the complexity of bioequivalence trials beyond the simplest cases. TrialSize, which includes over 80 functions for clinical trial sample size estimation, also lacks dedicated functions for anything beyond basic biosimilar trials.
+Existing software solutions, both simple and advanced, often fall short of addressing the intricacies of bioequivalence trial designs.  Generic sample size packages, such as the \proglang{R} package \pkg{pwr} \citep{Champely2020} provide basic power calculations for tests involving proportions, means, one-way ANOVA, and the general linear model, as well as effect size computation. However, these packages are restricted to trials with simple designs, typically involving two arms and a single endpoint. Similarly, \pkg{TrialSize} \citep{TrialSize2020} which offers over 80 functions for clinical trial sample size estimation, lacks the specialized features required for handling more advanced biosimilar trial scenarios.
 
-Proprietary software such as nQuery and PASS offers broader capabilities. For instance, nQuery supports a range of adaptive, group-sequential, and fixed sample size trials, including some bioequivalence study designs, such as the 2x2 crossover design. Similarly, PASS includes procedures for biosimilar trials using a parallel 2-group design. However, their applicability to more complex trial scenarios remains limited, and the reliance on proprietary systems may hinder reproducibility and accessibility.
+More advanced packages, such as \pkg{rpact} \citep{rpact2024}, are tailored for adaptive clinical trials and support complex designs, including group-sequential and multi-arm trials. However, these tools are not specifically designed to address the unique challenges of bioequivalence studies, such as implementing equivalence-specific statistical methodologies.
 
-Specialized R packages like PowerTOST (Labes et al., 2024) and Toster (Caldwell, 2022) aim to address sample size and power calculations for equivalence studies. These tools are particularly focused on the TOST procedure (two one-sided t-tests) and offer robust support for standard bioequivalence trials. However, their functionality is constrained when dealing with trials involving more than two arms or other complex design elements.
+Specialized \proglang{R} packages like \pkg{PowerTOST} \citep{PowerTOST2024} and \pkg{TOSTER} \citep{Caldwell2022} focus specifically on equivalence testing, with a strong emphasis on the TOST procedure (two one-sided t-tests). These packages provide robust support for standard bioequivalence trials but are limited in their capacity to handle more complex designs, such as those involving multiple arms or more intricate statistical frameworks.
+
+Proprietary software such as nQuery \citep{nQuery2024} and PASS \citep{PASS2024} offers broader capabilities. For instance, nQuery supports a range of adaptive, group-sequential, and fixed sample size trials, including some bioequivalence study designs, such as the 2x2 crossover design. Similarly, PASS includes procedures for biosimilar trials using a parallel 2-group design. However, their applicability to more complex trial scenarios remains limited, and the reliance on proprietary systems may hinder reproducibility and accessibility. A summary of the existing R packages and other applicable software is provided in Table~\ref{tab:overview}.
+
+\begin{table}[t!]
+\centering
+\begin{tabular}{lp{2.0cm}p{4.7cm}p{3.6cm}}
+\hline
+Software         & Domain of focus & Features   & Limitations \\
+ & & & \\\hline
+\pkg{PowerTOST}           & Biosimilar trials      & Wide range of power and sample size functions for (bio)equivalence studies & Limited support for trials with more than two arms\\
+\pkg{TOSTER} &  Biosimilar trials   & Focuses on two one-sided tests (TOST) with functions for equivalence testing and minimal effects testing  & Limited support for trials with more than two arms\\
+\pkg{rpact}  &  Adaptive trials & Comprehensive power and sample size functions for various endpoints in adaptive trials & No specific focus on biosimilar studies\\
+\pkg{pwr}     & Generic power calculations           &   Basic power calculations for proportions, means, and simple statistical tests & Restricted to relatively simple trial designs \\
+\pkg{TrialSize} & Clinical trials      & Extensive sample size functions for diverse clinical trial designs, including dose escalation studies & No specific focus on biosimilar studies\\\hline
+PASS & Clinical trials and other designs  & Extensive power and sample size procedures for a variety of study designs & Proprietary software; limited functionality for biosimilar designs \\
+nQuery	& Adaptive trials &	Comprehensive power and sample size functionality, including frequentist and Bayesian methods & Proprietary software \\ \hline
+\end{tabular}
+\caption{\label{tab:overview} R packages and other software for sample size calculation for bio-equivalence trials}
+\end{table}
+
+This paper presents the \proglang{R} package \pkg{SimTOST}, which is intended for use by clinical trial statisticians with a basic understanding of \proglang{R}, clinical trial design, and sample size calculation. \pkg{SimTOST} was developed to streamline sample size estimation for Phase 1 randomized bioequivalence trials. Major features of the software include the evaluation of multiple treatment arms, evaluation of multiple (co-)primary endpoints, configuration of distributional assumptions, customization of trial success criteria, adjustment for multiplicity, and empirical assessment of power and the type I error rate. Unlike conventional methods, \pkg{SimTOST} addresses the particular complexities of biosimilar trials, in that it can deal appropriately with multiple hypotheses, treatments, and correlated endpoints with flexibility and accuracy. We are not aware of any existing software/\proglang{R} package that is aimed specifically at sample size estimation for bioequivalence trials, that can also handle multiple endpoints, testing of multiple hypotheses, and crossover designs.
+
+The rest of this paper is structured as follows: Section~\ref{sec:bioequivalence} reviews the distinguishing features of biosimilar trials and summarises the key methods developed for sample size estimation for bioequivalence studies. In Section 3, the principal functionality of the \pkg{SimTOST} package is presented. In Section 4, several advanced features of the package are described, including multiple hypothesis testing. Section 5 presents a worked example to illustrate application of the software to a complex, but real-world situation encountered in the bioequivalence field: trials with three arms, three correlated co-primary endpoints, and two different reference products. Finally, Section 6 provides discussion, future directions, and conclusions.
+
+\section{Bioequivalence} \label{sec:bioequivalence}
+
+\subsection{Biosimilar versus conventional trial designs}
+Biosimilar trials differ from conventional clinical trials in both their objectives and the choice of comparator arms. The primary goal of a biosimilar trial is to demonstrate (bio)equivalence, whereas conventional trials often aim to establish superiority or non-inferiority. Furthermore, in biosimilar trials, the comparator is a reference medicinal product -- a previously approved drug -- rather than the standard of care, placebo, sham, or other alternative treatments typically used in conventional trials.
+
+Two medicinal products are considered bioequivalent if they meet specific criteria. These products must be either:
+
+\begin{itemize}
+  \item Pharmaceutical equivalents: Products that differ only in manufacturer but are otherwise identical in active ingredients, strength, and dosage form.
+	\item Pharmaceutical alternatives: Products that differ in their dosage form or formulation but contain the same active ingredients.
+\end{itemize}
+
+Bioequivalence is determined by comparing the bioavailability of the two products, which involves assessing the rate and extent of drug absorption using a standard set of pharmacokinetic parameters. The products are deemed bioequivalent if their bioavailability falls within predefined limits set by regulatory guidelines. \citep{CHMP2010}
+
+Unlike conventional trials, biosimilar trials may involve more than one reference product. This situation arises when different regulatory bodies stipulate distinct reference products for the clinical indication of interest. In such cases, it may be desirable to design a single trial that addresses the requirements of multiple regulators by simultaneously comparing the new product to two reference products. Estimating the sample size for such a trial requires careful consideration of the trial’s unique design and objectives.
+
+Figure~\ref{fig:exampletrial} illustrates an example of this approach, where a new treatment is compared to two different reference treatments across three outcomes, meeting the diverse requirements of multiple regulatory authorities.
+
+
+\begin{figure}[t!]
+\centering
+\includegraphics[width=\textwidth]{fig_manuscript_01.png}
+\caption{\label{fig:exampletrial} Example trial illustrating comparisons for three outcomes (AUCInf, AUClast, and Cmax) between a new treatment and reference products designated by different regulatory bodies (USA and EU).}
+\end{figure}
+
 
 \begin{leftbar}
 The introduction is in principle ``as usual''. However, it should usually embed
@@ -201,36 +254,7 @@ column headers and captions in sentence style, and if possible avoiding vertical
 lines.
 \end{leftbar}
 
-\begin{table}[t!]
-\centering
-\begin{tabular}{lllp{7.4cm}}
-\hline
-Type           & Distribution & Method   & Description \\ \hline
-GLM            & Poisson      & ML       & Poisson regression: classical GLM,
-                                           estimated by maximum likelihood (ML) \\
-               &              & Quasi    & ``Quasi-Poisson regression'':
-                                           same mean function, estimated by
-                                           quasi-ML (QML) or equivalently
-                                           generalized estimating equations (GEE),
-                                           inference adjustment via estimated
-                                           dispersion parameter \\
-               &              & Adjusted & ``Adjusted Poisson regression'':
-                                           same mean function, estimated by
-                                           QML/GEE, inference adjustment via
-                                           sandwich covariances\\
-               & NB           & ML       & NB regression: extended GLM,
-                                           estimated by ML including additional
-                                           shape parameter \\ \hline
-Zero-augmented & Poisson      & ML       & Zero-inflated Poisson (ZIP),
-                                           hurdle Poisson \\
-               & NB           & ML       & Zero-inflated NB (ZINB),
-                                           hurdle NB \\ \hline
-\end{tabular}
-\caption{\label{tab:overview} Overview of various count regression models. The
-table is usually placed at the top of the page (\texttt{[t!]}), centered
-(\texttt{centering}), has a caption below the table, column headers and captions
-are in sentence style, and if possible vertical lines should be avoided.}
-\end{table}
+
 
 
 %% -- Illustrations ------------------------------------------------------------
