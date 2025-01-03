@@ -8,6 +8,9 @@
 %% sideways tables
 %\usepackage{rotating}
 
+%% Use of normal (upright) text instead of italicized math mode.
+\usepackage{amsmath}
+
 
 %% another package (only for this demo article)
 \usepackage{framed}
@@ -148,16 +151,16 @@ Designing and analyzing a bioequivalence study requires careful attention to two
 The selection of pharmacokinetic (PK) parameters to estimate depends on trial characteristics, such as the sampling period. As outlined by \cite{CHMP2010}, in biosimilar studies aiming to demonstrate bioequivalence after a single dose, the actual sampling times should be utilized, and the following PK parameters should be evaluated:
 
 \begin{itemize}
-\item AUCInf (Area Under the Curve to Infinity): Total drug exposure over time, including extrapolated data beyond the last measurable concentration.
-\item AUClast (Area Under the Curve to Last Time Point): Drug exposure calculated up to the last measurable concentration.
-\item Cmax (Maximum Concentration): Peak plasma concentration, reflecting the highest level of drug exposure.
+\item $\text{AUC}_{\inf}$ (Area Under the Curve to Infinity): Total drug exposure over time, including extrapolated data beyond the last measurable concentration.
+\item $\text{AUC}_{\text{last}}$ (Area Under the Curve to Last Time Point): Drug exposure calculated up to the last measurable concentration.
+\item $C_{\text{max}}$ (Maximum Concentration): Peak plasma concentration, reflecting the highest level of drug exposure.
 \item Residual Area: The proportion of AUC that is extrapolated beyond the observed data, providing insight into the elimination phase.
-\item tmax (Time to Maximum Concentration): The time taken to reach the peak plasma concentration, indicating the rate of absorption.
+\item $t_{\text{max}}$ (Time to Maximum Concentration): The time taken to reach the peak plasma concentration, indicating the rate of absorption.
 \end{itemize}
 
 For biosimilar trials, equivalence testing methods are required when the objective of a statistical test is to demonstrate that the size of a difference in an endpoint of interest between two (or more) trial arms is not meaningful (i.e., not clinically relevant). For the base case of evaluating whether a new pharmaceutical product is `equivalent' to the reference product, the Two One-Sided Tests (TOST) procedure is deployed, in which the null hypothesis of `new product is worse by a clinically relevant amount' is compared with the alternative hypothesis of `difference between products is too small to be clinically relevant' \citep{schuirmann_comparison_1987, shieh_assessing_2022}.
 
-The TOST procedure involves evaluating two one-sided hypotheses to assess equivalence. The first null hypothesis is defined as:
+The TOST procedure is used to assess the equivalence of two drugs,  T (test) and  R (reference). It involves evaluating two one-sided hypotheses. The first null hypothesis is defined as:
 %
 \begin{equation} \label{eq:TOST_01}
 H_{01}: \mu_T - \mu_R \leq \theta_1,
@@ -169,7 +172,6 @@ with its corresponding alternative hypothesis:
 H_{11}: \mu_T - \mu_R > \theta_1.
 \end{equation}
 %
-
 Similarly, the second null hypothesis is defined as:
 %
 \begin{equation} \label{eq:TOST_01}
@@ -182,57 +184,45 @@ with its corresponding alternative hypothesis:
 H_{12}: \mu_T - \mu_R < \theta_2.
 \end{equation}
 %
-Equivalence between $\mu_T$ and $\mu_R$ is established, if and only if, both $H_{01}$ and $H_{02}$ are rejected at the chosen significance level $\alpha$.
+Equivalence between $\mu_T$ and $\mu_R$ is established, if and only if, both $H_{01}$ and $H_{02}$ are rejected at the chosen significance level $\alpha$. The significance level  $\alpha$ represents the type I error, which is the probability of incorrectly declaring the drugs bioequivalent when they are not.
 
 \section{The SimTOST package} \label{sec:pkgSimTOST}
 
+\subsection{Installation}
+The \pkg{SimTOST} package is available on CRAN at \url{https://CRAN.R-project.org/package=SimTOST}. To install and load \pkg{SimTOST} from the \proglang{R} command line, use the following commands:
+
+%
+<<simtost, eval=FALSE>>=
+install.packages("SimTOST")
+library("SimTOST")
+@
+%
+
+%
+<<simtost, echo=FALSE>>=
+library("SimTOST")
+@
+%
+
+\subsection{Data preparation and overall workflow}
+The workflow for sample size estimation involves making decisions regarding design (parallel vs. crossover design), setting target power, specifying equivalence boundaries, preparing the data, and making the relevant functions calls (described below).
+
+Data preparation is relatively simple. The principal parameters (vectors of mean and standard deviation vectors for each arm and each outcome, the lower and upper equivalence boundaries, and the arms to compare within each `comparator' (regulatory body)) are specified as list objects (see section 6.1.2). The remainder of the parameter choices are provided via function arguments (see section 6.1.3).
+
+\subsection{Functions and methods}
+The main features of the \pkg{SimTOST} package are deployed within the \fct{sampleSize} function, which is used to calculate the sample size required for achieving a specified minimum power. This function supports calculations for both individual and multiple endpoints, making it versatile for a wide range of bioequivalence trial designs. An example call is:
+
+\begin{Code}
+sampleSize(power = 0.9, alpha = 0.05, mu_list = mu_list,
+           sigma_list = sigma_list, lequi.tol = lequi.tol,
+           uequi.tol = uequi.tol, list_comparator = list_comparator,
+           adjust = "no", dtype = "parallel", ctype = "ROM", vareq = FALSE,
+           lognorm = TRUE, ncores = 1, nsim = 50, seed = 1234)
+\end{Code}
+
+The R console output produced by the above call summarise the specified parameters and result; in this case a total required sample size of N=138:
 
 
-
-\begin{leftbar}
-The introduction is in principle ``as usual''. However, it should usually embed
-both the implemented \emph{methods} and the \emph{software} into the respective
-relevant literature. For the latter both competing and complementary software
-should be discussed (within the same software environment and beyond), bringing
-out relative (dis)advantages. All software mentioned should be properly
-\verb|\cite{}|d. (See also Appendix~\ref{app:bibtex} for more details on
-\textsc{Bib}{\TeX}.)
-
-For writing about software JSS requires authors to use the markup
-\verb|\proglang{}| (programming languages and large programmable systems),
-\verb|\pkg{}| (software packages), \verb|\code{}| (functions, commands,
-arguments, etc.). If there is such markup in (sub)section titles (as above), a
-plain text version has to be provided in the {\LaTeX} command as well. Below we
-also illustrate how abbrevations should be introduced and citation commands can
-be employed. See the {\LaTeX} code for more details.
-\end{leftbar}
-
-Modeling count variables is a common task in economics and the social sciences.
-The classical Poisson regression model for count data is often of limited use in
-these disciplines because empirical count data sets typically exhibit
-overdispersion and/or an excess number of zeros. The former issue can be
-addressed by extending  the plain Poisson regression model in various
-directions: e.g., using sandwich covariances or estimating an additional
-dispersion parameter (in a so-called quasi-Poisson model). Another more formal
-way is to use a negative binomial (NB) regression. All of these models belong to
-the family of generalized linear models (GLMs). However, although these models
-typically can capture overdispersion rather well, they are in many applications
-not sufficient for  modeling excess zeros. Since \cite{Mullahy:1986} there is
-increased interest in zero-augmented models that address this issue by a second
-model component capturing zero counts. An overview of count data models in
-econometrics, including  hurdle and zero-inflated models, is provided in
-\cite{Cameron+Trivedi:2013}.
-
-In \proglang{R} \citep{R}, GLMs are provided by the model fitting functions
-\fct{glm} in the \pkg{stats} package and \fct{glm.nb} in the \pkg{MASS} package
-\citep[][Chapter~7.4]{Venables+Ripley:2002} along with associated methods for
-diagnostics and inference. The manuscript that this document is based on
-\citep{Zeileis+Kleiber+Jackman:2008} then introduced hurdle and zero-inflated
-count models in the functions \fct{hurdle} and \fct{zeroinfl} in the \pkg{pscl}
-package \citep{Jackman:2015}. Of course, much more software could be discussed
-here, including (but not limited to) generalized additive models for count data
-as available in the \proglang{R} packages \pkg{mgcv} \cite{Wood:2006},
-\pkg{gamlss} \citep{Stasinopoulos+Rigby:2007}, or \pkg{VGAM} \citep{Yee:2009}.
 
 
 %% -- Manuscript ---------------------------------------------------------------
