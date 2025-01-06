@@ -1,0 +1,107 @@
+---
+title: "Bioequivalence Tests for Parallel Trial Designs: 3 Arms, 1 Endpoint"
+author: "Thomas Debray"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output: 
+  html_document:
+    fig_caption: yes
+    fig_width: 9
+    fig_height: 6
+vignette: >
+  %\VignetteIndexEntry{Bioequivalence Tests for Parallel Trial Designs: 3 Arms, 1 Endpoint}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+bibliography: 'references.bib'
+link-citations: yes
+---
+
+```{r setup, include=FALSE, message = FALSE, warning = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(comment = "#>", collapse = TRUE)
+options(rmarkdown.html_vignette.check_title = FALSE) #title of doc does not match vignette title
+doc.cache <- T #for cran; change to F
+```
+
+This vignette demonstrates advanced sample size calculation techniques for parallel trial designs involving three arms and one endpoint. Specifically, we calculate the required sample size to test bioequivalence between a new treatment (SB2) and a reference drug (Remicade) administered in two different locations ("EU_Remicade" and "USA_Remicade"). The endpoint of interest is the Area Under the Curve (AUCinf), a commonly used pharmacokinetic measure.
+
+In this example, we assume the endpoint follows a log-normal distribution with equal variances across arms. The goal is to determine the sample size needed to achieve 90\% power while controlling the type I error rate at 5\%. The equivalence margin is defined as $E_L = 80\%$ and $E_U = 125\%$ of the reference mean on the original scale.
+
+The methods presented in this vignette build on fundamental bioequivalence testing concepts and extend them to multi-arm scenarios. These examples provide practical insights for designing robust parallel trials with complex equivalence testing requirements.
+
+For the primary outcome, AUCinf, we assume the data is available on the original scale, including the mean and standard deviation for each arm. This information is organized into a structured data table for further analysis:
+
+
+```{r setup, echo = T, message=F}
+library(SimTOST)
+
+data <- data.table::data.table(arm = c("SB2","EU_Remicade","USA_Remicade"),
+                               mean = c(37162.0, 37705.0, 37702.8), 
+                               sd = c(11113.62172, 12332.41615,12113.72))
+```
+
+# Sample Size Calculation for AUCinf: Equivalence to EU Remicade
+
+This example demonstrates how to calculate the sample size required when testing the equivalence of SB2 to a reference drug, Remicade, as administered in Europe. The goal is to determine the minimum number of participants needed to ensure adequate power for the equivalence test.
+
+## Hypotheses
+
+Null Hypothesis (No Equivalence):
+$$H_0: \frac{\mu_{SB2}}{\mu_{RemEU}} \le E_L ~~ or~~ \frac{\mu_{SB2}}{\mu_{RemEU}} \ge E_U$$
+
+Alternative Hypothesis (Equivalence):
+
+$$H_1: E_L<\frac{\mu_{SB2}}{\mu_{RemEU}} < E_U$$
+
+Here, $E_L$ and $E_U$ represent the lower and upper equivalence margins, respectively.
+
+
+## Preparing the function arguments
+
+To proceed with the sample size calculation, we first need to organize the mean and standard deviation values of each arm (SB2, EU Remicade, USA Remicade) into appropriate lists.
+
+Since this example focuses on a single endpoint, the mean list (`mu_list`) contains three scalar elements corresponding to each arm, and the standard deviation list (`sigma_list`) contains three 1x1 matrix elements.
+
+```{r}
+mu_list <- as.list(data$mean)  # Organize mean values into a list
+sigma_list <- as.list(data$sd)  # Organize standard deviation values into a list
+```
+
+Next, we define the comparison parameters, including the lower (`lequi.tol`) and upper (`uequi.tol`) equivalence boundaries, as well as the list of comparators. Since we are only comparing two arms (SB2 and EU Remicade), the list of comparators contains a single element specifying these two arms:
+
+```{r}
+list_comparator <- list("Comparison" = c("SB2","EU_Remicade"))
+list_lequi.tol <- list("Comparison" = 0.8)
+list_uequi.tol <- list("Comparison" = 1/0.8)
+```
+
+## Computing Sample Size
+
+Finally, we use the [sampleSize()](../reference/sampleSize.html) function to calculate the required sample size based on stochastic simulations of the trial. The function accepts several parameters, such as the desired power, confidence level, and design specifications. By default, it assumes:
+
+* A parallel design,
+* A test based on the rate of means (ROM),
+* Equal variances across arms,
+* A lognormal distribution for the endpoint.
+
+
+```{r}
+AUCinf_1comp <- sampleSize(
+  power = 0.9,                  # Target power
+  alpha = 0.05,                 # Confidence level
+  arm_names = data$arm,         # Names of trial arms
+  list_comparator = list_comparator,  # Comparator configuration
+  mu_list = mu_list,            # Mean values
+  sigma_list = sigma_list,      # Standard deviation values
+  list_lequi.tol = list_lequi.tol,   # Lower equivalence boundary
+  list_uequi.tol = list_uequi.tol,   # Upper equivalence boundary
+  ncores = 1,                   # Number of cores for computation
+  nsim = 1000                   # Number of stochastic simulations
+)
+
+AUCinf_1comp
+```
+
+Based on the table, the required sample size for this trial setting is `r AUCinf_1comp$response$n_total` or `r AUCinf_1comp$response$n_SB2`for each arm. 
+
+
+# References

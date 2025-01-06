@@ -28,7 +28,7 @@ sampleSize(
   dtype = "parallel",
   ctype = "ROM",
   vareq = TRUE,
-  lognorm = T,
+  lognorm = TRUE,
   k = NA,
   adjust = "no",
   dropout = NA,

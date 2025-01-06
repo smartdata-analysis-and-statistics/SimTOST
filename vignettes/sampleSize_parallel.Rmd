@@ -66,7 +66,9 @@ ss <- sampleSize(power = 0.8, alpha = 0.05,
                  adjust = "no", ncores = 1, nsim = 10000, seed = 1234)
 ss
 ```     
-For 80\% power, a total of `r ss$response$n_total` would be required. 
+For 80\% power, a total of `r ss$response$n_total` subjects would be required. 
+
+As an alternative scenario, consider that the standard deviation of the log-transformed response variable is unknown, but the standard deviation on the original scale is known ($\sigma = 1$). In such cases, the [sampleSize()](../reference/sampleSize.html) function can still accommodate adjustments to handle these uncertainties by transforming parameters accordingly. We now provide all data on the raw scale, including equivalence bounds, and set `ctype = ROM` and `lognorm = TRUE`:
 
 
 # Multiple Correlated Co-Primary Endpoints
