@@ -55,6 +55,9 @@
       <a href="../articles/sampleSize_crossover.html">Bioequivalence Tests for 2x2 Cross-Over Trial Designs with Log-Normal Data</a>
     </li>
     <li>
+      <a href="../articles/sampleSize_parallel_3A1E.html">Bioequivalence Tests for Parallel Trial Designs: 3 Arms, 1 Endpoint</a>
+    </li>
+    <li>
       <a href="../articles/sampleSize_parallel.html">Bioequivalence Tests for Parallel Trial Designs with Log-Normal Data</a>
     </li>
   </ul>
@@ -175,7 +178,16 @@ for greater flexibility in specifying parameter distributions.</p>
 <span><span class="co">#&gt;  n_drop   n_R   n_T n_total  power power_LCI power_UCI</span></span>
 <span><span class="co">#&gt;   &lt;num&gt; &lt;num&gt; &lt;num&gt;   &lt;num&gt;  &lt;num&gt;     &lt;num&gt;     &lt;num&gt;</span></span>
 <span><span class="co">#&gt;       0    68    68     136 0.8011 0.7931107 0.8088566</span></span></code></pre></div>
-<p>For 80% power, a total of 136 would be required.</p>
+<p>For 80% power, a total of 136 subjects would be required.</p>
+<p>As an alternative scenario, consider that the standard deviation of
+the log-transformed response variable is unknown, but the standard
+deviation on the original scale is known
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>σ</mi><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\sigma = 1</annotation></semantics></math>).
+In such cases, the <a href="../reference/sampleSize.html">sampleSize()</a> function can still
+accommodate adjustments to handle these uncertainties by transforming
+parameters accordingly. We now provide all data on the raw scale,
+including equivalence bounds, and set <code>ctype = ROM</code> and
+<code>lognorm = TRUE</code>:</p>
 </div>
 </div>
 <div class="section level2">
