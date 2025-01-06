@@ -45,7 +45,7 @@ Suggests:
     kableExtra,
     tibble,
     PowerTOST
-VignetteBuilder: knitr
+VignetteBuilder: rmarkdown
 Config/testthat/edition: 3
 LinkingTo: Rcpp, RcppArmadillo
 URL: https://github.com/smartdata-analysis-and-statistics/SimTOST,
