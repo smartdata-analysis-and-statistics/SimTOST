@@ -31,7 +31,7 @@ The methods presented in this vignette build on fundamental bioequivalence testi
 For the primary outcome, AUCinf, we assume the data is available on the original scale, including the mean and standard deviation for each arm. This information is organized into a structured data table for further analysis:
 
 
-```{r setup, echo = T, message=F}
+```{r}
 library(SimTOST)
 
 data <- data.table::data.table(arm = c("SB2","EU_Remicade","USA_Remicade"),
