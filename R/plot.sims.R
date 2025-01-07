@@ -1,10 +1,23 @@
-#' @title plot.simss
-#' @description Plot of power vs sample size for all comparators and total of comparators
+#' @title Plot Power vs Sample Size for Simulation Results
+#' @description Generates a detailed plot showing the relationship between power and total sample size for each comparator and the overall combined comparators.
+#' The plot also includes confidence intervals for power estimates and highlights the target power with a dashed line for easy visual comparison.
 #'
-#' @param x Object type simss
-#' @param \ldots Additional arguments which are passed to simss object.
+#' @param x An object of class `simss` containing simulation results.
+#' @param \ldots Additional arguments to be passed to the `plot.simss` function for customization.
 #'
-#' @return Plot of power vs total sample size per comparator and total of comparators
+#' @return A `ggplot` object illustrating:
+#'   - Power (y-axis) vs. Total Sample Size (x-axis) for individual endpoints and comparators.
+#'   - Error bars representing the 95% confidence interval of the power estimates.
+#'   - A dashed horizontal line indicating the target power for comparison.
+#'   - Faceted panels for each comparator, making it easy to compare results across different groups.
+#'
+#' @details
+#' The plot dynamically adjusts to exclude unnecessary components, such as redundant endpoints or comparators with insufficient data, ensuring clarity and simplicity.
+#' The `ggplot2` framework is used for visualizations, allowing further customization if needed.
+#'
+#' @author
+#' Johanna Muñoz \email{johanna.munoz@fromdatatowisdom.com}
+#'
 #' @importFrom data.table .SD
 #' @export plot.simss
 #'
@@ -14,7 +27,7 @@ plot.simss <- function(x, ...){
 
   table.test <- x$table.test
   nsim <- as.numeric(x$param.d["nsim"])
-  tpower<-as.numeric(x$param.d["power"])
+  tpower <- as.numeric(x$param.d["power"])
   # Calculate totaly test across all comparators= power
   qnam <- colnames(table.test)[grep("^totaly",colnames(table.test))]
 

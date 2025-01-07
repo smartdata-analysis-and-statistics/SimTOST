@@ -490,7 +490,7 @@ sampleSize <- function(mu_list, varcov_list = NA, sigma_list = NA, cor_mat = NA,
   # Parameters related to design ----
 
   if (lognorm == TRUE & ctype == "DOM"){
-    stop("No test available for DOM when variables are log normal distributed")
+    stop("Testing is not supported for DOM when variables follow a log-normal distribution.")
   }
 
   if( lognorm == FALSE & ctype == "ROM" & dtype =="2x2"){

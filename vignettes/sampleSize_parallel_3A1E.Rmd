@@ -126,12 +126,13 @@ Key Considerations:
 
 We proceed similarly to the initial example, modifying the `list_comparator` to include multiple comparators. In this case, the list contains two elements specifying the simultaneous comparison between SB2 vs. RemEU and SB2 vs. RemUSA. This approach ensures that the equivalence assessment accounts for both reference products.
 
+Additionally, we must specify equivalence boundaries for each comparison individually. These boundaries define the acceptable range for equivalence and are provided separately for each comparator.
 
 ```{r}
-list_comparator <- list("EU" = c("SB2", "EU_Remicade"),
-                        "US" = c("SB2", "USA_Remicade"))
-list_lequi.tol <- list("EU" = 0.8, "US" = 0.8)     # Lower equivalence boundary
-list_uequi.tol <- list("EU" = 1/0.8, "US" = 1/0.8) # Upper equivalence boundary
+list_comparator <- list("EMA" = c("SB2", "EU_Remicade"),
+                        "FDA" = c("SB2", "USA_Remicade"))
+list_lequi.tol <- list("EMA" = 0.8, "FDA" = 0.8)     # Lower equivalence boundary
+list_uequi.tol <- list("EMA" = 1/0.8, "FDA" = 1/0.8) # Upper equivalence boundary
 ```
 
 ## Computing Sample Size

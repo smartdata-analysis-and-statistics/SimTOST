@@ -19,7 +19,7 @@ print.simss <- function(x, ...) {
   sst <- x$response[["n_total"]]
 
   message(cat("### Sample Size Calculation Results ###"))
-  message(cat(paste0("For a study targeting ",100*tpower,"% power with a ",100*alpha, "% type-I error.")))
+  message(cat(paste0("For a trial targeting ",100*tpower,"% power with a ",100*alpha, "% type-I error.")))
   message(cat("-------------------------------------------------------------"))
   message(cat(paste0("The total required sample size to achieve ",100*power,"% power is ",sst," sample units.\n")))
   print(x$response[,-1], row.names = FALSE)

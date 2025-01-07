@@ -2,18 +2,32 @@
 % Please edit documentation in R/plot.sims.R
 \name{plot.simss}
 \alias{plot.simss}
-\title{plot.simss}
+\title{Plot Power vs Sample Size for Simulation Results}
 \usage{
 \method{plot}{simss}(x, ...)
 }
 \arguments{
-\item{x}{Object type simss}
+\item{x}{An object of class \code{simss} containing simulation results.}
 
-\item{\ldots}{Additional arguments which are passed to simss object.}
+\item{\ldots}{Additional arguments to be passed to the \code{plot.simss} function for customization.}
 }
 \value{
-Plot of power vs total sample size per comparator and total of comparators
+A \code{ggplot} object illustrating:
+\itemize{
+\item Power (y-axis) vs. Total Sample Size (x-axis) for individual endpoints and comparators.
+\item Error bars representing the 95\% confidence interval of the power estimates.
+\item A dashed horizontal line indicating the target power for comparison.
+\item Faceted panels for each comparator, making it easy to compare results across different groups.
+}
 }
 \description{
-Plot of power vs sample size for all comparators and total of comparators
+Generates a detailed plot showing the relationship between power and total sample size for each comparator and the overall combined comparators.
+The plot also includes confidence intervals for power estimates and highlights the target power with a dashed line for easy visual comparison.
+}
+\details{
+The plot dynamically adjusts to exclude unnecessary components, such as redundant endpoints or comparators with insufficient data, ensuring clarity and simplicity.
+The \code{ggplot2} framework is used for visualizations, allowing further customization if needed.
+}
+\author{
+Johanna Muñoz \email{johanna.munoz@fromdatatowisdom.com}
 }
