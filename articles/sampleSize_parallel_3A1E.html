@@ -91,7 +91,7 @@
                         <h4 data-toc-skip class="author">Thomas
 Debray</h4>
             
-            <h4 data-toc-skip class="date">January 06, 2025</h4>
+            <h4 data-toc-skip class="date">January 07, 2025</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/smartdata-analysis-and-statistics/SimTOST/blob/main/vignettes/sampleSize_parallel_3A1E.Rmd" class="external-link"><code>vignettes/sampleSize_parallel_3A1E.Rmd</code></a></small>
       <div class="hidden name"><code>sampleSize_parallel_3A1E.Rmd</code></div>
@@ -209,8 +209,103 @@ assumes:</p>
 <span><span class="co">#&gt;  n_drop n_SB2 n_EU_Remicade n_total power power_LCI power_UCI</span></span>
 <span><span class="co">#&gt;   &lt;num&gt; &lt;num&gt;         &lt;num&gt;   &lt;num&gt; &lt;num&gt;     &lt;num&gt;     &lt;num&gt;</span></span>
 <span><span class="co">#&gt;       0    42            42      84 0.903  0.882545  0.920287</span></span></code></pre></div>
-<p>Based on the table, the required sample size for this trial setting
-is 84 or 42for each arm.</p>
+<p>Results from the simulations indicate that the required sample size
+for this trial setting is 84 or 42 for each arm.</p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="sample-size-calculation-for-aucinf-equivalence-to-us-remicade-and-eu-remicade">Sample Size Calculation for AUCinf: Equivalence to US Remicade and
+EU Remicade<a class="anchor" aria-label="anchor" href="#sample-size-calculation-for-aucinf-equivalence-to-us-remicade-and-eu-remicade"></a>
+</h2>
+<p>In this section, we calculate the sample size required to demonstrate
+equivalence with both the European reference product (RemEU) and the US
+reference product (RemUS). This scenario involves a more complex
+comparison, as we must simultaneously establish equivalence with two
+distinct reference arms.</p>
+<div class="section level3">
+<h3 id="hypotheses-1">Hypotheses<a class="anchor" aria-label="anchor" href="#hypotheses-1"></a>
+</h3>
+<p>Null Hypothesis (No Equivalence):</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>H</mi><mn>0</mn></msub><mo>:</mo><mfrac><msub><mi>μ</mi><mrow><mi>S</mi><mi>B</mi><mn>2</mn></mrow></msub><msub><mi>μ</mi><mrow><mi>R</mi><mi>e</mi><mi>m</mi><mi>E</mi><mi>U</mi></mrow></msub></mfrac><mo>≤</mo><msub><mi>E</mi><mi>L</mi></msub><mspace width="0.222em"></mspace><mspace width="0.222em"></mspace><mi>o</mi><mi>r</mi><mspace width="0.222em"></mspace><mspace width="0.222em"></mspace><mfrac><msub><mi>μ</mi><mrow><mi>S</mi><mi>B</mi><mn>2</mn></mrow></msub><msub><mi>μ</mi><mrow><mi>R</mi><mi>e</mi><mi>m</mi><mi>E</mi><mi>U</mi></mrow></msub></mfrac><mo>≥</mo><msub><mi>E</mi><mi>U</mi></msub><mspace width="0.222em"></mspace><mspace width="0.222em"></mspace><mi>o</mi><mi>r</mi><mspace width="0.222em"></mspace><mspace width="0.222em"></mspace><mfrac><msub><mi>μ</mi><mrow><mi>S</mi><mi>B</mi><mn>2</mn></mrow></msub><msub><mi>μ</mi><mrow><mi>R</mi><mi>e</mi><mi>m</mi><mi>U</mi><mi>S</mi><mi>A</mi></mrow></msub></mfrac><mo>≤</mo><msub><mi>E</mi><mi>L</mi></msub><mspace width="0.222em"></mspace><mspace width="0.222em"></mspace><mi>o</mi><mi>r</mi><mspace width="0.222em"></mspace><mspace width="0.222em"></mspace><mfrac><msub><mi>μ</mi><mrow><mi>S</mi><mi>B</mi><mn>2</mn></mrow></msub><msub><mi>μ</mi><mrow><mi>R</mi><mi>e</mi><mi>m</mi><mi>U</mi><mi>S</mi><mi>A</mi></mrow></msub></mfrac><mo>≥</mo><msub><mi>E</mi><mi>U</mi></msub></mrow><annotation encoding="application/x-tex">H_0: \frac{\mu_{SB2}}{\mu_{RemEU}} \le E_L ~~ or~~ \frac{\mu_{SB2}}{\mu_{RemEU}} \ge E_U~~ or~~ \frac{\mu_{SB2}}{\mu_{RemUSA}} \le E_L ~~ or~~ \frac{\mu_{SB2}}{\mu_{RemUSA}} \ge E_U</annotation></semantics></math></p>
+<p>Alternative Hypothesis (Equivalence):</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>H</mi><mn>1</mn></msub><mo>:</mo><msub><mi>E</mi><mi>L</mi></msub><mo>&lt;</mo><mfrac><msub><mi>μ</mi><mrow><mi>S</mi><mi>B</mi><mn>2</mn></mrow></msub><msub><mi>μ</mi><mrow><mi>R</mi><mi>e</mi><mi>m</mi><mi>E</mi><mi>U</mi></mrow></msub></mfrac><mo>&lt;</mo><msub><mi>E</mi><mi>U</mi></msub><mspace width="0.222em"></mspace><mspace width="0.222em"></mspace><mi>a</mi><mi>n</mi><mi>d</mi><mspace width="0.222em"></mspace><mspace width="0.222em"></mspace><msub><mi>E</mi><mi>L</mi></msub><mo>&lt;</mo><mfrac><msub><mi>μ</mi><mrow><mi>S</mi><mi>B</mi><mn>2</mn></mrow></msub><msub><mi>μ</mi><mrow><mi>R</mi><mi>e</mi><mi>m</mi><mi>U</mi><mi>S</mi><mi>A</mi></mrow></msub></mfrac><mo>&lt;</mo><msub><mi>E</mi><mi>U</mi></msub></mrow><annotation encoding="application/x-tex">H_1: E_L&lt;\frac{\mu_{SB2}}{\mu_{RemEU}} &lt; E_U~~ and~~E_L&lt;\frac{\mu_{SB2}}{\mu_{RemUSA}} &lt; E_U</annotation></semantics></math>
+Key Considerations:</p>
+<ul>
+<li>The function <a href="../reference/sampleSize.html">sampleSize()</a>
+adjusts the alpha level for multiple comparisons within a single
+comparator (e.g., comparisons involving only RemEU or RemUSA).</li>
+<li>Current Limitation: The function does not yet account for alpha
+adjustments between comparators when simultaneously comparing SB2 with
+both reference products (RemEU and RemUSA). Thus, the null hypothesis is
+rejected if any ratio of means (ROM) falls outside the equivalence
+boundaries. Future program updates aim to address this limitation and
+include proper alpha adjustments for comparisons between
+comparators.</li>
+</ul>
+</div>
+<div class="section level3">
+<h3 id="implementation-details">Implementation Details<a class="anchor" aria-label="anchor" href="#implementation-details"></a>
+</h3>
+<p>We proceed similarly to the initial example, modifying the
+<code>list_comparator</code> to include multiple comparators. In this
+case, the list contains two elements specifying the simultaneous
+comparison between SB2 vs. RemEU and SB2 vs. RemUSA. This approach
+ensures that the equivalence assessment accounts for both reference
+products.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">list_comparator</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"EU"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SB2"</span>, <span class="st">"EU_Remicade"</span><span class="op">)</span>,</span>
+<span>                        <span class="st">"US"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SB2"</span>, <span class="st">"USA_Remicade"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">list_lequi.tol</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"EU"</span> <span class="op">=</span> <span class="fl">0.8</span>, <span class="st">"US"</span> <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span>     <span class="co"># Lower equivalence boundary</span></span>
+<span><span class="va">list_uequi.tol</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"EU"</span> <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">0.8</span>, <span class="st">"US"</span> <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">0.8</span><span class="op">)</span> <span class="co"># Upper equivalence boundary</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="computing-sample-size-1">Computing Sample Size<a class="anchor" aria-label="anchor" href="#computing-sample-size-1"></a>
+</h3>
+<p>We then pass these values into the <a href="../reference/sampleSize.html">sampleSize()</a> function to
+calculate the required sample size for multiple comparisons.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">AUCinf_2comp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sampleSize.html">sampleSize</a></span><span class="op">(</span></span>
+<span>  power <span class="op">=</span> <span class="fl">0.9</span>,                  <span class="co"># Target power</span></span>
+<span>  alpha <span class="op">=</span> <span class="fl">0.05</span>,                 <span class="co"># Confidence level</span></span>
+<span>  arm_names <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">arm</span>,         <span class="co"># Names of trial arms</span></span>
+<span>  list_comparator <span class="op">=</span> <span class="va">list_comparator</span>,  <span class="co"># Comparator configuration</span></span>
+<span>  mu_list <span class="op">=</span> <span class="va">mu_list</span>,            <span class="co"># Mean values</span></span>
+<span>  sigma_list <span class="op">=</span> <span class="va">sigma_list</span>,      <span class="co"># Standard deviation values</span></span>
+<span>  list_lequi.tol <span class="op">=</span> <span class="va">list_lequi.tol</span>,   <span class="co"># Lower equivalence boundary</span></span>
+<span>  list_uequi.tol <span class="op">=</span> <span class="va">list_uequi.tol</span>,   <span class="co"># Upper equivalence boundary</span></span>
+<span>  ncores <span class="op">=</span> <span class="fl">1</span>,                   <span class="co"># Number of cores for computation</span></span>
+<span>  nsim <span class="op">=</span> <span class="fl">1000</span>                   <span class="co"># Number of stochastic simulations</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">AUCinf_2comp</span></span>
+<span><span class="co">#&gt; Given a 90%  target power with 100(1-2*0.05)% confidence level.</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; The total required sample size to achieve 91% power is 150 sample units.</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  n_drop n_SB2 n_EU_Remicade n_USA_Remicade n_total power power_LCI power_UCI</span></span>
+<span><span class="co">#&gt;   &lt;num&gt; &lt;num&gt;         &lt;num&gt;          &lt;num&gt;   &lt;num&gt; &lt;num&gt;     &lt;num&gt;     &lt;num&gt;</span></span>
+<span><span class="co">#&gt;       0    50            50             50     150  0.91 0.8901162 0.9266579</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="results-and-interpretation">Results and Interpretation<a class="anchor" aria-label="anchor" href="#results-and-interpretation"></a>
+</h3>
+<p>Based on the output table, the required total sample size for this
+trial setting is 150. Notably, an additional 8 patients per arm are
+required to achieve equivalence with both reference products (RemEU and
+RemUSA), compared to the scenario where equivalence is required with
+only one reference arm (42).</p>
+<p>This demonstrates the added complexity and sample size requirements
+when multiple comparators are involved in an equivalence trial.</p>
+<p>The package includes the <a href="../reference/plot.simss.html">plot()</a> function, which is
+designed to visualize the relationship between sample size (x-axis) and
+achieved power (y-axis) for all combinations of outcomes and
+comparators. In this example, we will use the <a href="../reference/plot.simss.html">plot()</a> function to generate a
+plot for the <code>AUCinf_2comp</code> object.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">AUCinf_2comp</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Error in get(paste0(generic, ".", class), envir = get_method_env()) : </span></span>
+<span><span class="co">#&gt;   object 'type_sum.accel' not found</span></span></code></pre></div>
+<p><img src="sampleSize_parallel_3A1E_files/figure-html/unnamed-chunk-7-1.png" width="95%"></p>
 </div>
 </div>
 <div class="section level2">
