@@ -204,7 +204,7 @@ assumes:</p>
 <span><span class="va">AUCinf_1comp</span></span>
 <span><span class="co">#&gt; ### Sample Size Calculation Results ###</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; For a study targeting 90% power with a 5% type-I error.</span></span>
+<span><span class="co">#&gt; For a trial targeting 90% power with a 5% type-I error.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; -------------------------------------------------------------</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -256,11 +256,14 @@ case, the list contains two elements specifying the simultaneous
 comparison between SB2 vs. RemEU and SB2 vs. RemUSA. This approach
 ensures that the equivalence assessment accounts for both reference
 products.</p>
+<p>Additionally, we must specify equivalence boundaries for each
+comparison individually. These boundaries define the acceptable range
+for equivalence and are provided separately for each comparator.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">list_comparator</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"EU"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SB2"</span>, <span class="st">"EU_Remicade"</span><span class="op">)</span>,</span>
-<span>                        <span class="st">"US"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SB2"</span>, <span class="st">"USA_Remicade"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">list_lequi.tol</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"EU"</span> <span class="op">=</span> <span class="fl">0.8</span>, <span class="st">"US"</span> <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span>     <span class="co"># Lower equivalence boundary</span></span>
-<span><span class="va">list_uequi.tol</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"EU"</span> <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">0.8</span>, <span class="st">"US"</span> <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">0.8</span><span class="op">)</span> <span class="co"># Upper equivalence boundary</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">list_comparator</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"EMA"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SB2"</span>, <span class="st">"EU_Remicade"</span><span class="op">)</span>,</span>
+<span>                        <span class="st">"FDA"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SB2"</span>, <span class="st">"USA_Remicade"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">list_lequi.tol</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"EMA"</span> <span class="op">=</span> <span class="fl">0.8</span>, <span class="st">"FDA"</span> <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span>     <span class="co"># Lower equivalence boundary</span></span>
+<span><span class="va">list_uequi.tol</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"EMA"</span> <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">0.8</span>, <span class="st">"FDA"</span> <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">0.8</span><span class="op">)</span> <span class="co"># Upper equivalence boundary</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="computing-sample-size-1">Computing Sample Size<a class="anchor" aria-label="anchor" href="#computing-sample-size-1"></a>
@@ -284,7 +287,7 @@ calculate the required sample size for multiple comparisons.</p>
 <span><span class="va">AUCinf_2comp</span></span>
 <span><span class="co">#&gt; ### Sample Size Calculation Results ###</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; For a study targeting 90% power with a 5% type-I error.</span></span>
+<span><span class="co">#&gt; For a trial targeting 90% power with a 5% type-I error.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; -------------------------------------------------------------</span></span>
 <span><span class="co">#&gt; </span></span>
