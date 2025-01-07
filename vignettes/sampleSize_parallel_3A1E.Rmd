@@ -101,7 +101,70 @@ AUCinf_1comp <- sampleSize(
 AUCinf_1comp
 ```
 
-Based on the table, the required sample size for this trial setting is `r AUCinf_1comp$response$n_total` or `r AUCinf_1comp$response$n_SB2`for each arm. 
+Results from the simulations indicate that the required sample size for this trial setting is `r AUCinf_1comp$response$n_total` or `r AUCinf_1comp$response$n_SB2` for each arm. 
 
+
+# Sample Size Calculation for AUCinf: Equivalence to US Remicade and EU Remicade
+
+In this section, we calculate the sample size required to demonstrate equivalence with both the European reference product (RemEU) and the US reference product (RemUS). This scenario involves a more complex comparison, as we must simultaneously establish equivalence with two distinct reference arms. 
+
+## Hypotheses
+
+Null Hypothesis (No Equivalence):
+
+$$H_0: \frac{\mu_{SB2}}{\mu_{RemEU}} \le E_L ~~ or~~ \frac{\mu_{SB2}}{\mu_{RemEU}} \ge E_U~~ or~~ \frac{\mu_{SB2}}{\mu_{RemUSA}} \le E_L ~~ or~~ \frac{\mu_{SB2}}{\mu_{RemUSA}} \ge E_U$$
+
+Alternative Hypothesis (Equivalence):
+
+$$H_1: E_L<\frac{\mu_{SB2}}{\mu_{RemEU}} < E_U~~ and~~E_L<\frac{\mu_{SB2}}{\mu_{RemUSA}} < E_U$$
+Key Considerations:
+
+* The function [sampleSize()](../reference/sampleSize.html) adjusts the alpha level for multiple comparisons within a single comparator (e.g., comparisons involving only RemEU or RemUSA).
+* Current Limitation: The function does not yet account for alpha adjustments between comparators when simultaneously comparing SB2 with both reference products (RemEU and RemUSA). Thus, the null hypothesis is rejected if any ratio of means (ROM) falls outside the equivalence boundaries. Future program updates aim to address this limitation and include proper alpha adjustments for comparisons between comparators.
+
+## Implementation Details
+
+We proceed similarly to the initial example, modifying the `list_comparator` to include multiple comparators. In this case, the list contains two elements specifying the simultaneous comparison between SB2 vs. RemEU and SB2 vs. RemUSA. This approach ensures that the equivalence assessment accounts for both reference products.
+
+
+```{r}
+list_comparator <- list("EU" = c("SB2", "EU_Remicade"),
+                        "US" = c("SB2", "USA_Remicade"))
+list_lequi.tol <- list("EU" = 0.8, "US" = 0.8)     # Lower equivalence boundary
+list_uequi.tol <- list("EU" = 1/0.8, "US" = 1/0.8) # Upper equivalence boundary
+```
+
+## Computing Sample Size
+
+We then pass these values into the [sampleSize()](../reference/sampleSize.html) function to calculate the required sample size for multiple comparisons.
+
+```{r}
+AUCinf_2comp <- sampleSize(
+  power = 0.9,                  # Target power
+  alpha = 0.05,                 # Confidence level
+  arm_names = data$arm,         # Names of trial arms
+  list_comparator = list_comparator,  # Comparator configuration
+  mu_list = mu_list,            # Mean values
+  sigma_list = sigma_list,      # Standard deviation values
+  list_lequi.tol = list_lequi.tol,   # Lower equivalence boundary
+  list_uequi.tol = list_uequi.tol,   # Upper equivalence boundary
+  ncores = 1,                   # Number of cores for computation
+  nsim = 1000                   # Number of stochastic simulations
+)
+
+AUCinf_2comp
+```
+
+## Results and Interpretation
+
+Based on the output table, the required total sample size for this trial setting is `r AUCinf_2comp$response$n_total`. Notably, an additional `r AUCinf_2comp$response$n_SB2 - AUCinf_1comp$response$n_SB2` patients per arm are required to achieve equivalence with both reference products (RemEU and RemUSA), compared to the scenario where equivalence is required with only one reference arm (`r AUCinf_1comp$response$n_SB2`).
+
+This demonstrates the added complexity and sample size requirements when multiple comparators are involved in an equivalence trial.
+
+The package includes the [plot()](../reference/plot.simss.html) function, which is designed to visualize the relationship between sample size (x-axis) and achieved power (y-axis) for all combinations of outcomes and comparators. In this example, we will use the [plot()](../reference/plot.simss.html) function to generate a plot for the `AUCinf_2comp` object.
+
+```{r, fig.height=4, fig.width = 10, out.width = "95%"}
+plot(AUCinf_2comp)
+```
 
 # References
