@@ -89,6 +89,8 @@ The null hypothesis ($H_0$) is rejected if, and only if, all null hypotheses ass
 If each pharmacokinetic (PK) measure is tested independently, the following sample sizes would be required for each endpoint to achieve a 5\% significance level:
 
 ```{r}
+library(SimTOST)
+
 # Sample size calculation for AUCinf
 (sim_AUCinf <- sampleSize(
   power = 0.9,                                # Target power
@@ -97,15 +99,29 @@ If each pharmacokinetic (PK) measure is tested independently, the following samp
   list_comparator = list("EMA" = c("SB2", "EU_Remicade")),  # Comparator configuration
   mu_list = list("SB2" = 38703, "EU_Remicade" = 39360),     # Mean values
   sigma_list = list("SB2" = 11114, "EU_Remicade" = 12332),  # Standard deviation values
-  list_lequi.tol = list("EMA" = 0.8),         # Lower equivalence margin
-  list_uequi.tol = list("EMA" = 1 / 0.8),     # Upper equivalence margin
+  list_lequi.tol = list("EMA" = 0.80),        # Lower equivalence margin
+  list_uequi.tol = list("EMA" = 1.25),        # Upper equivalence margin
+  ncores = 1,                                 # Number of computation cores
+  nsim = 1000                                 # Number of stochastic simulations
+))
+
+# Sample size calculation for AUClast
+(sim_AUClast <- sampleSize(
+  power = 0.9,                                # Target power
+  alpha = 0.05,                               # Significance level
+  arm_names = c("SB2", "EU_Remicade"),        # Names of trial arms
+  list_comparator = list("EMA" = c("SB2", "EU_Remicade")),  # Comparator configuration
+  mu_list = list("SB2" = 36862, "EU_Remicade" = 37022),     # Mean values
+  sigma_list = list("SB2" = 9133, "EU_Remicade" = 9398),    # Standard deviation values
+  list_lequi.tol = list("EMA" = 0.80),        # Lower equivalence margin
+  list_uequi.tol = list("EMA" = 1.25),        # Upper equivalence margin
   ncores = 1,                                 # Number of computation cores
   nsim = 1000                                 # Number of stochastic simulations
 ))
 ```
 
 
-If we were to test each PK measure independently, we would find a total sample size of $N=$ `r sim_AUCinf$sim_AUCinf$response$n_total` for AUCinf, $N=56$ for AUClast, and $N=20$ for Cmax. This means that we would have to enroll `r sim_AUCinf$sim_AUCinf$response$n_total` + $56+20 = 152$ patients in order to reject $H_0$ at a significance level of 5\%.
+If we were to test each PK measure independently, we would find a total sample size of `r sim_AUCinf$response$n_total` for AUCinf, `r sim_AUClast$response$n_total` for AUClast, and $N=20$ for Cmax. This means that we would have to enroll `r sim_AUCinf$response$n_total` + `r sim_AUClast$response$n_total` +$20 = 152$ patients in order to reject $H_0$ at a significance level of 5\%.
 
 
 
