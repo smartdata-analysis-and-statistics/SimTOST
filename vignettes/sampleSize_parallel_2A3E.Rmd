@@ -50,68 +50,10 @@ kableExtra::kable_styling(kableExtra::kable(data,
                           bootstrap_options = "striped")
 ```
 
-# Methodology and Assumptions
+In the sections below, we explore various strategies for determining the sample size required for a parallel trial to demonstrate equivalence across the three co-primary endpoints. These strategies are based on the Ratio of Means (ROM) approach, with equivalence bounds set between 80\% and 125\%.
 
-The bioequivalence analysis focuses on two key pharmacokinetic endpoints:
-
-* AUCinf: Area Under the Curve (infinity)
-* Cmax: Maximum concentration
-
-For both endpoints, the analysis assumes that:
-
-* Summary data (e.g., mean and standard deviation) are available on the original scale.
-* These data are provided for each treatment arm.
-
-To evaluate bioequivalence, we apply the $80\%/125\%$ rule, which defines equivalence bounds relative to the reference mean. The evaluation is conducted using a one-sided significance level of 5\%, with a target statistical power of 90\%.
-
-
-## Hypotheses
-The null and alternative hypotheses for the equivalence test are as follows:
-
-### Difference of Means (DOM)
-
-Null Hypothesis ($H_0$): At least one endpoint does not meet the equivalence criteria:
- 
-$$H_0: \mu_T^{(j)} - \mu_R^{(j)} \le E_L ~~ \text{or}~~ \mu_T^{(j)} - \mu_R^{(j)} \ge E_U \quad \text{for at least one}\;j$$
-
-Alternative Hypothesis ($H_1$): All endpoints meet the equivalence criteria:
-
-$$H_1: E_L<\mu_{T}^{(j)}-\mu_{R}^{(j)} < E_U \quad\text{for all}\;j$$
-
-The null hypothesis ($H_0$) is rejected if, and only if, all null hypotheses associated with the $K$ primary endpoints are rejected at a significance level of $\alpha$. This ensures that equivalence is established across all endpoints simultaneously. 
-
-### Ratio of Means (ROM)
-The equivalence hypotheses can also be expressed as a Ratio of Means (ROM), which is often used in bioequivalence studies:
-
-Null Hypothesis ($H_0$): At least one endpoint does not meet the equivalence criteria:
- 
-$$H_0: \frac{\mu_T^{(j)}}{\mu_R^{(j)}} \le \log(E_L) ~~ \text{or}~~ \frac{\mu_T^{(j)}}{\mu_R^{(j)}} \ge \log(E_U) \quad \text{for at least one}\;j$$
-
-Alternative Hypothesis ($H_1$): All endpoints meet the equivalence criteria:
-
-$$H_1: \log(E_L)< \frac{\mu_{T}^{(j)}}{\mu_{R}^{(j)}} < \log(E_U) \quad\text{for all}\;j$$
-
-
-## Statistical Considerations
-
-### Consistency Across Endpoints
-For equivalence to be established, all primary endpoints must simultaneously satisfy the equivalence criteria. This applies whether the criteria are expressed as:
-
-  * The Difference of Means (DOM) approach measures absolute differences between treatment means.
-  * The Ratio of Means (ROM) approach captures relative differences and is commonly used when analyzing log-transformed data, such as in pharmacokinetic studies.
-
-### Type I Error Control
-Rejection of the null hypothesis ($H_0$) requires that all individual null hypotheses across endpoints be rejected. Since the test is designed to achieve equivalence simultaneously for all endpoints, there is no need for multiplicity adjustments, and the Type I error rate is controlled by the study design.
-
-### Impact on Power
-Requiring equivalence across multiple endpoints reduces the overall power of the test. Specifically:
-
-* The Type II error increases as the number of primary endpoints ($K$) grows.
-* This makes equivalence testing more challenging for studies with multiple endpoints, as additional endpoints require larger sample sizes or stronger effect sizes to achieve sufficient power [@mielke_sample_2018].
-
-
-## Independent Testing of PK Measures
-If each pharmacokinetic (PK) measure is tested independently, the following sample sizes would be required for each endpoint to achieve a 5\% significance level:
+# Independent Testing of PK Measures
+A conservative approach to sample size calculation involves testing each pharmacokinetic (PK) measure independently. This method assumes that the endpoints are uncorrelated and that equivalence must be demonstrated for each endpoint separately. Consequently, the overall sample size required for the trial is the sum of the sample sizes for each PK measure.
 
 ```{r}
 library(SimTOST)
@@ -162,8 +104,11 @@ library(SimTOST)
 
 If we were to test each PK measure independently, we would find a total sample size of `r sim_AUCinf$response$n_total` for AUCinf, `r sim_AUClast$response$n_total` for AUClast, and `r sim_Cmax$response$n_total` for Cmax. This means that we would have to enroll `r sim_AUCinf$response$n_total` + `r sim_AUClast$response$n_total` + `r sim_Cmax$response$n_total` = `r sim_AUCinf$response$n_total + sim_AUClast$response$n_total + sim_Cmax$response$n_total` patients in order to reject $H_0$ at a significance level of 5\%. For context, the original trial was a randomized, single-blind, three-arm, parallel-group study conducted in 159 healthy subjects, slightly more than the `r sim_AUCinf$response$n_total + sim_AUClast$response$n_total + sim_Cmax$response$n_total` patients estimated as necessary. This suggests that the original trial had a small buffer above the calculated sample size requirements.
 
-## Simultaneous Testing of PK Measures with Independent Endpoints
+# Simultaneous Testing of PK Measures with Independent Endpoints
 This approach focuses on simultaneous testing of pharmacokinetic (PK) measures while assuming independence between endpoints. Unlike the previous approach, which evaluated each PK measure independently, this method integrates comparisons across multiple endpoints, accounting for correlations (or lack thereof) between them. By doing so, it enables simultaneous testing for equivalence without inflating the overall Type I error rate.
+
+
+
 
 In this setting, equivalence is required for at least one endpoint rather than all endpoints, reducing the overall sample size compared to independent testing. Furthermore, this approach allows for greater flexibility by enabling users to specify correlation structures or work with uncorrelated endpoints as a default assumption.
 

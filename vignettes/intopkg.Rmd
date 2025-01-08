@@ -17,3 +17,74 @@ knitr::opts_chunk$set(
 ```{r setup}
 library(SimTOST)
 ```
+
+
+ Methodology and Assumptions
+
+
+# Hypotheses
+The null and alternative hypotheses for the equivalence test are as follows:
+
+## Difference of Means (DOM)
+A common approach to assessing bioequivalence involves comparing the log-transformed pharmacokinetic (PK) measures between the test and reference products. This is done using the following interval (null) hypothesis:
+
+Null Hypothesis ($H_0$): At least one endpoint does not meet the equivalence criteria:
+ 
+$$H_0: m_T^{(j)} - m_R^{(j)} \le \delta_L ~~ \text{or}~~ m_T^{(j)} - m_R^{(j)} \ge \delta_U \quad \text{for at least one}\;j$$
+
+Alternative Hypothesis ($H_1$): All endpoints meet the equivalence criteria:
+
+$$H_1: \delta_L<m_{T}^{(j)}-m_{R}^{(j)} <\delta_U \quad\text{for all}\;j$$
+
+Here, $m_T$ and $m_R$ represent the logarithmically transformed mean responses of the test product (the proposed biosimilar) and the reference product, respectively. The equivalence limits, $\delta_L$ and $\delta_u$, are typically chosen to be symmetric, such that  $\delta = - \delta_L = \delta_U$. The FDA further recommends that the equivalence acceptance criterion (EAC) be defined as $\delta = EAC = 1.5 \sigma_R$, where $\sigma_R$ represents the variability of the log-transformed endpoint for the reference product.
+
+The null hypothesis ($H_0$) is rejected if, and only if, all null hypotheses associated with the $K$ primary endpoints are rejected at a significance level of $\alpha$. This ensures that equivalence is established across all endpoints simultaneously. 
+
+
+## Ratio of Means (ROM)
+The equivalence hypotheses can also be expressed as a Ratio of Means (ROM):
+
+Null Hypothesis ($H_0$): At least one endpoint does not meet the equivalence criteria:
+ 
+$$H_0: \frac{\mu_T^{(j)}}{\mu_R^{(j)}} \le E_L ~~ \text{or}~~ \frac{\mu_T^{(j)}}{\mu_R^{(j)}} \ge E_U \quad \text{for at least one}\;j$$
+
+Alternative Hypothesis ($H_1$): All endpoints meet the equivalence criteria:
+
+$$H_1: E_L< \frac{\mu_{T}^{(j)}}{\mu_{R}^{(j)}} < E_U \quad\text{for all}\;j$$
+
+Here, $\mu_T$ and $\mu_R$ represent the arithmetic mean responses of the test product (the proposed biosimilar) and the reference product, respectively. 
+
+# Log-Transformation and Parameter Adjustments in sampleSize()
+In [sampleSize()](../reference/sampleSize.html), Ratio of Means (ROM) tests are converted to Difference of Means (DOM) tests by log-transforming the data. Equivalence limits are applied to the log-transformed data, and the results are back-transformed to the original scale for interpretation. This approach leverages the log-normal distribution of pharmacokinetic (PK) measures like AUC and Cmax.
+
+## Logarithmic Mean
+The logarithmic mean is derived from the provided `mu_list` (arithmetic means) and `sigma_list` (variances) using the following formula:
+
+$$\text{Logarithmic Mean} = \log(\text{Arithmetic Mean}) - \frac{1}{2}\text{Variance}$$
+This formula adjusts the arithmetic mean to account for the skewness of log-normal data, ensuring that the central tendency on the log scale aligns with the transformed data.
+
+## Logarithmic Variance Transformation
+To fully operate within the log-normal framework, the variances on the original scale (`sigma_list`) must also be transformed. The variance on the log scale is calculated using the normalized variance formula:
+ 
+\[
+\text{Logarithmic Variance} = \log\left(1 + \frac{\sigma^2}{\mu^2}\right)
+\]
+
+# Statistical Considerations
+
+## Consistency Across Endpoints
+For equivalence to be established, all primary endpoints must simultaneously satisfy the equivalence criteria. This applies whether the criteria are expressed as:
+
+  * The Difference of Means (DOM) approach measures absolute differences between treatment means.
+  * The Ratio of Means (ROM) approach captures relative differences and is commonly used when analyzing log-transformed data, such as in pharmacokinetic studies.
+
+## Type I Error Control
+Rejection of the null hypothesis ($H_0$) requires that all individual null hypotheses across endpoints be rejected. Since the test is designed to achieve equivalence simultaneously for all endpoints, there is no need for multiplicity adjustments, and the Type I error rate is controlled by the study design.
+
+## Impact on Power
+Requiring equivalence across multiple endpoints reduces the overall power of the test. Specifically:
+
+* The Type II error increases as the number of primary endpoints ($K$) grows.
+* This makes equivalence testing more challenging for studies with multiple endpoints, as additional endpoints require larger sample sizes or stronger effect sizes to achieve sufficient power [@mielke_sample_2018].
+
+# References
