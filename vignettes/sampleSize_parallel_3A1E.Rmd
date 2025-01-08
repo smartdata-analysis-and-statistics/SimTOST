@@ -39,6 +39,7 @@ data <- data.table::data.table(arm = c("SB2","EU_Remicade","USA_Remicade"),
                                sd = c(11113.62172, 12332.41615,12113.72))
 ```
 
+
 # Sample Size Calculation for AUCinf: Equivalence to EU Remicade
 
 This example demonstrates how to calculate the sample size required when testing the equivalence of SB2 to a reference drug, Remicade, as administered in Europe. The goal is to determine the minimum number of participants needed to ensure adequate power for the equivalence test.

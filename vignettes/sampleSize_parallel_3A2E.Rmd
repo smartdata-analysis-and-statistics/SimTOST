@@ -1,0 +1,53 @@
+---
+title: "Bioequivalence Tests for Parallel Trial Designs: 3 Arms, 2 Endpoints"
+author: "Thomas Debray"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output: 
+  html_document:
+    fig_caption: yes
+    fig_width: 9
+    fig_height: 6
+vignette: >
+  %\VignetteIndexEntry{Bioequivalence Tests for Parallel Trial Designs: 3 Arms, 2 Endpoints}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+bibliography: 'references.bib'
+link-citations: yes
+---
+
+```{r setup, include=FALSE, message = FALSE, warning = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(comment = "#>", collapse = TRUE)
+options(rmarkdown.html_vignette.check_title = FALSE) #title of doc does not match vignette title
+doc.cache <- T #for cran; change to F
+```
+
+# Introduction
+
+In many studies, it is necessary to evaluate equivalence across multiple primary variables. For instance, the European Medicines Agency (EMA) recommends demonstrating equivalence for both **Area Under the Curve** (AUC) and **maximum concentration** (Cmax) when assessing pharmacokinetic properties.
+
+When multiple primary endpoints are involved, a decision must be made on the desired criteria for equivalence:
+
+* Equivalence for All Primary Endpoints
+  * This is the most common setting and is often referred to as having *multiple co-primary endpoints*.
+  * Equivalence must be demonstrated for **all** endpoints to conclude overall equivalence.
+* Equivalence for At Least One Primary Endpoint
+  * Known as having *multiple primary endpoints*.
+  * Equivalence is required for **at least one** endpoint to meet the study's objectives.
+
+This vignette presents advanced techniques for calculating sample size in parallel trial designs involving three treatment arms and two endpoints. Specifically, it focuses on bioequivalence testing between a new treatment (SB2) and a reference drug (Remicade) administered in two distinct locations (EU_Remicade and USA_Remicade).
+
+# Methodology and Assumptions
+
+The endpoints of interest are:
+
+* AUCinf: Area Under the Curve (infinity)
+* Cmax: Maximum concentration
+
+For both endpoints, the analysis assumes that:
+
+* Summary data are available on the original scale (e.g., mean and standard deviation).
+* These data are provided for each treatment arm.
+
+This vignette demonstrates how to compute the required sample size for testing bioequivalence, ensuring robust conclusions across endpoints in this three-arm parallel trial design.
+
