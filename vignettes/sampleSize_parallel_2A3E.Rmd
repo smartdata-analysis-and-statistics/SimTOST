@@ -1,5 +1,5 @@
 ---
-title: "Bioequivalence Tests for Parallel Trial Designs: 3 Arms, 2 Endpoints"
+title: "Bioequivalence Tests for Parallel Trial Designs: 2 Arms, 3 Endpoints"
 author: "Thomas Debray"
 date: "`r format(Sys.time(), '%B %d, %Y')`"
 output: 
@@ -8,7 +8,7 @@ output:
     fig_width: 9
     fig_height: 6
 vignette: >
-  %\VignetteIndexEntry{Bioequivalence Tests for Parallel Trial Designs: 3 Arms, 2 Endpoints}
+  %\VignetteIndexEntry{Bioequivalence Tests for Parallel Trial Designs: 2 Arms, 3 Endpoints}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 bibliography: 'references.bib'
@@ -45,11 +45,10 @@ data <- data.frame("PK measure" = c("AUCinf ($\\mu$g*h/mL)","AUClast ($\\mu$g*h/
                    "EU-INF" = c("39,360  $\\pm$ 12,332", "37,022 $\\pm$ 9398", "126.2 $\\pm$ 17.9"))
 
 kableExtra::kable_styling(kableExtra::kable(data, 
-                                            col.names = c("PK measure", "SB2", "EU-INF"),
+                                            col.names = c("PK measure", "SB2", "Remicade (EU)"),
                                             caption = "Primary PK measures between test and reference product. Data represent arithmetic mean +- standard deviation."),
                           bootstrap_options = "striped")
 ```
-
 
 # Methodology and Assumptions
 
@@ -79,16 +78,34 @@ Alternative Hypothesis ($H_1$): All endpoints meet the equivalence criteria:
 
 $$H_1: E_L<\mu_{T}^{(j)}-\mu_{R}^{(j)} < E_U \quad\text{for all}\;j$$
 
-The null hypothesis $H_0$ is rejected if and only if all of the null hypotheses associated with each of the $K$ primary endpoints are rejected at a significance level of $\alpha$.
-
-## Decision Rule
-
 The null hypothesis ($H_0$) is rejected if, and only if, all null hypotheses associated with the $K$ primary endpoints are rejected at a significance level of $\alpha$. This ensures that equivalence is established across all endpoints simultaneously.
 
 ## Statistical Considerations
 
 * **Type I Error Control**: Since rejection of $H_0$ requires all individual null hypotheses to be rejected, there is no need for multiplicity adjustments. The Type I error rate is controlled by the design.
 * **Impact on Power**: Requiring equivalence across multiple endpoints decreases the overall power of the test. The Type II error increases as the number of primary endpoints ($K$) grows, which can make equivalence testing more challenging [@mielke_sample_2018].
+
+## Independent Testing of Pharmacokinetic (PK) Measures
+If each pharmacokinetic (PK) measure is tested independently, the following sample sizes would be required for each endpoint to achieve a 5\% significance level:
+
+```{r}
+# Sample size calculation for AUCinf
+(sim_AUCinf <- sampleSize(
+  power = 0.9,                                # Target power
+  alpha = 0.05,                               # Significance level
+  arm_names = c("SB2", "EU_Remicade"),        # Names of trial arms
+  list_comparator = list("EMA" = c("SB2", "EU_Remicade")),  # Comparator configuration
+  mu_list = list("SB2" = 38703, "EU_Remicade" = 39360),     # Mean values
+  sigma_list = list("SB2" = 11114, "EU_Remicade" = 12332),  # Standard deviation values
+  list_lequi.tol = list("EMA" = 0.8),         # Lower equivalence margin
+  list_uequi.tol = list("EMA" = 1 / 0.8),     # Upper equivalence margin
+  ncores = 1,                                 # Number of computation cores
+  nsim = 1000                                 # Number of stochastic simulations
+))
+```
+
+
+If we were to test each PK measure independently, we would find a total sample size of $N=$ `r sim_AUCinf$sim_AUCinf$response$n_total` for AUCinf, $N=56$ for AUClast, and $N=20$ for Cmax. This means that we would have to enroll `r sim_AUCinf$sim_AUCinf$response$n_total` + $56+20 = 152$ patients in order to reject $H_0$ at a significance level of 5\%.
 
 
 
