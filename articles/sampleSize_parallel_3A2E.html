@@ -86,7 +86,8 @@
 
 
 
-      </header><div class="row">
+      </header><script src="sampleSize_parallel_3A2E_files/kePrint-0.0.1/kePrint.js"></script><link href="sampleSize_parallel_3A2E_files/lightable-0.0.1/lightable.css" rel="stylesheet">
+<div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Bioequivalence Tests for Parallel Trial Designs:
@@ -135,24 +136,100 @@ size in parallel trial designs involving three treatment arms and two
 endpoints. Specifically, it focuses on bioequivalence testing between a
 new treatment (SB2) and a reference drug (Remicade) administered in two
 distinct locations (EU_Remicade and USA_Remicade).</p>
+<p>As an illustrative example, we consider published data from the
+phase-1 trial <a href="https://clinicaltrials.gov/study/NCT01922336#study-overview" class="external-link">NCT01922336</a>.
+This trial assessed the pharmacokinetics of SB2 compared to its
+EU-sourced reference product. The following outcomes were reported
+following a single dose of SB2 or its EU reference product <span class="citation">(<a href="#ref-shin_randomized_2015">Shin et al.
+2015</a>)</span>:</p>
+<table class="table table table-striped" style="margin-left: auto; margin-right: auto;">
+<caption>
+Primary PK measures between test and reference product. Data represent
+arithmetic mean +- standard deviation.
+</caption>
+<thead><tr>
+<th style="text-align:left;">
+PK measure
+</th>
+<th style="text-align:left;">
+SB2
+</th>
+<th style="text-align:left;">
+EU-INF
+</th>
+</tr></thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+AUCinf
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>μ</mi><annotation encoding="application/x-tex">\mu</annotation></semantics></math>g*h/mL)
+</td>
+<td style="text-align:left;">
+38,703
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>±</mo><annotation encoding="application/x-tex">\pm</annotation></semantics></math>
+11,114
+</td>
+<td style="text-align:left;">
+39,360
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>±</mo><annotation encoding="application/x-tex">\pm</annotation></semantics></math>
+12,332
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+AUClast
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>μ</mi><annotation encoding="application/x-tex">\mu</annotation></semantics></math>g*h/mL)
+</td>
+<td style="text-align:left;">
+36,862
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>±</mo><annotation encoding="application/x-tex">\pm</annotation></semantics></math>
+9133
+</td>
+<td style="text-align:left;">
+37,022
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>±</mo><annotation encoding="application/x-tex">\pm</annotation></semantics></math>
+9398
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Cmax
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>μ</mi><annotation encoding="application/x-tex">\mu</annotation></semantics></math>g/mL)
+</td>
+<td style="text-align:left;">
+127.0
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>±</mo><annotation encoding="application/x-tex">\pm</annotation></semantics></math>
+16.9
+</td>
+<td style="text-align:left;">
+126.2
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>±</mo><annotation encoding="application/x-tex">\pm</annotation></semantics></math>
+17.9
+</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="section level2">
 <h2 id="methodology-and-assumptions">Methodology and Assumptions<a class="anchor" aria-label="anchor" href="#methodology-and-assumptions"></a>
 </h2>
-<p>The endpoints of interest are:</p>
+<p>The bioequivalence analysis focuses on two key pharmacokinetic
+endpoints:</p>
 <ul>
 <li>AUCinf: Area Under the Curve (infinity)</li>
 <li>Cmax: Maximum concentration</li>
 </ul>
 <p>For both endpoints, the analysis assumes that:</p>
 <ul>
-<li>Summary data are available on the original scale (e.g., mean and
-standard deviation).</li>
+<li>Summary data (e.g., mean and standard deviation) are available on
+the original scale.</li>
 <li>These data are provided for each treatment arm.</li>
 </ul>
-<p>This vignette demonstrates how to compute the required sample size
-for testing bioequivalence, ensuring robust conclusions across endpoints
-in this three-arm parallel trial design.</p>
+<p>To evaluate bioequivalence, we apply the
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>80</mn><mi>%</mi><mi>/</mi><mn>125</mn><mi>%</mi></mrow><annotation encoding="application/x-tex">80\%/125\%</annotation></semantics></math>
+rule, which defines equivalence bounds relative to the reference mean.
+The evaluation is conducted using a one-sided significance level of 5%,
+with a target statistical power of 90%.</p>
 </div>
 <div class="section level2">
 <h2 id="testing-the-difference-of-means-dom-for-multiple-co-primary-endpoints">Testing the Difference of Means (DOM) for multiple Co-primary
@@ -227,6 +304,14 @@ Mielke, Johanna, Byron Jones, Bernd Jilma, and Franz König. 2018.
 <span>“Sample <span>Size</span> for <span>Multiple Hypothesis
 Testing</span> in <span>Biosimilar Development</span>.”</span>
 <em>Statistics in Biopharmaceutical Research</em> 10 (1): 39–49. <a href="https://doi.org/10.1080/19466315.2017.1371071" class="external-link">https://doi.org/10.1080/19466315.2017.1371071</a>.
+</div>
+<div id="ref-shin_randomized_2015" class="csl-entry">
+Shin, Donghoon, Youngdoe Kim, Yoo Seok Kim, Thomas Körnicke, and Rainard
+Fuhr. 2015. <span>“A <span>Randomized</span>, <span>Phase I
+Pharmacokinetic Study Comparing SB2</span> and <span>Infliximab
+Reference Product</span> (<span>Remicade</span><span></span>) in
+<span>Healthy Subjects</span>.”</span> <em>BioDrugs</em> 29 (6): 381–88.
+<a href="https://doi.org/10.1007/s40259-015-0150-5" class="external-link">https://doi.org/10.1007/s40259-015-0150-5</a>.
 </div>
 </div>
 </div>
