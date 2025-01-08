@@ -5,13 +5,13 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Introduction • SimTOST</title>
+<title>Bioequivalence Tests for Parallel Trial Designs: 3 Arms, 2 Endpoints • SimTOST</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="Introduction">
+<script src="../pkgdown.js"></script><meta property="og:title" content="Bioequivalence Tests for Parallel Trial Designs: 3 Arms, 2 Endpoints">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -89,18 +89,71 @@
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Introduction</h1>
+      <h1 data-toc-skip>Bioequivalence Tests for Parallel Trial Designs:
+3 Arms, 2 Endpoints</h1>
+                        <h4 data-toc-skip class="author">Thomas
+Debray</h4>
             
+            <h4 data-toc-skip class="date">January 08, 2025</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/smartdata-analysis-and-statistics/SimTOST/blob/main/vignettes/intopkg.Rmd" class="external-link"><code>vignettes/intopkg.Rmd</code></a></small>
-      <div class="hidden name"><code>intopkg.Rmd</code></div>
+      <small class="dont-index">Source: <a href="https://github.com/smartdata-analysis-and-statistics/SimTOST/blob/main/vignettes/sampleSize_parallel_3A2E.Rmd" class="external-link"><code>vignettes/sampleSize_parallel_3A2E.Rmd</code></a></small>
+      <div class="hidden name"><code>sampleSize_parallel_3A2E.Rmd</code></div>
 
     </div>
 
     
     
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/smartdata-analysis-and-statistics/SimTOST" class="external-link">SimTOST</a></span><span class="op">)</span></span></code></pre></div>
+<div class="section level2">
+<h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
+</h2>
+<p>In many studies, it is necessary to evaluate equivalence across
+multiple primary variables. For instance, the European Medicines Agency
+(EMA) recommends demonstrating equivalence for both <strong>Area Under
+the Curve</strong> (AUC) and <strong>maximum concentration</strong>
+(Cmax) when assessing pharmacokinetic properties.</p>
+<p>When multiple primary endpoints are involved, a decision must be made
+on the desired criteria for equivalence:</p>
+<ul>
+<li>Equivalence for All Primary Endpoints
+<ul>
+<li>This is the most common setting and is often referred to as having
+<em>multiple co-primary endpoints</em>.</li>
+<li>Equivalence must be demonstrated for <strong>all</strong> endpoints
+to conclude overall equivalence.</li>
+</ul>
+</li>
+<li>Equivalence for At Least One Primary Endpoint
+<ul>
+<li>Known as having <em>multiple primary endpoints</em>.</li>
+<li>Equivalence is required for <strong>at least one</strong> endpoint
+to meet the study’s objectives.</li>
+</ul>
+</li>
+</ul>
+<p>This vignette presents advanced techniques for calculating sample
+size in parallel trial designs involving three treatment arms and two
+endpoints. Specifically, it focuses on bioequivalence testing between a
+new treatment (SB2) and a reference drug (Remicade) administered in two
+distinct locations (EU_Remicade and USA_Remicade).</p>
+</div>
+<div class="section level2">
+<h2 id="methodology-and-assumptions">Methodology and Assumptions<a class="anchor" aria-label="anchor" href="#methodology-and-assumptions"></a>
+</h2>
+<p>The endpoints of interest are:</p>
+<ul>
+<li>AUCinf: Area Under the Curve (infinity)</li>
+<li>Cmax: Maximum concentration</li>
+</ul>
+<p>For both endpoints, the analysis assumes that:</p>
+<ul>
+<li>Summary data are available on the original scale (e.g., mean and
+standard deviation).</li>
+<li>These data are provided for each treatment arm.</li>
+</ul>
+<p>This vignette demonstrates how to compute the required sample size
+for testing bioequivalence, ensuring robust conclusions across endpoints
+in this three-arm parallel trial design.</p>
+</div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
