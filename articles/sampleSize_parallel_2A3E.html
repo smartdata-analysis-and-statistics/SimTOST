@@ -305,17 +305,16 @@ following sample sizes would be required for each endpoint to achieve a
 <span>  ncores <span class="op">=</span> <span class="fl">1</span>,                                 <span class="co"># Number of computation cores</span></span>
 <span>  nsim <span class="op">=</span> <span class="fl">1000</span>                                 <span class="co"># Number of stochastic simulations</span></span>
 <span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; ### Sample Size Calculation Results ###</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; For a trial targeting 90% power with a 5% type-I error.</span></span>
+<span><span class="co">#&gt; Sample Size Calculation Results</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; -------------------------------------------------------------</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; The total required sample size to achieve 90.5% power is 78 sample units.</span></span>
+<span><span class="co">#&gt; Study Design: parallel trial targeting 90% power with a 5% type-I error.</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  n_drop n_SB2 n_EU_Remicade n_total power power_LCI power_UCI</span></span>
-<span><span class="co">#&gt;   &lt;num&gt; &lt;num&gt;         &lt;num&gt;   &lt;num&gt; &lt;num&gt;     &lt;num&gt;     &lt;num&gt;</span></span>
-<span><span class="co">#&gt;       0    39            39      78 0.905 0.8847051 0.9221104</span></span>
+<span><span class="co">#&gt;                  Parameter       Value</span></span>
+<span><span class="co">#&gt;          Total Sample Size          78</span></span>
+<span><span class="co">#&gt;             Achieved Power        90.5</span></span>
+<span><span class="co">#&gt;  Power Confidence Interval 88.5 - 92.2</span></span>
 <span></span>
 <span><span class="co"># Sample size calculation for AUClast</span></span>
 <span><span class="op">(</span><span class="va">sim_AUClast</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sampleSize.html">sampleSize</a></span><span class="op">(</span></span>
@@ -330,23 +329,45 @@ following sample sizes would be required for each endpoint to achieve a
 <span>  ncores <span class="op">=</span> <span class="fl">1</span>,                                 <span class="co"># Number of computation cores</span></span>
 <span>  nsim <span class="op">=</span> <span class="fl">1000</span>                                 <span class="co"># Number of stochastic simulations</span></span>
 <span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; ### Sample Size Calculation Results ###</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; For a trial targeting 90% power with a 5% type-I error.</span></span>
+<span><span class="co">#&gt; Sample Size Calculation Results</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; -------------------------------------------------------------</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; The total required sample size to achieve 90.4% power is 54 sample units.</span></span>
+<span><span class="co">#&gt; Study Design: parallel trial targeting 90% power with a 5% type-I error.</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  n_drop n_SB2 n_EU_Remicade n_total power power_LCI power_UCI</span></span>
-<span><span class="co">#&gt;   &lt;num&gt; &lt;num&gt;         &lt;num&gt;   &lt;num&gt; &lt;num&gt;     &lt;num&gt;     &lt;num&gt;</span></span>
-<span><span class="co">#&gt;       0    27            27      54 0.904 0.8836248  0.921199</span></span></code></pre></div>
+<span><span class="co">#&gt;                  Parameter       Value</span></span>
+<span><span class="co">#&gt;          Total Sample Size          54</span></span>
+<span><span class="co">#&gt;             Achieved Power        90.4</span></span>
+<span><span class="co">#&gt;  Power Confidence Interval 88.4 - 92.1</span></span>
+<span></span>
+<span></span>
+<span><span class="co"># Sample size calculation for Cmax</span></span>
+<span><span class="op">(</span><span class="va">sim_Cmax</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sampleSize.html">sampleSize</a></span><span class="op">(</span></span>
+<span>  power <span class="op">=</span> <span class="fl">0.9</span>,                                <span class="co"># Target power</span></span>
+<span>  alpha <span class="op">=</span> <span class="fl">0.05</span>,                               <span class="co"># Significance level</span></span>
+<span>  arm_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SB2"</span>, <span class="st">"EU_Remicade"</span><span class="op">)</span>,        <span class="co"># Names of trial arms</span></span>
+<span>  list_comparator <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"EMA"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SB2"</span>, <span class="st">"EU_Remicade"</span><span class="op">)</span><span class="op">)</span>,  <span class="co"># Comparator configuration</span></span>
+<span>  mu_list <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"SB2"</span> <span class="op">=</span> <span class="fl">127.0</span>, <span class="st">"EU_Remicade"</span> <span class="op">=</span> <span class="fl">126.2</span><span class="op">)</span>,     <span class="co"># Mean values</span></span>
+<span>  sigma_list <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"SB2"</span> <span class="op">=</span> <span class="fl">16.9</span>, <span class="st">"EU_Remicade"</span> <span class="op">=</span> <span class="fl">17.9</span><span class="op">)</span>,    <span class="co"># Standard deviation values</span></span>
+<span>  list_lequi.tol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"EMA"</span> <span class="op">=</span> <span class="fl">0.80</span><span class="op">)</span>,        <span class="co"># Lower equivalence margin</span></span>
+<span>  list_uequi.tol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"EMA"</span> <span class="op">=</span> <span class="fl">1.25</span><span class="op">)</span>,        <span class="co"># Upper equivalence margin</span></span>
+<span>  ncores <span class="op">=</span> <span class="fl">1</span>,                                 <span class="co"># Number of computation cores</span></span>
+<span>  nsim <span class="op">=</span> <span class="fl">1000</span>                                 <span class="co"># Number of stochastic simulations</span></span>
+<span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Sample Size Calculation Results</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; -------------------------------------------------------------</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Study Design: parallel trial targeting 90% power with a 5% type-I error.</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;                  Parameter       Value</span></span>
+<span><span class="co">#&gt;          Total Sample Size          18</span></span>
+<span><span class="co">#&gt;             Achieved Power        91.2</span></span>
+<span><span class="co">#&gt;  Power Confidence Interval 89.2 - 92.8</span></span></code></pre></div>
 <p>If we were to test each PK measure independently, we would find a
-total sample size of 78 for AUCinf, 54 for AUClast, and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi><mo>=</mo><mn>20</mn></mrow><annotation encoding="application/x-tex">N=20</annotation></semantics></math>
-for Cmax. This means that we would have to enroll 78 + 54
-+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>20</mn><mo>=</mo><mn>152</mn></mrow><annotation encoding="application/x-tex">20 = 152</annotation></semantics></math>
-patients in order to reject
+total sample size of 78 for AUCinf, 54 for AUClast, and 18 for Cmax.
+This means that we would have to enroll 78 + 54 + 18 = 150$ patients in
+order to reject
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>H</mi><mn>0</mn></msub><annotation encoding="application/x-tex">H_0</annotation></semantics></math>
 at a significance level of 5%.</p>
 </div>

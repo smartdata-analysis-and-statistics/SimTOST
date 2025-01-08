@@ -205,17 +205,16 @@ assumes:</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">AUCinf_1comp</span></span>
-<span><span class="co">#&gt; ### Sample Size Calculation Results ###</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; For a trial targeting 90% power with a 5% type-I error.</span></span>
+<span><span class="co">#&gt; Sample Size Calculation Results</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; -------------------------------------------------------------</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; The total required sample size to achieve 90.3% power is 84 sample units.</span></span>
+<span><span class="co">#&gt; Study Design: parallel trial targeting 90% power with a 5% type-I error.</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  n_drop n_SB2 n_EU_Remicade n_total power power_LCI power_UCI</span></span>
-<span><span class="co">#&gt;   &lt;num&gt; &lt;num&gt;         &lt;num&gt;   &lt;num&gt; &lt;num&gt;     &lt;num&gt;     &lt;num&gt;</span></span>
-<span><span class="co">#&gt;       0    42            42      84 0.903  0.882545  0.920287</span></span></code></pre></div>
+<span><span class="co">#&gt;                  Parameter     Value</span></span>
+<span><span class="co">#&gt;          Total Sample Size        84</span></span>
+<span><span class="co">#&gt;             Achieved Power      90.3</span></span>
+<span><span class="co">#&gt;  Power Confidence Interval 88.3 - 92</span></span></code></pre></div>
 <p>Results from the simulations indicate that the required sample size
 for this trial setting is 84 or 42 for each arm.</p>
 </div>
@@ -286,17 +285,16 @@ calculate the required sample size for multiple comparisons.</p>
 <span>  ncores <span class="op">=</span> <span class="fl">1</span>,                   <span class="co"># Number of cores for computation</span></span>
 <span>  nsim <span class="op">=</span> <span class="fl">1000</span>                   <span class="co"># Number of stochastic simulations</span></span>
 <span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; ### Sample Size Calculation Results ###</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; For a trial targeting 90% power with a 5% type-I error.</span></span>
+<span><span class="co">#&gt; Sample Size Calculation Results</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; -------------------------------------------------------------</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; The total required sample size to achieve 91% power is 150 sample units.</span></span>
+<span><span class="co">#&gt; Study Design: parallel trial targeting 90% power with a 5% type-I error.</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  n_drop n_SB2 n_EU_Remicade n_USA_Remicade n_total power power_LCI power_UCI</span></span>
-<span><span class="co">#&gt;   &lt;num&gt; &lt;num&gt;         &lt;num&gt;          &lt;num&gt;   &lt;num&gt; &lt;num&gt;     &lt;num&gt;     &lt;num&gt;</span></span>
-<span><span class="co">#&gt;       0    50            50             50     150  0.91 0.8901162 0.9266579</span></span></code></pre></div>
+<span><span class="co">#&gt;                  Parameter     Value</span></span>
+<span><span class="co">#&gt;          Total Sample Size       150</span></span>
+<span><span class="co">#&gt;             Achieved Power        91</span></span>
+<span><span class="co">#&gt;  Power Confidence Interval 89 - 92.7</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="results-and-interpretation">Results and Interpretation<a class="anchor" aria-label="anchor" href="#results-and-interpretation"></a>
