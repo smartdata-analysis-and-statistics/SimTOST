@@ -51,3 +51,31 @@ For both endpoints, the analysis assumes that:
 
 This vignette demonstrates how to compute the required sample size for testing bioequivalence, ensuring robust conclusions across endpoints in this three-arm parallel trial design.
 
+# Testing the Difference of Means (DOM) for multiple Co-primary Endpoints
+In biosimilar development, it is important to demonstrate equivalence across all relevant doses, routes of administration, patient populations, and endpoints. To establish equivalence between two treatments, the difference in means for each endpoint, $\mu_{T}^{(j)} - \mu_{R}^{(j)}$, must lie within a predefined equivalence margin around zero for all primary endpoints.
+
+## Hypotheses
+The null and alternative hypotheses for the equivalence test are as follows:
+
+Null Hypothesis ($H_0$): At least one endpoint does not meet the equivalence criteria:
+ 
+$$H_0: \mu_T^{(j)} - \mu_R^{(j)} \le E_L ~~ \text{or}~~ \mu_T^{(j)} - \mu_R^{(j)} \ge E_U \quad \text{for at least one}\;j$$
+
+Alternative Hypothesis ($H_1$): All endpoints meet the equivalence criteria:
+
+$$H_1: E_L<\mu_{T}^{(j)}-\mu_{R}^{(j)} < E_U \quad\text{for all}\;j$$
+
+The null hypothesis $H_0$ is rejected if and only if all of the null hypotheses associated with each of the $K$ primary endpoints are rejected at a significance level of $\alpha$.
+
+## Decision Rule
+
+The null hypothesis ($H_0$) is rejected if, and only if, all null hypotheses associated with the $K$ primary endpoints are rejected at a significance level of $\alpha$. This ensures that equivalence is established across all endpoints simultaneously.
+
+## Statistical Considerations
+
+* **Type I Error Control**: Since rejection of $H_0$ requires all individual null hypotheses to be rejected, there is no need for multiplicity adjustments. The Type I error rate is controlled by the design.
+* **Impact on Power**: Requiring equivalence across multiple endpoints decreases the overall power of the test. The Type II error increases as the number of primary endpoints ($K$) grows, which can make equivalence testing more challenging [@mielke_sample_2018].
+
+
+
+# References
