@@ -209,117 +209,21 @@ Cmax
 </tr>
 </tbody>
 </table>
+<p>In the sections below, we explore various strategies for determining
+the sample size required for a parallel trial to demonstrate equivalence
+across the three co-primary endpoints. These strategies are based on the
+Ratio of Means (ROM) approach, with equivalence bounds set between 80%
+and 125%.</p>
 </div>
 <div class="section level2">
-<h2 id="methodology-and-assumptions">Methodology and Assumptions<a class="anchor" aria-label="anchor" href="#methodology-and-assumptions"></a>
+<h2 id="independent-testing-of-pk-measures">Independent Testing of PK Measures<a class="anchor" aria-label="anchor" href="#independent-testing-of-pk-measures"></a>
 </h2>
-<p>The bioequivalence analysis focuses on two key pharmacokinetic
-endpoints:</p>
-<ul>
-<li>AUCinf: Area Under the Curve (infinity)</li>
-<li>Cmax: Maximum concentration</li>
-</ul>
-<p>For both endpoints, the analysis assumes that:</p>
-<ul>
-<li>Summary data (e.g., mean and standard deviation) are available on
-the original scale.</li>
-<li>These data are provided for each treatment arm.</li>
-</ul>
-<p>To evaluate bioequivalence, we apply the
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>80</mn><mi>%</mi><mi>/</mi><mn>125</mn><mi>%</mi></mrow><annotation encoding="application/x-tex">80\%/125\%</annotation></semantics></math>
-rule, which defines equivalence bounds relative to the reference mean.
-The evaluation is conducted using a one-sided significance level of 5%,
-with a target statistical power of 90%.</p>
-<div class="section level3">
-<h3 id="hypotheses">Hypotheses<a class="anchor" aria-label="anchor" href="#hypotheses"></a>
-</h3>
-<p>The null and alternative hypotheses for the equivalence test are as
-follows:</p>
-<div class="section level4">
-<h4 id="difference-of-means-dom">Difference of Means (DOM)<a class="anchor" aria-label="anchor" href="#difference-of-means-dom"></a>
-</h4>
-<p>Null Hypothesis
-(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>H</mi><mn>0</mn></msub><annotation encoding="application/x-tex">H_0</annotation></semantics></math>):
-At least one endpoint does not meet the equivalence criteria:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>H</mi><mn>0</mn></msub><mo>:</mo><msubsup><mi>μ</mi><mi>T</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>j</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><mo>−</mo><msubsup><mi>μ</mi><mi>R</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>j</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><mo>≤</mo><msub><mi>E</mi><mi>L</mi></msub><mspace width="0.222em"></mspace><mspace width="0.222em"></mspace><mtext mathvariant="normal">or</mtext><mspace width="0.222em"></mspace><mspace width="0.222em"></mspace><msubsup><mi>μ</mi><mi>T</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>j</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><mo>−</mo><msubsup><mi>μ</mi><mi>R</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>j</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><mo>≥</mo><msub><mi>E</mi><mi>U</mi></msub><mspace width="1.0em"></mspace><mtext mathvariant="normal">for at least one</mtext><mspace width="0.278em"></mspace><mi>j</mi></mrow><annotation encoding="application/x-tex">H_0: \mu_T^{(j)} - \mu_R^{(j)} \le E_L ~~ \text{or}~~ \mu_T^{(j)} - \mu_R^{(j)} \ge E_U \quad \text{for at least one}\;j</annotation></semantics></math></p>
-<p>Alternative Hypothesis
-(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>H</mi><mn>1</mn></msub><annotation encoding="application/x-tex">H_1</annotation></semantics></math>):
-All endpoints meet the equivalence criteria:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>H</mi><mn>1</mn></msub><mo>:</mo><msub><mi>E</mi><mi>L</mi></msub><mo>&lt;</mo><msubsup><mi>μ</mi><mi>T</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>j</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><mo>−</mo><msubsup><mi>μ</mi><mi>R</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>j</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><mo>&lt;</mo><msub><mi>E</mi><mi>U</mi></msub><mspace width="1.0em"></mspace><mtext mathvariant="normal">for all</mtext><mspace width="0.278em"></mspace><mi>j</mi></mrow><annotation encoding="application/x-tex">H_1: E_L&lt;\mu_{T}^{(j)}-\mu_{R}^{(j)} &lt; E_U \quad\text{for all}\;j</annotation></semantics></math></p>
-<p>The null hypothesis
-(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>H</mi><mn>0</mn></msub><annotation encoding="application/x-tex">H_0</annotation></semantics></math>)
-is rejected if, and only if, all null hypotheses associated with the
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>K</mi><annotation encoding="application/x-tex">K</annotation></semantics></math>
-primary endpoints are rejected at a significance level of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>α</mi><annotation encoding="application/x-tex">\alpha</annotation></semantics></math>.
-This ensures that equivalence is established across all endpoints
-simultaneously.</p>
-</div>
-<div class="section level4">
-<h4 id="ratio-of-means-rom">Ratio of Means (ROM)<a class="anchor" aria-label="anchor" href="#ratio-of-means-rom"></a>
-</h4>
-<p>The equivalence hypotheses can also be expressed as a Ratio of Means
-(ROM), which is often used in bioequivalence studies:</p>
-<p>Null Hypothesis
-(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>H</mi><mn>0</mn></msub><annotation encoding="application/x-tex">H_0</annotation></semantics></math>):
-At least one endpoint does not meet the equivalence criteria:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>H</mi><mn>0</mn></msub><mo>:</mo><mfrac><msubsup><mi>μ</mi><mi>T</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>j</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><msubsup><mi>μ</mi><mi>R</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>j</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup></mfrac><mo>≤</mo><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>E</mi><mi>L</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mspace width="0.222em"></mspace><mspace width="0.222em"></mspace><mtext mathvariant="normal">or</mtext><mspace width="0.222em"></mspace><mspace width="0.222em"></mspace><mfrac><msubsup><mi>μ</mi><mi>T</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>j</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><msubsup><mi>μ</mi><mi>R</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>j</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup></mfrac><mo>≥</mo><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>E</mi><mi>U</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mspace width="1.0em"></mspace><mtext mathvariant="normal">for at least one</mtext><mspace width="0.278em"></mspace><mi>j</mi></mrow><annotation encoding="application/x-tex">H_0: \frac{\mu_T^{(j)}}{\mu_R^{(j)}} \le \log(E_L) ~~ \text{or}~~ \frac{\mu_T^{(j)}}{\mu_R^{(j)}} \ge \log(E_U) \quad \text{for at least one}\;j</annotation></semantics></math></p>
-<p>Alternative Hypothesis
-(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>H</mi><mn>1</mn></msub><annotation encoding="application/x-tex">H_1</annotation></semantics></math>):
-All endpoints meet the equivalence criteria:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>H</mi><mn>1</mn></msub><mo>:</mo><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>E</mi><mi>L</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>&lt;</mo><mfrac><msubsup><mi>μ</mi><mi>T</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>j</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><msubsup><mi>μ</mi><mi>R</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>j</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup></mfrac><mo>&lt;</mo><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>E</mi><mi>U</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mspace width="1.0em"></mspace><mtext mathvariant="normal">for all</mtext><mspace width="0.278em"></mspace><mi>j</mi></mrow><annotation encoding="application/x-tex">H_1: \log(E_L)&lt; \frac{\mu_{T}^{(j)}}{\mu_{R}^{(j)}} &lt; \log(E_U) \quad\text{for all}\;j</annotation></semantics></math></p>
-</div>
-</div>
-<div class="section level3">
-<h3 id="statistical-considerations">Statistical Considerations<a class="anchor" aria-label="anchor" href="#statistical-considerations"></a>
-</h3>
-<div class="section level4">
-<h4 id="consistency-across-endpoints">Consistency Across Endpoints<a class="anchor" aria-label="anchor" href="#consistency-across-endpoints"></a>
-</h4>
-<p>For equivalence to be established, all primary endpoints must
-simultaneously satisfy the equivalence criteria. This applies whether
-the criteria are expressed as:</p>
-<ul>
-<li>The Difference of Means (DOM) approach measures absolute differences
-between treatment means.</li>
-<li>The Ratio of Means (ROM) approach captures relative differences and
-is commonly used when analyzing log-transformed data, such as in
-pharmacokinetic studies.</li>
-</ul>
-</div>
-<div class="section level4">
-<h4 id="type-i-error-control">Type I Error Control<a class="anchor" aria-label="anchor" href="#type-i-error-control"></a>
-</h4>
-<p>Rejection of the null hypothesis
-(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>H</mi><mn>0</mn></msub><annotation encoding="application/x-tex">H_0</annotation></semantics></math>)
-requires that all individual null hypotheses across endpoints be
-rejected. Since the test is designed to achieve equivalence
-simultaneously for all endpoints, there is no need for multiplicity
-adjustments, and the Type I error rate is controlled by the study
-design.</p>
-</div>
-<div class="section level4">
-<h4 id="impact-on-power">Impact on Power<a class="anchor" aria-label="anchor" href="#impact-on-power"></a>
-</h4>
-<p>Requiring equivalence across multiple endpoints reduces the overall
-power of the test. Specifically:</p>
-<ul>
-<li>The Type II error increases as the number of primary endpoints
-(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>K</mi><annotation encoding="application/x-tex">K</annotation></semantics></math>)
-grows.</li>
-<li>This makes equivalence testing more challenging for studies with
-multiple endpoints, as additional endpoints require larger sample sizes
-or stronger effect sizes to achieve sufficient power <span class="citation">(<a href="#ref-mielke_sample_2018">Mielke et al.
-2018</a>)</span>.</li>
-</ul>
-</div>
-</div>
-<div class="section level3">
-<h3 id="independent-testing-of-pk-measures">Independent Testing of PK Measures<a class="anchor" aria-label="anchor" href="#independent-testing-of-pk-measures"></a>
-</h3>
-<p>If each pharmacokinetic (PK) measure is tested independently, the
-following sample sizes would be required for each endpoint to achieve a
-5% significance level:</p>
+<p>A conservative approach to sample size calculation involves testing
+each pharmacokinetic (PK) measure independently. This method assumes
+that the endpoints are uncorrelated and that equivalence must be
+demonstrated for each endpoint separately. Consequently, the overall
+sample size required for the trial is the sum of the sample sizes for
+each PK measure.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/smartdata-analysis-and-statistics/SimTOST" class="external-link">SimTOST</a></span><span class="op">)</span></span>
 <span></span>
@@ -400,9 +304,9 @@ randomized, single-blind, three-arm, parallel-group study conducted in
 necessary. This suggests that the original trial had a small buffer
 above the calculated sample size requirements.</p>
 </div>
-<div class="section level3">
-<h3 id="simultaneous-testing-of-pk-measures-with-independent-endpoints">Simultaneous Testing of PK Measures with Independent Endpoints<a class="anchor" aria-label="anchor" href="#simultaneous-testing-of-pk-measures-with-independent-endpoints"></a>
-</h3>
+<div class="section level2">
+<h2 id="simultaneous-testing-of-pk-measures-with-independent-endpoints">Simultaneous Testing of PK Measures with Independent Endpoints<a class="anchor" aria-label="anchor" href="#simultaneous-testing-of-pk-measures-with-independent-endpoints"></a>
+</h2>
 <p>This approach focuses on simultaneous testing of pharmacokinetic (PK)
 measures while assuming independence between endpoints. Unlike the
 previous approach, which evaluated each PK measure independently, this
@@ -416,17 +320,10 @@ independent testing. Furthermore, this approach allows for greater
 flexibility by enabling users to specify correlation structures or work
 with uncorrelated endpoints as a default assumption.</p>
 </div>
-</div>
 <div class="section level2">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
 <div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
-<div id="ref-mielke_sample_2018" class="csl-entry">
-Mielke, Johanna, Byron Jones, Bernd Jilma, and Franz König. 2018.
-<span>“Sample <span>Size</span> for <span>Multiple Hypothesis
-Testing</span> in <span>Biosimilar Development</span>.”</span>
-<em>Statistics in Biopharmaceutical Research</em> 10 (1): 39–49. <a href="https://doi.org/10.1080/19466315.2017.1371071" class="external-link">https://doi.org/10.1080/19466315.2017.1371071</a>.
-</div>
 <div id="ref-shin_randomized_2015" class="csl-entry">
 Shin, Donghoon, Youngdoe Kim, Yoo Seok Kim, Thomas Körnicke, and Rainard
 Fuhr. 2015. <span>“A <span>Randomized</span>, <span>Phase I

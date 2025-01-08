@@ -101,6 +101,156 @@
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/smartdata-analysis-and-statistics/SimTOST" class="external-link">SimTOST</a></span><span class="op">)</span></span></code></pre></div>
+<p>Methodology and Assumptions</p>
+<div class="section level2">
+<h2 id="hypotheses">Hypotheses<a class="anchor" aria-label="anchor" href="#hypotheses"></a>
+</h2>
+<p>The null and alternative hypotheses for the equivalence test are as
+follows:</p>
+<div class="section level3">
+<h3 id="difference-of-means-dom">Difference of Means (DOM)<a class="anchor" aria-label="anchor" href="#difference-of-means-dom"></a>
+</h3>
+<p>A common approach to assessing bioequivalence involves comparing the
+log-transformed pharmacokinetic (PK) measures between the test and
+reference products. This is done using the following interval (null)
+hypothesis:</p>
+<p>Null Hypothesis
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>H</mi><mn>0</mn></msub><annotation encoding="application/x-tex">H_0</annotation></semantics></math>):
+At least one endpoint does not meet the equivalence criteria:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>H</mi><mn>0</mn></msub><mo>:</mo><msubsup><mi>m</mi><mi>T</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>j</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><mo>−</mo><msubsup><mi>m</mi><mi>R</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>j</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><mo>≤</mo><msub><mi>δ</mi><mi>L</mi></msub><mspace width="0.222em"></mspace><mspace width="0.222em"></mspace><mtext mathvariant="normal">or</mtext><mspace width="0.222em"></mspace><mspace width="0.222em"></mspace><msubsup><mi>m</mi><mi>T</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>j</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><mo>−</mo><msubsup><mi>m</mi><mi>R</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>j</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><mo>≥</mo><msub><mi>δ</mi><mi>U</mi></msub><mspace width="1.0em"></mspace><mtext mathvariant="normal">for at least one</mtext><mspace width="0.278em"></mspace><mi>j</mi></mrow><annotation encoding="application/x-tex">H_0: m_T^{(j)} - m_R^{(j)} \le \delta_L ~~ \text{or}~~ m_T^{(j)} - m_R^{(j)} \ge \delta_U \quad \text{for at least one}\;j</annotation></semantics></math></p>
+<p>Alternative Hypothesis
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>H</mi><mn>1</mn></msub><annotation encoding="application/x-tex">H_1</annotation></semantics></math>):
+All endpoints meet the equivalence criteria:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>H</mi><mn>1</mn></msub><mo>:</mo><msub><mi>δ</mi><mi>L</mi></msub><mo>&lt;</mo><msubsup><mi>m</mi><mi>T</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>j</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><mo>−</mo><msubsup><mi>m</mi><mi>R</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>j</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><mo>&lt;</mo><msub><mi>δ</mi><mi>U</mi></msub><mspace width="1.0em"></mspace><mtext mathvariant="normal">for all</mtext><mspace width="0.278em"></mspace><mi>j</mi></mrow><annotation encoding="application/x-tex">H_1: \delta_L&lt;m_{T}^{(j)}-m_{R}^{(j)} &lt;\delta_U \quad\text{for all}\;j</annotation></semantics></math></p>
+<p>Here,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>m</mi><mi>T</mi></msub><annotation encoding="application/x-tex">m_T</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>m</mi><mi>R</mi></msub><annotation encoding="application/x-tex">m_R</annotation></semantics></math>
+represent the logarithmically transformed mean responses of the test
+product (the proposed biosimilar) and the reference product,
+respectively. The equivalence limits,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>δ</mi><mi>L</mi></msub><annotation encoding="application/x-tex">\delta_L</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>δ</mi><mi>u</mi></msub><annotation encoding="application/x-tex">\delta_u</annotation></semantics></math>,
+are typically chosen to be symmetric, such that
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>δ</mi><mo>=</mo><mo>−</mo><msub><mi>δ</mi><mi>L</mi></msub><mo>=</mo><msub><mi>δ</mi><mi>U</mi></msub></mrow><annotation encoding="application/x-tex">\delta = - \delta_L = \delta_U</annotation></semantics></math>.
+The FDA further recommends that the equivalence acceptance criterion
+(EAC) be defined as
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>δ</mi><mo>=</mo><mi>E</mi><mi>A</mi><mi>C</mi><mo>=</mo><mn>1.5</mn><msub><mi>σ</mi><mi>R</mi></msub></mrow><annotation encoding="application/x-tex">\delta = EAC = 1.5 \sigma_R</annotation></semantics></math>,
+where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>σ</mi><mi>R</mi></msub><annotation encoding="application/x-tex">\sigma_R</annotation></semantics></math>
+represents the variability of the log-transformed endpoint for the
+reference product.</p>
+<p>The null hypothesis
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>H</mi><mn>0</mn></msub><annotation encoding="application/x-tex">H_0</annotation></semantics></math>)
+is rejected if, and only if, all null hypotheses associated with the
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>K</mi><annotation encoding="application/x-tex">K</annotation></semantics></math>
+primary endpoints are rejected at a significance level of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>α</mi><annotation encoding="application/x-tex">\alpha</annotation></semantics></math>.
+This ensures that equivalence is established across all endpoints
+simultaneously.</p>
+</div>
+<div class="section level3">
+<h3 id="ratio-of-means-rom">Ratio of Means (ROM)<a class="anchor" aria-label="anchor" href="#ratio-of-means-rom"></a>
+</h3>
+<p>The equivalence hypotheses can also be expressed as a Ratio of Means
+(ROM):</p>
+<p>Null Hypothesis
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>H</mi><mn>0</mn></msub><annotation encoding="application/x-tex">H_0</annotation></semantics></math>):
+At least one endpoint does not meet the equivalence criteria:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>H</mi><mn>0</mn></msub><mo>:</mo><mfrac><msubsup><mi>μ</mi><mi>T</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>j</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><msubsup><mi>μ</mi><mi>R</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>j</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup></mfrac><mo>≤</mo><msub><mi>E</mi><mi>L</mi></msub><mspace width="0.222em"></mspace><mspace width="0.222em"></mspace><mtext mathvariant="normal">or</mtext><mspace width="0.222em"></mspace><mspace width="0.222em"></mspace><mfrac><msubsup><mi>μ</mi><mi>T</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>j</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><msubsup><mi>μ</mi><mi>R</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>j</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup></mfrac><mo>≥</mo><msub><mi>E</mi><mi>U</mi></msub><mspace width="1.0em"></mspace><mtext mathvariant="normal">for at least one</mtext><mspace width="0.278em"></mspace><mi>j</mi></mrow><annotation encoding="application/x-tex">H_0: \frac{\mu_T^{(j)}}{\mu_R^{(j)}} \le E_L ~~ \text{or}~~ \frac{\mu_T^{(j)}}{\mu_R^{(j)}} \ge E_U \quad \text{for at least one}\;j</annotation></semantics></math></p>
+<p>Alternative Hypothesis
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>H</mi><mn>1</mn></msub><annotation encoding="application/x-tex">H_1</annotation></semantics></math>):
+All endpoints meet the equivalence criteria:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>H</mi><mn>1</mn></msub><mo>:</mo><msub><mi>E</mi><mi>L</mi></msub><mo>&lt;</mo><mfrac><msubsup><mi>μ</mi><mi>T</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>j</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><msubsup><mi>μ</mi><mi>R</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>j</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup></mfrac><mo>&lt;</mo><msub><mi>E</mi><mi>U</mi></msub><mspace width="1.0em"></mspace><mtext mathvariant="normal">for all</mtext><mspace width="0.278em"></mspace><mi>j</mi></mrow><annotation encoding="application/x-tex">H_1: E_L&lt; \frac{\mu_{T}^{(j)}}{\mu_{R}^{(j)}} &lt; E_U \quad\text{for all}\;j</annotation></semantics></math></p>
+<p>Here,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>μ</mi><mi>T</mi></msub><annotation encoding="application/x-tex">\mu_T</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>μ</mi><mi>R</mi></msub><annotation encoding="application/x-tex">\mu_R</annotation></semantics></math>
+represent the arithmetic mean responses of the test product (the
+proposed biosimilar) and the reference product, respectively.</p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="log-transformation-and-parameter-adjustments-in-samplesize">Log-Transformation and Parameter Adjustments in sampleSize()<a class="anchor" aria-label="anchor" href="#log-transformation-and-parameter-adjustments-in-samplesize"></a>
+</h2>
+<p>In <a href="../reference/sampleSize.html">sampleSize()</a>, Ratio of
+Means (ROM) tests are converted to Difference of Means (DOM) tests by
+log-transforming the data. Equivalence limits are applied to the
+log-transformed data, and the results are back-transformed to the
+original scale for interpretation. This approach leverages the
+log-normal distribution of pharmacokinetic (PK) measures like AUC and
+Cmax.</p>
+<div class="section level3">
+<h3 id="logarithmic-mean">Logarithmic Mean<a class="anchor" aria-label="anchor" href="#logarithmic-mean"></a>
+</h3>
+<p>The logarithmic mean is derived from the provided
+<code>mu_list</code> (arithmetic means) and <code>sigma_list</code>
+(variances) using the following formula:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">Logarithmic Mean</mtext><mo>=</mo><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><mtext mathvariant="normal">Arithmetic Mean</mtext><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mtext mathvariant="normal">Variance</mtext></mrow><annotation encoding="application/x-tex">\text{Logarithmic Mean} = \log(\text{Arithmetic Mean}) - \frac{1}{2}\text{Variance}</annotation></semantics></math>
+This formula adjusts the arithmetic mean to account for the skewness of
+log-normal data, ensuring that the central tendency on the log scale
+aligns with the transformed data.</p>
+</div>
+<div class="section level3">
+<h3 id="logarithmic-variance-transformation">Logarithmic Variance Transformation<a class="anchor" aria-label="anchor" href="#logarithmic-variance-transformation"></a>
+</h3>
+<p>To fully operate within the log-normal framework, the variances on
+the original scale (<code>sigma_list</code>) must also be transformed.
+The variance on the log scale is calculated using the normalized
+variance formula:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">Logarithmic Variance</mtext><mo>=</mo><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>+</mo><mfrac><msup><mi>σ</mi><mn>2</mn></msup><msup><mi>μ</mi><mn>2</mn></msup></mfrac><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
+\text{Logarithmic Variance} = \log\left(1 + \frac{\sigma^2}{\mu^2}\right)
+</annotation></semantics></math></p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="statistical-considerations">Statistical Considerations<a class="anchor" aria-label="anchor" href="#statistical-considerations"></a>
+</h2>
+<div class="section level3">
+<h3 id="consistency-across-endpoints">Consistency Across Endpoints<a class="anchor" aria-label="anchor" href="#consistency-across-endpoints"></a>
+</h3>
+<p>For equivalence to be established, all primary endpoints must
+simultaneously satisfy the equivalence criteria. This applies whether
+the criteria are expressed as:</p>
+<ul>
+<li>The Difference of Means (DOM) approach measures absolute differences
+between treatment means.</li>
+<li>The Ratio of Means (ROM) approach captures relative differences and
+is commonly used when analyzing log-transformed data, such as in
+pharmacokinetic studies.</li>
+</ul>
+</div>
+<div class="section level3">
+<h3 id="type-i-error-control">Type I Error Control<a class="anchor" aria-label="anchor" href="#type-i-error-control"></a>
+</h3>
+<p>Rejection of the null hypothesis
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>H</mi><mn>0</mn></msub><annotation encoding="application/x-tex">H_0</annotation></semantics></math>)
+requires that all individual null hypotheses across endpoints be
+rejected. Since the test is designed to achieve equivalence
+simultaneously for all endpoints, there is no need for multiplicity
+adjustments, and the Type I error rate is controlled by the study
+design.</p>
+</div>
+<div class="section level3">
+<h3 id="impact-on-power">Impact on Power<a class="anchor" aria-label="anchor" href="#impact-on-power"></a>
+</h3>
+<p>Requiring equivalence across multiple endpoints reduces the overall
+power of the test. Specifically:</p>
+<ul>
+<li>The Type II error increases as the number of primary endpoints
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>K</mi><annotation encoding="application/x-tex">K</annotation></semantics></math>)
+grows.</li>
+<li>This makes equivalence testing more challenging for studies with
+multiple endpoints, as additional endpoints require larger sample sizes
+or stronger effect sizes to achieve sufficient power <span class="citation">[@mielke_sample_2018]</span>.</li>
+</ul>
+</div>
+</div>
+<div class="section level2">
+<h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+</h2>
+</div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
