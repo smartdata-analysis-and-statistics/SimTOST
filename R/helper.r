@@ -21,11 +21,12 @@ print.simss <- function(x, ...) {
   output <- data.frame(Parameter = c("Total Sample Size", "Achieved Power", "Power Confidence Interval"),
                        Value = c(sst, 100*power, paste0(100*lpower, " - ", 100*upower)))
 
-  message(cat("Sample Size Calculation Results"))
-  message(cat("-------------------------------------------------------------"))
-  message(cat(paste0("Study Design: ", x$param.d$dtype, " trial targeting ",100*tpower,"% power with a ",100*alpha, "% type-I error.")))
-
+  message("Sample Size Calculation Results")
+  cat("-------------------------------------------------------------\n")
+  cat(paste0("Study Design: ", x$param.d$dtype, " trial targeting ",100*tpower,"% power with a ",100*alpha, "% type-I error.\n"))
+  cat("-------------------------------------------------------------\n")
   print(output, row.names = FALSE)  # Suppress row numbers
+  #cat("-------------------------------------------------------------\n")
   #print(x$response[,-1], row.names = FALSE)
 }
 
