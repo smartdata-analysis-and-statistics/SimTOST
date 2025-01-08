@@ -18,11 +18,15 @@ print.simss <- function(x, ...) {
   upower <- round(x$response[["power_UCI"]], digits = 3)
   sst <- x$response[["n_total"]]
 
-  message(cat("### Sample Size Calculation Results ###"))
-  message(cat(paste0("For a trial targeting ",100*tpower,"% power with a ",100*alpha, "% type-I error.")))
+  output <- data.frame(Parameter = c("Total Sample Size", "Achieved Power", "Power Confidence Interval"),
+                       Value = c(sst, 100*power, paste0(100*lpower, " - ", 100*upower)))
+
+  message(cat("Sample Size Calculation Results"))
   message(cat("-------------------------------------------------------------"))
-  message(cat(paste0("The total required sample size to achieve ",100*power,"% power is ",sst," sample units.\n")))
-  print(x$response[,-1], row.names = FALSE)
+  message(cat(paste0("Study Design: ", x$param.d$dtype, " trial targeting ",100*tpower,"% power with a ",100*alpha, "% type-I error.")))
+
+  print(output, row.names = FALSE)  # Suppress row numbers
+  #print(x$response[,-1], row.names = FALSE)
 }
 
 

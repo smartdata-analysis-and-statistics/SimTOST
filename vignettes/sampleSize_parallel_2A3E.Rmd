@@ -118,10 +118,25 @@ library(SimTOST)
   ncores = 1,                                 # Number of computation cores
   nsim = 1000                                 # Number of stochastic simulations
 ))
+
+
+# Sample size calculation for Cmax
+(sim_Cmax <- sampleSize(
+  power = 0.9,                                # Target power
+  alpha = 0.05,                               # Significance level
+  arm_names = c("SB2", "EU_Remicade"),        # Names of trial arms
+  list_comparator = list("EMA" = c("SB2", "EU_Remicade")),  # Comparator configuration
+  mu_list = list("SB2" = 127.0, "EU_Remicade" = 126.2),     # Mean values
+  sigma_list = list("SB2" = 16.9, "EU_Remicade" = 17.9),    # Standard deviation values
+  list_lequi.tol = list("EMA" = 0.80),        # Lower equivalence margin
+  list_uequi.tol = list("EMA" = 1.25),        # Upper equivalence margin
+  ncores = 1,                                 # Number of computation cores
+  nsim = 1000                                 # Number of stochastic simulations
+))
 ```
 
 
-If we were to test each PK measure independently, we would find a total sample size of `r sim_AUCinf$response$n_total` for AUCinf, `r sim_AUClast$response$n_total` for AUClast, and $N=20$ for Cmax. This means that we would have to enroll `r sim_AUCinf$response$n_total` + `r sim_AUClast$response$n_total` +$20 = 152$ patients in order to reject $H_0$ at a significance level of 5\%.
+If we were to test each PK measure independently, we would find a total sample size of `r sim_AUCinf$response$n_total` for AUCinf, `r sim_AUClast$response$n_total` for AUClast, and `r sim_Cmax$response$n_total` for Cmax. This means that we would have to enroll `r sim_AUCinf$response$n_total` + `r sim_AUClast$response$n_total` + `r sim_Cmax$response$n_total` = `r sim_AUCinf$response$n_total + sim_AUClast$response$n_total + sim_Cmax$response$n_total`$ patients in order to reject $H_0$ at a significance level of 5\%.
 
 
 
