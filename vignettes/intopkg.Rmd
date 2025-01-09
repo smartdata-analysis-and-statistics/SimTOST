@@ -5,6 +5,8 @@ vignette: >
   %\VignetteIndexEntry{Introduction}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+bibliography: 'references.bib'
+link-citations: yes
 ---
 
 ```{r, include = FALSE}
@@ -92,12 +94,20 @@ A decision must be made as to whether it is desirable to
 * Demonstrate equivalence for at least one of the primary endpoints (also known as **multiple primary endpoints**)
 
 
-## Multiplicity
+## Testing multiple co-primary endpoints
 
 When a trial aims to evaluate the joint effects across all $m$ co-primary endpoints [@sozu_sample_2015], no multiplicity adjustment is required to control the Type I error rate, as all null hypotheses must be rejected to establish equivalence. However, as the number of endpoints ($K$) increases, the Type II error rate also increases. [@mielke_sample_2018] This leads to the following implications:
 
 * The power to detect equivalence decreases for a fixed sample size.
 * The probability of trial success is reduced as more endpoints are evaluated simultaneously.
+
+Previous studies have demonstrated that the sample size required to achieve a given power level increases as the number of endpoints increases [@mielke_sample_2018]. This increase in sample size can be substantial, particularly when there is no correlation between the test statistics and/or when a large number of tests are conducted. Conversely, the impact of the number of endpoints on the required sample size is less pronounced when the correlation between endpoints is high.
+
+One possible solution, if the required sample size is not feasible, is to power the study so that at least $k$ out of $m$ tests have to meet the equivalence criterion.
+
+## Testing multiple primary endpoints
+
+
 
 
 
