@@ -448,6 +448,80 @@ setting is 82. This is 2 fewer patients than the scenario where the
 endpoints are assumed to be uncorrelated.</p>
 </div>
 <div class="section level2">
+<h2 id="simultaneous-testing-of-independent-primary-endpoints">Simultaneous Testing of Independent Primary Endpoints<a class="anchor" aria-label="anchor" href="#simultaneous-testing-of-independent-primary-endpoints"></a>
+</h2>
+<p>Consider now we are interested in demonstrating equivalence for at
+least
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">k=1</annotation></semantics></math>
+of the
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi><mo>=</mo><mn>3</mn></mrow><annotation encoding="application/x-tex">m=3</annotation></semantics></math>
+primary endpoints. Unlike the previous cases, where equivalence was
+required for all endpoints, this setting necessitates an adjustment for
+multiplicity to control the family-wise error rate.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="op">(</span><span class="va">N_mp_bon</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sampleSize.html">sampleSize</a></span><span class="op">(</span></span>
+<span>  power <span class="op">=</span> <span class="fl">0.9</span>,               <span class="co"># Target power</span></span>
+<span>  alpha <span class="op">=</span> <span class="fl">0.05</span>,              <span class="co"># Significance level</span></span>
+<span>  mu_list <span class="op">=</span> <span class="va">mu_list</span>,         <span class="co"># List of means</span></span>
+<span>  sigma_list <span class="op">=</span> <span class="va">sigma_list</span>,   <span class="co"># List of standard deviations</span></span>
+<span>  list_comparator <span class="op">=</span> <span class="va">list_comparator</span>,  <span class="co"># Comparator configurations</span></span>
+<span>  list_lequi.tol <span class="op">=</span> <span class="va">list_lequi.tol</span>,    <span class="co"># Lower equivalence boundaries</span></span>
+<span>  list_uequi.tol <span class="op">=</span> <span class="va">list_uequi.tol</span>,    <span class="co"># Upper equivalence boundaries</span></span>
+<span>  rho <span class="op">=</span> <span class="fl">0.6</span>,                 <span class="co"># Correlation between endpoints</span></span>
+<span>  dtype <span class="op">=</span> <span class="st">"parallel"</span>,        <span class="co"># Trial design type</span></span>
+<span>  ctype <span class="op">=</span> <span class="st">"ROM"</span>,             <span class="co"># Test type (Ratio of Means)</span></span>
+<span>  vareq <span class="op">=</span> <span class="cn">TRUE</span>,              <span class="co"># Assume equal variances</span></span>
+<span>  lognorm <span class="op">=</span> <span class="cn">TRUE</span>,            <span class="co"># Log-normal distribution assumption</span></span>
+<span>  k <span class="op">=</span> <span class="fl">1</span>,                     <span class="co"># Reject at least one null hypothesis</span></span>
+<span>  adjust <span class="op">=</span> <span class="st">"bon"</span>,            <span class="co"># Bonferroni adjustment method</span></span>
+<span>  ncores <span class="op">=</span> <span class="fl">1</span>,                <span class="co"># Number of cores for computation</span></span>
+<span>  nsim <span class="op">=</span> <span class="fl">1000</span>,               <span class="co"># Number of stochastic simulations</span></span>
+<span>  seed <span class="op">=</span> <span class="fl">1234</span>                <span class="co"># Random seed for reproducibility</span></span>
+<span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Sample Size Calculation Results</span></span>
+<span><span class="co">#&gt; -------------------------------------------------------------</span></span>
+<span><span class="co">#&gt; Study Design: parallel trial targeting 90% power with a 5% type-I error.</span></span>
+<span><span class="co">#&gt; -------------------------------------------------------------</span></span>
+<span><span class="co">#&gt;                  Parameter       Value</span></span>
+<span><span class="co">#&gt;          Total Sample Size          24</span></span>
+<span><span class="co">#&gt;             Achieved Power        90.6</span></span>
+<span><span class="co">#&gt;  Power Confidence Interval 88.6 - 92.3</span></span></code></pre></div>
+<p>As mentioned in <a href="../articles/intopkg.html">the
+Introduction</a>, the Bonferroni correction is often overly
+conservative, especially in scenarios with correlated tests. A less
+restrictive alternative is the <em>k</em>-adjustment, which specifically
+accounts for the number of tests and the number of endpoints required
+for equivalence.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="op">(</span><span class="va">N_mp_k</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sampleSize.html">sampleSize</a></span><span class="op">(</span></span>
+<span>  power <span class="op">=</span> <span class="fl">0.9</span>,               <span class="co"># Target power</span></span>
+<span>  alpha <span class="op">=</span> <span class="fl">0.05</span>,              <span class="co"># Significance level</span></span>
+<span>  mu_list <span class="op">=</span> <span class="va">mu_list</span>,         <span class="co"># List of means</span></span>
+<span>  sigma_list <span class="op">=</span> <span class="va">sigma_list</span>,   <span class="co"># List of standard deviations</span></span>
+<span>  list_comparator <span class="op">=</span> <span class="va">list_comparator</span>,  <span class="co"># Comparator configurations</span></span>
+<span>  list_lequi.tol <span class="op">=</span> <span class="va">list_lequi.tol</span>,    <span class="co"># Lower equivalence boundaries</span></span>
+<span>  list_uequi.tol <span class="op">=</span> <span class="va">list_uequi.tol</span>,    <span class="co"># Upper equivalence boundaries</span></span>
+<span>  rho <span class="op">=</span> <span class="fl">0.6</span>,                 <span class="co"># Correlation between endpoints</span></span>
+<span>  dtype <span class="op">=</span> <span class="st">"parallel"</span>,        <span class="co"># Trial design type</span></span>
+<span>  ctype <span class="op">=</span> <span class="st">"ROM"</span>,             <span class="co"># Test type (Ratio of Means)</span></span>
+<span>  vareq <span class="op">=</span> <span class="cn">TRUE</span>,              <span class="co"># Assume equal variances</span></span>
+<span>  lognorm <span class="op">=</span> <span class="cn">TRUE</span>,            <span class="co"># Log-normal distribution assumption</span></span>
+<span>  k <span class="op">=</span> <span class="fl">1</span>,                     <span class="co"># Reject at least one null hypothesis</span></span>
+<span>  adjust <span class="op">=</span> <span class="st">"k"</span>,              <span class="co"># Adjustment method</span></span>
+<span>  ncores <span class="op">=</span> <span class="fl">1</span>,                <span class="co"># Number of cores for computation</span></span>
+<span>  nsim <span class="op">=</span> <span class="fl">1000</span>,               <span class="co"># Number of stochastic simulations</span></span>
+<span>  seed <span class="op">=</span> <span class="fl">1234</span>                <span class="co"># Random seed for reproducibility</span></span>
+<span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Sample Size Calculation Results</span></span>
+<span><span class="co">#&gt; -------------------------------------------------------------</span></span>
+<span><span class="co">#&gt; Study Design: parallel trial targeting 90% power with a 5% type-I error.</span></span>
+<span><span class="co">#&gt; -------------------------------------------------------------</span></span>
+<span><span class="co">#&gt;                  Parameter       Value</span></span>
+<span><span class="co">#&gt;          Total Sample Size          24</span></span>
+<span><span class="co">#&gt;             Achieved Power        90.6</span></span>
+<span><span class="co">#&gt;  Power Confidence Interval 88.6 - 92.3</span></span></code></pre></div>
+</div>
+<div class="section level2">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
 <div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
