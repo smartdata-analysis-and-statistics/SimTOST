@@ -200,7 +200,52 @@ If correlations differ between endpoints, they can be specified individually usi
 
 Referring to the output above, the required sample size for this setting is `r N_mult_corr$response$n_total`. This is `r N_ss$response$n_total - N_mult_corr$response$n_total` fewer patients than the scenario where the endpoints are assumed to be uncorrelated.
 
+# Simultaneous Testing of Independent Primary Endpoints
+Consider now we are interested in demonstrating equivalence for at least $k=1$ of the $m=3$ primary endpoints. Unlike the previous cases, where equivalence was required for all endpoints, this setting necessitates an adjustment for multiplicity to control the family-wise error rate.
 
+```{r}
+(N_mp_bon <- sampleSize(
+  power = 0.9,               # Target power
+  alpha = 0.05,              # Significance level
+  mu_list = mu_list,         # List of means
+  sigma_list = sigma_list,   # List of standard deviations
+  list_comparator = list_comparator,  # Comparator configurations
+  list_lequi.tol = list_lequi.tol,    # Lower equivalence boundaries
+  list_uequi.tol = list_uequi.tol,    # Upper equivalence boundaries
+  rho = 0.6,                 # Correlation between endpoints
+  dtype = "parallel",        # Trial design type
+  ctype = "ROM",             # Test type (Ratio of Means)
+  vareq = TRUE,              # Assume equal variances
+  lognorm = TRUE,            # Log-normal distribution assumption
+  k = 1,                     # Reject at least one null hypothesis
+  adjust = "bon",            # Bonferroni adjustment method
+  ncores = 1,                # Number of cores for computation
+  nsim = 1000,               # Number of stochastic simulations
+  seed = 1234                # Random seed for reproducibility
+))
+```
+As mentioned in [the Introduction](../articles/intopkg.html), the Bonferroni correction is often overly conservative, especially in scenarios with correlated tests. A less restrictive alternative is the *k*-adjustment, which specifically accounts for the number of tests and the number of endpoints required for equivalence.
 
+```{r}
+(N_mp_k <- sampleSize(
+  power = 0.9,               # Target power
+  alpha = 0.05,              # Significance level
+  mu_list = mu_list,         # List of means
+  sigma_list = sigma_list,   # List of standard deviations
+  list_comparator = list_comparator,  # Comparator configurations
+  list_lequi.tol = list_lequi.tol,    # Lower equivalence boundaries
+  list_uequi.tol = list_uequi.tol,    # Upper equivalence boundaries
+  rho = 0.6,                 # Correlation between endpoints
+  dtype = "parallel",        # Trial design type
+  ctype = "ROM",             # Test type (Ratio of Means)
+  vareq = TRUE,              # Assume equal variances
+  lognorm = TRUE,            # Log-normal distribution assumption
+  k = 1,                     # Reject at least one null hypothesis
+  adjust = "k",              # Adjustment method
+  ncores = 1,                # Number of cores for computation
+  nsim = 1000,               # Number of stochastic simulations
+  seed = 1234                # Random seed for reproducibility
+))
+```
 
 # References
