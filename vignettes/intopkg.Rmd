@@ -22,7 +22,11 @@ library(SimTOST)
  Methodology and Assumptions
 
 
+
+
+
 # Hypotheses
+
 The null and alternative hypotheses for the equivalence test are as follows:
 
 ## Difference of Means (DOM)
@@ -54,6 +58,15 @@ $$H_1: E_L< \frac{\mu_{T}^{(j)}}{\mu_{R}^{(j)}} < E_U \quad\text{for all}\;j$$
 
 Here, $\mu_T$ and $\mu_R$ represent the arithmetic mean responses of the test product (the proposed biosimilar) and the reference product, respectively. 
 
+## Regulatory Requirements 
+When evaluating bioequivalence, certain statistical and methodological requirements must be adhered to, as outlined in the European Medicines Agency's bioequivalence guidelines [@CHMP2010]. These requirements ensure that the test and reference products meet predefined criteria for equivalence in terms of pharmacokinetic parameters. The key considerations are summarized below:
+
+* Hypothesis testing should be based on the ratio of the population geometric means 
+* The 90% confidence interval for the ratio of the test and reference products should be contained within the acceptance interval of 80.00 to 125.00%. 
+* A margin of clinical equivalence ($\Delta$) is chosen by defining the largest difference that is clinically acceptable, so that a difference bigger than this would matter in practice. 
+* The data should be transformed prior to analysis using a logarithmic transformation and subsequently be analyzed using ANOVA
+
+
 # Log-Transformation and Parameter Adjustments in sampleSize()
 In [sampleSize()](../reference/sampleSize.html), Ratio of Means (ROM) tests are converted to Difference of Means (DOM) tests by log-transforming the data. Equivalence limits are applied to the log-transformed data, and the results are back-transformed to the original scale for interpretation. This approach leverages the log-normal distribution of pharmacokinetic (PK) measures like AUC and Cmax.
 
@@ -70,21 +83,22 @@ To fully operate within the log-normal framework, the variances on the original 
 \text{Logarithmic Variance} = \log\left(1 + \frac{\sigma^2}{\mu^2}\right)
 \]
 
-# Statistical Considerations
+# Testing of multiple endpoints
+It is often required to investigate equivalence for more than one primary variable. [@sozu_sample_2015] For example, EMA recommends showing equivalence both for AUC and Cmax 
 
-## Consistency Across Endpoints
-For equivalence to be established, all primary endpoints must simultaneously satisfy the equivalence criteria. This applies whether the criteria are expressed as:
+A decision must be made as to whether it is desirable to 
 
-  * The Difference of Means (DOM) approach measures absolute differences between treatment means.
-  * The Ratio of Means (ROM) approach captures relative differences and is commonly used when analyzing log-transformed data, such as in pharmacokinetic studies.
+* Demonstrate equivalence for all primary endpoints: most common setting (also known as **multiple co-primary endpoints**)
+* Demonstrate equivalence for at least one of the primary endpoints (also known as **multiple primary endpoints**)
 
-## Type I Error Control
-Rejection of the null hypothesis ($H_0$) requires that all individual null hypotheses across endpoints be rejected. Since the test is designed to achieve equivalence simultaneously for all endpoints, there is no need for multiplicity adjustments, and the Type I error rate is controlled by the study design.
 
-## Impact on Power
-Requiring equivalence across multiple endpoints reduces the overall power of the test. Specifically:
+## Multiplicity
 
-* The Type II error increases as the number of primary endpoints ($K$) grows.
-* This makes equivalence testing more challenging for studies with multiple endpoints, as additional endpoints require larger sample sizes or stronger effect sizes to achieve sufficient power [@mielke_sample_2018].
+When a trial aims to evaluate the joint effects across all $m$ co-primary endpoints [@sozu_sample_2015], no multiplicity adjustment is required to control the Type I error rate, as all null hypotheses must be rejected to establish equivalence. However, as the number of endpoints ($K$) increases, the Type II error rate also increases. [@mielke_sample_2018] This leads to the following implications:
+
+* The power to detect equivalence decreases for a fixed sample size.
+* The probability of trial success is reduced as more endpoints are evaluated simultaneously.
+
+
 
 # References
