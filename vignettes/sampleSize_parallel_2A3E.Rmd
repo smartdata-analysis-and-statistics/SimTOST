@@ -52,7 +52,7 @@ kableExtra::kable_styling(kableExtra::kable(data,
 
 In the sections below, we explore various strategies for determining the sample size required for a parallel trial to demonstrate equivalence across the three co-primary endpoints. These strategies are based on the Ratio of Means (ROM) approach, with equivalence bounds set between 80\% and 125\%.
 
-# Independent Testing of PK Measures
+# Independent Testing of Co-Primary Endpoints
 A conservative approach to sample size calculation involves testing each pharmacokinetic (PK) measure independently. This method assumes that the endpoints are uncorrelated and that equivalence must be demonstrated for each endpoint separately. Consequently, the overall sample size required for the trial is the sum of the sample sizes for each PK measure.
 
 ```{r}
@@ -104,7 +104,7 @@ library(SimTOST)
 
 If we were to test each PK measure independently, we would find a total sample size of `r sim_AUCinf$response$n_total` for AUCinf, `r sim_AUClast$response$n_total` for AUClast, and `r sim_Cmax$response$n_total` for Cmax. This means that we would have to enroll `r sim_AUCinf$response$n_total` + `r sim_AUClast$response$n_total` + `r sim_Cmax$response$n_total` = `r sim_AUCinf$response$n_total + sim_AUClast$response$n_total + sim_Cmax$response$n_total` patients in order to reject $H_0$ at a significance level of 5\%. For context, the original trial was a randomized, single-blind, three-arm, parallel-group study conducted in 159 healthy subjects, slightly more than the `r sim_AUCinf$response$n_total + sim_AUClast$response$n_total + sim_Cmax$response$n_total` patients estimated as necessary. This suggests that the original trial had a small buffer above the calculated sample size requirements.
 
-# Simultaneous Testing of PK Measures with Independent Endpoints
+# Simultaneous Testing of Independent Co-Primary Endpoints
 This approach focuses on simultaneous testing of pharmacokinetic (PK) measures while assuming independence between endpoints. Unlike the previous approach, which evaluated each PK measure independently, this method integrates comparisons across multiple endpoints, accounting for correlations (or lack thereof) between them. By doing so, it enables simultaneous testing for equivalence without inflating the overall Type I error rate.
 
 ## Key Assumptions
@@ -172,7 +172,7 @@ We can inspect more detailed sample size requirements as follows:
 N_ss$response
 ```
 
-# Simultaneous Testing of PK Measures with Correlated Endpoints
+# Simultaneous Testing of Correlated Co-Primary Endpoints
 
 Incorporating the correlation among endpoints into power and sample size calculations for co-primary continuous endpoints offers significant advantages. [@sozu_sample_2015] Without accounting for correlation, adding more endpoints typically reduces the power. However, by including positive correlations in the calculations, power can be increased, and required sample sizes may be reduced.
 
@@ -198,7 +198,7 @@ If correlations differ between endpoints, they can be specified individually usi
                            seed = 1234))
 ```
 
-Referring to the output above, the required sample size for this setting is `r N_mult_corr$response$n_total`. This is `r N_ss$response$n_SB2 - N_mult_corr$response$n_SB2` fewer patients than the scenario where the endpoints are assumed to be uncorrelated.
+Referring to the output above, the required sample size for this setting is `r N_mult_corr$response$n_total`. This is `r N_ss$response$n_total - N_mult_corr$response$n_total` fewer patients than the scenario where the endpoints are assumed to be uncorrelated.
 
 
 

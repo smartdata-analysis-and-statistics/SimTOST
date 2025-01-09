@@ -107,17 +107,46 @@ One possible solution, if the required sample size is not feasible, is to power 
 
 ## Testing multiple primary endpoints
 
-When a trial aims to evaluate equivalence for at least $k$ out of $m$ primary endpoints, multiple tests are required. The total number of tests depends on the way equivalence is evaluated. Specifically, if pairwise comparisons are being considered among $m$ endpoints, the number of tests is calculated as:
+When a trial aims to evaluate equivalence for at least $k$ out of $m$ primary endpoints, multiple tests are required.  The total number of tests depends on the approach used to evaluate equivalence. For example, with $m=3$ independent primary endpoints and a significance level of $\alpha = 5\%$, the probability of making a Type I error on at least one hypothesis test is:
 
-$$ k(k-1)/2 \leq m$$
+$$ 1 – (1-\alpha)^m  = 1 - (1-0.05)^3 = 0.1426. $$
+This means that the overall probability of making any false positive error, also known as the **family-wise error rate (FWER)**, increases to approximately 14%. 
 
-A total of 𝑘(𝑘−1)/2≤𝑚 tests are being considered
-The statistical probability of incorrectly rejecting a true H0 will inflate along with the increased number of simultaneously tested hypotheses
-Strategies to control the type I error when evaluating multiple comparisons
-Directly adjust the observed P value for each hypothesis 
-Adjust the cutoff level 𝛼 to reject each hypothesis
+To address this, adjustments to the significance level are necessary for multiple endpoint comparisons. Various methods have been proposed to handle this issue. In the package under consideration, the following approaches are included:
 
 
+### Bonferroni correction
+The most common and easiest procedure for multiplicity adjustment that controls the family-wise error rate (FWER) is the Bonferroni method. Each hypothesis is tested at level
+
+$$\alpha_{bon}= \alpha/m$$
+
+where $m$ is the total number of tests. While simple, this method is conservative, especially when the tests are correlated, as it assumes all tests are independent. In the [sampleSize()](../reference/sampleSize.html) function, the Bonferroni correction can be applied by specifying `adjust = "bon"`.
+
+### Sidak correction
+
+The Sidak correction is an alternative method for controlling the family-wise error rate (FWER) in hypothesis testing. Like the Bonferroni correction, it assumes that the tests are independent. However, the Sidak correction accounts for the joint probability of all tests being non-significant, making it mathematically less conservative than Bonferroni. The adjusted significance level is calculated as:
+
+$$\alpha_{sid}= 1-(1-\alpha)^ {1/m}$$
+
+The Sidak correction can be implemented by specifying `adjust = "sid"` in the [sampleSize()](../reference/sampleSize.html) function.
+
+### K adjustment
+
+This correction explicitly accounts for the scenario where equivalence is required for only $k$ out of $m$ endpoints. Unlike the Bonferroni and Sidak corrections, which assume that all  $m$ tests contribute equally to the overall Type I error rate, the *k*-adjustment directly incorporates the number of endpoints ($k$) required for equivalence into the adjustment. The adjusted significance level is calculated as:
+
+$$\alpha_k= \frac{k*\alpha}{m}$$
+
+where $k$ is the number of endpoints required for equivalence, and $m$ is the total number of endpoints evaluated.
+
+### Sequential adjustment
+In this approach, the user specifies which endpoints are primary and which are secondary using the `type_y` vector parameter. Tests are then performed sequentially, starting with the primary endpoints. If the tests on the primary endpoints are accepted, the procedure proceeds to testing the secondary endpoints.
+
+The significance level ($\alpha$) is adjusted separately for each group of endpoints:
+
+* **Primary Endpoints**: A Bonferroni adjustment is applied based on the number of primary endpoints.
+* **Secondary Endpoints**: If the primary endpoints meet the equivalence criteria, the secondary endpoints are tested. These are also adjusted using the Bonferroni method, based on the number of secondary endpoints.
+
+This sequential adjustment ensures that the Type I error is controlled while prioritizing the evaluation of primary endpoints before moving on to secondary ones.
 
 
 
