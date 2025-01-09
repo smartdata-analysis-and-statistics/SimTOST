@@ -284,17 +284,97 @@ tests have to meet the equivalence criterion.</p>
 out of
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>m</mi><annotation encoding="application/x-tex">m</annotation></semantics></math>
 primary endpoints, multiple tests are required. The total number of
-tests depends on the way equivalence is evaluated. Specifically, if
-pairwise comparisons are being considered among
+tests depends on the approach used to evaluate equivalence. For example,
+with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi><mo>=</mo><mn>3</mn></mrow><annotation encoding="application/x-tex">m=3</annotation></semantics></math>
+independent primary endpoints and a significance level of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>α</mi><mo>=</mo><mn>5</mn><mi>%</mi></mrow><annotation encoding="application/x-tex">\alpha = 5\%</annotation></semantics></math>,
+the probability of making a Type I error on at least one hypothesis test
+is:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mi>–</mi><msup><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><mi>α</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>m</mi></msup><mo>=</mo><mn>1</mn><mo>−</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><mn>0.05</mn><mo stretchy="true" form="postfix">)</mo></mrow><mn>3</mn></msup><mo>=</mo><mn>0.1426</mn><mi>.</mi></mrow><annotation encoding="application/x-tex"> 1 – (1-\alpha)^m  = 1 - (1-0.05)^3 = 0.1426. </annotation></semantics></math>
+This means that the overall probability of making any false positive
+error, also known as the <strong>family-wise error rate (FWER)</strong>,
+increases to approximately 14%.</p>
+<p>To address this, adjustments to the significance level are necessary
+for multiple endpoint comparisons. Various methods have been proposed to
+handle this issue. In the package under consideration, the following
+approaches are included:</p>
+<div class="section level4">
+<h4 id="bonferroni-correction">Bonferroni correction<a class="anchor" aria-label="anchor" href="#bonferroni-correction"></a>
+</h4>
+<p>The most common and easiest procedure for multiplicity adjustment
+that controls the family-wise error rate (FWER) is the Bonferroni
+method. Each hypothesis is tested at level</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>α</mi><mrow><mi>b</mi><mi>o</mi><mi>n</mi></mrow></msub><mo>=</mo><mi>α</mi><mi>/</mi><mi>m</mi></mrow><annotation encoding="application/x-tex">\alpha_{bon}= \alpha/m</annotation></semantics></math></p>
+<p>where
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>m</mi><annotation encoding="application/x-tex">m</annotation></semantics></math>
-endpoints, the number of tests is calculated as:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>k</mi><mo>−</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><mi>/</mi><mn>2</mn><mo>≤</mo><mi>m</mi></mrow><annotation encoding="application/x-tex"> k(k-1)/2 \leq m</annotation></semantics></math></p>
-<p>A total of 𝑘(𝑘−1)/2≤𝑚 tests are being considered The statistical
-probability of incorrectly rejecting a true H0 will inflate along with
-the increased number of simultaneously tested hypotheses Strategies to
-control the type I error when evaluating multiple comparisons Directly
-adjust the observed P value for each hypothesis Adjust the cutoff level
-𝛼 to reject each hypothesis</p>
+is the total number of tests. While simple, this method is conservative,
+especially when the tests are correlated, as it assumes all tests are
+independent. In the <a href="../reference/sampleSize.html">sampleSize()</a> function, the
+Bonferroni correction can be applied by specifying
+<code>adjust = "bon"</code>.</p>
+</div>
+<div class="section level4">
+<h4 id="sidak-correction">Sidak correction<a class="anchor" aria-label="anchor" href="#sidak-correction"></a>
+</h4>
+<p>The Sidak correction is an alternative method for controlling the
+family-wise error rate (FWER) in hypothesis testing. Like the Bonferroni
+correction, it assumes that the tests are independent. However, the
+Sidak correction accounts for the joint probability of all tests being
+non-significant, making it mathematically less conservative than
+Bonferroni. The adjusted significance level is calculated as:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>α</mi><mrow><mi>s</mi><mi>i</mi><mi>d</mi></mrow></msub><mo>=</mo><mn>1</mn><mo>−</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><mi>α</mi><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mn>1</mn><mi>/</mi><mi>m</mi></mrow></msup></mrow><annotation encoding="application/x-tex">\alpha_{sid}= 1-(1-\alpha)^ {1/m}</annotation></semantics></math></p>
+<p>The Sidak correction can be implemented by specifying
+<code>adjust = "sid"</code> in the <a href="../reference/sampleSize.html">sampleSize()</a> function.</p>
+</div>
+<div class="section level4">
+<h4 id="k-adjustment">K adjustment<a class="anchor" aria-label="anchor" href="#k-adjustment"></a>
+</h4>
+<p>This correction explicitly accounts for the scenario where
+equivalence is required for only
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>
+out of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>m</mi><annotation encoding="application/x-tex">m</annotation></semantics></math>
+endpoints. Unlike the Bonferroni and Sidak corrections, which assume
+that all
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>m</mi><annotation encoding="application/x-tex">m</annotation></semantics></math>
+tests contribute equally to the overall Type I error rate, the
+<em>k</em>-adjustment directly incorporates the number of endpoints
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>)
+required for equivalence into the adjustment. The adjusted significance
+level is calculated as:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>α</mi><mi>k</mi></msub><mo>=</mo><mfrac><mrow><mi>k</mi><mo>*</mo><mi>α</mi></mrow><mi>m</mi></mfrac></mrow><annotation encoding="application/x-tex">\alpha_k= \frac{k*\alpha}{m}</annotation></semantics></math></p>
+<p>where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>
+is the number of endpoints required for equivalence, and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>m</mi><annotation encoding="application/x-tex">m</annotation></semantics></math>
+is the total number of endpoints evaluated.</p>
+</div>
+<div class="section level4">
+<h4 id="sequential-adjustment">Sequential adjustment<a class="anchor" aria-label="anchor" href="#sequential-adjustment"></a>
+</h4>
+<p>In this approach, the user specifies which endpoints are primary and
+which are secondary using the <code>type_y</code> vector parameter.
+Tests are then performed sequentially, starting with the primary
+endpoints. If the tests on the primary endpoints are accepted, the
+procedure proceeds to testing the secondary endpoints.</p>
+<p>The significance level
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>α</mi><annotation encoding="application/x-tex">\alpha</annotation></semantics></math>)
+is adjusted separately for each group of endpoints:</p>
+<ul>
+<li>
+<strong>Primary Endpoints</strong>: A Bonferroni adjustment is
+applied based on the number of primary endpoints.</li>
+<li>
+<strong>Secondary Endpoints</strong>: If the primary endpoints meet
+the equivalence criteria, the secondary endpoints are tested. These are
+also adjusted using the Bonferroni method, based on the number of
+secondary endpoints.</li>
+</ul>
+<p>This sequential adjustment ensures that the Type I error is
+controlled while prioritizing the evaluation of primary endpoints before
+moving on to secondary ones.</p>
+</div>
 </div>
 </div>
 <div class="section level2">
