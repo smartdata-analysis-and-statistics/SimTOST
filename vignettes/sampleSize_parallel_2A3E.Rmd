@@ -200,7 +200,7 @@ If correlations differ between endpoints, they can be specified individually usi
 
 Referring to the output above, the required sample size for this setting is `r N_mult_corr$response$n_total`. This is `r N_ss$response$n_total - N_mult_corr$response$n_total` fewer patients than the scenario where the endpoints are assumed to be uncorrelated.
 
-# Simultaneous Testing of Independent Primary Endpoints
+# Simultaneous Testing of Correlated Primary Endpoints
 Consider now we are interested in demonstrating equivalence for at least $k=1$ of the $m=3$ primary endpoints. Unlike the previous cases, where equivalence was required for all endpoints, this setting necessitates an adjustment for multiplicity to control the family-wise error rate.
 
 ```{r}
@@ -247,5 +247,36 @@ As mentioned in [the Introduction](../articles/intopkg.html), the Bonferroni cor
   seed = 1234                # Random seed for reproducibility
 ))
 ```
+
+A more advanced testing approach involves Sequential Adjustment, where the significance level is adjusted separately for groups of endpoints (primary and secondary). A Bonferroni adjustment is applied to the primary endpoints based on their number. If the null hypothesis for the primary endpoints is rejected, testing proceeds sequentially to the secondary endpoints, which are also Bonferroni-adjusted based on the number of secondary endpoints.
+
+In this example, the sequential adjustment can be implemented by setting the function argument to `adjust = "seq"` and specifying the type of each endpoint through the `type_y` parameter. For instance, we define "AUCinf" as a primary endpoint, while "AUClast" and "Cmax" are designated as secondary endpoints.
+
+
+```{r}
+(N_mp_seq <- sampleSize(
+  power           = 0.9,                              # Target power
+  alpha           = 0.05,                             # Significance level
+  mu_list         = mu_list,                          # List of means
+  sigma_list      = sigma_list,                       # List of standard deviations
+  list_comparator = list_comparator,                  # Comparator configurations
+  list_lequi.tol  = list_lequi.tol,                   # Lower equivalence boundaries
+  list_uequi.tol  = list_uequi.tol,                   # Upper equivalence boundaries
+  rho             = 0.6,                              # Correlation between endpoints
+  dtype           = "parallel",                       # Trial design type
+  ctype           = "ROM",                            # Test type (Ratio of Means)
+  vareq           = TRUE,                             # Assume equal variances
+  lognorm         = TRUE,                             # Log-normal distribution assumption
+  k               = 1,                                # Reject at least one null hypothesis
+  adjust          = "seq",                            # Sequential adjustment method
+  type_y          = c("AUCinf" = 1, "AUClast" = 2, "Cmax" = 2), # Endpoint types
+  ncores          = 1,                                # Number of cores for computation
+  nsim            = 1000,                             # Number of stochastic simulations
+  seed            = 1234                              # Random seed for reproducibility
+))
+```
+
+
+
 
 # References
