@@ -110,13 +110,13 @@ This approach focuses on simultaneous testing of pharmacokinetic (PK) measures w
 ## Key Assumptions
 In the calculations below, the following assumptions are made:
 
-* Parameter Tested: The Ratio of Means (ROM) is used as the equivalence parameter.
-* Design: A parallel trial design is assumed.
+* Hypothesis Testing Approach: Ratio of Means (ROM)
+* Design: A parallel trial design
 * Distribution: PK measures follow a log-normal distribution.
-* Standard Deviation: A common standard deviation is assumed for each biosimilar.
+* Standard Deviation: All treatments share a  common standard deviation for each endpoint
 * Multiplicity: No multiplicity adjustments are applied.
-* Equivalence Criterion: Equivalence is required for only one of the endpoints.
-*Independence: All endpoints are assumed to be uncorrelated. This is specified using the default value of the correlation parameter, $\rho=0$.
+* Equivalence Criterion: Equivalence is required for all $k=m=3$ endpoints.
+* Independence: All endpoints are assumed to be uncorrelated, specified by setting the correlation parameter to $\rho=0$.
 
 ## Input Data
 
@@ -151,26 +151,54 @@ By default, it is required that all $k=m$ co-primary endpoints have to be equiva
 
 ```{r}
 (N_ss <- sampleSize(power = 0.9, # target power
-               alpha = 0.05,
-               mu_list = mu_list,
-               sigma_list = sigma_list,
-               list_comparator = list_comparator,
-               list_lequi.tol = list_lequi.tol,
-               list_uequi.tol = list_uequi.tol,
-               dtype = "parallel",
-               ctype = "ROM",
-               vareq = TRUE,
-               lognorm = TRUE,
-               ncores = 1,
-               nsim = 50,
-               seed = 1234))
+                    alpha = 0.05,
+                    mu_list = mu_list,
+                    sigma_list = sigma_list,
+                    list_comparator = list_comparator,
+                    list_lequi.tol = list_lequi.tol,
+                    list_uequi.tol = list_uequi.tol,
+                    dtype = "parallel",
+                    ctype = "ROM",
+                    vareq = TRUE,
+                    lognorm = TRUE,
+                    ncores = 1,
+                    nsim = 1000,
+                    seed = 1234))
 ```
 
-If we increase `nsim` to 10,000 we find a total sample size of 80 patients.
+We can inspect more detailed sample size requirements as follows:
 
+```{r}
+N_ss$response
+```
 
-In this setting, equivalence is required for at least one endpoint rather than all endpoints, reducing the overall sample size compared to independent testing. Furthermore, this approach allows for greater flexibility by enabling users to specify correlation structures or work with uncorrelated endpoints as a default assumption.
+# Simultaneous Testing of PK Measures with Correlated Endpoints
 
+Incorporating the correlation among endpoints into power and sample size calculations for co-primary continuous endpoints offers significant advantages. [@sozu_sample_2015] Without accounting for correlation, adding more endpoints typically reduces the power. However, by including positive correlations in the calculations, power can be increased, and required sample sizes may be reduced.
+
+For this analysis, we proceed with the same values used previously but now assume that a correlation exists between endpoints. Specifically, we set $\rho = 0.6$, assuming a common correlation across all endpoints.
+
+If correlations differ between endpoints, they can be specified individually using a correlation matrix (`cor_mat`), allowing for greater flexibility in the analysis.
+
+```{r}
+(N_mult_corr <- sampleSize(power = 0.9, # target power
+                           alpha = 0.05,
+                           mu_list = mu_list,
+                           sigma_list = sigma_list,
+                           list_comparator = list_comparator,
+                           list_lequi.tol = list_lequi.tol,
+                           list_uequi.tol = list_uequi.tol,
+                           rho = 0.6,
+                           dtype = "parallel",
+                           ctype = "ROM",
+                           vareq = TRUE,
+                           lognorm = TRUE,
+                           ncores = 1,
+                           nsim = 1000,
+                           seed = 1234))
+```
+
+Referring to the output above, the required sample size for this setting is `r N_mult_corr$response$n_total`. This is `r N_ss$response$n_SB2 - N_mult_corr$response$n_SB2` fewer patients than the scenario where the endpoints are assumed to be uncorrelated.
 
 
 

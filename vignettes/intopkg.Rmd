@@ -107,6 +107,18 @@ One possible solution, if the required sample size is not feasible, is to power 
 
 ## Testing multiple primary endpoints
 
+When a trial aims to evaluate equivalence for at least $k$ out of $m$ primary endpoints, multiple tests are required. The total number of tests depends on the way equivalence is evaluated. Specifically, if pairwise comparisons are being considered among $m$ endpoints, the number of tests is calculated as:
+
+$$ k(k-1)/2 \leq m$$
+
+A total of 𝑘(𝑘−1)/2≤𝑚 tests are being considered
+The statistical probability of incorrectly rejecting a true H0 will inflate along with the increased number of simultaneously tested hypotheses
+Strategies to control the type I error when evaluating multiple comparisons
+Directly adjust the observed P value for each hypothesis 
+Adjust the cutoff level 𝛼 to reject each hypothesis
+
+
+
 
 
 
