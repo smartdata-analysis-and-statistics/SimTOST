@@ -95,7 +95,7 @@
                         <h4 data-toc-skip class="author">Thomas
 Debray</h4>
             
-            <h4 data-toc-skip class="date">January 08, 2025</h4>
+            <h4 data-toc-skip class="date">January 09, 2025</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/smartdata-analysis-and-statistics/SimTOST/blob/main/vignettes/sampleSize_parallel_2A3E.Rmd" class="external-link"><code>vignettes/sampleSize_parallel_2A3E.Rmd</code></a></small>
       <div class="hidden name"><code>sampleSize_parallel_2A3E.Rmd</code></div>
@@ -314,11 +314,92 @@ method integrates comparisons across multiple endpoints, accounting for
 correlations (or lack thereof) between them. By doing so, it enables
 simultaneous testing for equivalence without inflating the overall Type
 I error rate.</p>
+<div class="section level3">
+<h3 id="key-assumptions">Key Assumptions<a class="anchor" aria-label="anchor" href="#key-assumptions"></a>
+</h3>
+<p>In the calculations below, the following assumptions are made:</p>
+<ul>
+<li>Parameter Tested: The Ratio of Means (ROM) is used as the
+equivalence parameter.</li>
+<li>Design: A parallel trial design is assumed.</li>
+<li>Distribution: PK measures follow a log-normal distribution.</li>
+<li>Standard Deviation: A common standard deviation is assumed for each
+biosimilar.</li>
+<li>Multiplicity: No multiplicity adjustments are applied.</li>
+<li>Equivalence Criterion: Equivalence is required for only one of the
+endpoints. *Independence: All endpoints are assumed to be uncorrelated.
+This is specified using the default value of the correlation parameter,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ρ</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\rho=0</annotation></semantics></math>.</li>
+</ul>
+</div>
+<div class="section level3">
+<h3 id="input-data">Input Data<a class="anchor" aria-label="anchor" href="#input-data"></a>
+</h3>
+<p>The arithmetic means and standard deviations for each endpoint and
+treatment arm are defined as follows:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">mu_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>  SB2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>AUCinf <span class="op">=</span> <span class="fl">38703</span>, AUClast <span class="op">=</span> <span class="fl">36862</span>, Cmax <span class="op">=</span> <span class="fl">127.0</span><span class="op">)</span>,</span>
+<span>  EUREF <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>AUCinf <span class="op">=</span> <span class="fl">39360</span>, AUClast <span class="op">=</span> <span class="fl">37022</span>, Cmax <span class="op">=</span> <span class="fl">126.2</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">sigma_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>  SB2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>AUCinf <span class="op">=</span> <span class="fl">11114</span>, AUClast <span class="op">=</span> <span class="fl">9133</span>, Cmax <span class="op">=</span> <span class="fl">16.9</span><span class="op">)</span>,</span>
+<span>  EUREF <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>AUCinf <span class="op">=</span> <span class="fl">12332</span>, AUClast <span class="op">=</span> <span class="fl">9398</span>, Cmax <span class="op">=</span> <span class="fl">17.9</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="equivalence-boundaries">Equivalence Boundaries<a class="anchor" aria-label="anchor" href="#equivalence-boundaries"></a>
+</h3>
+<p>Since we are comparing multiple co-primary endpoints, it is essential
+to define the lower and upper equivalence boundaries for each endpoint.
+These boundaries determine the acceptable range for the Ratio of Means
+(ROM) within which equivalence is established.</p>
+<p>For simplicity, the same equivalence boundaries are applied to all
+endpoints:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Equivalent boundaries</span></span>
+<span><span class="va">list_comparator</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"Comparison"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SB2"</span>,<span class="st">"EUREF"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">list_lequi.tol</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"Comparison"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>AUCinf <span class="op">=</span> <span class="fl">0.8</span>, AUClast <span class="op">=</span> <span class="fl">0.8</span>, Cmax <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">list_uequi.tol</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"Comparison"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>AUCinf <span class="op">=</span> <span class="fl">1.25</span>, AUClast <span class="op">=</span> <span class="fl">1.25</span>, Cmax <span class="op">=</span> <span class="fl">1.25</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>By default, it is required that all
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi><mo>=</mo><mi>m</mi></mrow><annotation encoding="application/x-tex">k=m</annotation></semantics></math>
+co-primary endpoints have to be equivalent:</p>
+</div>
+<div class="section level3">
+<h3 id="computing-sample-size">Computing Sample Size<a class="anchor" aria-label="anchor" href="#computing-sample-size"></a>
+</h3>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="op">(</span><span class="va">N_ss</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sampleSize.html">sampleSize</a></span><span class="op">(</span>power <span class="op">=</span> <span class="fl">0.9</span>, <span class="co"># target power</span></span>
+<span>               alpha <span class="op">=</span> <span class="fl">0.05</span>,</span>
+<span>               mu_list <span class="op">=</span> <span class="va">mu_list</span>,</span>
+<span>               sigma_list <span class="op">=</span> <span class="va">sigma_list</span>,</span>
+<span>               list_comparator <span class="op">=</span> <span class="va">list_comparator</span>,</span>
+<span>               list_lequi.tol <span class="op">=</span> <span class="va">list_lequi.tol</span>,</span>
+<span>               list_uequi.tol <span class="op">=</span> <span class="va">list_uequi.tol</span>,</span>
+<span>               dtype <span class="op">=</span> <span class="st">"parallel"</span>,</span>
+<span>               ctype <span class="op">=</span> <span class="st">"ROM"</span>,</span>
+<span>               vareq <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>               lognorm <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>               ncores <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>               nsim <span class="op">=</span> <span class="fl">50</span>,</span>
+<span>               seed <span class="op">=</span> <span class="fl">1234</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Sample Size Calculation Results</span></span>
+<span><span class="co">#&gt; -------------------------------------------------------------</span></span>
+<span><span class="co">#&gt; Study Design: parallel trial targeting 90% power with a 5% type-I error.</span></span>
+<span><span class="co">#&gt; -------------------------------------------------------------</span></span>
+<span><span class="co">#&gt;                  Parameter       Value</span></span>
+<span><span class="co">#&gt;          Total Sample Size          80</span></span>
+<span><span class="co">#&gt;             Achieved Power          90</span></span>
+<span><span class="co">#&gt;  Power Confidence Interval 77.4 - 96.3</span></span></code></pre></div>
+<p>If we increase <code>nsim</code> to 10,000 we find a total sample
+size of 80 patients.</p>
 <p>In this setting, equivalence is required for at least one endpoint
 rather than all endpoints, reducing the overall sample size compared to
 independent testing. Furthermore, this approach allows for greater
 flexibility by enabling users to specify correlation structures or work
 with uncorrelated endpoints as a default assumption.</p>
+</div>
 </div>
 <div class="section level2">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
