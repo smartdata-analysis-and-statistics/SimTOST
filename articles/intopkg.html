@@ -308,10 +308,16 @@ method. Each hypothesis is tested at level</p>
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>α</mi><mrow><mi>b</mi><mi>o</mi><mi>n</mi></mrow></msub><mo>=</mo><mi>α</mi><mi>/</mi><mi>m</mi></mrow><annotation encoding="application/x-tex">\alpha_{bon}= \alpha/m</annotation></semantics></math></p>
 <p>where
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>m</mi><annotation encoding="application/x-tex">m</annotation></semantics></math>
-is the total number of tests. While simple, this method is conservative,
-especially when the tests are correlated, as it assumes all tests are
-independent. In the <a href="../reference/sampleSize.html">sampleSize()</a> function, the
-Bonferroni correction can be applied by specifying
+is the total number of tests. While simple, this method is highly
+conservative, particularly when the tests are correlated, as it assumes
+all tests are independent. This conservativeness remains pronounced even
+for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">k=1</annotation></semantics></math>,
+where only one of the
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>m</mi><annotation encoding="application/x-tex">m</annotation></semantics></math>
+hypotheses needs to be rejected. <span class="citation">(<a href="#ref-mielke_sample_2018">Mielke et al. 2018</a>)</span></p>
+<p>In the <a href="../reference/sampleSize.html">sampleSize()</a>
+function, the Bonferroni correction can be applied by setting
 <code>adjust = "bon"</code>.</p>
 </div>
 <div class="section level4">
