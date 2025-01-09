@@ -147,9 +147,9 @@ list_uequi.tol <- list("Comparison" = c(AUCinf = 1.25, AUClast = 1.25, Cmax = 1.
 
 By default, it is required that all $k=m$ co-primary endpoints have to be equivalent:
 
-```{r}
-library(simsamplesize)
+## Computing Sample Size
 
+```{r}
 (N_ss <- sampleSize(power = 0.9, # target power
                alpha = 0.05,
                mu_list = mu_list,
