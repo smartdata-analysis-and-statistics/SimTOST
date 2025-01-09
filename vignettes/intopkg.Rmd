@@ -1,6 +1,9 @@
 ---
 title: "Introduction"
-output: rmarkdown::html_vignette
+output: 
+  rmarkdown::html_vignette:
+    number_sections: true
+    toc: true
 vignette: >
   %\VignetteIndexEntry{Introduction}
   %\VignetteEngine{knitr::rmarkdown}
@@ -120,7 +123,9 @@ The most common and easiest procedure for multiplicity adjustment that controls 
 
 $$\alpha_{bon}= \alpha/m$$
 
-where $m$ is the total number of tests. While simple, this method is conservative, especially when the tests are correlated, as it assumes all tests are independent. In the [sampleSize()](../reference/sampleSize.html) function, the Bonferroni correction can be applied by specifying `adjust = "bon"`.
+where $m$ is the total number of tests. While simple, this method is highly conservative, particularly when the tests are correlated, as it assumes all tests are independent. This conservativeness remains pronounced even for $k=1$, where only one of the $m$ hypotheses needs to be rejected. [@mielke_sample_2018]
+
+In the [sampleSize()](../reference/sampleSize.html) function, the Bonferroni correction can be applied by setting `adjust = "bon"`.
 
 ### Sidak correction
 
