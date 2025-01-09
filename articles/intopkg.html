@@ -175,10 +175,11 @@ proposed biosimilar) and the reference product, respectively.</p>
 </h3>
 <p>When evaluating bioequivalence, certain statistical and
 methodological requirements must be adhered to, as outlined in the
-European Medicines Agency’s bioequivalence guidelines <span class="citation">[@CHMP2010]</span>. These requirements ensure that the
-test and reference products meet predefined criteria for equivalence in
-terms of pharmacokinetic parameters. The key considerations are
-summarized below:</p>
+European Medicines Agency’s bioequivalence guidelines <span class="citation">(<a href="#ref-CHMP2010">Committee for Medicinal
+Products for Human Use (CHMP) 2010</a>)</span>. These requirements
+ensure that the test and reference products meet predefined criteria for
+equivalence in terms of pharmacokinetic parameters. The key
+considerations are summarized below:</p>
 <ul>
 <li>Hypothesis testing should be based on the ratio of the population
 geometric means</li>
@@ -232,8 +233,8 @@ variance formula:</p>
 <h2 id="testing-of-multiple-endpoints">Testing of multiple endpoints<a class="anchor" aria-label="anchor" href="#testing-of-multiple-endpoints"></a>
 </h2>
 <p>It is often required to investigate equivalence for more than one
-primary variable. <span class="citation">[@sozu_sample_2015]</span> For
-example, EMA recommends showing equivalence both for AUC and Cmax</p>
+primary variable. <span class="citation">(<a href="#ref-sozu_sample_2015">Sozu et al. 2015</a>)</span> For example,
+EMA recommends showing equivalence both for AUC and Cmax</p>
 <p>A decision must be made as to whether it is desirable to</p>
 <ul>
 <li>Demonstrate equivalence for all primary endpoints: most common
@@ -243,28 +244,66 @@ endpoints</strong>)</li>
 (also known as <strong>multiple primary endpoints</strong>)</li>
 </ul>
 <div class="section level3">
-<h3 id="multiplicity">Multiplicity<a class="anchor" aria-label="anchor" href="#multiplicity"></a>
+<h3 id="testing-multiple-co-primary-endpoints">Testing multiple co-primary endpoints<a class="anchor" aria-label="anchor" href="#testing-multiple-co-primary-endpoints"></a>
 </h3>
 <p>When a trial aims to evaluate the joint effects across all
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>m</mi><annotation encoding="application/x-tex">m</annotation></semantics></math>
-co-primary endpoints <span class="citation">[@sozu_sample_2015]</span>,
-no multiplicity adjustment is required to control the Type I error rate,
-as all null hypotheses must be rejected to establish equivalence.
-However, as the number of endpoints
+co-primary endpoints <span class="citation">(<a href="#ref-sozu_sample_2015">Sozu et al. 2015</a>)</span>, no
+multiplicity adjustment is required to control the Type I error rate, as
+all null hypotheses must be rejected to establish equivalence. However,
+as the number of endpoints
 (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>K</mi><annotation encoding="application/x-tex">K</annotation></semantics></math>)
-increases, the Type II error rate also increases. <span class="citation">[@mielke_sample_2018]</span> This leads to the
-following implications:</p>
+increases, the Type II error rate also increases. <span class="citation">(<a href="#ref-mielke_sample_2018">Mielke et al.
+2018</a>)</span> This leads to the following implications:</p>
 <ul>
 <li>The power to detect equivalence decreases for a fixed sample
 size.</li>
 <li>The probability of trial success is reduced as more endpoints are
 evaluated simultaneously.</li>
 </ul>
+<p>Previous studies have demonstrated that the sample size required to
+achieve a given power level increases as the number of endpoints
+increases <span class="citation">(<a href="#ref-mielke_sample_2018">Mielke et al. 2018</a>)</span>. This
+increase in sample size can be substantial, particularly when there is
+no correlation between the test statistics and/or when a large number of
+tests are conducted. Conversely, the impact of the number of endpoints
+on the required sample size is less pronounced when the correlation
+between endpoints is high.</p>
+<p>One possible solution, if the required sample size is not feasible,
+is to power the study so that at least
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>
+out of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>m</mi><annotation encoding="application/x-tex">m</annotation></semantics></math>
+tests have to meet the equivalence criterion.</p>
+</div>
+<div class="section level3">
+<h3 id="testing-multiple-primary-endpoints">Testing multiple primary endpoints<a class="anchor" aria-label="anchor" href="#testing-multiple-primary-endpoints"></a>
+</h3>
 </div>
 </div>
 <div class="section level2">
-<h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+<h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="ref-CHMP2010" class="csl-entry">
+Committee for Medicinal Products for Human Use (CHMP). 2010.
+<span>“Guideline on the Investigation of Bioequivalence.”</span>
+CPMP/EWP/QWP/1401/98. London, UK: European Medicines Agency. <a href="https://www.ema.europa.eu/en/documents/scientific-guideline/guideline-investigation-bioequivalence-rev1_en.pdf" class="external-link">https://www.ema.europa.eu/en/documents/scientific-guideline/guideline-investigation-bioequivalence-rev1_en.pdf</a>.
+</div>
+<div id="ref-mielke_sample_2018" class="csl-entry">
+Mielke, Johanna, Byron Jones, Bernd Jilma, and Franz König. 2018.
+<span>“Sample <span>Size</span> for <span>Multiple Hypothesis
+Testing</span> in <span>Biosimilar Development</span>.”</span>
+<em>Statistics in Biopharmaceutical Research</em> 10 (1): 39–49. <a href="https://doi.org/10.1080/19466315.2017.1371071" class="external-link">https://doi.org/10.1080/19466315.2017.1371071</a>.
+</div>
+<div id="ref-sozu_sample_2015" class="csl-entry">
+Sozu, Takashi, Tomoyuki Sugimoto, Toshimitsu Hamasaki, and Scott R.
+Evans. 2015. <em>Sample <span>Size Determination</span> in
+<span>Clinical Trials</span> with <span>Multiple Endpoints</span></em>.
+<span>SpringerBriefs</span> in <span>Statistics</span>. Cham: Springer
+International Publishing. <a href="https://doi.org/10.1007/978-3-319-22005-5" class="external-link">https://doi.org/10.1007/978-3-319-22005-5</a>.
+</div>
+</div>
 </div>
   </div>
 
