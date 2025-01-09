@@ -448,7 +448,7 @@ setting is 82. This is 2 fewer patients than the scenario where the
 endpoints are assumed to be uncorrelated.</p>
 </div>
 <div class="section level2">
-<h2 id="simultaneous-testing-of-independent-primary-endpoints">Simultaneous Testing of Independent Primary Endpoints<a class="anchor" aria-label="anchor" href="#simultaneous-testing-of-independent-primary-endpoints"></a>
+<h2 id="simultaneous-testing-of-correlated-primary-endpoints">Simultaneous Testing of Correlated Primary Endpoints<a class="anchor" aria-label="anchor" href="#simultaneous-testing-of-correlated-primary-endpoints"></a>
 </h2>
 <p>Consider now we are interested in demonstrating equivalence for at
 least
@@ -520,6 +520,47 @@ for equivalence.</p>
 <span><span class="co">#&gt;          Total Sample Size          24</span></span>
 <span><span class="co">#&gt;             Achieved Power        90.6</span></span>
 <span><span class="co">#&gt;  Power Confidence Interval 88.6 - 92.3</span></span></code></pre></div>
+<p>A more advanced testing approach involves Sequential Adjustment,
+where the significance level is adjusted separately for groups of
+endpoints (primary and secondary). A Bonferroni adjustment is applied to
+the primary endpoints based on their number. If the null hypothesis for
+the primary endpoints is rejected, testing proceeds sequentially to the
+secondary endpoints, which are also Bonferroni-adjusted based on the
+number of secondary endpoints.</p>
+<p>In this example, the sequential adjustment can be implemented by
+setting the function argument to <code>adjust = "seq"</code> and
+specifying the type of each endpoint through the <code>type_y</code>
+parameter. For instance, we define “AUCinf” as a primary endpoint, while
+“AUClast” and “Cmax” are designated as secondary endpoints.</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="op">(</span><span class="va">N_mp_seq</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sampleSize.html">sampleSize</a></span><span class="op">(</span></span>
+<span>  power           <span class="op">=</span> <span class="fl">0.9</span>,                              <span class="co"># Target power</span></span>
+<span>  alpha           <span class="op">=</span> <span class="fl">0.05</span>,                             <span class="co"># Significance level</span></span>
+<span>  mu_list         <span class="op">=</span> <span class="va">mu_list</span>,                          <span class="co"># List of means</span></span>
+<span>  sigma_list      <span class="op">=</span> <span class="va">sigma_list</span>,                       <span class="co"># List of standard deviations</span></span>
+<span>  list_comparator <span class="op">=</span> <span class="va">list_comparator</span>,                  <span class="co"># Comparator configurations</span></span>
+<span>  list_lequi.tol  <span class="op">=</span> <span class="va">list_lequi.tol</span>,                   <span class="co"># Lower equivalence boundaries</span></span>
+<span>  list_uequi.tol  <span class="op">=</span> <span class="va">list_uequi.tol</span>,                   <span class="co"># Upper equivalence boundaries</span></span>
+<span>  rho             <span class="op">=</span> <span class="fl">0.6</span>,                              <span class="co"># Correlation between endpoints</span></span>
+<span>  dtype           <span class="op">=</span> <span class="st">"parallel"</span>,                       <span class="co"># Trial design type</span></span>
+<span>  ctype           <span class="op">=</span> <span class="st">"ROM"</span>,                            <span class="co"># Test type (Ratio of Means)</span></span>
+<span>  vareq           <span class="op">=</span> <span class="cn">TRUE</span>,                             <span class="co"># Assume equal variances</span></span>
+<span>  lognorm         <span class="op">=</span> <span class="cn">TRUE</span>,                             <span class="co"># Log-normal distribution assumption</span></span>
+<span>  k               <span class="op">=</span> <span class="fl">1</span>,                                <span class="co"># Reject at least one null hypothesis</span></span>
+<span>  adjust          <span class="op">=</span> <span class="st">"seq"</span>,                            <span class="co"># Sequential adjustment method</span></span>
+<span>  type_y          <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AUCinf"</span> <span class="op">=</span> <span class="fl">1</span>, <span class="st">"AUClast"</span> <span class="op">=</span> <span class="fl">2</span>, <span class="st">"Cmax"</span> <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>, <span class="co"># Endpoint types</span></span>
+<span>  ncores          <span class="op">=</span> <span class="fl">1</span>,                                <span class="co"># Number of cores for computation</span></span>
+<span>  nsim            <span class="op">=</span> <span class="fl">1000</span>,                             <span class="co"># Number of stochastic simulations</span></span>
+<span>  seed            <span class="op">=</span> <span class="fl">1234</span>                              <span class="co"># Random seed for reproducibility</span></span>
+<span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Sample Size Calculation Results</span></span>
+<span><span class="co">#&gt; -------------------------------------------------------------</span></span>
+<span><span class="co">#&gt; Study Design: parallel trial targeting 90% power with a 5% type-I error.</span></span>
+<span><span class="co">#&gt; -------------------------------------------------------------</span></span>
+<span><span class="co">#&gt;                  Parameter     Value</span></span>
+<span><span class="co">#&gt;          Total Sample Size        80</span></span>
+<span><span class="co">#&gt;             Achieved Power      90.1</span></span>
+<span><span class="co">#&gt;  Power Confidence Interval 88 - 91.8</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
