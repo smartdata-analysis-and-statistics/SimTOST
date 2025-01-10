@@ -26,9 +26,15 @@ print.simss <- function(x, ...) {
   cat(paste0("Study Design: ", x$param.d$dtype, " trial targeting ",100*tpower,"% power with a ",100*alpha, "% type-I error.\n"))
   cat("Endpoints Tested:\n")
   for (i in 1:length(x$param$list_comparator)) {
-    cat(paste0("  - ", paste(x$param$list_comparator[[i]], collapse = " vs. "), ": ",
-                  paste(x$param$list_y_comparator[[i]], collapse = ", "), " (k = ",
-               x$param.d$k[i], ")\n"))
+    nendp <- length(x$param$list_comparator[[i]])
+    str <- paste0("  - ", paste(x$param$list_comparator[[i]], collapse = " vs. "), ": ",
+                  paste(x$param$list_y_comparator[[i]], collapse = ", "))
+    if (nendp > 1 & x$param.d$k[i] < nendp) {
+      str <- paste0(str, " (multiple primary endpoints, k = ", x$param.d$k[i], ")")
+    } else if (nendp > 1 & x$param.d$k[i] == nendp) {
+      str <- paste0(str, " (multiple co-primary endpoints, m = ", x$param.d$k[i], ")")
+    }
+    cat(paste0(str, "\n"))
   }
 
   cat("-------------------------------------------------------------\n")
