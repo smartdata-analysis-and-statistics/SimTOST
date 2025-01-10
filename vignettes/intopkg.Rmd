@@ -154,7 +154,10 @@ The significance level ($\alpha$) is adjusted separately for each group of endpo
 This sequential adjustment ensures that the Type I error is controlled while prioritizing the evaluation of primary endpoints before moving on to secondary ones.
 
 
+# Testing of multiple treatments
+In some cases, it may be necessary to compare multiple treatments simultaneously. This can be achieved by specifying multiple comparators in the `mu_list` and `sigma_list` parameters. The [sampleSize()](../reference/sampleSize.html) function can accommodate multiple treatments, allowing for the evaluation of equivalence across different products or formulations.   
 
+Although trials with multiple arms are common, there is no clear consensus in the literature on whether statistical corrections should be applied for testing multiple primary hypotheses in such analyses. In SimTOST, no adjustments are made for trials involving more than two treatment arms.
 
 
 # References
