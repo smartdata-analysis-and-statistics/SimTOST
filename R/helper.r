@@ -27,10 +27,9 @@ print.simss <- function(x, ...) {
   cat("Endpoints Tested:\n")
   for (i in 1:length(x$param$list_comparator)) {
     cat(paste0("  - ", paste(x$param$list_comparator[[i]], collapse = " vs. "), ": ",
-               paste(x$param$list_y_comparator[[i]], collapse = ", "), "\n")) #AUCinf and Cmax (multiple co-primary endpoints, m = 2)\n"))
+                  paste(x$param$list_y_comparator[[i]], collapse = ", "), " (k = ",
+               x$param.d$k[i], ")\n"))
   }
-
-
 
   cat("-------------------------------------------------------------\n")
   print(output, row.names = FALSE)  # Suppress row numbers
