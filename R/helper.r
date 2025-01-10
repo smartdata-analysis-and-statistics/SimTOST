@@ -51,8 +51,10 @@ print.simss <- function(x, ...) {
       alphau <- x$param.d$alpha*x$param$weight_seq
     }
 
-    cat("    - Multiplicity Correction:", multiplicity_correction, "\n")
-    cat("      - Adjusted Significance Levels: α =", paste(format(alphau, digits = 3, nsmall = 3), collapse = "; "), "\n\n")
+    if (nendp > 1 & x$param.d$k[i] < nendp) {
+      cat("    - Multiplicity Correction:", multiplicity_correction, "\n")
+      cat("      - Adjusted Significance Levels: α =", paste(format(alphau, digits = 3, nsmall = 3), collapse = "; "), "\n\n")
+    }
 
   }
 
