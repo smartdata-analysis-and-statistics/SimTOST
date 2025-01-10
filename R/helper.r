@@ -34,6 +34,7 @@ print.simss <- function(x, ...) {
     } else if (nendp > 1 & x$param.d$k[i] == nendp) {
       str <- paste0(str, " (multiple co-primary endpoints, m = ", x$param.d$k[i], ")\n")
     }
+    cat(str)
   }
 
   cat("Multiplicity Correction:\n")
@@ -54,6 +55,7 @@ print.simss <- function(x, ...) {
     } else if (x$param.d$adjust == "seq") {
       str <- paste0(str, " sequential (alpha = ",  paste(x$param.d$alpha*x$param$weight_seq, collapse = "; "), ")\n")
     }
+    cat(str)
   }
 
   cat("-------------------------------------------------------------\n")
