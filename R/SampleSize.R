@@ -501,7 +501,16 @@ sampleSize <- function(mu_list, varcov_list = NA, sigma_list = NA, cor_mat = NA,
     stop("Names included in the list_comparator should be coherent with the names in the arm_names vector")
   }
 
-  param.d <- list(nsim=nsim,power=power,alpha=alpha,dtype=dtype,ctype=ctype,lognorm=lognorm,vareq=vareq,k=k,adjust=adjust,dropout=dropout,list_lequi.tol=list_lequi.tol, list_uequi.tol=list_uequi.tol)
+  param.d <- list(nsim=nsim,
+                  power=power,
+                  alpha=alpha,
+                  dtype=dtype,
+                  ctype=ctype,
+                  lognorm=lognorm,
+                  vareq=vareq,
+                  k=k,
+                  adjust=adjust,
+                  dropout=dropout,list_lequi.tol=list_lequi.tol, list_uequi.tol=list_uequi.tol)
 
   if(is.na(ncores)) {
     ncores <- parallel::detectCores() - 1

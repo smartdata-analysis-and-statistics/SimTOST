@@ -24,6 +24,14 @@ print.simss <- function(x, ...) {
   message("Sample Size Calculation Results")
   cat("-------------------------------------------------------------\n")
   cat(paste0("Study Design: ", x$param.d$dtype, " trial targeting ",100*tpower,"% power with a ",100*alpha, "% type-I error.\n"))
+  cat("Endpoints Tested:\n")
+  for (i in 1:length(x$param$list_comparator)) {
+    cat(paste0("  - ", paste(x$param$list_comparator[[i]], collapse = " vs. "), ": ",
+               paste(x$param$list_y_comparator[[i]], collapse = ", "), "\n")) #AUCinf and Cmax (multiple co-primary endpoints, m = 2)\n"))
+  }
+
+
+
   cat("-------------------------------------------------------------\n")
   print(output, row.names = FALSE)  # Suppress row numbers
   #cat("-------------------------------------------------------------\n")
