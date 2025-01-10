@@ -384,6 +384,21 @@ moving on to secondary ones.</p>
 </div>
 </div>
 <div class="section level2">
+<h2 id="testing-of-multiple-treatments">Testing of multiple treatments<a class="anchor" aria-label="anchor" href="#testing-of-multiple-treatments"></a>
+</h2>
+<p>In some cases, it may be necessary to compare multiple treatments
+simultaneously. This can be achieved by specifying multiple comparators
+in the <code>mu_list</code> and <code>sigma_list</code> parameters. The
+<a href="../reference/sampleSize.html">sampleSize()</a> function can
+accommodate multiple treatments, allowing for the evaluation of
+equivalence across different products or formulations.</p>
+<p>Although trials with multiple arms are common, there is no clear
+consensus in the literature on whether statistical corrections should be
+applied for testing multiple primary hypotheses in such analyses. In
+SimTOST, no adjustments are made for trials involving more than two
+treatment arms.</p>
+</div>
+<div class="section level2">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
 <div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
