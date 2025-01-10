@@ -36,7 +36,7 @@ print.simss <- function(x, ...) {
     }
     if (x$param.d$adjust == "no") {
       multiplicity_correction <- "No Adjustment"
-      #cat(paste0(" no adjustment (alpha = ", x$param.d$alpha, ")\n"))
+      alphau <- x$param.d$alpha
     } else if (x$param.d$adjust == "bon") {
       multiplicity_correction <- "Bonferroni"
       alphau <- x$param.d$alpha/nendp
