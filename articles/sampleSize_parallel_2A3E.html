@@ -243,14 +243,19 @@ each PK measure.</p>
 <span><span class="co">#&gt; Sample Size Calculation Results</span></span>
 <span><span class="co">#&gt; -------------------------------------------------------------</span></span>
 <span><span class="co">#&gt; Study Design: parallel trial targeting 90% power with a 5% type-I error.</span></span>
-<span><span class="co">#&gt; Endpoints Tested:</span></span>
-<span><span class="co">#&gt;   - SB2 vs. EU_Remicade: y1Multiplicity Correction:</span></span>
-<span><span class="co">#&gt;   - SB2 vs. EU_Remicade:  no adjustment (alpha = 0.05)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Comparisons:</span></span>
+<span><span class="co">#&gt;    SB2 vs. EU_Remicade </span></span>
+<span><span class="co">#&gt;     - Endpoints Tested: y1 </span></span>
+<span><span class="co">#&gt;     - Multiplicity Correction: No Adjustment </span></span>
+<span><span class="co">#&gt;       - Adjusted Significance Levels: α = 0.050 </span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; -------------------------------------------------------------</span></span>
 <span><span class="co">#&gt;                  Parameter       Value</span></span>
 <span><span class="co">#&gt;          Total Sample Size          78</span></span>
 <span><span class="co">#&gt;             Achieved Power        90.5</span></span>
 <span><span class="co">#&gt;  Power Confidence Interval 88.5 - 92.2</span></span>
+<span><span class="co">#&gt; -------------------------------------------------------------</span></span>
 <span></span>
 <span><span class="co"># Sample size calculation for AUClast</span></span>
 <span><span class="op">(</span><span class="va">sim_AUClast</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sampleSize.html">sampleSize</a></span><span class="op">(</span></span>
@@ -268,14 +273,19 @@ each PK measure.</p>
 <span><span class="co">#&gt; Sample Size Calculation Results</span></span>
 <span><span class="co">#&gt; -------------------------------------------------------------</span></span>
 <span><span class="co">#&gt; Study Design: parallel trial targeting 90% power with a 5% type-I error.</span></span>
-<span><span class="co">#&gt; Endpoints Tested:</span></span>
-<span><span class="co">#&gt;   - SB2 vs. EU_Remicade: y1Multiplicity Correction:</span></span>
-<span><span class="co">#&gt;   - SB2 vs. EU_Remicade:  no adjustment (alpha = 0.05)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Comparisons:</span></span>
+<span><span class="co">#&gt;    SB2 vs. EU_Remicade </span></span>
+<span><span class="co">#&gt;     - Endpoints Tested: y1 </span></span>
+<span><span class="co">#&gt;     - Multiplicity Correction: No Adjustment </span></span>
+<span><span class="co">#&gt;       - Adjusted Significance Levels: α = 0.050 </span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; -------------------------------------------------------------</span></span>
 <span><span class="co">#&gt;                  Parameter       Value</span></span>
 <span><span class="co">#&gt;          Total Sample Size          54</span></span>
 <span><span class="co">#&gt;             Achieved Power        90.4</span></span>
 <span><span class="co">#&gt;  Power Confidence Interval 88.4 - 92.1</span></span>
+<span><span class="co">#&gt; -------------------------------------------------------------</span></span>
 <span></span>
 <span></span>
 <span><span class="co"># Sample size calculation for Cmax</span></span>
@@ -294,14 +304,19 @@ each PK measure.</p>
 <span><span class="co">#&gt; Sample Size Calculation Results</span></span>
 <span><span class="co">#&gt; -------------------------------------------------------------</span></span>
 <span><span class="co">#&gt; Study Design: parallel trial targeting 90% power with a 5% type-I error.</span></span>
-<span><span class="co">#&gt; Endpoints Tested:</span></span>
-<span><span class="co">#&gt;   - SB2 vs. EU_Remicade: y1Multiplicity Correction:</span></span>
-<span><span class="co">#&gt;   - SB2 vs. EU_Remicade:  no adjustment (alpha = 0.05)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Comparisons:</span></span>
+<span><span class="co">#&gt;    SB2 vs. EU_Remicade </span></span>
+<span><span class="co">#&gt;     - Endpoints Tested: y1 </span></span>
+<span><span class="co">#&gt;     - Multiplicity Correction: No Adjustment </span></span>
+<span><span class="co">#&gt;       - Adjusted Significance Levels: α = 0.050 </span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; -------------------------------------------------------------</span></span>
 <span><span class="co">#&gt;                  Parameter       Value</span></span>
 <span><span class="co">#&gt;          Total Sample Size          18</span></span>
 <span><span class="co">#&gt;             Achieved Power        91.2</span></span>
-<span><span class="co">#&gt;  Power Confidence Interval 89.2 - 92.8</span></span></code></pre></div>
+<span><span class="co">#&gt;  Power Confidence Interval 89.2 - 92.8</span></span>
+<span><span class="co">#&gt; -------------------------------------------------------------</span></span></code></pre></div>
 <p>If we were to test each PK measure independently, we would find a
 total sample size of 78 for AUCinf, 54 for AUClast, and 18 for Cmax.
 This means that we would have to enroll 78 + 54 + 18 = 150 patients in
@@ -397,15 +412,20 @@ co-primary endpoints have to be equivalent:</p>
 <span><span class="co">#&gt; Sample Size Calculation Results</span></span>
 <span><span class="co">#&gt; -------------------------------------------------------------</span></span>
 <span><span class="co">#&gt; Study Design: parallel trial targeting 90% power with a 5% type-I error.</span></span>
-<span><span class="co">#&gt; Endpoints Tested:</span></span>
-<span><span class="co">#&gt;   - SB2 vs. EUREF: AUCinf, AUClast, Cmax (multiple co-primary endpoints, m = 3)</span></span>
-<span><span class="co">#&gt; Multiplicity Correction:</span></span>
-<span><span class="co">#&gt;   - SB2 vs. EUREF:  no adjustment (alpha = 0.05)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Comparisons:</span></span>
+<span><span class="co">#&gt;    SB2 vs. EUREF </span></span>
+<span><span class="co">#&gt;     - Endpoints Tested: AUCinf, AUClast, Cmax </span></span>
+<span><span class="co">#&gt;       (multiple co-primary endpoints, m =  3 )</span></span>
+<span><span class="co">#&gt;     - Multiplicity Correction: No Adjustment </span></span>
+<span><span class="co">#&gt;       - Adjusted Significance Levels: α = 0.050 </span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; -------------------------------------------------------------</span></span>
 <span><span class="co">#&gt;                  Parameter       Value</span></span>
 <span><span class="co">#&gt;          Total Sample Size          84</span></span>
 <span><span class="co">#&gt;             Achieved Power          90</span></span>
-<span><span class="co">#&gt;  Power Confidence Interval 87.9 - 91.8</span></span></code></pre></div>
+<span><span class="co">#&gt;  Power Confidence Interval 87.9 - 91.8</span></span>
+<span><span class="co">#&gt; -------------------------------------------------------------</span></span></code></pre></div>
 <p>We can inspect more detailed sample size requirements as follows:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">N_ss</span><span class="op">$</span><span class="va">response</span></span>
@@ -451,15 +471,20 @@ for greater flexibility in the analysis.</p>
 <span><span class="co">#&gt; Sample Size Calculation Results</span></span>
 <span><span class="co">#&gt; -------------------------------------------------------------</span></span>
 <span><span class="co">#&gt; Study Design: parallel trial targeting 90% power with a 5% type-I error.</span></span>
-<span><span class="co">#&gt; Endpoints Tested:</span></span>
-<span><span class="co">#&gt;   - SB2 vs. EUREF: AUCinf, AUClast, Cmax (multiple co-primary endpoints, m = 3)</span></span>
-<span><span class="co">#&gt; Multiplicity Correction:</span></span>
-<span><span class="co">#&gt;   - SB2 vs. EUREF:  no adjustment (alpha = 0.05)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Comparisons:</span></span>
+<span><span class="co">#&gt;    SB2 vs. EUREF </span></span>
+<span><span class="co">#&gt;     - Endpoints Tested: AUCinf, AUClast, Cmax </span></span>
+<span><span class="co">#&gt;       (multiple co-primary endpoints, m =  3 )</span></span>
+<span><span class="co">#&gt;     - Multiplicity Correction: No Adjustment </span></span>
+<span><span class="co">#&gt;       - Adjusted Significance Levels: α = 0.050 </span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; -------------------------------------------------------------</span></span>
 <span><span class="co">#&gt;                  Parameter       Value</span></span>
 <span><span class="co">#&gt;          Total Sample Size          82</span></span>
 <span><span class="co">#&gt;             Achieved Power        90.4</span></span>
-<span><span class="co">#&gt;  Power Confidence Interval 88.4 - 92.1</span></span></code></pre></div>
+<span><span class="co">#&gt;  Power Confidence Interval 88.4 - 92.1</span></span>
+<span><span class="co">#&gt; -------------------------------------------------------------</span></span></code></pre></div>
 <p>Referring to the output above, the required sample size for this
 setting is 82. This is 2 fewer patients than the scenario where the
 endpoints are assumed to be uncorrelated.</p>
@@ -498,15 +523,20 @@ multiplicity to control the family-wise error rate.</p>
 <span><span class="co">#&gt; Sample Size Calculation Results</span></span>
 <span><span class="co">#&gt; -------------------------------------------------------------</span></span>
 <span><span class="co">#&gt; Study Design: parallel trial targeting 90% power with a 5% type-I error.</span></span>
-<span><span class="co">#&gt; Endpoints Tested:</span></span>
-<span><span class="co">#&gt;   - SB2 vs. EUREF: AUCinf, AUClast, Cmax (multiple primary endpoints, k = 1)</span></span>
-<span><span class="co">#&gt; Multiplicity Correction:</span></span>
-<span><span class="co">#&gt;   - SB2 vs. EUREF:  bonferroni (alpha = 0.0167)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Comparisons:</span></span>
+<span><span class="co">#&gt;    SB2 vs. EUREF </span></span>
+<span><span class="co">#&gt;     - Endpoints Tested: AUCinf, AUClast, Cmax </span></span>
+<span><span class="co">#&gt;       (multiple primary endpoints, k =  1 )</span></span>
+<span><span class="co">#&gt;     - Multiplicity Correction: Bonferroni </span></span>
+<span><span class="co">#&gt;       - Adjusted Significance Levels: α = 0.0167 </span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; -------------------------------------------------------------</span></span>
 <span><span class="co">#&gt;                  Parameter       Value</span></span>
 <span><span class="co">#&gt;          Total Sample Size          24</span></span>
 <span><span class="co">#&gt;             Achieved Power        90.6</span></span>
-<span><span class="co">#&gt;  Power Confidence Interval 88.6 - 92.3</span></span></code></pre></div>
+<span><span class="co">#&gt;  Power Confidence Interval 88.6 - 92.3</span></span>
+<span><span class="co">#&gt; -------------------------------------------------------------</span></span></code></pre></div>
 <p>As mentioned in <a href="../articles/intopkg.html">the
 Introduction</a>, the Bonferroni correction is often overly
 conservative, especially in scenarios with correlated tests. A less
@@ -536,15 +566,20 @@ for equivalence.</p>
 <span><span class="co">#&gt; Sample Size Calculation Results</span></span>
 <span><span class="co">#&gt; -------------------------------------------------------------</span></span>
 <span><span class="co">#&gt; Study Design: parallel trial targeting 90% power with a 5% type-I error.</span></span>
-<span><span class="co">#&gt; Endpoints Tested:</span></span>
-<span><span class="co">#&gt;   - SB2 vs. EUREF: AUCinf, AUClast, Cmax (multiple primary endpoints, k = 1)</span></span>
-<span><span class="co">#&gt; Multiplicity Correction:</span></span>
-<span><span class="co">#&gt;   - SB2 vs. EUREF:  k-adjustment (alpha = 0.0167)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Comparisons:</span></span>
+<span><span class="co">#&gt;    SB2 vs. EUREF </span></span>
+<span><span class="co">#&gt;     - Endpoints Tested: AUCinf, AUClast, Cmax </span></span>
+<span><span class="co">#&gt;       (multiple primary endpoints, k =  1 )</span></span>
+<span><span class="co">#&gt;     - Multiplicity Correction: k-adjustment </span></span>
+<span><span class="co">#&gt;       - Adjusted Significance Levels: α = 0.0167 </span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; -------------------------------------------------------------</span></span>
 <span><span class="co">#&gt;                  Parameter       Value</span></span>
 <span><span class="co">#&gt;          Total Sample Size          24</span></span>
 <span><span class="co">#&gt;             Achieved Power        90.6</span></span>
-<span><span class="co">#&gt;  Power Confidence Interval 88.6 - 92.3</span></span></code></pre></div>
+<span><span class="co">#&gt;  Power Confidence Interval 88.6 - 92.3</span></span>
+<span><span class="co">#&gt; -------------------------------------------------------------</span></span></code></pre></div>
 <p>A more advanced testing approach involves Sequential Adjustment,
 where the significance level is adjusted separately for groups of
 endpoints (primary and secondary). A Bonferroni adjustment is applied to
@@ -581,15 +616,20 @@ parameter. For instance, we define “AUCinf” as a primary endpoint, while
 <span><span class="co">#&gt; Sample Size Calculation Results</span></span>
 <span><span class="co">#&gt; -------------------------------------------------------------</span></span>
 <span><span class="co">#&gt; Study Design: parallel trial targeting 90% power with a 5% type-I error.</span></span>
-<span><span class="co">#&gt; Endpoints Tested:</span></span>
-<span><span class="co">#&gt;   - SB2 vs. EUREF: AUCinf, AUClast, Cmax (multiple primary endpoints, k = 1)</span></span>
-<span><span class="co">#&gt; Multiplicity Correction:</span></span>
-<span><span class="co">#&gt;   - SB2 vs. EUREF:  sequential (alpha = 0.05; 0.025; 0.025)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Comparisons:</span></span>
+<span><span class="co">#&gt;    SB2 vs. EUREF </span></span>
+<span><span class="co">#&gt;     - Endpoints Tested: AUCinf, AUClast, Cmax </span></span>
+<span><span class="co">#&gt;       (multiple primary endpoints, k =  1 )</span></span>
+<span><span class="co">#&gt;     - Multiplicity Correction: Sequential </span></span>
+<span><span class="co">#&gt;       - Adjusted Significance Levels: α = 0.050; 0.025; 0.025 </span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; -------------------------------------------------------------</span></span>
 <span><span class="co">#&gt;                  Parameter     Value</span></span>
 <span><span class="co">#&gt;          Total Sample Size        80</span></span>
 <span><span class="co">#&gt;             Achieved Power      90.1</span></span>
-<span><span class="co">#&gt;  Power Confidence Interval 88 - 91.8</span></span></code></pre></div>
+<span><span class="co">#&gt;  Power Confidence Interval 88 - 91.8</span></span>
+<span><span class="co">#&gt; -------------------------------------------------------------</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
