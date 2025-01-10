@@ -23,43 +23,44 @@ print.simss <- function(x, ...) {
 
   cat("Sample Size Calculation Results\n")
   cat("-------------------------------------------------------------\n")
-  cat(paste0("Study Design: ", x$param.d$dtype, " trial targeting ",100*tpower,"% power with a ",100*alpha, "% type-I error.\n"))
-  cat("Endpoints Tested:\n")
+  cat(paste0("Study Design: ", x$param.d$dtype, " trial targeting ",100*tpower,"% power with a ",100*alpha, "% type-I error.\n\n"))
+  cat("Comparisons:\n")
   for (i in 1:length(x$param$list_comparator)) {
     nendp <- length(x$param$list_y_comparator[[i]])
-    str <- paste0("  - ", paste(x$param$list_comparator[[i]], collapse = " vs. "), ": ",
-                  paste(x$param$list_y_comparator[[i]], collapse = ", "))
+    cat("  ", paste(x$param$list_comparator[[i]], collapse = " vs. "), "\n")
+    cat("    - Endpoints Tested:", paste(x$param$list_y_comparator[[i]], collapse = ", "), "\n")
     if (nendp > 1 & x$param.d$k[i] < nendp) {
-      str <- paste0(str, " (multiple primary endpoints, k = ", x$param.d$k[i], ")\n")
+      cat("      (multiple primary endpoints, k = ", x$param.d$k[i], ")\n")
     } else if (nendp > 1 & x$param.d$k[i] == nendp) {
-      str <- paste0(str, " (multiple co-primary endpoints, m = ", x$param.d$k[i], ")\n")
+      cat("      (multiple co-primary endpoints, m = ", x$param.d$k[i], ")\n")
     }
-    cat(str)
+    if (x$param.d$adjust == "no") {
+      multiplicity_correction <- "No Adjustment"
+      #cat(paste0(" no adjustment (alpha = ", x$param.d$alpha, ")\n"))
+    } else if (x$param.d$adjust == "bon") {
+      multiplicity_correction <- "Bonferroni"
+      alphau <- x$param.d$alpha/nendp
+    } else if (x$param.d$adjust == "sid") {
+      multiplicity_correction <- "Sidak"
+      alphau <- 1-(1-x$param.d$alpha)^(1/nendp)
+    } else if (x$param.d$adjust == "k") {
+      multiplicity_correction <- "k-adjustment"
+      alphau <- x$param.d$k[i]*x$param.d$alpha/nendp
+    } else if (x$param.d$adjust == "seq") {
+      multiplicity_correction <- "Sequential"
+      alphau <- x$param.d$alpha*x$param$weight_seq
+    }
+
+    cat("    - Multiplicity Correction:", multiplicity_correction, "\n")
+    cat("      - Adjusted Significance Levels: α =", paste(format(alphau, digits = 3, nsmall = 3), collapse = "; "), "\n\n")
+
   }
 
-  cat("Multiplicity Correction:\n")
-  for (i in 1:length(x$param$list_comparator)) {
-    nendp <- length(x$param$list_y_comparator[[i]])
-    str <- paste0("  - ", paste(x$param$list_comparator[[i]], collapse = " vs. "), ": ")
-    if (x$param.d$adjust == "no") {
-      str <- paste0(str, " no adjustment (alpha = ", x$param.d$alpha, ")\n")
-    } else if (x$param.d$adjust == "bon") {
-      alphau <- x$param.d$alpha/nendp
-      str <- paste0(str, " bonferroni (alpha = ", format(alphau, digits = 3, nsmall = 3), ")\n")
-    } else if (x$param.d$adjust == "sid") {
-      alphau <- 1-(1-x$param.d$alpha)^(1/nendp)
-      str <- paste0(str, " sidak (alpha = ", format(alphau, digits = 3, nsmall = 3), ")\n")
-    } else if (x$param.d$adjust == "k") {
-      alphau <- x$param.d$k[i]*x$param.d$alpha/nendp
-      str <- paste0(str, " k-adjustment (alpha = ", format(alphau, digits = 3, nsmall = 3), ")\n")
-    } else if (x$param.d$adjust == "seq") {
-      str <- paste0(str, " sequential (alpha = ",  paste(x$param.d$alpha*x$param$weight_seq, collapse = "; "), ")\n")
-    }
-    cat(str)
-  }
+
 
   cat("-------------------------------------------------------------\n")
   print(output, row.names = FALSE)  # Suppress row numbers
+  cat("-------------------------------------------------------------\n")
   #cat("-------------------------------------------------------------\n")
   #print(x$response[,-1], row.names = FALSE)
 }
