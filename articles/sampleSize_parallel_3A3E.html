@@ -129,8 +129,8 @@ size in such trials, where both multiple endpoints and multiple
 reference products are considered. As an illustrative example, we use
 data from the phase-1 trial <a href="https://clinicaltrials.gov/study/NCT01922336#study-overview" class="external-link">NCT01922336</a>,
 which assessed pharmacokinetics following a single dose of SB2, its
-EU-sourced reference product (EU_Remicade), and its US-sourced reference
-product (USA_Remicade) <span class="citation">(<a href="#ref-shin_randomized_2015">Shin et al. 2015</a>)</span>.</p>
+EU-sourced reference product (EU-INF), and its US-sourced reference
+product (US-INF) <span class="citation">(<a href="#ref-shin_randomized_2015">Shin et al. 2015</a>)</span>.</p>
 <table class="table table table-striped" style="margin-left: auto; margin-right: auto;">
 <caption>
 Primary PK measures between test and reference product. Data represent
@@ -244,15 +244,15 @@ following inputs are required:</p>
 <code class="sourceCode R"><span><span class="co"># Mean values for each endpoint and arm</span></span>
 <span><span class="va">mu_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>  SB2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>AUCinf <span class="op">=</span> <span class="fl">38703</span>, AUClast <span class="op">=</span> <span class="fl">36862</span>, Cmax <span class="op">=</span> <span class="fl">127.0</span><span class="op">)</span>,</span>
-<span>  EUREF <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>AUCinf <span class="op">=</span> <span class="fl">39360</span>, AUClast <span class="op">=</span> <span class="fl">37022</span>, Cmax <span class="op">=</span> <span class="fl">126.2</span><span class="op">)</span>,</span>
-<span>  USREF <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>AUCinf <span class="op">=</span> <span class="fl">39270</span>, AUClast <span class="op">=</span> <span class="fl">37368</span>, Cmax <span class="op">=</span> <span class="fl">129.2</span><span class="op">)</span></span>
+<span>  EUINF <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>AUCinf <span class="op">=</span> <span class="fl">39360</span>, AUClast <span class="op">=</span> <span class="fl">37022</span>, Cmax <span class="op">=</span> <span class="fl">126.2</span><span class="op">)</span>,</span>
+<span>  USINF <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>AUCinf <span class="op">=</span> <span class="fl">39270</span>, AUClast <span class="op">=</span> <span class="fl">37368</span>, Cmax <span class="op">=</span> <span class="fl">129.2</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Standard deviation values for each endpoint and arm</span></span>
 <span><span class="va">sigma_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>  SB2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>AUCinf <span class="op">=</span> <span class="fl">11114</span>, AUClast <span class="op">=</span> <span class="fl">9133</span>, Cmax <span class="op">=</span> <span class="fl">16.9</span><span class="op">)</span>,</span>
-<span>  EUREF <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>AUCinf <span class="op">=</span> <span class="fl">12332</span>, AUClast <span class="op">=</span> <span class="fl">9398</span>, Cmax <span class="op">=</span> <span class="fl">17.9</span><span class="op">)</span>,</span>
-<span>  USREF <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>AUCinf <span class="op">=</span> <span class="fl">10064</span>, AUClast <span class="op">=</span> <span class="fl">8332</span>, Cmax <span class="op">=</span> <span class="fl">18.8</span><span class="op">)</span></span>
+<span>  EUINF <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>AUCinf <span class="op">=</span> <span class="fl">12332</span>, AUClast <span class="op">=</span> <span class="fl">9398</span>, Cmax <span class="op">=</span> <span class="fl">17.9</span><span class="op">)</span>,</span>
+<span>  USINF <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>AUCinf <span class="op">=</span> <span class="fl">10064</span>, AUClast <span class="op">=</span> <span class="fl">8332</span>, Cmax <span class="op">=</span> <span class="fl">18.8</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -269,27 +269,178 @@ endpoints.</p>
 <li>Bioequivalence of SB2 vs. EU-INF for AUCinf and Cmax, and</li>
 <li>Bioequivalence of SB2 vs. US-INF for AUClast and Cmax.</li>
 </ul>
+<p>The comparisons can be specified as follows:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Arms to be compared</span></span>
+<span><span class="va">list_comparator</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>  EMA <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SB2"</span>, <span class="st">"EUINF"</span><span class="op">)</span>,</span>
+<span>  FDA <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SB2"</span>, <span class="st">"USINF"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Endpoints to be compared</span></span>
+<span><span class="va">list_y_comparator</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>  EMA <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AUCinf"</span>, <span class="st">"Cmax"</span><span class="op">)</span>,</span>
+<span>  FDA <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AUClast"</span>, <span class="st">"Cmax"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <p>For all endpoints, bioequivalence is established if the 90%
 confidence intervals for the ratios of the geometric means fall within
 the equivalence range of 80.00% to 125.00%.</p>
 <p>Below is the R code to define the equivalence boundaries for each
 comparison:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Define comparators and equivalence boundaries</span></span>
 <span><span class="va">list_comparator</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>  <span class="st">"EMA"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SB2"</span>, <span class="st">"EUREF"</span><span class="op">)</span>,</span>
-<span>  <span class="st">"FDA"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SB2"</span>, <span class="st">"USREF"</span><span class="op">)</span></span>
+<span>  <span class="st">"EMA"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SB2"</span>, <span class="st">"EUINF"</span><span class="op">)</span>,</span>
+<span>  <span class="st">"FDA"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SB2"</span>, <span class="st">"USINF"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">list_lequi.tol</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>  <span class="st">"EMA"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>AUCinf <span class="op">=</span> <span class="fl">0.8</span>, AUClast <span class="op">=</span> <span class="fl">0.8</span>, Cmax <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span>,</span>
-<span>  <span class="st">"FDA"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>AUCinf <span class="op">=</span> <span class="fl">0.8</span>, AUClast <span class="op">=</span> <span class="fl">0.8</span>, Cmax <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span></span>
+<span>  <span class="st">"EMA"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>AUCinf <span class="op">=</span> <span class="fl">0.8</span>, Cmax <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span>,</span>
+<span>  <span class="st">"FDA"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>AUClast <span class="op">=</span> <span class="fl">0.8</span>, Cmax <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">list_uequi.tol</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>  <span class="st">"EMA"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>AUCinf <span class="op">=</span> <span class="fl">1.25</span>, AUClast <span class="op">=</span> <span class="fl">1.25</span>, Cmax <span class="op">=</span> <span class="fl">1.25</span><span class="op">)</span>,</span>
-<span>  <span class="st">"FDA"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>AUCinf <span class="op">=</span> <span class="fl">1.25</span>, AUClast <span class="op">=</span> <span class="fl">1.25</span>, Cmax <span class="op">=</span> <span class="fl">1.25</span><span class="op">)</span></span>
+<span>  <span class="st">"EMA"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>AUCinf <span class="op">=</span> <span class="fl">1.25</span>, Cmax <span class="op">=</span> <span class="fl">1.25</span><span class="op">)</span>,</span>
+<span>  <span class="st">"FDA"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>AUClast <span class="op">=</span> <span class="fl">1.25</span>, Cmax <span class="op">=</span> <span class="fl">1.25</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
+<p>Here, the <code>list_comparator</code> parameter specifies the arms
+being compared, while <code>list_lequi.tol</code> and
+<code>list_uequi.tol</code> define the lower and upper equivalence
+boundaries for the endpoints under consideration.</p>
+<p>To calculate the required sample size for testing equivalence under
+the specified conditions, we use the <a href="../reference/sampleSize.html">sampleSize()</a> function from the
+SimTOST package. This function computes the total sample size needed to
+achieve the target power while ensuring equivalence criteria are
+met.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/smartdata-analysis-and-statistics/SimTOST" class="external-link">SimTOST</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="op">(</span><span class="va">N_ss</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sampleSize.html">sampleSize</a></span><span class="op">(</span>power <span class="op">=</span> <span class="fl">0.9</span>,        <span class="co"># Target power</span></span>
+<span>                    alpha <span class="op">=</span> <span class="fl">0.05</span>,      <span class="co"># Type I error rate</span></span>
+<span>                    mu_list <span class="op">=</span> <span class="va">mu_list</span>, <span class="co"># Means for each endpoint and arm</span></span>
+<span>                    sigma_list <span class="op">=</span> <span class="va">sigma_list</span>, <span class="co"># Standard deviations</span></span>
+<span>                    list_comparator <span class="op">=</span> <span class="va">list_comparator</span>, <span class="co"># Comparator arms</span></span>
+<span>                    list_y_comparator <span class="op">=</span> <span class="va">list_y_comparator</span>, <span class="co"># Endpoints to compare</span></span>
+<span>                    list_lequi.tol <span class="op">=</span> <span class="va">list_lequi.tol</span>, <span class="co"># Lower equivalence boundaries</span></span>
+<span>                    list_uequi.tol <span class="op">=</span> <span class="va">list_uequi.tol</span>, <span class="co"># Upper equivalence boundaries</span></span>
+<span>                    dtype <span class="op">=</span> <span class="st">"parallel"</span>, <span class="co"># Trial design type</span></span>
+<span>                    ctype <span class="op">=</span> <span class="st">"ROM"</span>,      <span class="co"># Test type: Ratio of Means</span></span>
+<span>                    vareq <span class="op">=</span> <span class="cn">TRUE</span>,       <span class="co"># Assume equal variances</span></span>
+<span>                    lognorm <span class="op">=</span> <span class="cn">TRUE</span>,     <span class="co"># Log-normal distribution assumption</span></span>
+<span>                    ncores <span class="op">=</span> <span class="fl">1</span>,         <span class="co"># Number of cores for computation</span></span>
+<span>                    nsim <span class="op">=</span> <span class="fl">1000</span>,        <span class="co"># Number of stochastic simulations</span></span>
+<span>                    seed <span class="op">=</span> <span class="fl">1234</span><span class="op">)</span><span class="op">)</span>       <span class="co"># Random seed for reproducibility</span></span>
+<span><span class="co">#&gt; Sample Size Calculation Results</span></span>
+<span><span class="co">#&gt; -------------------------------------------------------------</span></span>
+<span><span class="co">#&gt; Study Design: parallel trial targeting 90% power with a 5% type-I error.</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Comparisons:</span></span>
+<span><span class="co">#&gt;    SB2 vs. EUINF </span></span>
+<span><span class="co">#&gt;     - Endpoints Tested: AUCinf, Cmax </span></span>
+<span><span class="co">#&gt;       (multiple co-primary endpoints, m =  2 )</span></span>
+<span><span class="co">#&gt;    SB2 vs. USINF </span></span>
+<span><span class="co">#&gt;     - Endpoints Tested: AUClast, Cmax </span></span>
+<span><span class="co">#&gt;       (multiple co-primary endpoints, m =  2 )</span></span>
+<span><span class="co">#&gt; -------------------------------------------------------------</span></span>
+<span><span class="co">#&gt;                  Parameter       Value</span></span>
+<span><span class="co">#&gt;          Total Sample Size         117</span></span>
+<span><span class="co">#&gt;             Achieved Power          90</span></span>
+<span><span class="co">#&gt;  Power Confidence Interval 87.9 - 91.8</span></span>
+<span><span class="co">#&gt; -------------------------------------------------------------</span></span></code></pre></div>
+<p>We find a total sample size of
+N_ss<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>r</mi><mi>e</mi><mi>s</mi><mi>p</mi><mi>o</mi><mi>n</mi><mi>s</mi><mi>e</mi></mrow><annotation encoding="application/x-tex">response</annotation></semantics></math>n_total
+patients (or 39 per arm) are required to demonstrate equivalence.</p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="simultaneous-testing-of-independent-primary-endpoints">Simultaneous Testing of Independent Primary Endpoints<a class="anchor" aria-label="anchor" href="#simultaneous-testing-of-independent-primary-endpoints"></a>
+</h2>
+<div class="section level3">
+<h3 id="equivalence-for-at-least-2-of-the-3-endpoints-with-bonferroni-adjustment">Equivalence for At Least 2 of the 3 Endpoints with Bonferroni
+Adjustment<a class="anchor" aria-label="anchor" href="#equivalence-for-at-least-2-of-the-3-endpoints-with-bonferroni-adjustment"></a>
+</h3>
+<p>In this example, we aim to establish equivalence for at least two out
+of three primary endpoints while accounting for multiplicity using the
+Bonferroni adjustment. The following assumptions are made:</p>
+<ul>
+<li>Equality of Variances: Variances are assumed to be equal across
+groups (<code>vareq = TRUE</code>).</li>
+<li>Testing Parameter: The Ratio of Means (ROM) is used as the testing
+parameter (<code>ctype = "ROM"</code>).</li>
+<li>Design: A parallel trial design is assumed
+(<code>dtype = "parallel"</code>).</li>
+<li>Distribution: Endpoint data follows a log-normal distribution
+(<code>lognorm = TRUE</code>).</li>
+<li>Correlation: Endpoints are assumed to be independent, with no
+correlation between them (default <code>rho = 0</code>).</li>
+<li>Multiplicity Adjustment: The Bonferroni correction is applied to
+control for Type I error (<code>adjust = "bon"</code>).</li>
+<li>Equivalence Criterion: Equivalence is required for at least two of
+the three endpoints (<code>k = 2</code>).</li>
+</ul>
+<p>These settings ensure a robust framework for testing multiple
+endpoints while maintaining control of the family-wise error rate.</p>
+<p>The comparisons and equivalence boundaries can be defined as
+follows:</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Endpoints to be compared for each comparator</span></span>
+<span><span class="va">list_y_comparator</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>  EMA <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AUCinf"</span>, <span class="st">"AUClast"</span>, <span class="st">"Cmax"</span><span class="op">)</span>,</span>
+<span>  FDA <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AUCinf"</span>, <span class="st">"AUClast"</span>, <span class="st">"Cmax"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Define lower equivalence boundaries for each comparator</span></span>
+<span><span class="va">list_lequi.tol</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>  EMA <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>AUCinf <span class="op">=</span> <span class="fl">0.8</span>, AUClast <span class="op">=</span> <span class="fl">0.8</span>, Cmax <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span>,</span>
+<span>  FDA <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>AUCinf <span class="op">=</span> <span class="fl">0.8</span>, AUClast <span class="op">=</span> <span class="fl">0.8</span>, Cmax <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Define upper equivalence boundaries for each comparator</span></span>
+<span><span class="va">list_uequi.tol</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>  EMA <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>AUCinf <span class="op">=</span> <span class="fl">1.25</span>, AUClast <span class="op">=</span> <span class="fl">1.25</span>, Cmax <span class="op">=</span> <span class="fl">1.25</span><span class="op">)</span>,</span>
+<span>  FDA <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>AUCinf <span class="op">=</span> <span class="fl">1.25</span>, AUClast <span class="op">=</span> <span class="fl">1.25</span>, Cmax <span class="op">=</span> <span class="fl">1.25</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="op">(</span><span class="va">N_mp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sampleSize.html">sampleSize</a></span><span class="op">(</span>power <span class="op">=</span> <span class="fl">0.9</span>,        <span class="co"># Target power</span></span>
+<span>                    alpha <span class="op">=</span> <span class="fl">0.05</span>,      <span class="co"># Type I error rate</span></span>
+<span>                    mu_list <span class="op">=</span> <span class="va">mu_list</span>, <span class="co"># Means for each endpoint and arm</span></span>
+<span>                    sigma_list <span class="op">=</span> <span class="va">sigma_list</span>, <span class="co"># Standard deviations</span></span>
+<span>                    list_comparator <span class="op">=</span> <span class="va">list_comparator</span>, <span class="co"># Comparator arms</span></span>
+<span>                    list_y_comparator <span class="op">=</span> <span class="va">list_y_comparator</span>, <span class="co"># Endpoints to compare</span></span>
+<span>                    list_lequi.tol <span class="op">=</span> <span class="va">list_lequi.tol</span>, <span class="co"># Lower equivalence boundaries</span></span>
+<span>                    list_uequi.tol <span class="op">=</span> <span class="va">list_uequi.tol</span>, <span class="co"># Upper equivalence boundaries</span></span>
+<span>                    k <span class="op">=</span> <span class="fl">2</span>,              <span class="co"># Number of endpoints to be equivalent</span></span>
+<span>                    adjust <span class="op">=</span> <span class="st">"bon"</span>,     <span class="co"># Bonferroni adjustment</span></span>
+<span>                    dtype <span class="op">=</span> <span class="st">"parallel"</span>, <span class="co"># Trial design type</span></span>
+<span>                    ctype <span class="op">=</span> <span class="st">"ROM"</span>,      <span class="co"># Test type: Ratio of Means</span></span>
+<span>                    vareq <span class="op">=</span> <span class="cn">TRUE</span>,       <span class="co"># Assume equal variances</span></span>
+<span>                    lognorm <span class="op">=</span> <span class="cn">TRUE</span>,     <span class="co"># Log-normal distribution assumption</span></span>
+<span>                    ncores <span class="op">=</span> <span class="fl">1</span>,         <span class="co"># Number of cores for computation</span></span>
+<span>                    nsim <span class="op">=</span> <span class="fl">1000</span>,        <span class="co"># Number of stochastic simulations</span></span>
+<span>                    seed <span class="op">=</span> <span class="fl">1234</span><span class="op">)</span><span class="op">)</span>       <span class="co"># Random seed for reproducibility</span></span>
+<span><span class="co">#&gt; Sample Size Calculation Results</span></span>
+<span><span class="co">#&gt; -------------------------------------------------------------</span></span>
+<span><span class="co">#&gt; Study Design: parallel trial targeting 90% power with a 5% type-I error.</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Comparisons:</span></span>
+<span><span class="co">#&gt;    SB2 vs. EUINF </span></span>
+<span><span class="co">#&gt;     - Endpoints Tested: AUCinf, AUClast, Cmax </span></span>
+<span><span class="co">#&gt;       (multiple primary endpoints, k =  2 )</span></span>
+<span><span class="co">#&gt;     - Multiplicity Correction: Bonferroni </span></span>
+<span><span class="co">#&gt;       - Adjusted Significance Levels: alpha = 0.0167 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;    SB2 vs. USINF </span></span>
+<span><span class="co">#&gt;     - Endpoints Tested: AUCinf, AUClast, Cmax </span></span>
+<span><span class="co">#&gt;       (multiple primary endpoints, k =  2 )</span></span>
+<span><span class="co">#&gt;     - Multiplicity Correction: Bonferroni </span></span>
+<span><span class="co">#&gt;       - Adjusted Significance Levels: alpha = 0.0167 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; -------------------------------------------------------------</span></span>
+<span><span class="co">#&gt;                  Parameter       Value</span></span>
+<span><span class="co">#&gt;          Total Sample Size          93</span></span>
+<span><span class="co">#&gt;             Achieved Power          90</span></span>
+<span><span class="co">#&gt;  Power Confidence Interval 87.9 - 91.8</span></span>
+<span><span class="co">#&gt; -------------------------------------------------------------</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
