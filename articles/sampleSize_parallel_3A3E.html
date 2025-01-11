@@ -347,9 +347,8 @@ met.</p>
 <span><span class="co">#&gt;             Achieved Power          90</span></span>
 <span><span class="co">#&gt;  Power Confidence Interval 87.9 - 91.8</span></span>
 <span><span class="co">#&gt; -------------------------------------------------------------</span></span></code></pre></div>
-<p>We find a total sample size of
-N_ss<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>r</mi><mi>e</mi><mi>s</mi><mi>p</mi><mi>o</mi><mi>n</mi><mi>s</mi><mi>e</mi></mrow><annotation encoding="application/x-tex">response</annotation></semantics></math>n_total
-patients (or 39 per arm) are required to demonstrate equivalence.</p>
+<p>We find a total sample size of 117 patients (or 39 per arm) are
+required to demonstrate equivalence.</p>
 </div>
 </div>
 <div class="section level2">
@@ -497,9 +496,63 @@ each reference arm.</p>
 <span><span class="co">#&gt; -------------------------------------------------------------</span></span></code></pre></div>
 <p>Results from the simulation indicate that 48 patients are required
 for SB2 the active treatment arm (SB2), and 24 patients are required for
-each reference arm. The total sample size required is 96. This is
-significantly larger compared to the previous example, where the total
-sample size was 93.</p>
+each reference arm. The total sample size required is 96, which is
+larger compared to the trial with an equal allocation ratio, where the
+total sample size was 93.</p>
+</div>
+<div class="section level3">
+<h3 id="accounting-for-dropouts">Accounting for Dropouts<a class="anchor" aria-label="anchor" href="#accounting-for-dropouts"></a>
+</h3>
+<p>In the examples above, the sample size calculations assumed that all
+patients enrolled in the trial would complete it. However, in practice,
+a certain percentage of participants typically drop out, which can
+impact the required sample size. To account for this, we consider a 20%
+dropout rate across all treatment arms in this example.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="op">(</span><span class="va">N_mp3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sampleSize.html">sampleSize</a></span><span class="op">(</span>power <span class="op">=</span> <span class="fl">0.9</span>,       <span class="co"># Target power</span></span>
+<span>                     alpha <span class="op">=</span> <span class="fl">0.05</span>,      <span class="co"># Type I error rate</span></span>
+<span>                     mu_list <span class="op">=</span> <span class="va">mu_list</span>, <span class="co"># Means for each endpoint and arm</span></span>
+<span>                     sigma_list <span class="op">=</span> <span class="va">sigma_list</span>, <span class="co"># Standard deviations</span></span>
+<span>                     list_comparator <span class="op">=</span> <span class="va">list_comparator</span>, <span class="co"># Comparator arms</span></span>
+<span>                     list_y_comparator <span class="op">=</span> <span class="va">list_y_comparator</span>, <span class="co"># Endpoints to compare</span></span>
+<span>                     list_lequi.tol <span class="op">=</span> <span class="va">list_lequi.tol</span>, <span class="co"># Lower equivalence boundaries</span></span>
+<span>                     list_uequi.tol <span class="op">=</span> <span class="va">list_uequi.tol</span>, <span class="co"># Upper equivalence boundaries</span></span>
+<span>                     k <span class="op">=</span> <span class="fl">2</span>,              <span class="co"># Number of endpoints required to demonstrate equivalence</span></span>
+<span>                     adjust <span class="op">=</span> <span class="st">"bon"</span>,     <span class="co"># Bonferroni adjustment for multiple comparisons</span></span>
+<span>                     TAR <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SB2"</span> <span class="op">=</span> <span class="fl">2</span>, <span class="st">"EUINF"</span> <span class="op">=</span> <span class="fl">1</span>, <span class="st">"USINF"</span> <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>, <span class="co"># Treatment allocation rates</span></span>
+<span>                     dropout <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SB2"</span> <span class="op">=</span> <span class="fl">0.20</span>, <span class="st">"EUINF"</span> <span class="op">=</span> <span class="fl">0.20</span>, <span class="st">"USINF"</span> <span class="op">=</span> <span class="fl">0.20</span><span class="op">)</span>, <span class="co"># Expected dropout rates</span></span>
+<span>                     dtype <span class="op">=</span> <span class="st">"parallel"</span>, <span class="co"># Trial design type (parallel group)</span></span>
+<span>                     ctype <span class="op">=</span> <span class="st">"ROM"</span>,      <span class="co"># Test type: Ratio of Means</span></span>
+<span>                     vareq <span class="op">=</span> <span class="cn">TRUE</span>,       <span class="co"># Assume equal variances across arms</span></span>
+<span>                     lognorm <span class="op">=</span> <span class="cn">TRUE</span>,     <span class="co"># Log-normal distribution assumption</span></span>
+<span>                     ncores <span class="op">=</span> <span class="fl">1</span>,         <span class="co"># Number of cores for computation</span></span>
+<span>                     nsim <span class="op">=</span> <span class="fl">1000</span>,        <span class="co"># Number of stochastic simulations</span></span>
+<span>                     seed <span class="op">=</span> <span class="fl">1234</span><span class="op">)</span><span class="op">)</span>       <span class="co"># Random seed for reproducibility</span></span>
+<span><span class="co">#&gt; Sample Size Calculation Results</span></span>
+<span><span class="co">#&gt; -------------------------------------------------------------</span></span>
+<span><span class="co">#&gt; Study Design: parallel trial targeting 90% power with a 5% type-I error.</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Comparisons:</span></span>
+<span><span class="co">#&gt;    SB2 vs. EUINF </span></span>
+<span><span class="co">#&gt;     - Endpoints Tested: AUCinf, AUClast, Cmax </span></span>
+<span><span class="co">#&gt;       (multiple primary endpoints, k =  2 )</span></span>
+<span><span class="co">#&gt;     - Multiplicity Correction: Bonferroni </span></span>
+<span><span class="co">#&gt;       - Adjusted Significance Levels: alpha = 0.0167 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;    SB2 vs. USINF </span></span>
+<span><span class="co">#&gt;     - Endpoints Tested: AUCinf, AUClast, Cmax </span></span>
+<span><span class="co">#&gt;       (multiple primary endpoints, k =  2 )</span></span>
+<span><span class="co">#&gt;     - Multiplicity Correction: Bonferroni </span></span>
+<span><span class="co">#&gt;       - Adjusted Significance Levels: alpha = 0.0167 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; -------------------------------------------------------------</span></span>
+<span><span class="co">#&gt;                  Parameter       Value</span></span>
+<span><span class="co">#&gt;          Total Sample Size         120</span></span>
+<span><span class="co">#&gt;             Achieved Power          90</span></span>
+<span><span class="co">#&gt;  Power Confidence Interval 87.9 - 91.8</span></span>
+<span><span class="co">#&gt; -------------------------------------------------------------</span></span></code></pre></div>
+<p>Based on the output above, considering a 20% dropout rate, the total
+sample size required is 120.</p>
 </div>
 </div>
 <div class="section level2">
