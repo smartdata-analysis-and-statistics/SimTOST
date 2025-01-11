@@ -114,7 +114,7 @@ One possible solution, if the required sample size is not feasible, is to power 
 
 ## Testing multiple primary endpoints
 
-When a trial aims to evaluate equivalence for at least $k$ out of $m$ primary endpoints, multiple tests are required.  The total number of tests depends on the approach used to evaluate equivalence. For example, with $m=3$ independent primary endpoints and a significance level of $\alpha = 5\%$, the probability of making a Type I error on at least one hypothesis test is:
+When a trial aims to evaluate equivalence for at least $k$ out of $m$ primary endpoints, adjustments must be made to account for the increased probability of Type I errors due to multiple hypothesis testing. For example, with $m=3$ independent primary endpoints and a significance level of $\alpha = 5\%$, the probability of making a Type I error on at least one hypothesis test is:
 
 $$ 1 – (1-\alpha)^m  = 1 - (1-0.05)^3 = 0.1426. $$
 This means that the overall probability of making any false positive error, also known as the **family-wise error rate (FWER)**, increases to approximately 14%. 

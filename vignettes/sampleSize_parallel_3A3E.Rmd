@@ -27,7 +27,7 @@ Similar to the example presented in [Bioequivalence Tests for Parallel Trial Des
 
 In many studies, it is necessary to evaluate equivalence across multiple primary variables. For example, the European Medicines Agency (EMA) recommends demonstrating equivalence for both the Area Under the Curve (AUC) and the maximum concentration (Cmax) when assessing pharmacokinetic properties. However, in this case, we evaluate equivalence across three treatment arms, including a test biosimilar and two reference products, each sourced from a different regulatory region.
 
-This vignette demonstrates advanced techniques for calculating sample size in such trials, where both multiple endpoints and multiple reference products are considered. As an illustrative example, we use data from the phase-1 trial [NCT01922336](https://clinicaltrials.gov/study/NCT01922336#study-overview), which assessed pharmacokinetics following a single dose of SB2, its EU-sourced reference product (EU_Remicade), and its US-sourced reference product (USA_Remicade) [@shin_randomized_2015].
+This vignette demonstrates advanced techniques for calculating sample size in such trials, where both multiple endpoints and multiple reference products are considered. As an illustrative example, we use data from the phase-1 trial [NCT01922336](https://clinicaltrials.gov/study/NCT01922336#study-overview), which assessed pharmacokinetics following a single dose of SB2, its EU-sourced reference product (EU-INF), and its US-sourced reference product (US-INF) [@shin_randomized_2015].
 
 ```{r inputdata, echo=FALSE}
 
@@ -64,15 +64,15 @@ Below is the R code to define the required data:
 # Mean values for each endpoint and arm
 mu_list <- list(
   SB2 = c(AUCinf = 38703, AUClast = 36862, Cmax = 127.0),
-  EUREF = c(AUCinf = 39360, AUClast = 37022, Cmax = 126.2),
-  USREF = c(AUCinf = 39270, AUClast = 37368, Cmax = 129.2)
+  EUINF = c(AUCinf = 39360, AUClast = 37022, Cmax = 126.2),
+  USINF = c(AUCinf = 39270, AUClast = 37368, Cmax = 129.2)
 )
 
 # Standard deviation values for each endpoint and arm
 sigma_list <- list(
   SB2 = c(AUCinf = 11114, AUClast = 9133, Cmax = 16.9),
-  EUREF = c(AUCinf = 12332, AUClast = 9398, Cmax = 17.9),
-  USREF = c(AUCinf = 10064, AUClast = 8332, Cmax = 18.8)
+  EUINF = c(AUCinf = 12332, AUClast = 9398, Cmax = 17.9),
+  USINF = c(AUCinf = 10064, AUClast = 8332, Cmax = 18.8)
 )
 ```
 
@@ -89,6 +89,22 @@ In this example, we aim to demonstrate:
 * Bioequivalence of SB2 vs. EU-INF for AUCinf and Cmax, and
 * Bioequivalence of SB2 vs. US-INF for AUClast and Cmax.
 
+The comparisons can be specified as follows:
+
+```{r}
+# Arms to be compared
+list_comparator <- list(
+  EMA = c("SB2", "EUINF"),
+  FDA = c("SB2", "USINF")
+)
+
+# Endpoints to be compared
+list_y_comparator <- list(
+  EMA = c("AUCinf", "Cmax"),
+  FDA = c("AUClast", "Cmax")
+)
+```
+
 For all endpoints, bioequivalence is established if the 90% confidence intervals for the ratios of the geometric means fall within the equivalence range of 80.00% to 125.00%.
 
 Below is the R code to define the equivalence boundaries for each comparison:
@@ -96,19 +112,104 @@ Below is the R code to define the equivalence boundaries for each comparison:
 ```{r}
 # Define comparators and equivalence boundaries
 list_comparator <- list(
-  "EMA" = c("SB2", "EUREF"),
-  "FDA" = c("SB2", "USREF")
+  "EMA" = c("SB2", "EUINF"),
+  "FDA" = c("SB2", "USINF")
 )
 
 list_lequi.tol <- list(
-  "EMA" = c(AUCinf = 0.8, AUClast = 0.8, Cmax = 0.8),
-  "FDA" = c(AUCinf = 0.8, AUClast = 0.8, Cmax = 0.8)
+  "EMA" = c(AUCinf = 0.8, Cmax = 0.8),
+  "FDA" = c(AUClast = 0.8, Cmax = 0.8)
 )
 
 list_uequi.tol <- list(
-  "EMA" = c(AUCinf = 1.25, AUClast = 1.25, Cmax = 1.25),
-  "FDA" = c(AUCinf = 1.25, AUClast = 1.25, Cmax = 1.25)
+  "EMA" = c(AUCinf = 1.25, Cmax = 1.25),
+  "FDA" = c(AUClast = 1.25, Cmax = 1.25)
 )
 ```
+
+Here, the `list_comparator` parameter specifies the arms being compared, while `list_lequi.tol` and `list_uequi.tol` define the lower and upper equivalence boundaries for the endpoints under consideration.
+
+To calculate the required sample size for testing equivalence under the specified conditions, we use the [sampleSize()](../reference/sampleSize.html) function from the SimTOST package. This function computes the total sample size needed to achieve the target power while ensuring equivalence criteria are met.
+
+```{r}
+library(SimTOST)
+
+(N_ss <- sampleSize(power = 0.9,        # Target power
+                    alpha = 0.05,      # Type I error rate
+                    mu_list = mu_list, # Means for each endpoint and arm
+                    sigma_list = sigma_list, # Standard deviations
+                    list_comparator = list_comparator, # Comparator arms
+                    list_y_comparator = list_y_comparator, # Endpoints to compare
+                    list_lequi.tol = list_lequi.tol, # Lower equivalence boundaries
+                    list_uequi.tol = list_uequi.tol, # Upper equivalence boundaries
+                    dtype = "parallel", # Trial design type
+                    ctype = "ROM",      # Test type: Ratio of Means
+                    vareq = TRUE,       # Assume equal variances
+                    lognorm = TRUE,     # Log-normal distribution assumption
+                    ncores = 1,         # Number of cores for computation
+                    nsim = 1000,        # Number of stochastic simulations
+                    seed = 1234))       # Random seed for reproducibility
+```
+
+We find a total sample size of N_ss$response$n_total patients (or `r N_ss$response$n_total/3` per arm) are required to demonstrate equivalence.
+
+# Simultaneous Testing of Independent Primary Endpoints
+
+## Equivalence for At Least 2 of the 3 Endpoints with Bonferroni Adjustment
+In this example, we aim to establish equivalence for at least two out of three primary endpoints while accounting for multiplicity using the Bonferroni adjustment. The following assumptions are made:
+
+* Equality of Variances: Variances are assumed to be equal across groups (`vareq = TRUE`).
+* Testing Parameter: The Ratio of Means (ROM) is used as the testing parameter (`ctype = "ROM"`).
+* Design: A parallel trial design is assumed (`dtype = "parallel"`).
+* Distribution: Endpoint data follows a log-normal distribution (`lognorm = TRUE`).
+* Correlation: Endpoints are assumed to be independent, with no correlation between them (default `rho = 0`).
+* Multiplicity Adjustment: The Bonferroni correction is applied to control for Type I error (`adjust = "bon"`).
+* Equivalence Criterion: Equivalence is required for at least two of the three endpoints (`k = 2`).
+
+These settings ensure a robust framework for testing multiple endpoints while maintaining control of the family-wise error rate.
+
+The comparisons and equivalence boundaries can be defined as follows:
+
+```{r}
+# Endpoints to be compared for each comparator
+list_y_comparator <- list(
+  EMA = c("AUCinf", "AUClast", "Cmax"),
+  FDA = c("AUCinf", "AUClast", "Cmax")
+)
+
+# Define lower equivalence boundaries for each comparator
+list_lequi.tol <- list(
+  EMA = c(AUCinf = 0.8, AUClast = 0.8, Cmax = 0.8),
+  FDA = c(AUCinf = 0.8, AUClast = 0.8, Cmax = 0.8)
+)
+
+# Define upper equivalence boundaries for each comparator
+list_uequi.tol <- list(
+  EMA = c(AUCinf = 1.25, AUClast = 1.25, Cmax = 1.25),
+  FDA = c(AUCinf = 1.25, AUClast = 1.25, Cmax = 1.25)
+)
+```
+
+
+```{r}
+(N_mp <- sampleSize(power = 0.9,        # Target power
+                    alpha = 0.05,      # Type I error rate
+                    mu_list = mu_list, # Means for each endpoint and arm
+                    sigma_list = sigma_list, # Standard deviations
+                    list_comparator = list_comparator, # Comparator arms
+                    list_y_comparator = list_y_comparator, # Endpoints to compare
+                    list_lequi.tol = list_lequi.tol, # Lower equivalence boundaries
+                    list_uequi.tol = list_uequi.tol, # Upper equivalence boundaries
+                    k = 2,              # Number of endpoints to be equivalent
+                    adjust = "bon",     # Bonferroni adjustment
+                    dtype = "parallel", # Trial design type
+                    ctype = "ROM",      # Test type: Ratio of Means
+                    vareq = TRUE,       # Assume equal variances
+                    lognorm = TRUE,     # Log-normal distribution assumption
+                    ncores = 1,         # Number of cores for computation
+                    nsim = 1000,        # Number of stochastic simulations
+                    seed = 1234))       # Random seed for reproducibility
+```
+
 
 # References
