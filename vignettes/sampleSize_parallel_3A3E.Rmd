@@ -151,7 +151,7 @@ library(SimTOST)
                     seed = 1234))       # Random seed for reproducibility
 ```
 
-We find a total sample size of N_ss$response$n_total patients (or `r N_ss$response$n_total/3` per arm) are required to demonstrate equivalence.
+We find a total sample size of `r N_ss$response$n_total` patients (or `r N_ss$response$n_total/3` per arm) are required to demonstrate equivalence.
 
 # Simultaneous Testing of Independent Primary Endpoints
 
@@ -236,8 +236,33 @@ This can be achieved by specifying the treatment allocation rate parameter (`TAR
                      seed = 1234))       # Random seed for reproducibility
 ```
 
-Results from the simulation indicate that `r N_mp2$response$n_SB2` patients are required for SB2 the active treatment arm (SB2), and `r N_mp2$response$n_EUINF` patients are required for each reference arm. The total sample size required is `r N_mp2$response$n_total`.  This is significantly larger compared to the previous example, where the total sample size was `r N_mp$response$n_total`.
+Results from the simulation indicate that `r N_mp2$response$n_SB2` patients are required for SB2 the active treatment arm (SB2), and `r N_mp2$response$n_EUINF` patients are required for each reference arm. The total sample size required is `r N_mp2$response$n_total`, which is larger compared to the trial with an equal allocation ratio, where the total sample size was `r N_mp$response$n_total`.
 
+## Accounting for Dropouts
+In the examples above, the sample size calculations assumed that all patients enrolled in the trial would complete it. However, in practice, a certain percentage of participants typically drop out, which can impact the required sample size. To account for this, we consider a 20% dropout rate across all treatment arms in this example.
 
+```{r}
+(N_mp3 <- sampleSize(power = 0.9,       # Target power
+                     alpha = 0.05,      # Type I error rate
+                     mu_list = mu_list, # Means for each endpoint and arm
+                     sigma_list = sigma_list, # Standard deviations
+                     list_comparator = list_comparator, # Comparator arms
+                     list_y_comparator = list_y_comparator, # Endpoints to compare
+                     list_lequi.tol = list_lequi.tol, # Lower equivalence boundaries
+                     list_uequi.tol = list_uequi.tol, # Upper equivalence boundaries
+                     k = 2,              # Number of endpoints required to demonstrate equivalence
+                     adjust = "bon",     # Bonferroni adjustment for multiple comparisons
+                     TAR = c("SB2" = 2, "EUINF" = 1, "USINF" = 1), # Treatment allocation rates
+                     dropout = c("SB2" = 0.20, "EUINF" = 0.20, "USINF" = 0.20), # Expected dropout rates
+                     dtype = "parallel", # Trial design type (parallel group)
+                     ctype = "ROM",      # Test type: Ratio of Means
+                     vareq = TRUE,       # Assume equal variances across arms
+                     lognorm = TRUE,     # Log-normal distribution assumption
+                     ncores = 1,         # Number of cores for computation
+                     nsim = 1000,        # Number of stochastic simulations
+                     seed = 1234))       # Random seed for reproducibility
+```
+
+Based on the output above, considering a 20% dropout rate, the total sample size required is `r N_mp3$response$n_total`.
 
 # References
