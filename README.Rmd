@@ -43,4 +43,11 @@ devtools::install_github("smartdata-analysis-and-statistics/SimTOST")
 The main features of this package is `sampleSize` function which can be used to calculate sample size for individual and multiple endpoints. Various worked examples are available as [vignettes](https://smartdata-analysis-and-statistics.github.io/SimTOST)
 
 
+| **Vignette**                                    | **Design**   | **Number of Arms** | **Number of Endpoints** |
+|------------------------------------------------|--------------|---------------------|--------------------------|
+| [Bioequivalence Tests for Parallel Trial Designs: 3 Arms, 1 Endpoint](../articles/sampleSize_parallel_3A1E.html) | Parallel    | 3                  | 1                        |
+| [Bioequivalence Tests for Parallel Trial Designs: 2 Arms, 3 Endpoints](../articles/sampleSize_parallel_2A3E.html)  | Parallel    | 2                  | 3 |
+| [Bioequivalence Tests for Parallel Trial Designs: 3 Arms, 3 Endpoints](../articles/sampleSize_parallel_3A3E.html)  | Parallel    | 3                  | 3 |
+
+
 

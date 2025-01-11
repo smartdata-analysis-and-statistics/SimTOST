@@ -51,6 +51,7 @@ print.simss <- function(x, ...) {
       alphau <- x$param.d$alpha*x$param$weight_seq
     }
 
+    # Generate the description of the multiplicity correction in case of multiple primary endpoints
     if (nendp > 1 & x$param.d$k[i] < nendp) {
       cat("    - Multiplicity Correction:", multiplicity_correction, "\n")
       cat("      - Adjusted Significance Levels: α =", paste(format(alphau, digits = 3, nsmall = 3), collapse = "; "), "\n\n")

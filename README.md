@@ -5,7 +5,7 @@
 
 <!-- badges: start -->
 
-[![R-CMD-check](https://github.com/smartdata-analysis-and-statistics/SimTOST/actions/workflows/R-CMD-check.yml/badge.svg)](https://github.com/smartdata-analysis-and-statistics/SimTOST/actions/workflows/R-CMD-check.yml)
+[![R-CMD-check](https://github.com/smartdata-analysis-and-statistics/SimTOST/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/smartdata-analysis-and-statistics/SimTOST/actions/workflows/R-CMD-check.yaml)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/SimTOST)](https://CRAN.R-project.org/package=SimTOST)
 [![Codecov test
@@ -32,13 +32,15 @@ You can also install the development version of SimTOST from
 devtools::install_github("smartdata-analysis-and-statistics/SimTOST")
 ```
 
-## Example
+## Vignettes
 
-The main features of this package is `sampleSize` function which can be used
-to calculate sample size for individual and multiple endpoints.
+The main features of this package is `sampleSize` function which can be
+used to calculate sample size for individual and multiple endpoints.
+Various worked examples are available as
+[vignettes](https://smartdata-analysis-and-statistics.github.io/SimTOST)
 
-The example of using the functionality of this package can be found in
-these vignettes:
-
-1.  [Sample size calculation of individual endpoint]()
-2.  [Sample size calculation of multiple endpoints]()
+| **Vignette** | **Design** | **Number of Arms** | **Number of Endpoints** |
+|----|----|----|----|
+| [Bioequivalence Tests for Parallel Trial Designs: 3 Arms, 1 Endpoint](../articles/sampleSize_parallel_3A1E.html) | Parallel | 3 | 1 |
+| [Bioequivalence Tests for Parallel Trial Designs: 2 Arms, 3 Endpoints](../articles/sampleSize_parallel_2A3E.html) | Parallel | 2 | 3 |
+| [Bioequivalence Tests for Parallel Trial Designs: 3 Arms, 3 Endpoints](../articles/sampleSize_parallel_3A3E.html) | Parallel | 3 | 3 |
