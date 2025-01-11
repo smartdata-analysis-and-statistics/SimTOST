@@ -166,8 +166,6 @@ In this example, we aim to establish equivalence for at least two out of three p
 * Multiplicity Adjustment: The Bonferroni correction is applied to control for Type I error (`adjust = "bon"`).
 * Equivalence Criterion: Equivalence is required for at least two of the three endpoints (`k = 2`).
 
-These settings ensure a robust framework for testing multiple endpoints while maintaining control of the family-wise error rate.
-
 The comparisons and equivalence boundaries can be defined as follows:
 
 ```{r}
@@ -190,9 +188,10 @@ list_uequi.tol <- list(
 )
 ```
 
+Finally, we calculate the required sample size:
 
 ```{r}
-(N_mp <- sampleSize(power = 0.9,        # Target power
+(N_mp <- sampleSize(power = 0.9,       # Target power
                     alpha = 0.05,      # Type I error rate
                     mu_list = mu_list, # Means for each endpoint and arm
                     sigma_list = sigma_list, # Standard deviations
@@ -200,16 +199,45 @@ list_uequi.tol <- list(
                     list_y_comparator = list_y_comparator, # Endpoints to compare
                     list_lequi.tol = list_lequi.tol, # Lower equivalence boundaries
                     list_uequi.tol = list_uequi.tol, # Upper equivalence boundaries
-                    k = 2,              # Number of endpoints to be equivalent
-                    adjust = "bon",     # Bonferroni adjustment
-                    dtype = "parallel", # Trial design type
+                    k = 2,              # Number of endpoints required to demonstrate equivalence
+                    adjust = "bon",     # Bonferroni adjustment for multiple comparisons
+                    dtype = "parallel", # Trial design type (parallel group)
                     ctype = "ROM",      # Test type: Ratio of Means
-                    vareq = TRUE,       # Assume equal variances
+                    vareq = TRUE,       # Assume equal variances across arms
                     lognorm = TRUE,     # Log-normal distribution assumption
                     ncores = 1,         # Number of cores for computation
                     nsim = 1000,        # Number of stochastic simulations
                     seed = 1234))       # Random seed for reproducibility
 ```
+
+## Unequal Allocation Rates Across Arms
+In this example, we build upon the previous setting but introduce unequal allocation rates across the treatment arms. Specifically, we require that the number of patients in the new treatment arm is double the number in each of the reference arms.
+
+This can be achieved by specifying the treatment allocation rate parameter (`TAR`). The rates are provided as a vector, for example: `TAR = c(2, 1, 1)`. This ensures that for every two patients assigned to the new treatment arm, one patient is assigned to each reference arm.
+
+```{r}
+(N_mp2 <- sampleSize(power = 0.9,       # Target power
+                     alpha = 0.05,      # Type I error rate
+                     mu_list = mu_list, # Means for each endpoint and arm
+                     sigma_list = sigma_list, # Standard deviations
+                     list_comparator = list_comparator, # Comparator arms
+                     list_y_comparator = list_y_comparator, # Endpoints to compare
+                     list_lequi.tol = list_lequi.tol, # Lower equivalence boundaries
+                     list_uequi.tol = list_uequi.tol, # Upper equivalence boundaries
+                     k = 2,              # Number of endpoints required to demonstrate equivalence
+                     adjust = "bon",     # Bonferroni adjustment for multiple comparisons
+                     TAR = c("SB2" = 2, "EUINF" = 1, "USINF" = 1), # Treatment allocation rates
+                     dtype = "parallel", # Trial design type (parallel group)
+                     ctype = "ROM",      # Test type: Ratio of Means
+                     vareq = TRUE,       # Assume equal variances across arms
+                     lognorm = TRUE,     # Log-normal distribution assumption
+                     ncores = 1,         # Number of cores for computation
+                     nsim = 1000,        # Number of stochastic simulations
+                     seed = 1234))       # Random seed for reproducibility
+```
+
+Results from the simulation indicate that `r N_mp2$response$n_SB2` patients are required for SB2 the active treatment arm (SB2), and `r N_mp2$response$n_EUINF` patients are required for each reference arm. The total sample size required is `r N_mp2$response$n_total`.  This is significantly larger compared to the previous example, where the total sample size was `r N_mp$response$n_total`.
+
 
 
 # References

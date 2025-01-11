@@ -241,7 +241,6 @@ A more advanced testing approach involves Sequential Adjustment, where the signi
 
 In this example, the sequential adjustment can be implemented by setting the function argument to `adjust = "seq"` and specifying the type of each endpoint through the `type_y` parameter. For instance, we define "AUCinf" as a primary endpoint, while "AUClast" and "Cmax" are designated as secondary endpoints.
 
-
 ```{r}
 (N_mp_seq <- sampleSize(
   power           = 0.9,                              # Target power
