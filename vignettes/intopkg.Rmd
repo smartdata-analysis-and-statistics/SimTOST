@@ -93,8 +93,12 @@ It is often required to investigate equivalence for more than one primary variab
 
 A decision must be made as to whether it is desirable to 
 
-* Demonstrate equivalence for all primary endpoints: most common setting (also known as **multiple co-primary endpoints**)
-* Demonstrate equivalence for at least one of the primary endpoints (also known as **multiple primary endpoints**)
+* Demonstrate equivalence for all primary endpoints
+  * This is the most common setting and is often referred to as having *multiple co-primary endpoints*.
+  * Equivalence must be demonstrated for **all** endpoints to conclude overall equivalence.
+* Demonstrate equivalence for at least one of the primary endpoints 
+  * Known as having *multiple primary endpoints*.
+  * Equivalence is required for **at least one** endpoint to meet the study's objectives.
 
 
 ## Testing multiple co-primary endpoints

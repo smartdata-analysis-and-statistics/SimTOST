@@ -5,7 +5,7 @@
 
 <!-- badges: start -->
 
-[![R-CMD-check](https://github.com/smartdata-analysis-and-statistics/SimTOST/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/smartdata-analysis-and-statistics/SimTOST/actions/workflows/R-CMD-check.yaml)
+[![R-CMD-check](https://github.com/smartdata-analysis-and-statistics/SimTOST/actions/workflows/R-CMD-check.yml/badge.svg)](https://github.com/smartdata-analysis-and-statistics/SimTOST/actions/workflows/R-CMD-check.yml)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/SimTOST)](https://CRAN.R-project.org/package=SimTOST)
 [![Codecov test
@@ -41,6 +41,8 @@ Various worked examples are available as
 
 | **Vignette** | **Design** | **Number of Arms** | **Number of Endpoints** |
 |----|----|----|----|
-| [Bioequivalence Tests for Parallel Trial Designs: 3 Arms, 1 Endpoint](../articles/sampleSize_parallel_3A1E.html) | Parallel | 3 | 1 |
-| [Bioequivalence Tests for Parallel Trial Designs: 2 Arms, 3 Endpoints](../articles/sampleSize_parallel_2A3E.html) | Parallel | 2 | 3 |
-| [Bioequivalence Tests for Parallel Trial Designs: 3 Arms, 3 Endpoints](../articles/sampleSize_parallel_3A3E.html) | Parallel | 3 | 3 |
+| [Bioequivalence Tests for Parallel Trial Designs with Log-Normal Data](articles/sampleSize_parallel.html) | Parallel | 2 | Multiple (e.g., 2 or 3) |
+| [Bioequivalence Tests for 2x2 Cross-Over Trial Designs with Log-Normal Data](articles/sampleSize_crossover.html) | Cross-over | 2 | 2 |
+| [Bioequivalence Tests for Parallel Trial Designs: 3 Arms, 1 Endpoint](articles/sampleSize_parallel_3A1E.html) | Parallel | 3 | 1 |
+| [Bioequivalence Tests for Parallel Trial Designs: 2 Arms, 3 Endpoints](articles/sampleSize_parallel_2A3E.html) | Parallel | 2 | 3 |
+| [Bioequivalence Tests for Parallel Trial Designs: 3 Arms, 3 Endpoints](articles/sampleSize_parallel_3A3E.html) | Parallel | 3 | 3 |
