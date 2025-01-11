@@ -23,7 +23,92 @@ doc.cache <- T #for cran; change to F
 ```
 
 # Introduction
+Similar to the example presented in [Bioequivalence Tests for Parallel Trial Designs: 2 Arms, 3 Endpoints](sampleSize_parallel_2A3E.html), where equivalence across multiple endpoints was assessed, we now extend the framework to trials involving two reference products. This scenario arises when regulators from different regions require comparisons with their locally sourced reference biosimilars.
+
+In many studies, it is necessary to evaluate equivalence across multiple primary variables. For example, the European Medicines Agency (EMA) recommends demonstrating equivalence for both the Area Under the Curve (AUC) and the maximum concentration (Cmax) when assessing pharmacokinetic properties. However, in this case, we evaluate equivalence across three treatment arms, including a test biosimilar and two reference products, each sourced from a different regulatory region.
+
+This vignette demonstrates advanced techniques for calculating sample size in such trials, where both multiple endpoints and multiple reference products are considered. As an illustrative example, we use data from the phase-1 trial [NCT01922336](https://clinicaltrials.gov/study/NCT01922336#study-overview), which assessed pharmacokinetics following a single dose of SB2, its EU-sourced reference product (EU_Remicade), and its US-sourced reference product (USA_Remicade) [@shin_randomized_2015].
+
+```{r setup, echo=FALSE}
+
+data <- data.frame("PK measure" = c("AUCinf ($\\mu$g*h/mL)","AUClast ($\\mu$g*h/mL)","Cmax ($\\mu$g/mL)"),
+                   "SB2" = c("38,703 $\\pm$ 11,114", "36,862 $\\pm$ 9133", "127.0 $\\pm$ 16.9"), 
+                   "EU-INF" = c("39,360  $\\pm$ 12,332", "37,022 $\\pm$ 9398", "126.2 $\\pm$ 17.9"),
+                   "US-INF" = c("39,270 $\\pm$ 10,064", "37,368 $\\pm$ 8332", "129.2 $\\pm$ 18.8"))
+
+kableExtra::kable_styling(kableExtra::kable(data, 
+                                            col.names = c("PK measure", "SB2", "EU-INF", "US-INF"),
+                                            caption = "Primary PK measures between test and reference product. Data represent arithmetic mean +- standard deviation."),
+                          bootstrap_options = "striped")
+
+```
 
 
+# Input Data
+As in [this vignette](sampleSize_parallel_2A3E.html), the following inputs are required:
+
+* Means for each endpoint and treatment arm (`mu_list`),
+* Standard deviations for each endpoint and arm (`sigma_list`),
+* Endpoint and arm names (`yname_list` and `arm_names`),
+* Arms to be compared within each comparator (`list_comparator`),
+* Endpoints to be compared within each comparator (`list_y_comparator`).
+
+In this example, we simultaneously compare each biosimilar:
+
+* SB2 vs. EU Remicade
+* SB2 vs. US Remicade
+
+Below is the R code to define the required data:
+
+```{r}
+# Mean values for each endpoint and arm
+mu_list <- list(
+  SB2 = c(AUCinf = 38703, AUClast = 36862, Cmax = 127.0),
+  EUREF = c(AUCinf = 39360, AUClast = 37022, Cmax = 126.2),
+  USREF = c(AUCinf = 39270, AUClast = 37368, Cmax = 129.2)
+)
+
+# Standard deviation values for each endpoint and arm
+sigma_list <- list(
+  SB2 = c(AUCinf = 11114, AUClast = 9133, Cmax = 16.9),
+  EUREF = c(AUCinf = 12332, AUClast = 9398, Cmax = 17.9),
+  USREF = c(AUCinf = 10064, AUClast = 8332, Cmax = 18.8)
+)
+```
+
+
+
+# Simultaneous Testing of Independent Co-Primary Endpoints
+
+In this analysis, we adopt the **Ratio of Means (ROM)** approach to evaluate bioequivalence across independent co-primary endpoints.
+
+
+## Different Hypotheses across endpoints
+In this example, we aim to demonstrate:
+
+* Bioequivalence of SB2 vs. EU-INF for AUCinf and Cmax, and
+* Bioequivalence of SB2 vs. US-INF for AUClast and Cmax.
+
+For all endpoints, bioequivalence is established if the 90% confidence intervals for the ratios of the geometric means fall within the equivalence range of 80.00% to 125.00%.
+
+Below is the R code to define the equivalence boundaries for each comparison:
+
+```{r}
+# Define comparators and equivalence boundaries
+list_comparator <- list(
+  "EMA" = c("SB2", "EUREF"),
+  "FDA" = c("SB2", "USREF")
+)
+
+list_lequi.tol <- list(
+  "EMA" = c(AUCinf = 0.8, AUClast = 0.8, Cmax = 0.8),
+  "FDA" = c(AUCinf = 0.8, AUClast = 0.8, Cmax = 0.8)
+)
+
+list_uequi.tol <- list(
+  "EMA" = c(AUCinf = 1.25, AUClast = 1.25, Cmax = 1.25),
+  "FDA" = c(AUCinf = 1.25, AUClast = 1.25, Cmax = 1.25)
+)
+```
 
 # References
