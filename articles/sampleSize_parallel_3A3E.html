@@ -378,8 +378,6 @@ control for Type I error (<code>adjust = "bon"</code>).</li>
 <li>Equivalence Criterion: Equivalence is required for at least two of
 the three endpoints (<code>k = 2</code>).</li>
 </ul>
-<p>These settings ensure a robust framework for testing multiple
-endpoints while maintaining control of the family-wise error rate.</p>
 <p>The comparisons and equivalence boundaries can be defined as
 follows:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
@@ -400,8 +398,9 @@ follows:</p>
 <span>  EMA <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>AUCinf <span class="op">=</span> <span class="fl">1.25</span>, AUClast <span class="op">=</span> <span class="fl">1.25</span>, Cmax <span class="op">=</span> <span class="fl">1.25</span><span class="op">)</span>,</span>
 <span>  FDA <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>AUCinf <span class="op">=</span> <span class="fl">1.25</span>, AUClast <span class="op">=</span> <span class="fl">1.25</span>, Cmax <span class="op">=</span> <span class="fl">1.25</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
+<p>Finally, we calculate the required sample size:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="op">(</span><span class="va">N_mp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sampleSize.html">sampleSize</a></span><span class="op">(</span>power <span class="op">=</span> <span class="fl">0.9</span>,        <span class="co"># Target power</span></span>
+<code class="sourceCode R"><span><span class="op">(</span><span class="va">N_mp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sampleSize.html">sampleSize</a></span><span class="op">(</span>power <span class="op">=</span> <span class="fl">0.9</span>,       <span class="co"># Target power</span></span>
 <span>                    alpha <span class="op">=</span> <span class="fl">0.05</span>,      <span class="co"># Type I error rate</span></span>
 <span>                    mu_list <span class="op">=</span> <span class="va">mu_list</span>, <span class="co"># Means for each endpoint and arm</span></span>
 <span>                    sigma_list <span class="op">=</span> <span class="va">sigma_list</span>, <span class="co"># Standard deviations</span></span>
@@ -409,11 +408,11 @@ follows:</p>
 <span>                    list_y_comparator <span class="op">=</span> <span class="va">list_y_comparator</span>, <span class="co"># Endpoints to compare</span></span>
 <span>                    list_lequi.tol <span class="op">=</span> <span class="va">list_lequi.tol</span>, <span class="co"># Lower equivalence boundaries</span></span>
 <span>                    list_uequi.tol <span class="op">=</span> <span class="va">list_uequi.tol</span>, <span class="co"># Upper equivalence boundaries</span></span>
-<span>                    k <span class="op">=</span> <span class="fl">2</span>,              <span class="co"># Number of endpoints to be equivalent</span></span>
-<span>                    adjust <span class="op">=</span> <span class="st">"bon"</span>,     <span class="co"># Bonferroni adjustment</span></span>
-<span>                    dtype <span class="op">=</span> <span class="st">"parallel"</span>, <span class="co"># Trial design type</span></span>
+<span>                    k <span class="op">=</span> <span class="fl">2</span>,              <span class="co"># Number of endpoints required to demonstrate equivalence</span></span>
+<span>                    adjust <span class="op">=</span> <span class="st">"bon"</span>,     <span class="co"># Bonferroni adjustment for multiple comparisons</span></span>
+<span>                    dtype <span class="op">=</span> <span class="st">"parallel"</span>, <span class="co"># Trial design type (parallel group)</span></span>
 <span>                    ctype <span class="op">=</span> <span class="st">"ROM"</span>,      <span class="co"># Test type: Ratio of Means</span></span>
-<span>                    vareq <span class="op">=</span> <span class="cn">TRUE</span>,       <span class="co"># Assume equal variances</span></span>
+<span>                    vareq <span class="op">=</span> <span class="cn">TRUE</span>,       <span class="co"># Assume equal variances across arms</span></span>
 <span>                    lognorm <span class="op">=</span> <span class="cn">TRUE</span>,     <span class="co"># Log-normal distribution assumption</span></span>
 <span>                    ncores <span class="op">=</span> <span class="fl">1</span>,         <span class="co"># Number of cores for computation</span></span>
 <span>                    nsim <span class="op">=</span> <span class="fl">1000</span>,        <span class="co"># Number of stochastic simulations</span></span>
@@ -441,6 +440,66 @@ follows:</p>
 <span><span class="co">#&gt;             Achieved Power          90</span></span>
 <span><span class="co">#&gt;  Power Confidence Interval 87.9 - 91.8</span></span>
 <span><span class="co">#&gt; -------------------------------------------------------------</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="unequal-allocation-rates-across-arms">Unequal Allocation Rates Across Arms<a class="anchor" aria-label="anchor" href="#unequal-allocation-rates-across-arms"></a>
+</h3>
+<p>In this example, we build upon the previous setting but introduce
+unequal allocation rates across the treatment arms. Specifically, we
+require that the number of patients in the new treatment arm is double
+the number in each of the reference arms.</p>
+<p>This can be achieved by specifying the treatment allocation rate
+parameter (<code>TAR</code>). The rates are provided as a vector, for
+example: <code>TAR = c(2, 1, 1)</code>. This ensures that for every two
+patients assigned to the new treatment arm, one patient is assigned to
+each reference arm.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="op">(</span><span class="va">N_mp2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sampleSize.html">sampleSize</a></span><span class="op">(</span>power <span class="op">=</span> <span class="fl">0.9</span>,       <span class="co"># Target power</span></span>
+<span>                     alpha <span class="op">=</span> <span class="fl">0.05</span>,      <span class="co"># Type I error rate</span></span>
+<span>                     mu_list <span class="op">=</span> <span class="va">mu_list</span>, <span class="co"># Means for each endpoint and arm</span></span>
+<span>                     sigma_list <span class="op">=</span> <span class="va">sigma_list</span>, <span class="co"># Standard deviations</span></span>
+<span>                     list_comparator <span class="op">=</span> <span class="va">list_comparator</span>, <span class="co"># Comparator arms</span></span>
+<span>                     list_y_comparator <span class="op">=</span> <span class="va">list_y_comparator</span>, <span class="co"># Endpoints to compare</span></span>
+<span>                     list_lequi.tol <span class="op">=</span> <span class="va">list_lequi.tol</span>, <span class="co"># Lower equivalence boundaries</span></span>
+<span>                     list_uequi.tol <span class="op">=</span> <span class="va">list_uequi.tol</span>, <span class="co"># Upper equivalence boundaries</span></span>
+<span>                     k <span class="op">=</span> <span class="fl">2</span>,              <span class="co"># Number of endpoints required to demonstrate equivalence</span></span>
+<span>                     adjust <span class="op">=</span> <span class="st">"bon"</span>,     <span class="co"># Bonferroni adjustment for multiple comparisons</span></span>
+<span>                     TAR <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SB2"</span> <span class="op">=</span> <span class="fl">2</span>, <span class="st">"EUINF"</span> <span class="op">=</span> <span class="fl">1</span>, <span class="st">"USINF"</span> <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>, <span class="co"># Treatment allocation rates</span></span>
+<span>                     dtype <span class="op">=</span> <span class="st">"parallel"</span>, <span class="co"># Trial design type (parallel group)</span></span>
+<span>                     ctype <span class="op">=</span> <span class="st">"ROM"</span>,      <span class="co"># Test type: Ratio of Means</span></span>
+<span>                     vareq <span class="op">=</span> <span class="cn">TRUE</span>,       <span class="co"># Assume equal variances across arms</span></span>
+<span>                     lognorm <span class="op">=</span> <span class="cn">TRUE</span>,     <span class="co"># Log-normal distribution assumption</span></span>
+<span>                     ncores <span class="op">=</span> <span class="fl">1</span>,         <span class="co"># Number of cores for computation</span></span>
+<span>                     nsim <span class="op">=</span> <span class="fl">1000</span>,        <span class="co"># Number of stochastic simulations</span></span>
+<span>                     seed <span class="op">=</span> <span class="fl">1234</span><span class="op">)</span><span class="op">)</span>       <span class="co"># Random seed for reproducibility</span></span>
+<span><span class="co">#&gt; Sample Size Calculation Results</span></span>
+<span><span class="co">#&gt; -------------------------------------------------------------</span></span>
+<span><span class="co">#&gt; Study Design: parallel trial targeting 90% power with a 5% type-I error.</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Comparisons:</span></span>
+<span><span class="co">#&gt;    SB2 vs. EUINF </span></span>
+<span><span class="co">#&gt;     - Endpoints Tested: AUCinf, AUClast, Cmax </span></span>
+<span><span class="co">#&gt;       (multiple primary endpoints, k =  2 )</span></span>
+<span><span class="co">#&gt;     - Multiplicity Correction: Bonferroni </span></span>
+<span><span class="co">#&gt;       - Adjusted Significance Levels: alpha = 0.0167 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;    SB2 vs. USINF </span></span>
+<span><span class="co">#&gt;     - Endpoints Tested: AUCinf, AUClast, Cmax </span></span>
+<span><span class="co">#&gt;       (multiple primary endpoints, k =  2 )</span></span>
+<span><span class="co">#&gt;     - Multiplicity Correction: Bonferroni </span></span>
+<span><span class="co">#&gt;       - Adjusted Significance Levels: alpha = 0.0167 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; -------------------------------------------------------------</span></span>
+<span><span class="co">#&gt;                  Parameter       Value</span></span>
+<span><span class="co">#&gt;          Total Sample Size          96</span></span>
+<span><span class="co">#&gt;             Achieved Power          90</span></span>
+<span><span class="co">#&gt;  Power Confidence Interval 87.9 - 91.8</span></span>
+<span><span class="co">#&gt; -------------------------------------------------------------</span></span></code></pre></div>
+<p>Results from the simulation indicate that 48 patients are required
+for SB2 the active treatment arm (SB2), and 24 patients are required for
+each reference arm. The total sample size required is 96. This is
+significantly larger compared to the previous example, where the total
+sample size was 93.</p>
 </div>
 </div>
 <div class="section level2">
