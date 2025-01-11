@@ -89,7 +89,8 @@
 
 
 
-      </header><div class="row">
+      </header><script src="sampleSize_parallel_3A3E_files/kePrint-0.0.1/kePrint.js"></script><link href="sampleSize_parallel_3A3E_files/lightable-0.0.1/lightable.css" rel="stylesheet">
+<div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Bioequivalence Tests for Parallel Trial Designs:
@@ -109,10 +110,201 @@ Debray</h4>
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
+<p>Similar to the example presented in <a href="sampleSize_parallel_2A3E.html">Bioequivalence Tests for Parallel
+Trial Designs: 2 Arms, 3 Endpoints</a>, where equivalence across
+multiple endpoints was assessed, we now extend the framework to trials
+involving two reference products. This scenario arises when regulators
+from different regions require comparisons with their locally sourced
+reference biosimilars.</p>
+<p>In many studies, it is necessary to evaluate equivalence across
+multiple primary variables. For example, the European Medicines Agency
+(EMA) recommends demonstrating equivalence for both the Area Under the
+Curve (AUC) and the maximum concentration (Cmax) when assessing
+pharmacokinetic properties. However, in this case, we evaluate
+equivalence across three treatment arms, including a test biosimilar and
+two reference products, each sourced from a different regulatory
+region.</p>
+<p>This vignette demonstrates advanced techniques for calculating sample
+size in such trials, where both multiple endpoints and multiple
+reference products are considered. As an illustrative example, we use
+data from the phase-1 trial <a href="https://clinicaltrials.gov/study/NCT01922336#study-overview" class="external-link">NCT01922336</a>,
+which assessed pharmacokinetics following a single dose of SB2, its
+EU-sourced reference product (EU_Remicade), and its US-sourced reference
+product (USA_Remicade) <span class="citation">(<a href="#ref-shin_randomized_2015">Shin et al. 2015</a>)</span>.</p>
+<table class="table table table-striped" style="margin-left: auto; margin-right: auto;">
+<caption>
+Primary PK measures between test and reference product. Data represent
+arithmetic mean +- standard deviation.
+</caption>
+<thead><tr>
+<th style="text-align:left;">
+PK measure
+</th>
+<th style="text-align:left;">
+SB2
+</th>
+<th style="text-align:left;">
+EU-INF
+</th>
+<th style="text-align:left;">
+US-INF
+</th>
+</tr></thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+AUCinf
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>μ</mi><annotation encoding="application/x-tex">\mu</annotation></semantics></math>g*h/mL)
+</td>
+<td style="text-align:left;">
+38,703
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>±</mo><annotation encoding="application/x-tex">\pm</annotation></semantics></math>
+11,114
+</td>
+<td style="text-align:left;">
+39,360
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>±</mo><annotation encoding="application/x-tex">\pm</annotation></semantics></math>
+12,332
+</td>
+<td style="text-align:left;">
+39,270
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>±</mo><annotation encoding="application/x-tex">\pm</annotation></semantics></math>
+10,064
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+AUClast
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>μ</mi><annotation encoding="application/x-tex">\mu</annotation></semantics></math>g*h/mL)
+</td>
+<td style="text-align:left;">
+36,862
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>±</mo><annotation encoding="application/x-tex">\pm</annotation></semantics></math>
+9133
+</td>
+<td style="text-align:left;">
+37,022
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>±</mo><annotation encoding="application/x-tex">\pm</annotation></semantics></math>
+9398
+</td>
+<td style="text-align:left;">
+37,368
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>±</mo><annotation encoding="application/x-tex">\pm</annotation></semantics></math>
+8332
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Cmax
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>μ</mi><annotation encoding="application/x-tex">\mu</annotation></semantics></math>g/mL)
+</td>
+<td style="text-align:left;">
+127.0
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>±</mo><annotation encoding="application/x-tex">\pm</annotation></semantics></math>
+16.9
+</td>
+<td style="text-align:left;">
+126.2
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>±</mo><annotation encoding="application/x-tex">\pm</annotation></semantics></math>
+17.9
+</td>
+<td style="text-align:left;">
+129.2
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>±</mo><annotation encoding="application/x-tex">\pm</annotation></semantics></math>
+18.8
+</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="section level2">
-<h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+<h2 id="input-data">Input Data<a class="anchor" aria-label="anchor" href="#input-data"></a>
 </h2>
+<p>As in <a href="sampleSize_parallel_2A3E.html">this vignette</a>, the
+following inputs are required:</p>
+<ul>
+<li>Means for each endpoint and treatment arm
+(<code>mu_list</code>),</li>
+<li>Standard deviations for each endpoint and arm
+(<code>sigma_list</code>),</li>
+<li>Endpoint and arm names (<code>yname_list</code> and
+<code>arm_names</code>),</li>
+<li>Arms to be compared within each comparator
+(<code>list_comparator</code>),</li>
+<li>Endpoints to be compared within each comparator
+(<code>list_y_comparator</code>).</li>
+</ul>
+<p>In this example, we simultaneously compare each biosimilar:</p>
+<ul>
+<li>SB2 vs. EU Remicade</li>
+<li>SB2 vs. US Remicade</li>
+</ul>
+<p>Below is the R code to define the required data:</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Mean values for each endpoint and arm</span></span>
+<span><span class="va">mu_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>  SB2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>AUCinf <span class="op">=</span> <span class="fl">38703</span>, AUClast <span class="op">=</span> <span class="fl">36862</span>, Cmax <span class="op">=</span> <span class="fl">127.0</span><span class="op">)</span>,</span>
+<span>  EUREF <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>AUCinf <span class="op">=</span> <span class="fl">39360</span>, AUClast <span class="op">=</span> <span class="fl">37022</span>, Cmax <span class="op">=</span> <span class="fl">126.2</span><span class="op">)</span>,</span>
+<span>  USREF <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>AUCinf <span class="op">=</span> <span class="fl">39270</span>, AUClast <span class="op">=</span> <span class="fl">37368</span>, Cmax <span class="op">=</span> <span class="fl">129.2</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Standard deviation values for each endpoint and arm</span></span>
+<span><span class="va">sigma_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>  SB2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>AUCinf <span class="op">=</span> <span class="fl">11114</span>, AUClast <span class="op">=</span> <span class="fl">9133</span>, Cmax <span class="op">=</span> <span class="fl">16.9</span><span class="op">)</span>,</span>
+<span>  EUREF <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>AUCinf <span class="op">=</span> <span class="fl">12332</span>, AUClast <span class="op">=</span> <span class="fl">9398</span>, Cmax <span class="op">=</span> <span class="fl">17.9</span><span class="op">)</span>,</span>
+<span>  USREF <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>AUCinf <span class="op">=</span> <span class="fl">10064</span>, AUClast <span class="op">=</span> <span class="fl">8332</span>, Cmax <span class="op">=</span> <span class="fl">18.8</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="simultaneous-testing-of-independent-co-primary-endpoints">Simultaneous Testing of Independent Co-Primary Endpoints<a class="anchor" aria-label="anchor" href="#simultaneous-testing-of-independent-co-primary-endpoints"></a>
+</h2>
+<p>In this analysis, we adopt the <strong>Ratio of Means (ROM)</strong>
+approach to evaluate bioequivalence across independent co-primary
+endpoints.</p>
+<div class="section level3">
+<h3 id="different-hypotheses-across-endpoints">Different Hypotheses across endpoints<a class="anchor" aria-label="anchor" href="#different-hypotheses-across-endpoints"></a>
+</h3>
+<p>In this example, we aim to demonstrate:</p>
+<ul>
+<li>Bioequivalence of SB2 vs. EU-INF for AUCinf and Cmax, and</li>
+<li>Bioequivalence of SB2 vs. US-INF for AUClast and Cmax.</li>
+</ul>
+<p>For all endpoints, bioequivalence is established if the 90%
+confidence intervals for the ratios of the geometric means fall within
+the equivalence range of 80.00% to 125.00%.</p>
+<p>Below is the R code to define the equivalence boundaries for each
+comparison:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Define comparators and equivalence boundaries</span></span>
+<span><span class="va">list_comparator</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>  <span class="st">"EMA"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SB2"</span>, <span class="st">"EUREF"</span><span class="op">)</span>,</span>
+<span>  <span class="st">"FDA"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SB2"</span>, <span class="st">"USREF"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">list_lequi.tol</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>  <span class="st">"EMA"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>AUCinf <span class="op">=</span> <span class="fl">0.8</span>, AUClast <span class="op">=</span> <span class="fl">0.8</span>, Cmax <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span>,</span>
+<span>  <span class="st">"FDA"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>AUCinf <span class="op">=</span> <span class="fl">0.8</span>, AUClast <span class="op">=</span> <span class="fl">0.8</span>, Cmax <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">list_uequi.tol</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>  <span class="st">"EMA"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>AUCinf <span class="op">=</span> <span class="fl">1.25</span>, AUClast <span class="op">=</span> <span class="fl">1.25</span>, Cmax <span class="op">=</span> <span class="fl">1.25</span><span class="op">)</span>,</span>
+<span>  <span class="st">"FDA"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>AUCinf <span class="op">=</span> <span class="fl">1.25</span>, AUClast <span class="op">=</span> <span class="fl">1.25</span>, Cmax <span class="op">=</span> <span class="fl">1.25</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+</div>
+</div>
+<div class="section level2">
+<h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+</h2>
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="ref-shin_randomized_2015" class="csl-entry">
+Shin, Donghoon, Youngdoe Kim, Yoo Seok Kim, Thomas Körnicke, and Rainard
+Fuhr. 2015. <span>“A <span>Randomized</span>, <span>Phase I
+Pharmacokinetic Study Comparing SB2</span> and <span>Infliximab
+Reference Product</span> (<span>Remicade</span><span></span>) in
+<span>Healthy Subjects</span>.”</span> <em>BioDrugs</em> 29 (6): 381–88.
+<a href="https://doi.org/10.1007/s40259-015-0150-5" class="external-link">https://doi.org/10.1007/s40259-015-0150-5</a>.
+</div>
+</div>
 </div>
   </div>
 
