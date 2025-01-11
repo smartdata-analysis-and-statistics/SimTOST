@@ -29,7 +29,7 @@ In many studies, it is necessary to evaluate equivalence across multiple primary
 
 This vignette demonstrates advanced techniques for calculating sample size in such trials, where both multiple endpoints and multiple reference products are considered. As an illustrative example, we use data from the phase-1 trial [NCT01922336](https://clinicaltrials.gov/study/NCT01922336#study-overview), which assessed pharmacokinetics following a single dose of SB2, its EU-sourced reference product (EU_Remicade), and its US-sourced reference product (USA_Remicade) [@shin_randomized_2015].
 
-```{r setup, echo=FALSE}
+```{r inputdata, echo=FALSE}
 
 data <- data.frame("PK measure" = c("AUCinf ($\\mu$g*h/mL)","AUClast ($\\mu$g*h/mL)","Cmax ($\\mu$g/mL)"),
                    "SB2" = c("38,703 $\\pm$ 11,114", "36,862 $\\pm$ 9133", "127.0 $\\pm$ 16.9"), 
