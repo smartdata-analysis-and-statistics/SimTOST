@@ -63,6 +63,9 @@
       <a href="articles/sampleSize_parallel_3A1E.html">Bioequivalence Tests for Parallel Trial Designs: 3 Arms, 1 Endpoint</a>
     </li>
     <li>
+      <a href="articles/sampleSize_parallel_3A3E.html">Bioequivalence Tests for Parallel Trial Designs: 3 Arms, 3 Endpoints</a>
+    </li>
+    <li>
       <a href="articles/sampleSize_parallel.html">Bioequivalence Tests for Parallel Trial Designs with Log-Normal Data</a>
     </li>
   </ul>
@@ -108,14 +111,43 @@
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"smartdata-analysis-and-statistics/SimTOST"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
+<h2 id="vignettes">Vignettes<a class="anchor" aria-label="anchor" href="#vignettes"></a>
 </h2>
-<p>The main features of this package is <code>sampleSize</code> function which can be used to calculate sample size for individual and multiple endpoints.</p>
-<p>The example of using the functionality of this package can be found in these vignettes:</p>
-<ol style="list-style-type: decimal">
-<li><a href="">Sample size calculation of individual endpoint</a></li>
-<li><a href="">Sample size calculation of multiple endpoints</a></li>
-</ol>
+<p>The main features of this package is <code>sampleSize</code> function which can be used to calculate sample size for individual and multiple endpoints. Various worked examples are available as <a href="https://smartdata-analysis-and-statistics.github.io/SimTOST" class="external-link">vignettes</a></p>
+<table class="table">
+<colgroup>
+<col width="25%">
+<col width="25%">
+<col width="25%">
+<col width="25%">
+</colgroup>
+<thead><tr class="header">
+<th><strong>Vignette</strong></th>
+<th><strong>Design</strong></th>
+<th><strong>Number of Arms</strong></th>
+<th><strong>Number of Endpoints</strong></th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><a href="../articles/sampleSize_parallel_3A1E.html">Bioequivalence Tests for Parallel Trial Designs: 3 Arms, 1 Endpoint</a></td>
+<td>Parallel</td>
+<td>3</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td><a href="../articles/sampleSize_parallel_2A3E.html">Bioequivalence Tests for Parallel Trial Designs: 2 Arms, 3 Endpoints</a></td>
+<td>Parallel</td>
+<td>2</td>
+<td>3</td>
+</tr>
+<tr class="odd">
+<td><a href="../articles/sampleSize_parallel_3A3E.html">Bioequivalence Tests for Parallel Trial Designs: 3 Arms, 3 Endpoints</a></td>
+<td>Parallel</td>
+<td>3</td>
+<td>3</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
   </div>
@@ -158,7 +190,7 @@
 <div class="dev-status">
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://github.com/smartdata-analysis-and-statistics/SimTOST/actions/workflows/R-CMD-check.yml" class="external-link"><img src="https://github.com/smartdata-analysis-and-statistics/SimTOST/actions/workflows/R-CMD-check.yml/badge.svg" alt="R-CMD-check"></a></li>
+<li><a href="https://github.com/smartdata-analysis-and-statistics/SimTOST/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/smartdata-analysis-and-statistics/SimTOST/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
 <li><a href="https://CRAN.R-project.org/package=SimTOST" class="external-link"><img src="https://www.r-pkg.org/badges/version/SimTOST" alt="CRAN status"></a></li>
 <li><a href="https://app.codecov.io/gh/smartdata-analysis-and-statistics/SimTOST?branch=main" class="external-link"><img src="https://codecov.io/gh/smartdata-analysis-and-statistics/SimTOST/branch/main/graph/badge.svg" alt="Codecov test coverage"></a></li>
 </ul>

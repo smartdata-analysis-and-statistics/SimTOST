@@ -61,6 +61,9 @@
       <a href="../articles/sampleSize_parallel_3A1E.html">Bioequivalence Tests for Parallel Trial Designs: 3 Arms, 1 Endpoint</a>
     </li>
     <li>
+      <a href="../articles/sampleSize_parallel_3A3E.html">Bioequivalence Tests for Parallel Trial Designs: 3 Arms, 3 Endpoints</a>
+    </li>
+    <li>
       <a href="../articles/sampleSize_parallel.html">Bioequivalence Tests for Parallel Trial Designs with Log-Normal Data</a>
     </li>
   </ul>
@@ -95,7 +98,7 @@
                         <h4 data-toc-skip class="author">Thomas
 Debray</h4>
             
-            <h4 data-toc-skip class="date">January 10, 2025</h4>
+            <h4 data-toc-skip class="date">January 11, 2025</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/smartdata-analysis-and-statistics/SimTOST/blob/main/vignettes/sampleSize_parallel_2A3E.Rmd" class="external-link"><code>vignettes/sampleSize_parallel_2A3E.Rmd</code></a></small>
       <div class="hidden name"><code>sampleSize_parallel_2A3E.Rmd</code></div>
@@ -111,36 +114,15 @@ Debray</h4>
 multiple primary variables. For instance, the European Medicines Agency
 (EMA) recommends demonstrating equivalence for both <strong>Area Under
 the Curve</strong> (AUC) and <strong>maximum concentration</strong>
-(Cmax) when assessing pharmacokinetic properties.</p>
-<p>When multiple primary endpoints are involved, a decision must be made
-on the desired criteria for equivalence:</p>
-<ul>
-<li>Equivalence for All Primary Endpoints
-<ul>
-<li>This is the most common setting and is often referred to as having
-<em>multiple co-primary endpoints</em>.</li>
-<li>Equivalence must be demonstrated for <strong>all</strong> endpoints
-to conclude overall equivalence.</li>
-</ul>
-</li>
-<li>Equivalence for At Least One Primary Endpoint
-<ul>
-<li>Known as having <em>multiple primary endpoints</em>.</li>
-<li>Equivalence is required for <strong>at least one</strong> endpoint
-to meet the study’s objectives.</li>
-</ul>
-</li>
-</ul>
-<p>This vignette presents advanced techniques for calculating sample
-size in parallel trial designs involving three treatment arms and two
-endpoints. Specifically, it focuses on bioequivalence testing between a
-new treatment (SB2) and a reference drug (Remicade) administered in two
-distinct locations (EU_Remicade and USA_Remicade).</p>
+(Cmax) when assessing pharmacokinetic properties. This vignette presents
+advanced techniques for calculating sample size in parallel trial
+designs involving three treatment arms and two endpoints.</p>
 <p>As an illustrative example, we consider published data from the
 phase-1 trial <a href="https://clinicaltrials.gov/study/NCT01922336#study-overview" class="external-link">NCT01922336</a>.
 This trial assessed the pharmacokinetics of SB2 compared to its
-EU-sourced reference product. The following outcomes were reported
-following a single dose of SB2 or its EU reference product <span class="citation">(<a href="#ref-shin_randomized_2015">Shin et al.
+EU-sourced reference product (EU_Remicade). The following outcomes were
+reported following a single dose of SB2 or its EU reference product
+<span class="citation">(<a href="#ref-shin_randomized_2015">Shin et al.
 2015</a>)</span>:</p>
 <table class="table table table-striped" style="margin-left: auto; margin-right: auto;">
 <caption>
@@ -209,11 +191,15 @@ Cmax
 </tr>
 </tbody>
 </table>
-<p>In the sections below, we explore various strategies for determining
-the sample size required for a parallel trial to demonstrate equivalence
-across the three co-primary endpoints. These strategies are based on the
-Ratio of Means (ROM) approach, with equivalence bounds set between 80%
-and 125%.</p>
+<p>In the sections below, we examine various strategies for determining
+the sample size required for a parallel trial to establish equivalence
+across three co-primary endpoints. These strategies are based on the
+Ratio of Means (ROM) approach, using equivalence bounds set between 80%
+and 125%. Additionally, we demonstrate how the test can be adjusted to
+establish equivalence for at least
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">k=1</annotation></semantics></math>
+primary endpoint, providing flexibility in meeting equivalence
+criteria.</p>
 </div>
 <div class="section level2">
 <h2 id="independent-testing-of-co-primary-endpoints">Independent Testing of Co-Primary Endpoints<a class="anchor" aria-label="anchor" href="#independent-testing-of-co-primary-endpoints"></a>
