@@ -145,7 +145,8 @@ between the two groups is set to
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>δ</mi><mo>=</mo><mi>σ</mi><mi>/</mi><mn>8</mn><mo>=</mo><mn>2.25</mn></mrow><annotation encoding="application/x-tex">\delta = \sigma/8 = 2.25</annotation></semantics></math>
 mmHg.</li>
 <li>Biosimilarity Limits: These are defined as ±1.5σ = ±27 mmHg.</li>
-<li>Type-I Error Rate: A one-sided α = 0.025 is specified.</li>
+<li>Desired Type-I Error: 2.5%</li>
+<li>Target Power: 90%</li>
 </ul>
 <p>To implement these parameters in R, the following code snippet can be
 used:</p>
@@ -181,7 +182,9 @@ reference and treatment groups. The optimization method is set to
 sample size, providing detailed insights into the results.</p>
 <p>Below is an example of how the function can be implemented in R:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="op">(</span><span class="va">N_ss</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sampleSize.html">sampleSize</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/smartdata-analysis-and-statistics/SimTOST" class="external-link">SimTOST</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="op">(</span><span class="va">N_ss</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sampleSize.html">sampleSize</a></span><span class="op">(</span></span>
 <span>  power <span class="op">=</span> <span class="fl">0.90</span>,                  <span class="co"># Target power</span></span>
 <span>  alpha <span class="op">=</span> <span class="fl">0.025</span>,                 <span class="co"># Type-I error rate</span></span>
 <span>  mu_list <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"R"</span> <span class="op">=</span> <span class="va">mu_r</span>, <span class="st">"T"</span> <span class="op">=</span> <span class="va">mu_t</span><span class="op">)</span>, <span class="co"># Means for reference and treatment groups</span></span>
@@ -193,14 +196,88 @@ sample size, providing detailed insights into the results.</p>
 <span>  ctype <span class="op">=</span> <span class="st">"DOM"</span>,                 <span class="co"># Comparison type</span></span>
 <span>  lognorm <span class="op">=</span> <span class="cn">FALSE</span>,               <span class="co"># Assumes normal distribution</span></span>
 <span>  optimization_method <span class="op">=</span> <span class="st">"step-by-step"</span>, <span class="co"># Optimization method</span></span>
-<span>  adjust <span class="op">=</span> <span class="st">"no"</span>,                 <span class="co"># No adjustments</span></span>
 <span>  ncores <span class="op">=</span> <span class="fl">1</span>,                    <span class="co"># Single-core processing</span></span>
 <span>  nsim <span class="op">=</span> <span class="fl">1000</span>,                   <span class="co"># Number of simulations</span></span>
 <span>  seed <span class="op">=</span> <span class="fl">1234</span>                    <span class="co"># Random seed for reproducibility</span></span>
 <span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Sample Size Calculation Results</span></span>
+<span><span class="co">#&gt; -------------------------------------------------------------</span></span>
+<span><span class="co">#&gt; Study Design: parallel trial targeting 90% power with a 2.5% type-I error.</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Comparisons:</span></span>
+<span><span class="co">#&gt;    R vs. T </span></span>
+<span><span class="co">#&gt;     - Endpoints Tested: BP </span></span>
+<span><span class="co">#&gt; -------------------------------------------------------------</span></span>
+<span><span class="co">#&gt;                  Parameter       Value</span></span>
+<span><span class="co">#&gt;          Total Sample Size          26</span></span>
+<span><span class="co">#&gt;             Achieved Power        90.8</span></span>
+<span><span class="co">#&gt;  Power Confidence Interval 88.8 - 92.5</span></span>
+<span><span class="co">#&gt; -------------------------------------------------------------</span></span>
 <span></span>
 <span><span class="co"># Display iteration results</span></span>
-<span><span class="va">N_ss</span><span class="op">$</span><span class="va">table.iter</span></span></code></pre></div>
+<span><span class="va">N_ss</span><span class="op">$</span><span class="va">table.iter</span></span>
+<span><span class="co">#&gt; Index: &lt;n_iter&gt;</span></span>
+<span><span class="co">#&gt;     n_iter n_drop   n_R   n_T n_total power  power_LCI  power_UCI</span></span>
+<span><span class="co">#&gt;      &lt;int&gt;  &lt;num&gt; &lt;num&gt; &lt;num&gt;   &lt;num&gt; &lt;num&gt;      &lt;num&gt;      &lt;num&gt;</span></span>
+<span><span class="co">#&gt;  1:      2      0     2     2       4 0.042 0.03079269 0.05685194</span></span>
+<span><span class="co">#&gt;  2:      3      0     3     3       6 0.071 0.05622292 0.08916283</span></span>
+<span><span class="co">#&gt;  3:      4      0     4     4       8 0.118 0.09898992 0.14000650</span></span>
+<span><span class="co">#&gt;  4:      5      0     5     5      10 0.197 0.17305355 0.22331236</span></span>
+<span><span class="co">#&gt;  5:      6      0     6     6      12 0.335 0.30593958 0.36534479</span></span>
+<span><span class="co">#&gt;  6:      7      0     7     7      14 0.468 0.43675913 0.49948974</span></span>
+<span><span class="co">#&gt;  7:      8      0     8     8      16 0.597 0.56577960 0.62746582</span></span>
+<span><span class="co">#&gt;  8:      9      0     9     9      18 0.698 0.66831899 0.72613905</span></span>
+<span><span class="co">#&gt;  9:     10      0    10    10      20 0.766 0.73825476 0.79167071</span></span>
+<span><span class="co">#&gt; 10:     11      0    11    11      22 0.828 0.80284126 0.85059491</span></span>
+<span><span class="co">#&gt; 11:     12      0    12    12      24 0.885 0.86320172 0.90377751</span></span>
+<span><span class="co">#&gt; 12:     13      0    13    13      26 0.908 0.88794993 0.92484078</span></span></code></pre></div>
+<p>We can visualize the power curve for different sample sizes using the
+following code snippet:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">N_ss</span><span class="op">)</span></span></code></pre></div>
+<p><img src="sampleSize_parallel_2A1E_files/figure-html/unnamed-chunk-3-1.png" width="700"></p>
+<p>To account for an anticipated dropout rate of 20% in each group, we
+need to adjust the sample size. The following code demonstrates how to
+incorporate this adjustment using a custom optimization routine. This
+routine is designed to find the smallest integer sample size that meets
+or exceeds the target power. It employs a stepwise search strategy,
+starting with larger step sizes and progressively refining them as it
+approaches the solution.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Adjusted sample size calculation with 20% dropout rate</span></span>
+<span><span class="op">(</span><span class="va">N_ss_dropout</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sampleSize.html">sampleSize</a></span><span class="op">(</span></span>
+<span>  power <span class="op">=</span> <span class="fl">0.90</span>,                  <span class="co"># Target power</span></span>
+<span>  alpha <span class="op">=</span> <span class="fl">0.025</span>,                 <span class="co"># Type-I error rate</span></span>
+<span>  mu_list <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"R"</span> <span class="op">=</span> <span class="va">mu_r</span>, <span class="st">"T"</span> <span class="op">=</span> <span class="va">mu_t</span><span class="op">)</span>, <span class="co"># Means for reference and treatment groups</span></span>
+<span>  sigma_list <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"R"</span> <span class="op">=</span> <span class="va">sigma</span>, <span class="st">"T"</span> <span class="op">=</span> <span class="va">sigma</span><span class="op">)</span>, <span class="co"># Standard deviations</span></span>
+<span>  list_comparator <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"T_vs_R"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"R"</span>, <span class="st">"T"</span><span class="op">)</span><span class="op">)</span>, <span class="co"># Comparator setup</span></span>
+<span>  list_lequi.tol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"T_vs_R"</span> <span class="op">=</span> <span class="va">lequi_lower</span><span class="op">)</span>,  <span class="co"># Lower equivalence limit</span></span>
+<span>  list_uequi.tol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"T_vs_R"</span> <span class="op">=</span> <span class="va">lequi_upper</span><span class="op">)</span>,  <span class="co"># Upper equivalence limit</span></span>
+<span>  dropout <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"R"</span> <span class="op">=</span> <span class="fl">0.20</span>, <span class="st">"T"</span> <span class="op">=</span> <span class="fl">0.20</span><span class="op">)</span>, <span class="co"># Expected dropout rates</span></span>
+<span>  dtype <span class="op">=</span> <span class="st">"parallel"</span>,            <span class="co"># Study design</span></span>
+<span>  ctype <span class="op">=</span> <span class="st">"DOM"</span>,                 <span class="co"># Comparison type</span></span>
+<span>  lognorm <span class="op">=</span> <span class="cn">FALSE</span>,               <span class="co"># Assumes normal distribution</span></span>
+<span>  optimization_method <span class="op">=</span> <span class="st">"fast"</span>,  <span class="co"># Fast optimization method</span></span>
+<span>  ncores <span class="op">=</span> <span class="fl">1</span>,                    <span class="co"># Single-core processing</span></span>
+<span>  nsim <span class="op">=</span> <span class="fl">1000</span>,                   <span class="co"># Number of simulations</span></span>
+<span>  seed <span class="op">=</span> <span class="fl">1234</span>                    <span class="co"># Random seed for reproducibility</span></span>
+<span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Sample Size Calculation Results</span></span>
+<span><span class="co">#&gt; -------------------------------------------------------------</span></span>
+<span><span class="co">#&gt; Study Design: parallel trial targeting 90% power with a 2.5% type-I error.</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Comparisons:</span></span>
+<span><span class="co">#&gt;    R vs. T </span></span>
+<span><span class="co">#&gt;     - Endpoints Tested: BP </span></span>
+<span><span class="co">#&gt; -------------------------------------------------------------</span></span>
+<span><span class="co">#&gt;                  Parameter       Value</span></span>
+<span><span class="co">#&gt;          Total Sample Size          32</span></span>
+<span><span class="co">#&gt;             Achieved Power        90.8</span></span>
+<span><span class="co">#&gt;  Power Confidence Interval 88.8 - 92.5</span></span>
+<span><span class="co">#&gt; -------------------------------------------------------------</span></span></code></pre></div>
+<p>Previously, finding the required sample size took 12 iterations. With
+the fast optimizer, the number of iterations is reduced to 8,
+significantly improving efficiency.</p>
 </div>
 </div>
 </div>
