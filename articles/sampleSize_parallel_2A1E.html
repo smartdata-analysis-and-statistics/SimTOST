@@ -116,10 +116,11 @@ Debray</h4>
 <h3 id="difference-of-means-test">Difference of Means Test<a class="anchor" aria-label="anchor" href="#difference-of-means-test"></a>
 </h3>
 <p>This example, adapted from Example 1 in the PASS manual chapter
-titled <em>“Biosimilarity Tests for the Difference Between Means Using a
-Parallel Two-Group Design”</em>, illustrates the process of planning a
-clinical trial to assess biosimilarity. Specifically, the trial aims to
-compare blood pressure outcomes between two groups.</p>
+titled <a href="https://www.ncss.com/wp-content/themes/ncss/pdf/Procedures/PASS/Biosimilarity_Tests_for_the_Difference_Between_Means_using_a_Parallel_Two-Group_Design.pdf" class="external-link"><em>“Biosimilarity
+Tests for the Difference Between Means Using a Parallel Two-Group
+Design”</em></a>, illustrates the process of planning a clinical trial
+to assess biosimilarity. Specifically, the trial aims to compare blood
+pressure outcomes between two groups.</p>
 <div class="section level4">
 <h4 id="scenario">Scenario<a class="anchor" aria-label="anchor" href="#scenario"></a>
 </h4>
@@ -143,10 +144,8 @@ with a within-group standard deviation of 18 mmHg.</li>
 between the two groups is set to
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>δ</mi><mo>=</mo><mi>σ</mi><mi>/</mi><mn>8</mn><mo>=</mo><mn>2.25</mn></mrow><annotation encoding="application/x-tex">\delta = \sigma/8 = 2.25</annotation></semantics></math>
 mmHg.</li>
-<li>Biosimilarity Limits: These are defined as ±1.5σ = ±27 mmHg,
-ensuring compliance with regulatory requirements.</li>
-<li>Type-I Error Rate: A one-sided α=0.025 is specified.</li>
-<li>Desired Power: The target power for the study is 90%</li>
+<li>Biosimilarity Limits: These are defined as ±1.5σ = ±27 mmHg.</li>
+<li>Type-I Error Rate: A one-sided α = 0.025 is specified.</li>
 </ul>
 <p>To implement these parameters in R, the following code snippet can be
 used:</p>
@@ -169,18 +168,39 @@ used:</p>
 </h4>
 <p>To explore the power of the test across a range of group sample
 sizes, the researchers plan to calculate the power for group sizes
-varying from 6 to 20. These calculations will use the noncentral
-t-distribution to evaluate the ability of the study design to detect the
-specified difference and meet biosimilarity criteria.</p>
+varying from 6 to 20.</p>
+</div>
+<div class="section level4">
+<h4 id="implementation">Implementation<a class="anchor" aria-label="anchor" href="#implementation"></a>
+</h4>
+<p>To estimate the power for different sample sizes, we use the <a href="../reference/sampleSize.html">sampleSize()</a> function. The
+function is configured with a power target of 0.90, a type-I error rate
+of 0.025, and the specified mean and standard deviation values for the
+reference and treatment groups. The optimization method is set to
+<code>"step-by-step"</code> to display the achieved power for each
+sample size, providing detailed insights into the results.</p>
+<p>Below is an example of how the function can be implemented in R:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/sampleSize.html">sampleSize</a></span><span class="op">(</span>power <span class="op">=</span> <span class="fl">0.86</span>, alpha <span class="op">=</span> <span class="fl">0.025</span>,</span>
-<span>           mu_list <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"R"</span> <span class="op">=</span> <span class="va">mu_r</span>, <span class="st">"T"</span> <span class="op">=</span> <span class="va">mu_t</span><span class="op">)</span>,</span>
-<span>           sigma_list <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"R"</span> <span class="op">=</span> <span class="va">sigma</span>, <span class="st">"T"</span> <span class="op">=</span> <span class="va">sigma</span><span class="op">)</span>,</span>
-<span>           list_comparator <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"T_vs_R"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"R"</span>, <span class="st">"T"</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>           list_lequi.tol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"T_vs_R"</span> <span class="op">=</span> <span class="va">lequi_lower</span><span class="op">)</span>,</span>
-<span>           list_uequi.tol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"T_vs_R"</span> <span class="op">=</span> <span class="va">lequi_upper</span><span class="op">)</span>,</span>
-<span>           dtype <span class="op">=</span> <span class="st">"parallel"</span>, ctype <span class="op">=</span> <span class="st">"DOM"</span>, lognorm <span class="op">=</span> <span class="cn">FALSE</span>, </span>
-<span>           adjust <span class="op">=</span> <span class="st">"no"</span>, ncores <span class="op">=</span> <span class="fl">1</span>, nsim <span class="op">=</span> <span class="fl">1000</span>, seed <span class="op">=</span> <span class="fl">1234</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="op">(</span><span class="va">N_ss</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sampleSize.html">sampleSize</a></span><span class="op">(</span></span>
+<span>  power <span class="op">=</span> <span class="fl">0.90</span>,                  <span class="co"># Target power</span></span>
+<span>  alpha <span class="op">=</span> <span class="fl">0.025</span>,                 <span class="co"># Type-I error rate</span></span>
+<span>  mu_list <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"R"</span> <span class="op">=</span> <span class="va">mu_r</span>, <span class="st">"T"</span> <span class="op">=</span> <span class="va">mu_t</span><span class="op">)</span>, <span class="co"># Means for reference and treatment groups</span></span>
+<span>  sigma_list <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"R"</span> <span class="op">=</span> <span class="va">sigma</span>, <span class="st">"T"</span> <span class="op">=</span> <span class="va">sigma</span><span class="op">)</span>, <span class="co"># Standard deviations</span></span>
+<span>  list_comparator <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"T_vs_R"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"R"</span>, <span class="st">"T"</span><span class="op">)</span><span class="op">)</span>, <span class="co"># Comparator setup</span></span>
+<span>  list_lequi.tol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"T_vs_R"</span> <span class="op">=</span> <span class="va">lequi_lower</span><span class="op">)</span>,  <span class="co"># Lower equivalence limit</span></span>
+<span>  list_uequi.tol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"T_vs_R"</span> <span class="op">=</span> <span class="va">lequi_upper</span><span class="op">)</span>,  <span class="co"># Upper equivalence limit</span></span>
+<span>  dtype <span class="op">=</span> <span class="st">"parallel"</span>,            <span class="co"># Study design</span></span>
+<span>  ctype <span class="op">=</span> <span class="st">"DOM"</span>,                 <span class="co"># Comparison type</span></span>
+<span>  lognorm <span class="op">=</span> <span class="cn">FALSE</span>,               <span class="co"># Assumes normal distribution</span></span>
+<span>  optimization_method <span class="op">=</span> <span class="st">"step-by-step"</span>, <span class="co"># Optimization method</span></span>
+<span>  adjust <span class="op">=</span> <span class="st">"no"</span>,                 <span class="co"># No adjustments</span></span>
+<span>  ncores <span class="op">=</span> <span class="fl">1</span>,                    <span class="co"># Single-core processing</span></span>
+<span>  nsim <span class="op">=</span> <span class="fl">1000</span>,                   <span class="co"># Number of simulations</span></span>
+<span>  seed <span class="op">=</span> <span class="fl">1234</span>                    <span class="co"># Random seed for reproducibility</span></span>
+<span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Display iteration results</span></span>
+<span><span class="va">N_ss</span><span class="op">$</span><span class="va">table.iter</span></span></code></pre></div>
 </div>
 </div>
 </div>
