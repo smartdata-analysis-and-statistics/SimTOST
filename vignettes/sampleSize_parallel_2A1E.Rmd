@@ -26,7 +26,7 @@ doc.cache <- T #for cran; change to F
 
 
 ## Difference of Means Test
-This example, adapted from Example 1 in the PASS manual chapter titled *"Biosimilarity Tests for the Difference Between Means Using a Parallel Two-Group Design"*, illustrates the process of planning a clinical trial to assess biosimilarity. Specifically, the trial aims to compare blood pressure outcomes between two groups.
+This example, adapted from Example 1 in the PASS manual chapter titled [*"Biosimilarity Tests for the Difference Between Means Using a Parallel Two-Group Design"*](https://www.ncss.com/wp-content/themes/ncss/pdf/Procedures/PASS/Biosimilarity_Tests_for_the_Difference_Between_Means_using_a_Parallel_Two-Group_Design.pdf), illustrates the process of planning a clinical trial to assess biosimilarity. Specifically, the trial aims to compare blood pressure outcomes between two groups.
 
 ### Scenario
 Drug B is a well-established biologic drug used to control blood pressure. Its exclusive marketing license has expired, creating an opportunity for other companies to develop biosimilars. Drug A is a new competing drug being developed as a potential biosimilar to Drug B. The goal is to determine whether Drug A meets FDA biosimilarity requirements in terms of safety, purity, and therapeutic response when compared to Drug B.
@@ -36,9 +36,8 @@ The study follows a parallel-group design with the following key assumptions:
 
 * Reference Group (Drug B): The average blood pressure is 96 mmHg, with a within-group standard deviation of 18 mmHg.
 * Mean Difference: As per FDA guidelines, the assumed difference between the two groups is set to $\delta = \sigma/8 = 2.25$ mmHg.
-* Biosimilarity Limits: These are defined as ±1.5σ = ±27 mmHg, ensuring compliance with regulatory requirements.
-* Type-I Error Rate: A one-sided α=0.025 is specified.
-* Desired Power: The target power for the study is 90% 
+* Biosimilarity Limits: These are defined as ±1.5σ = ±27 mmHg.
+* Type-I Error Rate: A one-sided α = 0.025 is specified.
 
 To implement these parameters in R, the following code snippet can be used:
 
@@ -58,16 +57,33 @@ lequi_upper <- setNames(27, "BP")
 ```
 
 ### Objective
-To explore the power of the test across a range of group sample sizes, the researchers plan to calculate the power for group sizes varying from 6 to 20. These calculations will use the noncentral t-distribution to evaluate the ability of the study design to detect the specified difference and meet biosimilarity criteria.
+To explore the power of the test across a range of group sample sizes, the researchers plan to calculate the power for group sizes varying from 6 to 20. 
 
+### Implementation
+To estimate the power for different sample sizes, we use the  [sampleSize()](../reference/sampleSize.html) function. The function is configured with a power target of 0.90, a type-I error rate of 0.025, and the specified mean and standard deviation values for the reference and treatment groups. The optimization method is set to `"step-by-step"` to display the achieved power for each sample size, providing detailed insights into the results.
+
+Below is an example of how the function can be implemented in R:
 
 ```r
-sampleSize(power = 0.86, alpha = 0.025,
-           mu_list = list("R" = mu_r, "T" = mu_t),
-           sigma_list = list("R" = sigma, "T" = sigma),
-           list_comparator = list("T_vs_R" = c("R", "T")),
-           list_lequi.tol = list("T_vs_R" = lequi_lower),
-           list_uequi.tol = list("T_vs_R" = lequi_upper),
-           dtype = "parallel", ctype = "DOM", lognorm = FALSE, 
-           adjust = "no", ncores = 1, nsim = 1000, seed = 1234)
+(N_ss <- sampleSize(
+  power = 0.90,                  # Target power
+  alpha = 0.025,                 # Type-I error rate
+  mu_list = list("R" = mu_r, "T" = mu_t), # Means for reference and treatment groups
+  sigma_list = list("R" = sigma, "T" = sigma), # Standard deviations
+  list_comparator = list("T_vs_R" = c("R", "T")), # Comparator setup
+  list_lequi.tol = list("T_vs_R" = lequi_lower),  # Lower equivalence limit
+  list_uequi.tol = list("T_vs_R" = lequi_upper),  # Upper equivalence limit
+  dtype = "parallel",            # Study design
+  ctype = "DOM",                 # Comparison type
+  lognorm = FALSE,               # Assumes normal distribution
+  optimization_method = "step-by-step", # Optimization method
+  adjust = "no",                 # No adjustments
+  ncores = 1,                    # Single-core processing
+  nsim = 1000,                   # Number of simulations
+  seed = 1234                    # Random seed for reproducibility
+))
+
+# Display iteration results
+N_ss$table.iter
 ```
+
