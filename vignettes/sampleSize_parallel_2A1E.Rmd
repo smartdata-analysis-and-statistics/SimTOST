@@ -37,11 +37,12 @@ The study follows a parallel-group design with the following key assumptions:
 * Reference Group (Drug B): The average blood pressure is 96 mmHg, with a within-group standard deviation of 18 mmHg.
 * Mean Difference: As per FDA guidelines, the assumed difference between the two groups is set to $\delta = \sigma/8 = 2.25$ mmHg.
 * Biosimilarity Limits: These are defined as ±1.5σ = ±27 mmHg.
-* Type-I Error Rate: A one-sided α = 0.025 is specified.
+* Desired Type-I Error: 2.5%
+* Target Power: 90%
 
 To implement these parameters in R, the following code snippet can be used:
 
-```r
+```{r}
 # Reference group mean blood pressure (Drug B)
 mu_r <- setNames(96, "BP")
 
@@ -64,7 +65,7 @@ To estimate the power for different sample sizes, we use the  [sampleSize()](../
 
 Below is an example of how the function can be implemented in R:
 
-```r
+```{r}
 (N_ss <- sampleSize(
   power = 0.90,                  # Target power
   alpha = 0.025,                 # Type-I error rate
@@ -86,4 +87,35 @@ Below is an example of how the function can be implemented in R:
 # Display iteration results
 N_ss$table.iter
 ```
+
+We can visualize the power curve for different sample sizes using the following code snippet:
+
+```{r}
+plot(N_ss)
+```
+
+Consider now we want to adjust the sample size for an anticipated drop-out rate of 20% in each group. We can modify the code as follows:
+
+```{r}
+(N_ss <- sampleSize(
+  power = 0.90,                  # Target power
+  alpha = 0.025,                 # Type-I error rate
+  mu_list = list("R" = mu_r, "T" = mu_t), # Means for reference and treatment groups
+  sigma_list = list("R" = sigma, "T" = sigma), # Standard deviations
+  list_comparator = list("T_vs_R" = c("R", "T")), # Comparator setup
+  list_lequi.tol = list("T_vs_R" = lequi_lower),  # Lower equivalence limit
+  list_uequi.tol = list("T_vs_R" = lequi_upper),  # Upper equivalence limit
+  dropout = c("R" = 0.20, "T" = 0.20), # Expected dropout rates
+  dtype = "parallel",            # Study design
+  ctype = "DOM",                 # Comparison type
+  lognorm = FALSE,               # Assumes normal distribution
+  optimization_method = "step-by-step", # Optimization method
+  adjust = "no",                 # No adjustments
+  ncores = 1,                    # Single-core processing
+  nsim = 1000,                   # Number of simulations
+  seed = 1234                    # Random seed for reproducibility
+))
+```
+ 
+ 
 
