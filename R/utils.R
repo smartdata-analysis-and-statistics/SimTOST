@@ -59,7 +59,7 @@ simParallelEndpoints <- function(n,
 #'
 power_cal <- function(n,nsim,param,param.d,seed,ncores){
 
-  if(param.d$dtype == "parallel"){
+  if (param.d$dtype == "parallel") {
     TAR_used <- unlist(param$TAR_list)[unique(unlist(param$list_comparator))]
     size <- ceiling(n*TAR_used)
     size[size < 2] <- 2

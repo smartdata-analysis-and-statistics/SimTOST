@@ -1,0 +1,73 @@
+---
+title: "Bioequivalence Tests for Parallel Trial Designs: 2 Arms, 1 Endpoint"
+author: "Thomas Debray"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output: 
+  html_document:
+    fig_caption: yes
+    fig_width: 9
+    fig_height: 6
+vignette: >
+  %\VignetteIndexEntry{Bioequivalence Tests for Parallel Trial Designs: 2 Arms, 1 Endpoint}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+bibliography: 'references.bib'
+link-citations: yes
+---
+
+```{r setup, include=FALSE, message = FALSE, warning = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(comment = "#>", collapse = TRUE)
+options(rmarkdown.html_vignette.check_title = FALSE) #title of doc does not match vignette title
+doc.cache <- T #for cran; change to F
+```
+
+# Introduction
+
+
+## Difference of Means Test
+This example, adapted from Example 1 in the PASS manual chapter titled *"Biosimilarity Tests for the Difference Between Means Using a Parallel Two-Group Design"*, illustrates the process of planning a clinical trial to assess biosimilarity. Specifically, the trial aims to compare blood pressure outcomes between two groups.
+
+### Scenario
+Drug B is a well-established biologic drug used to control blood pressure. Its exclusive marketing license has expired, creating an opportunity for other companies to develop biosimilars. Drug A is a new competing drug being developed as a potential biosimilar to Drug B. The goal is to determine whether Drug A meets FDA biosimilarity requirements in terms of safety, purity, and therapeutic response when compared to Drug B.
+
+### Trial Design
+The study follows a parallel-group design with the following key assumptions:
+
+* Reference Group (Drug B): The average blood pressure is 96 mmHg, with a within-group standard deviation of 18 mmHg.
+* Mean Difference: As per FDA guidelines, the assumed difference between the two groups is set to $\delta = \sigma/8 = 2.25$ mmHg.
+* Biosimilarity Limits: These are defined as ±1.5σ = ±27 mmHg, ensuring compliance with regulatory requirements.
+* Type-I Error Rate: A one-sided α=0.025 is specified.
+* Desired Power: The target power for the study is 90% 
+
+To implement these parameters in R, the following code snippet can be used:
+
+```r
+# Reference group mean blood pressure (Drug B)
+mu_r <- setNames(96, "BP")
+
+# Treatment group mean blood pressure (Drug A)
+mu_t <- setNames(96 + 2.25, "BP")
+
+# Common within-group standard deviation
+sigma <- setNames(18, "BP")
+
+# Lower and upper biosimilarity limits
+lequi_lower <- setNames(-27, "BP")
+lequi_upper <- setNames(27, "BP")
+```
+
+### Objective
+To explore the power of the test across a range of group sample sizes, the researchers plan to calculate the power for group sizes varying from 6 to 20. These calculations will use the noncentral t-distribution to evaluate the ability of the study design to detect the specified difference and meet biosimilarity criteria.
+
+
+```r
+sampleSize(power = 0.86, alpha = 0.025,
+           mu_list = list("R" = mu_r, "T" = mu_t),
+           sigma_list = list("R" = sigma, "T" = sigma),
+           list_comparator = list("T_vs_R" = c("R", "T")),
+           list_lequi.tol = list("T_vs_R" = lequi_lower),
+           list_uequi.tol = list("T_vs_R" = lequi_upper),
+           dtype = "parallel", ctype = "DOM", lognorm = FALSE, 
+           adjust = "no", ncores = 1, nsim = 1000, seed = 1234)
+```
