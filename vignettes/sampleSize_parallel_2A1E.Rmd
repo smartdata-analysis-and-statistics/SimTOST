@@ -66,6 +66,8 @@ To estimate the power for different sample sizes, we use the  [sampleSize()](../
 Below is an example of how the function can be implemented in R:
 
 ```{r}
+library(SimTOST)
+
 (N_ss <- sampleSize(
   power = 0.90,                  # Target power
   alpha = 0.025,                 # Type-I error rate
@@ -78,7 +80,6 @@ Below is an example of how the function can be implemented in R:
   ctype = "DOM",                 # Comparison type
   lognorm = FALSE,               # Assumes normal distribution
   optimization_method = "step-by-step", # Optimization method
-  adjust = "no",                 # No adjustments
   ncores = 1,                    # Single-core processing
   nsim = 1000,                   # Number of simulations
   seed = 1234                    # Random seed for reproducibility
@@ -94,10 +95,11 @@ We can visualize the power curve for different sample sizes using the following 
 plot(N_ss)
 ```
 
-Consider now we want to adjust the sample size for an anticipated drop-out rate of 20% in each group. We can modify the code as follows:
+To account for an anticipated dropout rate of 20% in each group, we need to adjust the sample size. The following code demonstrates how to incorporate this adjustment using a custom optimization routine. This routine is designed to find the smallest integer sample size that meets or exceeds the target power. It employs a stepwise search strategy, starting with larger step sizes and progressively refining them as it approaches the solution.
 
 ```{r}
-(N_ss <- sampleSize(
+# Adjusted sample size calculation with 20% dropout rate
+(N_ss_dropout <- sampleSize(
   power = 0.90,                  # Target power
   alpha = 0.025,                 # Type-I error rate
   mu_list = list("R" = mu_r, "T" = mu_t), # Means for reference and treatment groups
@@ -109,13 +111,13 @@ Consider now we want to adjust the sample size for an anticipated drop-out rate 
   dtype = "parallel",            # Study design
   ctype = "DOM",                 # Comparison type
   lognorm = FALSE,               # Assumes normal distribution
-  optimization_method = "step-by-step", # Optimization method
-  adjust = "no",                 # No adjustments
+  optimization_method = "fast",  # Fast optimization method
   ncores = 1,                    # Single-core processing
   nsim = 1000,                   # Number of simulations
   seed = 1234                    # Random seed for reproducibility
 ))
 ```
- 
+
+Previously, finding the required sample size took `r nrow(N_ss$table.iter)` iterations. With the fast optimizer, the number of iterations is reduced to `r nrow(N_ss_dropout$table.iter)`, significantly improving efficiency.
  
 
