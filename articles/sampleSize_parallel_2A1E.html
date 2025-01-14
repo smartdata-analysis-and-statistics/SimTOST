@@ -138,13 +138,13 @@ Drug B.</p>
 <p>The study follows a parallel-group design with the following key
 assumptions:</p>
 <ul>
-<li>Reference Group (Drug B): The average blood pressure is 96 mmHg,
-with a within-group standard deviation of 18 mmHg.</li>
+<li>Reference Group (Drug B): Average blood pressure is 96 mmHg, with a
+within-group standard deviation of 18 mmHg.</li>
 <li>Mean Difference: As per FDA guidelines, the assumed difference
 between the two groups is set to
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>δ</mi><mo>=</mo><mi>σ</mi><mi>/</mi><mn>8</mn><mo>=</mo><mn>2.25</mn></mrow><annotation encoding="application/x-tex">\delta = \sigma/8 = 2.25</annotation></semantics></math>
 mmHg.</li>
-<li>Biosimilarity Limits: These are defined as ±1.5σ = ±27 mmHg.</li>
+<li>Biosimilarity Limits: Defined as ±1.5σ = ±27 mmHg.</li>
 <li>Desired Type-I Error: 2.5%</li>
 <li>Target Power: 90%</li>
 </ul>
@@ -168,8 +168,8 @@ used:</p>
 <h4 id="objective">Objective<a class="anchor" aria-label="anchor" href="#objective"></a>
 </h4>
 <p>To explore the power of the test across a range of group sample
-sizes, the researchers plan to calculate the power for group sizes
-varying from 6 to 20.</p>
+sizes, power for group sizes varying from 6 to 20 will be
+calculated.</p>
 </div>
 <div class="section level4">
 <h4 id="implementation">Implementation<a class="anchor" aria-label="anchor" href="#implementation"></a>
@@ -179,8 +179,8 @@ function is configured with a power target of 0.90, a type-I error rate
 of 0.025, and the specified mean and standard deviation values for the
 reference and treatment groups. The optimization method is set to
 <code>"step-by-step"</code> to display the achieved power for each
-sample size, providing detailed insights into the results.</p>
-<p>Below is an example of how the function can be implemented in R:</p>
+sample size, providing insights into the results.</p>
+<p>Below illustrates how the function can be implemented in R:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/smartdata-analysis-and-statistics/SimTOST" class="external-link">SimTOST</a></span><span class="op">)</span></span>
 <span></span>
@@ -231,8 +231,8 @@ sample size, providing detailed insights into the results.</p>
 <span><span class="co">#&gt; 10:     11      0    11    11      22 0.828 0.80284126 0.85059491</span></span>
 <span><span class="co">#&gt; 11:     12      0    12    12      24 0.885 0.86320172 0.90377751</span></span>
 <span><span class="co">#&gt; 12:     13      0    13    13      26 0.908 0.88794993 0.92484078</span></span></code></pre></div>
-<p>We can visualize the power curve for different sample sizes using the
-following code snippet:</p>
+<p>We can visualize the power curve for a range of sample sizes using
+the following code snippet:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">N_ss</span><span class="op">)</span></span></code></pre></div>
 <p><img src="sampleSize_parallel_2A1E_files/figure-html/unnamed-chunk-3-1.png" width="700"></p>
@@ -241,8 +241,8 @@ need to adjust the sample size. The following code demonstrates how to
 incorporate this adjustment using a custom optimization routine. This
 routine is designed to find the smallest integer sample size that meets
 or exceeds the target power. It employs a stepwise search strategy,
-starting with larger step sizes and progressively refining them as it
-approaches the solution.</p>
+starting with large step sizes that are progressively refined as the
+solution is approached.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Adjusted sample size calculation with 20% dropout rate</span></span>
 <span><span class="op">(</span><span class="va">N_ss_dropout</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sampleSize.html">sampleSize</a></span><span class="op">(</span></span>
@@ -276,8 +276,8 @@ approaches the solution.</p>
 <span><span class="co">#&gt;  Power Confidence Interval 88.8 - 92.5</span></span>
 <span><span class="co">#&gt; -------------------------------------------------------------</span></span></code></pre></div>
 <p>Previously, finding the required sample size took 12 iterations. With
-the fast optimizer, the number of iterations is reduced to 8,
-significantly improving efficiency.</p>
+the custom optimization routine, the number of iterations was reduced to
+8, significantly improving efficiency.</p>
 </div>
 </div>
 </div>
