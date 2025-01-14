@@ -34,9 +34,9 @@ Drug B is a well-established biologic drug used to control blood pressure. Its e
 ### Trial Design
 The study follows a parallel-group design with the following key assumptions:
 
-* Reference Group (Drug B): The average blood pressure is 96 mmHg, with a within-group standard deviation of 18 mmHg.
+* Reference Group (Drug B): Average blood pressure is 96 mmHg, with a within-group standard deviation of 18 mmHg.
 * Mean Difference: As per FDA guidelines, the assumed difference between the two groups is set to $\delta = \sigma/8 = 2.25$ mmHg.
-* Biosimilarity Limits: These are defined as ±1.5σ = ±27 mmHg.
+* Biosimilarity Limits: Defined as ±1.5σ = ±27 mmHg.
 * Desired Type-I Error: 2.5%
 * Target Power: 90%
 
@@ -58,12 +58,12 @@ lequi_upper <- setNames(27, "BP")
 ```
 
 ### Objective
-To explore the power of the test across a range of group sample sizes, the researchers plan to calculate the power for group sizes varying from 6 to 20. 
+To explore the power of the test across a range of group sample sizes, power for group sizes varying from 6 to 20 will be calculated. 
 
 ### Implementation
-To estimate the power for different sample sizes, we use the  [sampleSize()](../reference/sampleSize.html) function. The function is configured with a power target of 0.90, a type-I error rate of 0.025, and the specified mean and standard deviation values for the reference and treatment groups. The optimization method is set to `"step-by-step"` to display the achieved power for each sample size, providing detailed insights into the results.
+To estimate the power for different sample sizes, we use the  [sampleSize()](../reference/sampleSize.html) function. The function is configured with a power target of 0.90, a type-I error rate of 0.025, and the specified mean and standard deviation values for the reference and treatment groups. The optimization method is set to `"step-by-step"` to display the achieved power for each sample size, providing insights into the results.
 
-Below is an example of how the function can be implemented in R:
+Below illustrates how the function can be implemented in R:
 
 ```{r}
 library(SimTOST)
@@ -89,13 +89,13 @@ library(SimTOST)
 N_ss$table.iter
 ```
 
-We can visualize the power curve for different sample sizes using the following code snippet:
+We can visualize the power curve for a range of sample sizes using the following code snippet:
 
 ```{r}
 plot(N_ss)
 ```
 
-To account for an anticipated dropout rate of 20% in each group, we need to adjust the sample size. The following code demonstrates how to incorporate this adjustment using a custom optimization routine. This routine is designed to find the smallest integer sample size that meets or exceeds the target power. It employs a stepwise search strategy, starting with larger step sizes and progressively refining them as it approaches the solution.
+To account for an anticipated dropout rate of 20% in each group, we need to adjust the sample size. The following code demonstrates how to incorporate this adjustment using a custom optimization routine. This routine is designed to find the smallest integer sample size that meets or exceeds the target power. It employs a stepwise search strategy, starting with large step sizes that are progressively refined as the solution is approached.
 
 ```{r}
 # Adjusted sample size calculation with 20% dropout rate
@@ -118,6 +118,6 @@ To account for an anticipated dropout rate of 20% in each group, we need to adju
 ))
 ```
 
-Previously, finding the required sample size took `r nrow(N_ss$table.iter)` iterations. With the fast optimizer, the number of iterations is reduced to `r nrow(N_ss_dropout$table.iter)`, significantly improving efficiency.
+Previously, finding the required sample size took `r nrow(N_ss$table.iter)` iterations. With the custom optimization routine, the number of iterations was reduced to `r nrow(N_ss_dropout$table.iter)`, significantly improving efficiency.
  
 
