@@ -22,14 +22,14 @@ options(rmarkdown.html_vignette.check_title = FALSE) #title of doc does not matc
 doc.cache <- T #for cran; change to F
 ```
 
-In the following examples, we demonstrate the use of **SimTOST** for parallel trial designs with data assumed to follow a normal distribution on the log scale. We start by loading the package.
+In the following two examples, we demonstrate the use of **SimTOST** for parallel trial designs with data assumed to follow a normal distribution on the log scale. We start by loading the package.
 
 ```{r, echo = T, message=F}
 library(SimTOST)
 ```
 
 # Multiple Independent Co-Primary Endpoints
-We here consider a bio-equivalence trial with 2 treatment arms and $m=5$ endpoints. The sample size is calculated to ensure that the test and reference products are equivalent with respect to all 5 endpoints. The true ratio between the test and reference products is assumed to be 1.05. It is assumed that the standard deviation of the log-transformed response variable is $\sigma = 0.3$, and that all tests are independent ($\rho = 0$). The equivalence limits are set at 0.80 and 1.25. The significance level is 0.05. The sample size is determined at a power of 0.8. 
+Here, we consider a bio-equivalence trial with 2 treatment arms and $m=5$ endpoints. The sample size is calculated to ensure that the test and reference products are equivalent with respect to all 5 endpoints. The true ratio between the test and reference products is assumed to be 1.05. It is assumed that the standard deviation of the log-transformed response variable is $\sigma = 0.3$, and that all tests are independent ($\rho = 0$). The equivalence limits are set at 0.80 and 1.25. The significance level is 0.05. The sample size is determined at a power of 0.8. 
 
 This example is adapted from @mielke_sample_2018, who employed a difference-of-means test on the log scale. The sample size calculation can be conducted using two approaches, both of which are illustrated below.
 
@@ -44,10 +44,10 @@ ssMielke <- sampleSize_Mielke(power = 0.8, Nmax = 1000, m = 5, k = 5, rho = 0,
                               nsim = 10000)
 ssMielke
 ```
-For 80\% power, `r ssMielke["SS"]` subjects per sequence (`r ssMielke["SS"] * 2` in total) would have been required. 
+For 80\% power, `r ssMielke["SS"]` subjects per sequence (`r ssMielke["SS"] * 2` in total) would be required. 
 
 ## Approach 2: Using sampleSize
-Alternatively, the sample size calculation can be performed using the [sampleSize()](../reference/sampleSize.html) function. This method assumes that effect sizes are normally distributed on the log scale and uses a difference-of-means test (`ctype = "DOM"`) with user-specified values for `mu_list` and `sigma_list`. Unlike the first approach, this method allows for greater flexibility in specifying parameter distributions.
+Alternatively, the sample size calculation can be performed using the [sampleSize()](../reference/sampleSize.html) function. This method assumes that effect sizes are normally distributed on the log scale and uses a difference-of-means test (`ctype = "DOM"`) with user-specified values for `mu_list` and `sigma_list`. This method allows for greater flexibility than Approach 1 in specifying parameter distributions.
 
 ```{r, eval = TRUE}
 mu_r <- setNames(rep(log(1.00), 5), paste0("y", 1:5))
@@ -68,11 +68,11 @@ ss
 ```     
 For 80\% power, a total of `r ss$response$n_total` subjects would be required. 
 
-As an alternative scenario, consider that the standard deviation of the log-transformed response variable is unknown, but the standard deviation on the original scale is known ($\sigma = 1$). In such cases, the [sampleSize()](../reference/sampleSize.html) function can still accommodate adjustments to handle these uncertainties by transforming parameters accordingly. We now provide all data on the raw scale, including equivalence bounds, and set `ctype = ROM` and `lognorm = TRUE`:
+Consider an alternative scenario in which the standard deviation of the log-transformed response variable is unknown, but the standard deviation on the original scale is known ($\sigma = 1$). In such cases, the [sampleSize()](../reference/sampleSize.html) function can still accommodate adjustments to handle these uncertainties by transforming parameters accordingly. We now provide all data on the raw scale, including the equivalence bounds, and set `ctype = ROM` and `lognorm = TRUE`.
 
 
 # Multiple Correlated Co-Primary Endpoints
-In the second example, we have $k=m=5$, $\sigma = 0.3$ and $\rho = 0.8$. This example is also adapted from @mielke_sample_2018, who employed a difference-of-means test on the log scale. The sample size calculation can again be conducted using two approaches, both of which are illustrated below.
+In the second example, we set $k=m=5$, $\sigma = 0.3$ and $\rho = 0.8$. This example is also adapted from @mielke_sample_2018, who employed a difference-of-means test on the log scale. The sample size calculation can again be conducted using two approaches, both of which are illustrated below.
 
 ## Approach 1: Using sampleSize_Mielke
 In the first approach, we calculate the required sample size for 80% power using the [sampleSize_Mielke()](../reference/sampleSize_Mielke.html) function. This method directly follows the approach described in @mielke_sample_2018, assuming a difference-of-means test on the log-transformed scale with specified parameters.
@@ -85,10 +85,10 @@ ssMielke <- sampleSize_Mielke(power = 0.8, Nmax = 1000, m = 5, k = 5, rho = 0.8,
                               nsim = 10000)
 ssMielke
 ```
-For 80\% power, `r ssMielke["SS"]` subjects per sequence (`r ssMielke["SS"] * 2` in total) would be been required. 
+For 80\% power, `r ssMielke["SS"]` subjects per sequence (`r ssMielke["SS"] * 2` in total) would be required. 
 
 ## Approach 2: Using sampleSize
-Alternatively, the sample size calculation can be performed using the [sampleSize()](../reference/sampleSize.html) function. This method assumes that effect sizes are normally distributed on the log scale and uses a difference-of-means test (`ctype = "DOM"`) with user-specified values for `mu_list`, `sigma_list`, and the correlation `rho`. 
+Alternatively, the sample size calculation can be performed using the [sampleSize()](../reference/sampleSize.html) function. This method assumes that effect sizes are normally distributed on the log scale and uses a difference-of-means test (`ctype = "DOM"`) with user-specified values for `mu_list`, `sigma_list`, and the correlation parameter `rho`. 
 
 ```{r}
 mu_r <- setNames(rep(log(1.00), 5), paste0("y", 1:5))
