@@ -109,30 +109,30 @@ Debray</h4>
 
     
     
-<p>In the examples below, we illustrate the use of <code>SimTOST</code>
+<p>In the example below, we illustrate the use of <code>SimTOST</code>
 for 2x2 cross-over trials. As a first step, we load the package.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/smartdata-analysis-and-statistics/SimTOST" class="external-link">SimTOST</a></span><span class="op">)</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="bioequivalence-tests-for-auc-and-cmax">Bioequivalence Tests for AUC and Cmax<a class="anchor" aria-label="anchor" href="#bioequivalence-tests-for-auc-and-cmax"></a>
 </h2>
-<p>In the first example, we consider Example 1 from the PASS Sample Size
-Software <a href="https://www.ncss.com/wp-content/themes/ncss/pdf/Procedures/PASS/Bioequivalence_Tests_for_AUC_and_Cmax_in_a_2x2_Cross-Over_Design-Log-Normal_Data.pdf" class="external-link">Chapter
+<p>We consider Example 1 from the PASS Sample Size Software <a href="https://www.ncss.com/wp-content/themes/ncss/pdf/Procedures/PASS/Bioequivalence_Tests_for_AUC_and_Cmax_in_a_2x2_Cross-Over_Design-Log-Normal_Data.pdf" class="external-link">Chapter
 351</a>. We aim to estimate the sample size required to demonstrate
 bioequivalence between a test and reference product for two
 pharmacokinetic parameters: the area under the curve (AUC) and the
 maximum concentration (Cmax). We assume a 2x2 cross-over design. The
 true ratio of the test to the reference product is assumed to be 1.02
-for AUC and 1.03 for Cmax. Based on previous experiments, it is assumed
-that the standard deviation for
+for AUC and 1.03 for Cmax. Based on previous studies, it is assumed that
+the standard deviation for
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>A</mi><mi>U</mi><mi>C</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\log(AUC)</annotation></semantics></math>
 = 0.25 and the standard deviation for
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>C</mi><mi>m</mi><mi>a</mi><mi>x</mi><mo>=</mo><mn>0.3</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\log(Cmax = 0.3)</annotation></semantics></math>.
-The equivalence limits for the means ratio are set at 0.80 and 1.25.</p>
+The equivalence limits for the ratio of means are set at 0.80 and
+1.25.</p>
 <p>The significance level is set to 5%, and the sample size is
 calculated to achieve 80% power. Additionally, the correlation between
 AUC and Cmax is assumed to be 0.25. A difference-of-means test on the
-log scale is employed to determine bioequivalence. In the PASS software,
+log scale is employed to determine bioequivalence. Using PASS software,
 this scenario yielded a total sample size of
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>=</mo><mn>37</mn></mrow><annotation encoding="application/x-tex">n=37</annotation></semantics></math>
 patients. In <strong>SimTOST</strong>, we can estimate the sample size
@@ -169,11 +169,7 @@ function.</p>
 <span><span class="co">#&gt;             Achieved Power        80.9</span></span>
 <span><span class="co">#&gt;  Power Confidence Interval 80.1 - 81.7</span></span>
 <span><span class="co">#&gt; -------------------------------------------------------------</span></span></code></pre></div>
-<p>The total sample size is 37 subjects.</p>
-</div>
-<div class="section level2">
-<h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
-</h2>
+<p>The total sample size required is 37 subjects.</p>
 </div>
   </div>
 
