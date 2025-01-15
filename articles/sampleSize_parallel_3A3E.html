@@ -115,25 +115,24 @@ Debray</h4>
 </h2>
 <p>Similar to the example presented in <a href="sampleSize_parallel_2A3E.html">Bioequivalence Tests for Parallel
 Trial Designs: 2 Arms, 3 Endpoints</a>, where equivalence across
-multiple endpoints was assessed, we now extend the framework to trials
-involving two reference products. This scenario arises when regulators
-from different regions require comparisons with their locally sourced
-reference biosimilars.</p>
-<p>In many studies, it is necessary to evaluate equivalence across
-multiple primary variables. For example, the European Medicines Agency
-(EMA) recommends demonstrating equivalence for both the Area Under the
-Curve (AUC) and the maximum concentration (Cmax) when assessing
-pharmacokinetic properties. However, in this case, we evaluate
-equivalence across three treatment arms, including a test biosimilar and
-two reference products, each sourced from a different regulatory
-region.</p>
+multiple endpoints was assessed, this vignette extends the framework to
+trials involving two reference products. This scenario arises when
+regulators from different regions require comparisons with their locally
+sourced reference biosimilars.</p>
+<p>In many studies, the aim is to evaluate equivalence across multiple
+primary variables. For example, the European Medicines Agency (EMA)
+recommends demonstrating equivalence for both the Area Under the Curve
+(AUC) and the maximum concentration (Cmax) when endpoints. In this
+scenario, we additionally evaluate equivalence across three treatment
+arms, including a test biosimilar and two reference products, each
+sourced from a different regulatory region.</p>
 <p>This vignette demonstrates advanced techniques for calculating sample
-size in such trials, where both multiple endpoints and multiple
-reference products are considered. As an illustrative example, we use
-data from the phase-1 trial <a href="https://clinicaltrials.gov/study/NCT01922336#study-overview" class="external-link">NCT01922336</a>,
-which assessed pharmacokinetics following a single dose of SB2, its
-EU-sourced reference product (EU-INF), and its US-sourced reference
-product (US-INF) <span class="citation">(<a href="#ref-shin_randomized_2015">Shin et al. 2015</a>)</span>.</p>
+size in such trials, in which multiple endpoints and multiple reference
+products are considered. As an illustrative example, we use data from
+the phase 1 trial <a href="https://clinicaltrials.gov/study/NCT01922336#study-overview" class="external-link">NCT01922336</a>,
+which assessed pharmacokinetic (PK) endpoints following a single dose of
+SB2, its EU-sourced reference product (EU-INF), and its US-sourced
+reference product (US-INF) <span class="citation">(<a href="#ref-shin_randomized_2015">Shin et al. 2015</a>)</span>.</p>
 <table class="table table table-striped" style="margin-left: auto; margin-right: auto;">
 <caption>
 Primary PK measures between test and reference product. Data represent
@@ -237,12 +236,13 @@ following inputs are required:</p>
 <li>Endpoints to be compared within each comparator
 (<code>list_y_comparator</code>).</li>
 </ul>
-<p>In this example, we simultaneously compare each biosimilar:</p>
+<p>In this example, we simultaneously compare the trial drug (SB2) to
+each reference biosimilar:</p>
 <ul>
-<li>SB2 vs. EU Remicade</li>
-<li>SB2 vs. US Remicade</li>
+<li>SB2 vs. EU-INF</li>
+<li>SB2 vs. US-INF</li>
 </ul>
-<p>Below is the R code to define the required data:</p>
+<p>We define the required list objects:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Mean values for each endpoint and arm</span></span>
 <span><span class="va">mu_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
@@ -272,7 +272,7 @@ endpoints.</p>
 <li>Bioequivalence of SB2 vs. EU-INF for AUCinf and Cmax, and</li>
 <li>Bioequivalence of SB2 vs. US-INF for AUClast and Cmax.</li>
 </ul>
-<p>The comparisons can be specified as follows:</p>
+<p>The comparisons are specified as follows:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Arms to be compared</span></span>
 <span><span class="va">list_comparator</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
@@ -288,8 +288,7 @@ endpoints.</p>
 <p>For all endpoints, bioequivalence is established if the 90%
 confidence intervals for the ratios of the geometric means fall within
 the equivalence range of 80.00% to 125.00%.</p>
-<p>Below is the R code to define the equivalence boundaries for each
-comparison:</p>
+<p>Below we define the equivalence boundaries for each comparison:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Define comparators and equivalence boundaries</span></span>
 <span><span class="va">list_comparator</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
@@ -309,12 +308,11 @@ comparison:</p>
 <p>Here, the <code>list_comparator</code> parameter specifies the arms
 being compared, while <code>list_lequi.tol</code> and
 <code>list_uequi.tol</code> define the lower and upper equivalence
-boundaries for the endpoints under consideration.</p>
+boundaries for the two endpoints.</p>
 <p>To calculate the required sample size for testing equivalence under
-the specified conditions, we use the <a href="../reference/sampleSize.html">sampleSize()</a> function from the
-SimTOST package. This function computes the total sample size needed to
-achieve the target power while ensuring equivalence criteria are
-met.</p>
+the specified conditions, we use the <a href="../reference/sampleSize.html">sampleSize()</a> function. This
+function computes the total sample size needed to achieve the target
+power while ensuring equivalence criteria are met.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/smartdata-analysis-and-statistics/SimTOST" class="external-link">SimTOST</a></span><span class="op">)</span></span>
 <span></span>
@@ -350,8 +348,8 @@ met.</p>
 <span><span class="co">#&gt;             Achieved Power          90</span></span>
 <span><span class="co">#&gt;  Power Confidence Interval 87.9 - 91.8</span></span>
 <span><span class="co">#&gt; -------------------------------------------------------------</span></span></code></pre></div>
-<p>We find a total sample size of 117 patients (or 39 per arm) are
-required to demonstrate equivalence.</p>
+<p>A total sample size of 117 patients (or 39 per arm) is required to
+demonstrate equivalence.</p>
 </div>
 </div>
 <div class="section level2">
@@ -365,22 +363,22 @@ Adjustment<a class="anchor" aria-label="anchor" href="#equivalence-for-at-least-
 of three primary endpoints while accounting for multiplicity using the
 Bonferroni adjustment. The following assumptions are made:</p>
 <ul>
-<li>Equality of Variances: Variances are assumed to be equal across
+<li>Equality of Variances: variances are assumed to be equal across
 groups (<code>vareq = TRUE</code>).</li>
-<li>Testing Parameter: The Ratio of Means (ROM) is used as the testing
+<li>Testing Parameter: the Ratio of Means (ROM) is used as the testing
 parameter (<code>ctype = "ROM"</code>).</li>
-<li>Design: A parallel trial design is assumed
+<li>Design: a parallel trial design is assumed
 (<code>dtype = "parallel"</code>).</li>
-<li>Distribution: Endpoint data follows a log-normal distribution
+<li>Distribution: endpoint data follows a log-normal distribution
 (<code>lognorm = TRUE</code>).</li>
-<li>Correlation: Endpoints are assumed to be independent, with no
+<li>Correlation: endpoints are assumed to be independent, with no
 correlation between them (default <code>rho = 0</code>).</li>
-<li>Multiplicity Adjustment: The Bonferroni correction is applied to
+<li>Multiplicity Adjustment: the Bonferroni correction is applied to
 control for Type I error (<code>adjust = "bon"</code>).</li>
-<li>Equivalence Criterion: Equivalence is required for at least two of
+<li>Equivalence Criterion: equivalence is required for at least two of
 the three endpoints (<code>k = 2</code>).</li>
 </ul>
-<p>The comparisons and equivalence boundaries can be defined as
+<p>The comparisons and equivalence boundaries are defined as
 follows:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Endpoints to be compared for each comparator</span></span>
@@ -446,12 +444,12 @@ follows:</p>
 <div class="section level3">
 <h3 id="unequal-allocation-rates-across-arms">Unequal Allocation Rates Across Arms<a class="anchor" aria-label="anchor" href="#unequal-allocation-rates-across-arms"></a>
 </h3>
-<p>In this example, we build upon the previous setting but introduce
-unequal allocation rates across the treatment arms. Specifically, we
-require that the number of patients in the new treatment arm is double
-the number in each of the reference arms.</p>
+<p>In this example, we build upon the previous scenario but introduce
+unequal allocation rates across treatment arms. Specifically, we require
+that the number of patients in the new treatment arm is double the
+number in each of the reference arms.</p>
 <p>This can be achieved by specifying the treatment allocation rate
-parameter (<code>TAR</code>). The rates are provided as a vector, for
+parameter (<code>TAR</code>). Rates are provided as a vector, for
 example: <code>TAR = c(2, 1, 1)</code>. This ensures that for every two
 patients assigned to the new treatment arm, one patient is assigned to
 each reference arm.</p>
@@ -497,20 +495,20 @@ each reference arm.</p>
 <span><span class="co">#&gt;             Achieved Power          90</span></span>
 <span><span class="co">#&gt;  Power Confidence Interval 87.9 - 91.8</span></span>
 <span><span class="co">#&gt; -------------------------------------------------------------</span></span></code></pre></div>
-<p>Results from the simulation indicate that 48 patients are required
-for SB2 the active treatment arm (SB2), and 24 patients are required for
-each reference arm. The total sample size required is 96, which is
-larger compared to the trial with an equal allocation ratio, where the
-total sample size was 93.</p>
+<p>Results indicate that 48 patients are required for the active
+treatment arm (SB2), and 24 patients are required for each reference
+arm. The total sample size required is 96, which is larger compared to
+the trial with an equal allocation ratio, for which the total sample
+size was 93.</p>
 </div>
 <div class="section level3">
-<h3 id="accounting-for-dropouts">Accounting for Dropouts<a class="anchor" aria-label="anchor" href="#accounting-for-dropouts"></a>
+<h3 id="accounting-for-participant-dropout">Accounting for Participant Dropout<a class="anchor" aria-label="anchor" href="#accounting-for-participant-dropout"></a>
 </h3>
 <p>In the examples above, the sample size calculations assumed that all
-patients enrolled in the trial would complete it. However, in practice,
-a certain percentage of participants typically drop out, which can
-impact the required sample size. To account for this, we consider a 20%
-dropout rate across all treatment arms in this example.</p>
+enrolled patients complete the trial. However, in practice, a certain
+percentage of participants drop out, which can impact the required
+sample size. To account for this, we consider a 20% dropout rate across
+all treatment arms.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="op">(</span><span class="va">N_mp3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sampleSize.html">sampleSize</a></span><span class="op">(</span>power <span class="op">=</span> <span class="fl">0.9</span>,       <span class="co"># Target power</span></span>
 <span>                     alpha <span class="op">=</span> <span class="fl">0.05</span>,      <span class="co"># Type I error rate</span></span>
@@ -554,8 +552,8 @@ dropout rate across all treatment arms in this example.</p>
 <span><span class="co">#&gt;             Achieved Power          90</span></span>
 <span><span class="co">#&gt;  Power Confidence Interval 87.9 - 91.8</span></span>
 <span><span class="co">#&gt; -------------------------------------------------------------</span></span></code></pre></div>
-<p>Based on the output above, considering a 20% dropout rate, the total
-sample size required is 120.</p>
+<p>Considering a 20% dropout rate, the total sample size required is
+120.</p>
 </div>
 </div>
 <div class="section level2">
