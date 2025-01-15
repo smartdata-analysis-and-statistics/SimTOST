@@ -23,11 +23,11 @@ doc.cache <- T #for cran; change to F
 ```
 
 # Introduction
-Similar to the example presented in [Bioequivalence Tests for Parallel Trial Designs: 2 Arms, 3 Endpoints](sampleSize_parallel_2A3E.html), where equivalence across multiple endpoints was assessed, we now extend the framework to trials involving two reference products. This scenario arises when regulators from different regions require comparisons with their locally sourced reference biosimilars.
+Similar to the example presented in [Bioequivalence Tests for Parallel Trial Designs: 2 Arms, 3 Endpoints](sampleSize_parallel_2A3E.html), where equivalence across multiple endpoints was assessed, this vignette extends the framework to trials involving two reference products. This scenario arises when regulators from different regions require comparisons with their locally sourced reference biosimilars.
 
-In many studies, it is necessary to evaluate equivalence across multiple primary variables. For example, the European Medicines Agency (EMA) recommends demonstrating equivalence for both the Area Under the Curve (AUC) and the maximum concentration (Cmax) when assessing pharmacokinetic properties. However, in this case, we evaluate equivalence across three treatment arms, including a test biosimilar and two reference products, each sourced from a different regulatory region.
+In many studies, the aim is to evaluate equivalence across multiple primary variables. For example, the European Medicines Agency (EMA) recommends demonstrating equivalence for both the Area Under the Curve (AUC) and the maximum concentration (Cmax) when endpoints. In this scenario, we additionally evaluate equivalence across three treatment arms, including a test biosimilar and two reference products, each sourced from a different regulatory region.
 
-This vignette demonstrates advanced techniques for calculating sample size in such trials, where both multiple endpoints and multiple reference products are considered. As an illustrative example, we use data from the phase-1 trial [NCT01922336](https://clinicaltrials.gov/study/NCT01922336#study-overview), which assessed pharmacokinetics following a single dose of SB2, its EU-sourced reference product (EU-INF), and its US-sourced reference product (US-INF) [@shin_randomized_2015].
+This vignette demonstrates advanced techniques for calculating sample size in such trials, in which multiple endpoints and multiple reference products are considered. As an illustrative example, we use data from the phase 1 trial [NCT01922336](https://clinicaltrials.gov/study/NCT01922336#study-overview), which assessed pharmacokinetic (PK) endpoints following a single dose of SB2, its EU-sourced reference product (EU-INF), and its US-sourced reference product (US-INF) [@shin_randomized_2015].
 
 ```{r inputdata, echo=FALSE}
 
@@ -53,12 +53,12 @@ As in [this vignette](sampleSize_parallel_2A3E.html), the following inputs are r
 * Arms to be compared within each comparator (`list_comparator`),
 * Endpoints to be compared within each comparator (`list_y_comparator`).
 
-In this example, we simultaneously compare each biosimilar:
+In this example, we simultaneously compare the trial drug (SB2) to each reference biosimilar:
 
-* SB2 vs. EU Remicade
-* SB2 vs. US Remicade
+* SB2 vs. EU-INF
+* SB2 vs. US-INF
 
-Below is the R code to define the required data:
+We define the required list objects:
 
 ```{r}
 # Mean values for each endpoint and arm
@@ -89,7 +89,7 @@ In this example, we aim to demonstrate:
 * Bioequivalence of SB2 vs. EU-INF for AUCinf and Cmax, and
 * Bioequivalence of SB2 vs. US-INF for AUClast and Cmax.
 
-The comparisons can be specified as follows:
+The comparisons are specified as follows:
 
 ```{r}
 # Arms to be compared
@@ -107,7 +107,7 @@ list_y_comparator <- list(
 
 For all endpoints, bioequivalence is established if the 90% confidence intervals for the ratios of the geometric means fall within the equivalence range of 80.00% to 125.00%.
 
-Below is the R code to define the equivalence boundaries for each comparison:
+Below we define the equivalence boundaries for each comparison:
 
 ```{r}
 # Define comparators and equivalence boundaries
@@ -127,9 +127,9 @@ list_uequi.tol <- list(
 )
 ```
 
-Here, the `list_comparator` parameter specifies the arms being compared, while `list_lequi.tol` and `list_uequi.tol` define the lower and upper equivalence boundaries for the endpoints under consideration.
+Here, the `list_comparator` parameter specifies the arms being compared, while `list_lequi.tol` and `list_uequi.tol` define the lower and upper equivalence boundaries for the two endpoints.
 
-To calculate the required sample size for testing equivalence under the specified conditions, we use the [sampleSize()](../reference/sampleSize.html) function from the SimTOST package. This function computes the total sample size needed to achieve the target power while ensuring equivalence criteria are met.
+To calculate the required sample size for testing equivalence under the specified conditions, we use the [sampleSize()](../reference/sampleSize.html) function. This function computes the total sample size needed to achieve the target power while ensuring equivalence criteria are met.
 
 ```{r}
 library(SimTOST)
@@ -151,22 +151,22 @@ library(SimTOST)
                     seed = 1234))       # Random seed for reproducibility
 ```
 
-We find a total sample size of `r N_ss$response$n_total` patients (or `r N_ss$response$n_total/3` per arm) are required to demonstrate equivalence.
+A total sample size of `r N_ss$response$n_total` patients (or `r N_ss$response$n_total/3` per arm) is required to demonstrate equivalence.
 
 # Simultaneous Testing of Independent Primary Endpoints
 
 ## Equivalence for At Least 2 of the 3 Endpoints with Bonferroni Adjustment
 In this example, we aim to establish equivalence for at least two out of three primary endpoints while accounting for multiplicity using the Bonferroni adjustment. The following assumptions are made:
 
-* Equality of Variances: Variances are assumed to be equal across groups (`vareq = TRUE`).
-* Testing Parameter: The Ratio of Means (ROM) is used as the testing parameter (`ctype = "ROM"`).
-* Design: A parallel trial design is assumed (`dtype = "parallel"`).
-* Distribution: Endpoint data follows a log-normal distribution (`lognorm = TRUE`).
-* Correlation: Endpoints are assumed to be independent, with no correlation between them (default `rho = 0`).
-* Multiplicity Adjustment: The Bonferroni correction is applied to control for Type I error (`adjust = "bon"`).
-* Equivalence Criterion: Equivalence is required for at least two of the three endpoints (`k = 2`).
+* Equality of Variances: variances are assumed to be equal across groups (`vareq = TRUE`).
+* Testing Parameter: the Ratio of Means (ROM) is used as the testing parameter (`ctype = "ROM"`).
+* Design: a parallel trial design is assumed (`dtype = "parallel"`).
+* Distribution: endpoint data follows a log-normal distribution (`lognorm = TRUE`).
+* Correlation: endpoints are assumed to be independent, with no correlation between them (default `rho = 0`).
+* Multiplicity Adjustment: the Bonferroni correction is applied to control for Type I error (`adjust = "bon"`).
+* Equivalence Criterion: equivalence is required for at least two of the three endpoints (`k = 2`).
 
-The comparisons and equivalence boundaries can be defined as follows:
+The comparisons and equivalence boundaries are defined as follows:
 
 ```{r}
 # Endpoints to be compared for each comparator
@@ -211,9 +211,9 @@ Finally, we calculate the required sample size:
 ```
 
 ## Unequal Allocation Rates Across Arms
-In this example, we build upon the previous setting but introduce unequal allocation rates across the treatment arms. Specifically, we require that the number of patients in the new treatment arm is double the number in each of the reference arms.
+In this example, we build upon the previous scenario but introduce unequal allocation rates across treatment arms. Specifically, we require that the number of patients in the new treatment arm is double the number in each of the reference arms.
 
-This can be achieved by specifying the treatment allocation rate parameter (`TAR`). The rates are provided as a vector, for example: `TAR = c(2, 1, 1)`. This ensures that for every two patients assigned to the new treatment arm, one patient is assigned to each reference arm.
+This can be achieved by specifying the treatment allocation rate parameter (`TAR`). Rates are provided as a vector, for example: `TAR = c(2, 1, 1)`. This ensures that for every two patients assigned to the new treatment arm, one patient is assigned to each reference arm.
 
 ```{r}
 (N_mp2 <- sampleSize(power = 0.9,       # Target power
@@ -236,10 +236,10 @@ This can be achieved by specifying the treatment allocation rate parameter (`TAR
                      seed = 1234))       # Random seed for reproducibility
 ```
 
-Results from the simulation indicate that `r N_mp2$response$n_SB2` patients are required for SB2 the active treatment arm (SB2), and `r N_mp2$response$n_EUINF` patients are required for each reference arm. The total sample size required is `r N_mp2$response$n_total`, which is larger compared to the trial with an equal allocation ratio, where the total sample size was `r N_mp$response$n_total`.
+Results indicate that `r N_mp2$response$n_SB2` patients are required for the active treatment arm (SB2), and `r N_mp2$response$n_EUINF` patients are required for each reference arm. The total sample size required is `r N_mp2$response$n_total`, which is larger compared to the trial with an equal allocation ratio, for which the total sample size was `r N_mp$response$n_total`.
 
-## Accounting for Dropouts
-In the examples above, the sample size calculations assumed that all patients enrolled in the trial would complete it. However, in practice, a certain percentage of participants typically drop out, which can impact the required sample size. To account for this, we consider a 20% dropout rate across all treatment arms in this example.
+## Accounting for Participant Dropout
+In the examples above, the sample size calculations assumed that all enrolled patients complete the trial. However, in practice, a certain percentage of participants drop out, which can impact the required sample size. To account for this, we consider a 20% dropout rate across all treatment arms.
 
 ```{r}
 (N_mp3 <- sampleSize(power = 0.9,       # Target power
@@ -263,6 +263,6 @@ In the examples above, the sample size calculations assumed that all patients en
                      seed = 1234))       # Random seed for reproducibility
 ```
 
-Based on the output above, considering a 20% dropout rate, the total sample size required is `r N_mp3$response$n_total`.
+Considering a 20% dropout rate, the total sample size required is `r N_mp3$response$n_total`.
 
 # References
