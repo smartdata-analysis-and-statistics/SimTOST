@@ -165,7 +165,7 @@ N_ss$response
 
 Incorporating the correlations between endpoints in sample size calculations for continuous-valued co-primary  endpoints offers significant advantages [@sozu_sample_2015]. Adding more endpoints typically reduces power if such correlations are not accounted for. However, by including positive correlations in the calculations, power can be increased, and the required sample sizes may consequently be reduced.
 
-For this analysis, we proceed with the same values used previously but now assume that a correlation exists between endpoints. Specifically, we set $\rho = 0.6$, assuming a common correlation across all endpoints.
+For this scenario, we proceed with the same values used previously but now assume that a correlation exists between endpoints. Specifically, we set $\rho = 0.6$, assuming a common correlation across all endpoints.
 
 If correlations differ between endpoints, they can be specified individually using a correlation matrix (`cor_mat`), allowing for greater flexibility in the analysis.
 
@@ -189,8 +189,8 @@ If correlations differ between endpoints, they can be specified individually usi
 
 The required total sample size for this example is `r N_mult_corr$response$n_total`. This is `r N_ss$response$n_total - N_mult_corr$response$n_total` fewer patients than the scenario in which endpoints are assumed to be uncorrelated.
 
-# Simultaneous Testing of Correlated Co-Primary Endpoints
-Imagine that we are interested in demonstrating equivalence for at least $k=1$ of the $m=3$ co-primary endpoints. Unlike the previous cases, in which equivalence was required for all endpoints, this scenario requires an adjustment for multiplicity (Bonferroni correction) to control the family-wise error rate.
+# Simultaneous Testing of Correlated Primary Endpoints
+Imagine that we are interested in demonstrating equivalence for at least $k=1$ of the $m=3$ primary endpoints. Unlike the previous scenarios, in which equivalence was required for all endpoints, this scenario requires an adjustment for multiplicity (Bonferroni correction) to control the family-wise error rate.
 
 ```{r}
 (N_mp_bon <- sampleSize(
