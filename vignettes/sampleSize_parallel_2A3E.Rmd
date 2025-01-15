@@ -24,9 +24,9 @@ doc.cache <- T #for cran; change to F
 
 # Introduction
 
-In many studies, it is necessary to evaluate equivalence across multiple primary variables. For instance, the European Medicines Agency (EMA) recommends demonstrating equivalence for both **Area Under the Curve** (AUC) and **maximum concentration** (Cmax) when assessing pharmacokinetic properties. This vignette presents advanced techniques for calculating sample size in parallel trial designs involving three treatment arms and two endpoints.
+In many studies, the aim is to evaluate equivalence across multiple primary endpoints. The European Medicines Agency (EMA) recommends demonstrating bioequivalence for both **Area Under the Curve** (AUC) and **maximum concentration** (Cmax) when assessing pharmacokinetic properties. This vignette presents advanced techniques for calculating sample size in parallel trial designs involving three treatment arms and two endpoints.
 
-As an illustrative example, we consider published data from the phase-1 trial [NCT01922336](https://clinicaltrials.gov/study/NCT01922336#study-overview). This trial assessed the pharmacokinetics of SB2 compared to its EU-sourced reference product (EU_Remicade). The following outcomes were reported following a single dose of SB2 or its EU reference product [@shin_randomized_2015]:
+As an illustrative example, we consider published data from the phase-1 trial [NCT01922336](https://clinicaltrials.gov/study/NCT01922336#study-overview). This trial measured the pharmacokinetics (PK) of SB2 compared to its EU-sourced reference product (EU_Remicade). The following PK measures were reported following a single dose of SB2 or its EU reference product Remicade [@shin_randomized_2015]:
 
 ```{r, echo=FALSE}
 data <- data.frame("PK measure" = c("AUCinf ($\\mu$g*h/mL)","AUClast ($\\mu$g*h/mL)","Cmax ($\\mu$g/mL)"),
@@ -39,10 +39,10 @@ kableExtra::kable_styling(kableExtra::kable(data,
                           bootstrap_options = "striped")
 ```
 
-In the sections below, we examine various strategies for determining the sample size required for a parallel trial to establish equivalence across three co-primary endpoints. These strategies are based on the Ratio of Means (ROM) approach, using equivalence bounds set between 80% and 125%. Additionally, we demonstrate how the test can be adjusted to establish equivalence for at least $k=1$ primary endpoint, providing flexibility in meeting equivalence criteria.
+In the sections below, we describe various strategies for determining the sample size required for a parallel trial to establish equivalence across three co-primary endpoints. These strategies are based on the Ratio of Means (ROM) approach with equivalence bounds set between 80% and 125%. Additionally, we show how this approach can be adjusted to demonstrate equivalence for at least $k=1$ of $m=3$ co-primary endpoints, providing flexibility in meeting equivalence criteria.
 
 # Independent Testing of Co-Primary Endpoints
-A conservative approach to sample size calculation involves testing each pharmacokinetic (PK) measure independently. This method assumes that the endpoints are uncorrelated and that equivalence must be demonstrated for each endpoint separately. Consequently, the overall sample size required for the trial is the sum of the sample sizes for each PK measure.
+A conservative approach to sample size calculation involves testing each pharmacokinetic (PK) measure independently. This approach assumes that endpoints are uncorrelated and that equivalence is to be demonstrated for each endpoint separately. Consequently, the overall sample size required for the trial is the sum of the sample sizes calculated for each PK measure separately.
 
 ```{r}
 library(SimTOST)
@@ -91,18 +91,18 @@ library(SimTOST)
 ))
 ```
 
-If we were to test each PK measure independently, we would find a total sample size of `r sim_AUCinf$response$n_total` for AUCinf, `r sim_AUClast$response$n_total` for AUClast, and `r sim_Cmax$response$n_total` for Cmax. This means that we would have to enroll `r sim_AUCinf$response$n_total` + `r sim_AUClast$response$n_total` + `r sim_Cmax$response$n_total` = `r sim_AUCinf$response$n_total + sim_AUClast$response$n_total + sim_Cmax$response$n_total` patients in order to reject $H_0$ at a significance level of 5\%. For context, the original trial was a randomized, single-blind, three-arm, parallel-group study conducted in 159 healthy subjects, slightly more than the `r sim_AUCinf$response$n_total + sim_AUClast$response$n_total + sim_Cmax$response$n_total` patients estimated as necessary. This suggests that the original trial had a small buffer above the calculated sample size requirements.
+When testing each PK measure independently, the total sample size is `r sim_AUCinf$response$n_total` for AUCinf, `r sim_AUClast$response$n_total` for AUClast, and `r sim_Cmax$response$n_total` for Cmax. This means that we would have to enroll `r sim_AUCinf$response$n_total` + `r sim_AUClast$response$n_total` + `r sim_Cmax$response$n_total` = `r sim_AUCinf$response$n_total + sim_AUClast$response$n_total + sim_Cmax$response$n_total` patients in order to reject $H_0$ at a significance level of 5\%. For context, the original trial was a randomized, single-blind, three-arm, parallel-group study conducted in 159 healthy subjects, slightly more than the `r sim_AUCinf$response$n_total + sim_AUClast$response$n_total + sim_Cmax$response$n_total` patients estimated to be necessary. This suggests that the original trial had a small buffer above the calculated sample size requirements.
 
 # Simultaneous Testing of Independent Co-Primary Endpoints
-This approach focuses on simultaneous testing of pharmacokinetic (PK) measures while assuming independence between endpoints. Unlike the previous approach, which evaluated each PK measure independently, this method integrates comparisons across multiple endpoints, accounting for correlations (or lack thereof) between them. By doing so, it enables simultaneous testing for equivalence without inflating the overall Type I error rate.
+This approach focuses on simultaneous testing of PK measures while assuming independence between endpoints. Unlike the previous approach, which tested each PK measure independently, this method integrates comparisons across multiple endpoints, accounting for correlations (or lack thereof) between them, thus enabling simultaneous testing for equivalence without inflating the overall Type I error rate.
 
 ## Key Assumptions
 In the calculations below, the following assumptions are made:
 
 * Hypothesis Testing Approach: Ratio of Means (ROM)
-* Design: A parallel trial design
+* Design: Parallel trial design
 * Distribution: PK measures follow a log-normal distribution.
-* Standard Deviation: All treatments share a  common standard deviation for each endpoint
+* Standard Deviation: All treatments share a common standard deviation for each endpoint
 * Multiplicity: No multiplicity adjustments are applied.
 * Equivalence Criterion: Equivalence is required for all $k=m=3$ endpoints.
 * Independence: All endpoints are assumed to be uncorrelated, specified by setting the correlation parameter to $\rho=0$.
@@ -123,7 +123,7 @@ sigma_list <- list(
 ```
 
 ## Equivalence Boundaries
-Since we are comparing multiple co-primary endpoints, it is essential to define the lower and upper equivalence boundaries for each endpoint. These boundaries determine the acceptable range for the Ratio of Means (ROM) within which equivalence is established.
+It is essential to define the lower and upper equivalence boundaries for each co-primary endpoint. These boundaries determine the acceptable range for the Ratio of Means (ROM) within which equivalence is established.
 
 For simplicity, the same equivalence boundaries are applied to all endpoints:
 
@@ -134,7 +134,7 @@ list_lequi.tol <- list("Comparison" = c(AUCinf = 0.8, AUClast = 0.8, Cmax = 0.8)
 list_uequi.tol <- list("Comparison" = c(AUCinf = 1.25, AUClast = 1.25, Cmax = 1.25))
 ```
 
-By default, it is required that all $k=m$ co-primary endpoints have to be equivalent:
+By default, all $k=m$ co-primary endpoints are required to be equivalent.
 
 ## Computing Sample Size
 
@@ -155,7 +155,7 @@ By default, it is required that all $k=m$ co-primary endpoints have to be equiva
                     seed = 1234))
 ```
 
-We can inspect more detailed sample size requirements as follows:
+We can inspect the sample size requirements in more detail as follows:
 
 ```{r}
 N_ss$response
@@ -163,7 +163,7 @@ N_ss$response
 
 # Simultaneous Testing of Correlated Co-Primary Endpoints
 
-Incorporating the correlation among endpoints into power and sample size calculations for co-primary continuous endpoints offers significant advantages. [@sozu_sample_2015] Without accounting for correlation, adding more endpoints typically reduces the power. However, by including positive correlations in the calculations, power can be increased, and required sample sizes may be reduced.
+Incorporating the correlations between endpoints in sample size calculations for continuous-valued co-primary  endpoints offers significant advantages [@sozu_sample_2015]. Adding more endpoints typically reduces power if such correlations are not accounted for. However, by including positive correlations in the calculations, power can be increased, and the required sample sizes may consequently be reduced.
 
 For this analysis, we proceed with the same values used previously but now assume that a correlation exists between endpoints. Specifically, we set $\rho = 0.6$, assuming a common correlation across all endpoints.
 
@@ -187,10 +187,10 @@ If correlations differ between endpoints, they can be specified individually usi
                            seed = 1234))
 ```
 
-Referring to the output above, the required sample size for this setting is `r N_mult_corr$response$n_total`. This is `r N_ss$response$n_total - N_mult_corr$response$n_total` fewer patients than the scenario where the endpoints are assumed to be uncorrelated.
+The required total sample size for this example is `r N_mult_corr$response$n_total`. This is `r N_ss$response$n_total - N_mult_corr$response$n_total` fewer patients than the scenario in which endpoints are assumed to be uncorrelated.
 
-# Simultaneous Testing of Correlated Primary Endpoints
-Consider now we are interested in demonstrating equivalence for at least $k=1$ of the $m=3$ primary endpoints. Unlike the previous cases, where equivalence was required for all endpoints, this setting necessitates an adjustment for multiplicity to control the family-wise error rate.
+# Simultaneous Testing of Correlated Co-Primary Endpoints
+Imagine that we are interested in demonstrating equivalence for at least $k=1$ of the $m=3$ co-primary endpoints. Unlike the previous cases, in which equivalence was required for all endpoints, this scenario requires an adjustment for multiplicity (Bonferroni correction) to control the family-wise error rate.
 
 ```{r}
 (N_mp_bon <- sampleSize(
@@ -213,7 +213,7 @@ Consider now we are interested in demonstrating equivalence for at least $k=1$ o
   seed = 1234                # Random seed for reproducibility
 ))
 ```
-As mentioned in [the Introduction](../articles/intopkg.html), the Bonferroni correction is often overly conservative, especially in scenarios with correlated tests. A less restrictive alternative is the *k*-adjustment, which specifically accounts for the number of tests and the number of endpoints required for equivalence.
+As mentioned in [the Introduction](../articles/intopkg.html), Bonferroni adjustment is often overly conservative, especially in scenarios with correlated tests. A less restrictive alternative is the *k*-adjustment, which specifically accounts for the number of tests and the number of endpoints required for equivalence.
 
 ```{r}
 (N_mp_k <- sampleSize(
@@ -237,9 +237,9 @@ As mentioned in [the Introduction](../articles/intopkg.html), the Bonferroni cor
 ))
 ```
 
-A more advanced testing approach involves Sequential Adjustment, where the significance level is adjusted separately for groups of endpoints (primary and secondary). A Bonferroni adjustment is applied to the primary endpoints based on their number. If the null hypothesis for the primary endpoints is rejected, testing proceeds sequentially to the secondary endpoints, which are also Bonferroni-adjusted based on the number of secondary endpoints.
+A more advanced testing approach involves sequential adjustment, in which the significance level is adjusted separately for groups of endpoints (i.e., primary and secondary). A Bonferroni adjustment is first applied to the group of primary endpoints, based on the number of primary endpoints. If the null hypothesis for this group is rejected, testing proceeds sequentially to the group secondary endpoints, which are also Bonferroni-adjusted based on the number of secondary endpoints.
 
-In this example, the sequential adjustment can be implemented by setting the function argument to `adjust = "seq"` and specifying the type of each endpoint through the `type_y` parameter. For instance, we define "AUCinf" as a primary endpoint, while "AUClast" and "Cmax" are designated as secondary endpoints.
+In the below example, sequential adjustment can be implemented by setting the argument `adjust = "seq"` and for each endpoint specifying its type using the `type_y` parameter. For instance, we define "AUCinf" as a primary endpoint, while "AUClast" and "Cmax" are designated as secondary endpoints.
 
 ```{r}
 (N_mp_seq <- sampleSize(
