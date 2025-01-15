@@ -112,7 +112,7 @@ Debray</h4>
 <p>This vignette demonstrates advanced sample size calculation
 techniques for parallel trial designs involving three arms and one
 endpoint. Specifically, we calculate the required sample size to test
-bioequivalence between a new treatment (SB2) and a reference drug
+bioequivalence between a new treatment (SB2) and a reference product
 (Remicade) administered in two different locations (“EU_Remicade” and
 “USA_Remicade”). The endpoint of interest is the Area Under the Curve
 (AUCinf), a commonly used pharmacokinetic measure.</p>
@@ -128,10 +128,10 @@ of the reference mean on the original scale.</p>
 bioequivalence testing concepts and extend them to multi-arm scenarios.
 These examples provide practical insights for designing robust parallel
 trials with complex equivalence testing requirements.</p>
-<p>For the primary outcome, AUCinf, we assume the data is available on
-the original scale, including the mean and standard deviation for each
-arm. This information is organized into a structured data table for
-further analysis:</p>
+<p>We assume that the primary endpoint, AUCinf, is on the original
+scale, with the mean and standard deviation for each arm available. This
+information is organized into a structured data table for further
+analysis:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/smartdata-analysis-and-statistics/SimTOST" class="external-link">SimTOST</a></span><span class="op">)</span></span>
 <span></span>
@@ -141,9 +141,9 @@ further analysis:</p>
 <div class="section level2">
 <h2 id="sample-size-calculation-for-aucinf-equivalence-to-eu-remicade">Sample Size Calculation for AUCinf: Equivalence to EU Remicade<a class="anchor" aria-label="anchor" href="#sample-size-calculation-for-aucinf-equivalence-to-eu-remicade"></a>
 </h2>
-<p>This example demonstrates how to calculate the sample size required
+<p>This example demonstrates how to calculate the required sample size
 when testing the equivalence of SB2 to a reference drug, Remicade, as
-administered in Europe. The goal is to determine the minimum number of
+administered in the EU. The goal is to determine the minimum number of
 participants needed to ensure adequate power for the equivalence
 test.</p>
 <div class="section level3">
@@ -164,7 +164,7 @@ represent the lower and upper equivalence margins, respectively.</p>
 </h3>
 <p>To proceed with the sample size calculation, we first need to
 organize the mean and standard deviation values of each arm (SB2, EU
-Remicade, USA Remicade) into appropriate lists.</p>
+Remicade, USA Remicade) as list objects.</p>
 <p>Since this example focuses on a single endpoint, the mean list
 (<code>mu_list</code>) contains three scalar elements corresponding to
 each arm, and the standard deviation list (<code>sigma_list</code>)
@@ -192,7 +192,7 @@ power, confidence level, and design specifications. By default, it
 assumes:</p>
 <ul>
 <li>A parallel design,</li>
-<li>A test based on the rate of means (ROM),</li>
+<li>A test based on the ratio of means (ROM),</li>
 <li>Equal variances across arms,</li>
 <li>A lognormal distribution for the endpoint.</li>
 </ul>
@@ -224,8 +224,8 @@ assumes:</p>
 <span><span class="co">#&gt;             Achieved Power      90.3</span></span>
 <span><span class="co">#&gt;  Power Confidence Interval 88.3 - 92</span></span>
 <span><span class="co">#&gt; -------------------------------------------------------------</span></span></code></pre></div>
-<p>Results from the simulations indicate that the required sample size
-for this trial setting is 84 or 42 for each arm.</p>
+<p>The required sample size for this scenario is 84, or 42 for each
+arm.</p>
 </div>
 </div>
 <div class="section level2">
@@ -249,21 +249,20 @@ Key Considerations:</p>
 <li>The function <a href="../reference/sampleSize.html">sampleSize()</a>
 adjusts the alpha level for multiple comparisons within a single
 comparator (e.g., comparisons involving only RemEU or RemUSA).</li>
-<li>Current Limitation: The function does not yet account for alpha
-adjustments between comparators when simultaneously comparing SB2 with
-both reference products (RemEU and RemUSA). Thus, the null hypothesis is
-rejected if any ratio of means (ROM) falls outside the equivalence
-boundaries. Future program updates aim to address this limitation and
-include proper alpha adjustments for comparisons between
-comparators.</li>
+<li>The function does not yet account for alpha adjustments between
+comparators when simultaneously comparing SB2 with both reference
+products (RemEU and RemUSA). Thus, the null hypothesis is rejected if
+any ROM falls outside the equivalence boundaries. Future package updates
+will address this limitation and include proper alpha adjustments for
+comparisons between comparators.</li>
 </ul>
 </div>
 <div class="section level3">
 <h3 id="implementation-details">Implementation Details<a class="anchor" aria-label="anchor" href="#implementation-details"></a>
 </h3>
-<p>We proceed similarly to the initial example, modifying the
-<code>list_comparator</code> to include multiple comparators. In this
-case, the list contains two elements specifying the simultaneous
+<p>Implementation of this scenario is similar to the initial example, in
+which the <code>list_comparator</code> is modified to include multiple
+comparators. The list contains two elements specifying the simultaneous
 comparison between SB2 vs. RemEU and SB2 vs. RemUSA. This approach
 ensures that the equivalence assessment accounts for both reference
 products.</p>
@@ -313,17 +312,17 @@ calculate the required sample size for multiple comparisons.</p>
 <div class="section level3">
 <h3 id="results-and-interpretation">Results and Interpretation<a class="anchor" aria-label="anchor" href="#results-and-interpretation"></a>
 </h3>
-<p>Based on the output table, the required total sample size for this
-trial setting is 150. Notably, an additional 8 patients per arm are
-required to achieve equivalence with both reference products (RemEU and
-RemUSA), compared to the scenario where equivalence is required with
-only one reference arm (42).</p>
-<p>This demonstrates the added complexity and sample size requirements
-when multiple comparators are involved in an equivalence trial.</p>
-<p>The package includes the <a href="../reference/plot.simss.html">plot()</a> function, which is
-designed to visualize the relationship between sample size (x-axis) and
-achieved power (y-axis) for all combinations of outcomes and
-comparators. In this example, we will use the <a href="../reference/plot.simss.html">plot()</a> function to generate a
+<p>The required total sample size for this scenario is 150. Notably, an
+additional 8 patients per arm are required to achieve equivalence with
+both reference products (RemEU and RemUSA), compared to the scenario
+where equivalence is required with only one reference arm (42).</p>
+<p>This example demonstrates the added complexity and sample size
+requirements when multiple comparators are involved in an equivalence
+trial.</p>
+<p>The SimTOST package includes the <a href="../reference/plot.simss.html">plot()</a> function, which is
+designed to permit visualization of the relationship between sample size
+(x-axis) and achieved power (y-axis) for all combinations of endpoints
+and comparators. In this example, we use the <a href="../reference/plot.simss.html">plot()</a> function to generate a
 plot for the <code>AUCinf_2comp</code> object.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">AUCinf_2comp</span><span class="op">)</span></span></code></pre></div>
