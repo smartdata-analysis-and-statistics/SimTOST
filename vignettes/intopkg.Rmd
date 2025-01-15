@@ -32,10 +32,10 @@ library(SimTOST)
 
 # Hypotheses
 
-The null and alternative hypotheses for the equivalence test are as follows:
+The null and alternative hypotheses for the equivalence test are presented below for two different approaches:
 
 ## Difference of Means (DOM)
-A common approach to assessing bioequivalence involves comparing the log-transformed pharmacokinetic (PK) measures between the test and reference products. This is done using the following interval (null) hypothesis:
+One common approach for assessing bioequivalence involves comparing log-transformed pharmacokinetic (PK) measures between test and reference products. This is done using the following interval (null) hypothesis:
 
 Null Hypothesis ($H_0$): At least one endpoint does not meet the equivalence criteria:
  
@@ -45,7 +45,7 @@ Alternative Hypothesis ($H_1$): All endpoints meet the equivalence criteria:
 
 $$H_1: \delta_L<m_{T}^{(j)}-m_{R}^{(j)} <\delta_U \quad\text{for all}\;j$$
 
-Here, $m_T$ and $m_R$ represent the logarithmically transformed mean responses of the test product (the proposed biosimilar) and the reference product, respectively. The equivalence limits, $\delta_L$ and $\delta_u$, are typically chosen to be symmetric, such that  $\delta = - \delta_L = \delta_U$. The FDA further recommends that the equivalence acceptance criterion (EAC) be defined as $\delta = EAC = 1.5 \sigma_R$, where $\sigma_R$ represents the variability of the log-transformed endpoint for the reference product.
+Here, $m_T$ and $m_R$ represent the logarithmically transformed mean endpoints for the test product (the proposed biosimilar) and the reference product, respectively. The equivalence limits, $\delta_L$ and $\delta_u$, are typically chosen to be symmetric, such that  $\delta = - \delta_L = \delta_U$. The FDA recommends that the equivalence acceptance criterion (EAC) be defined as $\delta = EAC = 1.5 \sigma_R$, where $\sigma_R$ represents the variability of the log-transformed endpoint for the reference product.
 
 The null hypothesis ($H_0$) is rejected if, and only if, all null hypotheses associated with the $K$ primary endpoints are rejected at a significance level of $\alpha$. This ensures that equivalence is established across all endpoints simultaneously. 
 
@@ -61,19 +61,19 @@ Alternative Hypothesis ($H_1$): All endpoints meet the equivalence criteria:
 
 $$H_1: E_L< \frac{\mu_{T}^{(j)}}{\mu_{R}^{(j)}} < E_U \quad\text{for all}\;j$$
 
-Here, $\mu_T$ and $\mu_R$ represent the arithmetic mean responses of the test product (the proposed biosimilar) and the reference product, respectively. 
+Here, $\mu_T$ and $\mu_R$ represent the arithmetic mean endpoints for the test product (the proposed biosimilar) and the reference product, respectively. 
 
 ## Regulatory Requirements 
-When evaluating bioequivalence, certain statistical and methodological requirements must be adhered to, as outlined in the European Medicines Agency's bioequivalence guidelines [@CHMP2010]. These requirements ensure that the test and reference products meet predefined criteria for equivalence in terms of pharmacokinetic parameters. The key considerations are summarized below:
+When evaluating bioequivalence, certain statistical and methodological requirements must be adhered to, as outlined in the European Medicines Agency's bioequivalence guidelines [@CHMP2010]. These requirements ensure that the test and reference products meet predefined criteria for equivalence in terms of PK parameters. The key considerations are summarized below:
 
 * Hypothesis testing should be based on the ratio of the population geometric means 
 * The 90% confidence interval for the ratio of the test and reference products should be contained within the acceptance interval of 80.00 to 125.00%. 
-* A margin of clinical equivalence ($\Delta$) is chosen by defining the largest difference that is clinically acceptable, so that a difference bigger than this would matter in practice. 
+* A margin of clinical equivalence ($\Delta$) is chosen by defining the largest difference that is clinically acceptable, so that a difference larger than this would matter in practice. 
 * The data should be transformed prior to analysis using a logarithmic transformation and subsequently be analyzed using ANOVA
 
 
 # Log-Transformation and Parameter Adjustments in sampleSize()
-In [sampleSize()](../reference/sampleSize.html), Ratio of Means (ROM) tests are converted to Difference of Means (DOM) tests by log-transforming the data. Equivalence limits are applied to the log-transformed data, and the results are back-transformed to the original scale for interpretation. This approach leverages the log-normal distribution of pharmacokinetic (PK) measures like AUC and Cmax.
+In [sampleSize()](../reference/sampleSize.html), Ratio of Means (ROM) tests are converted to Difference of Means (DOM) tests by log-transforming the data. Equivalence limits are applied to the log-transformed data, and the results are back-transformed to the original scale for interpretation. This approach leverages the log-normal distribution of PK measures like AUC and Cmax.
 
 ## Logarithmic Mean
 The logarithmic mean is derived from the provided `mu_list` (arithmetic means) and `sigma_list` (variances) using the following formula:
@@ -89,7 +89,7 @@ To fully operate within the log-normal framework, the variances on the original 
 \]
 
 # Testing of multiple endpoints
-It is often required to investigate equivalence for more than one primary variable. [@sozu_sample_2015] For example, EMA recommends showing equivalence both for AUC and Cmax 
+Assessment of equivalence is often required for more than one primary variable. [@sozu_sample_2015] For example, EMA recommends showing equivalence both for AUC and Cmax 
 
 A decision must be made as to whether it is desirable to 
 
@@ -103,37 +103,37 @@ A decision must be made as to whether it is desirable to
 
 ## Testing multiple co-primary endpoints
 
-When a trial aims to evaluate the joint effects across all $m$ co-primary endpoints [@sozu_sample_2015], no multiplicity adjustment is required to control the Type I error rate, as all null hypotheses must be rejected to establish equivalence. However, as the number of endpoints ($K$) increases, the Type II error rate also increases. [@mielke_sample_2018] This leads to the following implications:
+If the aim of a trial is to evaluate joint effects across all $m$ co-primary endpoints [@sozu_sample_2015], a multiplicity adjustment is not required to control the Type I error rate, as all null hypotheses must be rejected to establish equivalence. However, as the number of endpoints ($K$) increases, the Type II error rate also increases. [@mielke_sample_2018] This leads to the following implications:
 
 * The power to detect equivalence decreases for a fixed sample size.
 * The probability of trial success is reduced as more endpoints are evaluated simultaneously.
 
-Previous studies have demonstrated that the sample size required to achieve a given power level increases as the number of endpoints increases [@mielke_sample_2018]. This increase in sample size can be substantial, particularly when there is no correlation between the test statistics and/or when a large number of tests are conducted. Conversely, the impact of the number of endpoints on the required sample size is less pronounced when the correlation between endpoints is high.
+Previous studies have demonstrated that the sample size required to achieve a given power level increases as the number of endpoints increases [@mielke_sample_2018]. This increase in sample size can be substantial, particularly when there is no correlation between the test statistics and/or when a large number of tests are conducted. The impact of the number of endpoints on the required sample size is less pronounced when the correlation between endpoints is high.
 
 One possible solution, if the required sample size is not feasible, is to power the study so that at least $k$ out of $m$ tests have to meet the equivalence criterion.
 
 ## Testing multiple primary endpoints
 
-When a trial aims to evaluate equivalence for at least $k$ out of $m$ primary endpoints, adjustments must be made to account for the increased probability of Type I errors due to multiple hypothesis testing. For example, with $m=3$ independent primary endpoints and a significance level of $\alpha = 5\%$, the probability of making a Type I error on at least one hypothesis test is:
+When a trial aims to evaluate equivalence for at least $k$ out of $m$ primary endpoints, adjustment for the increased probability of a Type I error due to multiple hypothesis testing is required. For example, with $m=3$ independent primary endpoints and a significance level of $\alpha = 5\%$, the probability of making a Type I error on at least one hypothesis test is:
 
 $$ 1 – (1-\alpha)^m  = 1 - (1-0.05)^3 = 0.1426. $$
 This means that the overall probability of making any false positive error, also known as the **family-wise error rate (FWER)**, increases to approximately 14%. 
 
-To address this, adjustments to the significance level are necessary for multiple endpoint comparisons. Various methods have been proposed to handle this issue. In the package under consideration, the following approaches are included:
+To address this issue, adjustments to the significance level are necessary for multiple endpoint comparisons for which various methods have been proposed. In SimTOST, the following approaches are included:
 
 
 ### Bonferroni correction
-The most common and easiest procedure for multiplicity adjustment that controls the family-wise error rate (FWER) is the Bonferroni method. Each hypothesis is tested at level
+The most common and easiest procedure for multiplicity adjustment to control the FWER is the Bonferroni method. Each hypothesis is tested at level
 
 $$\alpha_{bon}= \alpha/m$$
 
-where $m$ is the total number of tests. While simple, this method is highly conservative, particularly when the tests are correlated, as it assumes all tests are independent. This conservativeness remains pronounced even for $k=1$, where only one of the $m$ hypotheses needs to be rejected. [@mielke_sample_2018]
+where $m$ is the total number of tests. Although simple, this method is highly conservative, particularly when tests are correlated, as it assumes all tests are independent. This conservativeness remains pronounced even for $k=1$, where only one of the $m$ hypotheses needs to be rejected. [@mielke_sample_2018]
 
 In the [sampleSize()](../reference/sampleSize.html) function, the Bonferroni correction can be applied by setting `adjust = "bon"`.
 
 ### Sidak correction
 
-The Sidak correction is an alternative method for controlling the family-wise error rate (FWER) in hypothesis testing. Like the Bonferroni correction, it assumes that the tests are independent. However, the Sidak correction accounts for the joint probability of all tests being non-significant, making it mathematically less conservative than Bonferroni. The adjusted significance level is calculated as:
+The Sidak correction is an alternative method for controlling the FWER. Like the Bonferroni correction, it assumes that tests are independent. However, the Sidak correction accounts for the joint probability of all tests being non-significant, making it mathematically less conservative than the Bonferroni method. The adjusted significance level is calculated as:
 
 $$\alpha_{sid}= 1-(1-\alpha)^ {1/m}$$
 
@@ -148,20 +148,20 @@ $$\alpha_k= \frac{k*\alpha}{m}$$
 where $k$ is the number of endpoints required for equivalence, and $m$ is the total number of endpoints evaluated.
 
 ### Sequential adjustment
-In this approach, the user specifies which endpoints are primary and which are secondary using the `type_y` vector parameter. Tests are then performed sequentially, starting with the primary endpoints. If the tests on the primary endpoints are accepted, the procedure proceeds to testing the secondary endpoints.
+In this approach, the user specifies which endpoints are primary and which are secondary using the `type_y` vector parameter. Tests are then performed sequentially, starting with the primary endpoints. If the tests on the primary endpoints are accepted, the procedure proceeds with testing of the secondary endpoints.
 
 The significance level ($\alpha$) is adjusted separately for each group of endpoints:
 
 * **Primary Endpoints**: A Bonferroni adjustment is applied based on the number of primary endpoints.
 * **Secondary Endpoints**: If the primary endpoints meet the equivalence criteria, the secondary endpoints are tested. These are also adjusted using the Bonferroni method, based on the number of secondary endpoints.
 
-This sequential adjustment ensures that the Type I error is controlled while prioritizing the evaluation of primary endpoints before moving on to secondary ones.
+Sequential adjustment ensures that the Type I error is controlled while prioritizing the evaluation of primary endpoints before moving on to secondary ones.
 
 
 # Testing of multiple treatments
-In some cases, it may be necessary to compare multiple treatments simultaneously. This can be achieved by specifying multiple comparators in the `mu_list` and `sigma_list` parameters. The [sampleSize()](../reference/sampleSize.html) function can accommodate multiple treatments, allowing for the evaluation of equivalence across different products or formulations.   
+In certain cases, it may be necessary to compare multiple treatments simultaneously. This can be achieved by specifying multiple comparators in the `mu_list` and `sigma_list` parameters. The [sampleSize()](../reference/sampleSize.html) function can accommodate multiple treatments, allowing for the evaluation of equivalence across different products or formulations.   
 
-Although trials with multiple arms are common, there is no clear consensus in the literature on whether statistical corrections should be applied for testing multiple primary hypotheses in such analyses. In SimTOST, no adjustments are made for trials involving more than two treatment arms.
+Although trials with multiple arms are common, there is no clear consensus in the literature as to whether statistical corrections should be applied for testing multiple primary hypotheses in such analyses. In SimTOST, no adjustments are made for trials involving more than two treatment arms.
 
 
 # References
