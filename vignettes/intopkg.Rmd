@@ -24,10 +24,6 @@ library(SimTOST)
 ```
 
 
- Methodology and Assumptions
-
-
-
 
 
 # Hypotheses
@@ -35,7 +31,7 @@ library(SimTOST)
 The null and alternative hypotheses for the equivalence test are presented below for two different approaches:
 
 ## Difference of Means (DOM)
-One common approach for assessing bioequivalence involves comparing log-transformed pharmacokinetic (PK) measures between test and reference products. This is done using the following interval (null) hypothesis:
+One common approach for assessing bioequivalence involves comparing pharmacokinetic (PK) measures between test and reference products. This is done using the following interval (null) hypothesis:
 
 Null Hypothesis ($H_0$): At least one endpoint does not meet the equivalence criteria:
  
@@ -45,9 +41,19 @@ Alternative Hypothesis ($H_1$): All endpoints meet the equivalence criteria:
 
 $$H_1: \delta_L<m_{T}^{(j)}-m_{R}^{(j)} <\delta_U \quad\text{for all}\;j$$
 
-Here, $m_T$ and $m_R$ represent the logarithmically transformed mean endpoints for the test product (the proposed biosimilar) and the reference product, respectively. The equivalence limits, $\delta_L$ and $\delta_u$, are typically chosen to be symmetric, such that  $\delta = - \delta_L = \delta_U$. The FDA recommends that the equivalence acceptance criterion (EAC) be defined as $\delta = EAC = 1.5 \sigma_R$, where $\sigma_R$ represents the variability of the log-transformed endpoint for the reference product.
+Here, $m_T$ and $m_R$ represent the mean endpoints for the test product (the proposed biosimilar) and the reference product, respectively. The equivalence limits, $\delta_L$ and $\delta_u$, are typically chosen to be symmetric, such that  $\delta = - \delta_L = \delta_U$. 
 
 The null hypothesis ($H_0$) is rejected if, and only if, all null hypotheses associated with the $K$ primary endpoints are rejected at a significance level of $\alpha$. This ensures that equivalence is established across all endpoints simultaneously. 
+
+The DOM test can be implemented in [sampleSize()](../reference/sampleSize.html) by setting `ctype = "DOM"` and `lognorm = FALSE`. 
+
+For pharmacokinetic (PK) outcomes, such as the area under the curve (AUC) and maximum concentration (Cmax), log-transformation is commonly applied to achieve normality. To perform this transformation, the logarithm of the geometric mean should be provided to `mu_list`, while the logarithmic variance can be derived from the coefficient of variation (CV) using the formula:
+
+\[
+\text{Logarithmic Variance} = \log\left(1 + {\text{CV}^2}\right)
+\]
+
+Equivalence limits must also be specified on the log scale to align with the transformed data.
 
 
 ## Ratio of Means (ROM)
@@ -63,6 +69,18 @@ $$H_1: E_L< \frac{\mu_{T}^{(j)}}{\mu_{R}^{(j)}} < E_U \quad\text{for all}\;j$$
 
 Here, $\mu_T$ and $\mu_R$ represent the arithmetic mean endpoints for the test product (the proposed biosimilar) and the reference product, respectively. 
 
+The ROM test can be implemented in [sampleSize()](../reference/sampleSize.html) by setting `ctype = "ROM"` and `lognorm = TRUE`. Note that the `mu_list` argument should contain the arithmetic means of the endpoints, while `sigma_list` should contain their corresponding variances. 
+
+The ROM test is converted to a Difference of Means (DOM) tests by log-transforming the data and equivalence limits. The variance on the log scale is calculated using the normalized variance formula:
+ 
+\[
+\text{Logarithmic Variance} = \log\left(1 + \text{Arithmetic Variance}}{\text{Arithmetic Mean}^2}\right)
+\]
+
+The logarithmic mean is then calculated as:
+
+$$\text{Logarithmic Mean} = \log(\text{Arithmetic Mean}) - \frac{1}{2}(\text{Logarithmic Variance})$$
+
 ## Regulatory Requirements 
 When evaluating bioequivalence, certain statistical and methodological requirements must be adhered to, as outlined in the European Medicines Agency's bioequivalence guidelines [@CHMP2010]. These requirements ensure that the test and reference products meet predefined criteria for equivalence in terms of PK parameters. The key considerations are summarized below:
 
@@ -71,22 +89,7 @@ When evaluating bioequivalence, certain statistical and methodological requireme
 * A margin of clinical equivalence ($\Delta$) is chosen by defining the largest difference that is clinically acceptable, so that a difference larger than this would matter in practice. 
 * The data should be transformed prior to analysis using a logarithmic transformation and subsequently be analyzed using ANOVA
 
-
-# Log-Transformation and Parameter Adjustments in sampleSize()
-In [sampleSize()](../reference/sampleSize.html), Ratio of Means (ROM) tests are converted to Difference of Means (DOM) tests by log-transforming the data. Equivalence limits are applied to the log-transformed data, and the results are back-transformed to the original scale for interpretation. This approach leverages the log-normal distribution of PK measures like AUC and Cmax.
-
-## Logarithmic Mean
-The logarithmic mean is derived from the provided `mu_list` (arithmetic means) and `sigma_list` (variances) using the following formula:
-
-$$\text{Logarithmic Mean} = \log(\text{Arithmetic Mean}) - \frac{1}{2}\text{Variance}$$
-This formula adjusts the arithmetic mean to account for the skewness of log-normal data, ensuring that the central tendency on the log scale aligns with the transformed data.
-
-## Logarithmic Variance Transformation
-To fully operate within the log-normal framework, the variances on the original scale (`sigma_list`) must also be transformed. The variance on the log scale is calculated using the normalized variance formula:
- 
-\[
-\text{Logarithmic Variance} = \log\left(1 + \frac{\sigma^2}{\mu^2}\right)
-\]
+When conducting a DOM test, The FDA recommends that the equivalence acceptance criterion (EAC) be defined as $\delta = EAC = 1.5 \sigma_R$, where $\sigma_R$ represents the variability of the log-transformed endpoint for the reference product.
 
 # Testing of multiple endpoints
 Assessment of equivalence is often required for more than one primary variable. [@sozu_sample_2015] For example, EMA recommends showing equivalence both for AUC and Cmax 

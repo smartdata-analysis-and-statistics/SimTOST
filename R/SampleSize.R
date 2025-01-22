@@ -41,12 +41,12 @@
 #' @param verbose Logical. If `TRUE`, the function displays progress and informational messages during execution. Defaults to `FALSE`.
 #' @return An object simss that contains the following elements :
 #' \describe{
-#'  \item{"response"}{ array with the sample sizes for each arm and aproximated achieved power with confidence intervals}
-#'  \item{"table.iter"}{data frame with the estimated sample size for each arm and power calculated at each searching iteration}
-#'  \item{"table.test"}{data frame that collects the total information of the simulation at each iteration}
-#'  \item{"param.u"}{parameters provided by the user}
-#'  \item{"param"}{ parameters used for the sample size calculation; as param.u are checked and modified in case of any inconsistent or missing information provided}
-#'  \item{"param.d"}{ parameters of design}
+#'  \item{"response"}{ An array summarizing the results of the simulation, including the estimated sample sizes for each arm, the approximated achieved power, and the corresponding confidence interval.}
+#'  \item{"table.iter"}{A data frame detailing the estimated sample size for each arm and the calculated power at each iteration during the sample size searching process.}
+#'  \item{"table.test"}{A data frame containing the test results for all simulated trials, including relevant metrics for each tested sample size}
+#'  \item{"param.u"}{The original set of parameters provided by the user for the simulation.}
+#'  \item{"param"}{ The final set of parameters used for the sample size calculation. These are based on \code{param.u} but adjusted to address any inconsistencies or missing information.}
+#'  \item{"param.d"}{ The design parameters used in the simulation, including details relevant to the trial design.}
 #'}
 #'
 #' @references
