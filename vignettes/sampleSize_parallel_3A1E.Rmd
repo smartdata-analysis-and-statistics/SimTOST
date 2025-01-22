@@ -34,7 +34,7 @@ We assume that the primary endpoint, AUCinf, is on the original scale, with the 
 ```{r}
 library(SimTOST)
 
-data <- data.table::data.table(arm = c("SB2","EU_Remicade","USA_Remicade"),
+data <- data.table::data.table(arm = c("SB2","RemEU","RemUSA"),
                                mean = c(37162.0, 37705.0, 37702.8), 
                                sd = c(11113.62172, 12332.41615,12113.72))
 ```
@@ -70,7 +70,7 @@ sigma_list <- as.list(data$sd)  # Organize standard deviation values into a list
 Next, we define the comparison parameters, including the lower (`lequi.tol`) and upper (`uequi.tol`) equivalence boundaries, as well as the list of comparators. Since we are only comparing two arms (SB2 and EU Remicade), the list of comparators contains a single element specifying these two arms:
 
 ```{r}
-list_comparator <- list("Comparison" = c("SB2","EU_Remicade"))
+list_comparator <- list("Comparison" = c("SB2","RemEU"))
 list_lequi.tol <- list("Comparison" = 0.8)
 list_uequi.tol <- list("Comparison" = 1/0.8)
 ```
@@ -118,7 +118,7 @@ $$H_0: \frac{\mu_{SB2}}{\mu_{RemEU}} \le E_L ~~ or~~ \frac{\mu_{SB2}}{\mu_{RemEU
 Alternative Hypothesis (Equivalence):
 
 $$H_1: E_L<\frac{\mu_{SB2}}{\mu_{RemEU}} < E_U~~ and~~E_L<\frac{\mu_{SB2}}{\mu_{RemUSA}} < E_U$$
-Key Considerations:
+**Key Considerations**
 
 * The function [sampleSize()](../reference/sampleSize.html) adjusts the alpha level for multiple comparisons within a single comparator (e.g., comparisons involving only RemEU or RemUSA).
 * The function does not yet account for alpha adjustments between comparators when simultaneously comparing SB2 with both reference products (RemEU and RemUSA). Thus, the null hypothesis is rejected if any ROM falls outside the equivalence boundaries. Future package updates will address this limitation and include proper alpha adjustments for comparisons between comparators.
@@ -130,8 +130,8 @@ Implementation of this scenario is similar to the initial example, in which the 
 Additionally, we must specify equivalence boundaries for each comparison individually. These boundaries define the acceptable range for equivalence and are provided separately for each comparator.
 
 ```{r}
-list_comparator <- list("EMA" = c("SB2", "EU_Remicade"),
-                        "FDA" = c("SB2", "USA_Remicade"))
+list_comparator <- list("EMA" = c("SB2", "RemEU"),
+                        "FDA" = c("SB2", "RemUSA"))
 list_lequi.tol <- list("EMA" = 0.8, "FDA" = 0.8)     # Lower equivalence boundary
 list_uequi.tol <- list("EMA" = 1/0.8, "FDA" = 1/0.8) # Upper equivalence boundary
 ```
