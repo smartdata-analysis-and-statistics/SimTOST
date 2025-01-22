@@ -73,9 +73,9 @@ The ROM test can be implemented in [sampleSize()](../reference/sampleSize.html) 
 
 The ROM test is converted to a Difference of Means (DOM) tests by log-transforming the data and equivalence limits. The variance on the log scale is calculated using the normalized variance formula:
  
-\[
-\text{Logarithmic Variance} = \log\left(1 + \text{Arithmetic Variance}}{\text{Arithmetic Mean}^2}\right)
-\]
+$$
+\text{Logarithmic Variance} = \log\left(1 + \frac{\text{Arithmetic Variance}}{\text{Arithmetic Mean}^2}\right)
+$$
 
 The logarithmic mean is then calculated as:
 
