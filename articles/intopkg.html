@@ -107,7 +107,6 @@
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/smartdata-analysis-and-statistics/SimTOST" class="external-link">SimTOST</a></span><span class="op">)</span></span></code></pre></div>
-<p>Methodology and Assumptions</p>
 <div class="section level2">
 <h2 id="hypotheses">Hypotheses<a class="anchor" aria-label="anchor" href="#hypotheses"></a>
 </h2>
@@ -117,9 +116,8 @@ presented below for two different approaches:</p>
 <h3 id="difference-of-means-dom">Difference of Means (DOM)<a class="anchor" aria-label="anchor" href="#difference-of-means-dom"></a>
 </h3>
 <p>One common approach for assessing bioequivalence involves comparing
-log-transformed pharmacokinetic (PK) measures between test and reference
-products. This is done using the following interval (null)
-hypothesis:</p>
+pharmacokinetic (PK) measures between test and reference products. This
+is done using the following interval (null) hypothesis:</p>
 <p>Null Hypothesis
 (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>H</mi><mn>0</mn></msub><annotation encoding="application/x-tex">H_0</annotation></semantics></math>):
 At least one endpoint does not meet the equivalence criteria:</p>
@@ -132,21 +130,14 @@ All endpoints meet the equivalence criteria:</p>
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>m</mi><mi>T</mi></msub><annotation encoding="application/x-tex">m_T</annotation></semantics></math>
 and
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>m</mi><mi>R</mi></msub><annotation encoding="application/x-tex">m_R</annotation></semantics></math>
-represent the logarithmically transformed mean endpoints for the test
-product (the proposed biosimilar) and the reference product,
-respectively. The equivalence limits,
+represent the mean endpoints for the test product (the proposed
+biosimilar) and the reference product, respectively. The equivalence
+limits,
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>δ</mi><mi>L</mi></msub><annotation encoding="application/x-tex">\delta_L</annotation></semantics></math>
 and
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>δ</mi><mi>u</mi></msub><annotation encoding="application/x-tex">\delta_u</annotation></semantics></math>,
 are typically chosen to be symmetric, such that
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>δ</mi><mo>=</mo><mo>−</mo><msub><mi>δ</mi><mi>L</mi></msub><mo>=</mo><msub><mi>δ</mi><mi>U</mi></msub></mrow><annotation encoding="application/x-tex">\delta = - \delta_L = \delta_U</annotation></semantics></math>.
-The FDA recommends that the equivalence acceptance criterion (EAC) be
-defined as
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>δ</mi><mo>=</mo><mi>E</mi><mi>A</mi><mi>C</mi><mo>=</mo><mn>1.5</mn><msub><mi>σ</mi><mi>R</mi></msub></mrow><annotation encoding="application/x-tex">\delta = EAC = 1.5 \sigma_R</annotation></semantics></math>,
-where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>σ</mi><mi>R</mi></msub><annotation encoding="application/x-tex">\sigma_R</annotation></semantics></math>
-represents the variability of the log-transformed endpoint for the
-reference product.</p>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>δ</mi><mo>=</mo><mo>−</mo><msub><mi>δ</mi><mi>L</mi></msub><mo>=</mo><msub><mi>δ</mi><mi>U</mi></msub></mrow><annotation encoding="application/x-tex">\delta = - \delta_L = \delta_U</annotation></semantics></math>.</p>
 <p>The null hypothesis
 (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>H</mi><mn>0</mn></msub><annotation encoding="application/x-tex">H_0</annotation></semantics></math>)
 is rejected if, and only if, all null hypotheses associated with the
@@ -155,6 +146,19 @@ primary endpoints are rejected at a significance level of
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>α</mi><annotation encoding="application/x-tex">\alpha</annotation></semantics></math>.
 This ensures that equivalence is established across all endpoints
 simultaneously.</p>
+<p>The DOM test can be implemented in <a href="../reference/sampleSize.html">sampleSize()</a> by setting
+<code>ctype = "DOM"</code> and <code>lognorm = FALSE</code>.</p>
+<p>For pharmacokinetic (PK) outcomes, such as the area under the curve
+(AUC) and maximum concentration (Cmax), log-transformation is commonly
+applied to achieve normality. To perform this transformation, the
+logarithm of the geometric mean should be provided to
+<code>mu_list</code>, while the logarithmic variance can be derived from
+the coefficient of variation (CV) using the formula:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">Logarithmic Variance</mtext><mo>=</mo><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>+</mo><msup><mtext mathvariant="normal">CV</mtext><mn>2</mn></msup><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
+\text{Logarithmic Variance} = \log\left(1 + {\text{CV}^2}\right)
+</annotation></semantics></math></p>
+<p>Equivalence limits must also be specified on the log scale to align
+with the transformed data.</p>
 </div>
 <div class="section level3">
 <h3 id="ratio-of-means-rom">Ratio of Means (ROM)<a class="anchor" aria-label="anchor" href="#ratio-of-means-rom"></a>
@@ -175,6 +179,20 @@ and
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>μ</mi><mi>R</mi></msub><annotation encoding="application/x-tex">\mu_R</annotation></semantics></math>
 represent the arithmetic mean endpoints for the test product (the
 proposed biosimilar) and the reference product, respectively.</p>
+<p>The ROM test can be implemented in <a href="../reference/sampleSize.html">sampleSize()</a> by setting
+<code>ctype = "ROM"</code> and <code>lognorm = TRUE</code>. Note that
+the <code>mu_list</code> argument should contain the arithmetic means of
+the endpoints, while <code>sigma_list</code> should contain their
+corresponding variances.</p>
+<p>The ROM test is converted to a Difference of Means (DOM) tests by
+log-transforming the data and equivalence limits. The variance on the
+log scale is calculated using the normalized variance formula:</p>
+<p><span class="math display">$$
+\text{Logarithmic Variance} = \log\left(1 + \text{Arithmetic
+Variance}}{\text{Arithmetic Mean}^2}\right)
+$$</span></p>
+<p>The logarithmic mean is then calculated as:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">Logarithmic Mean</mtext><mo>=</mo><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><mtext mathvariant="normal">Arithmetic Mean</mtext><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mrow><mo stretchy="true" form="prefix">(</mo><mtext mathvariant="normal">Logarithmic Variance</mtext><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\text{Logarithmic Mean} = \log(\text{Arithmetic Mean}) - \frac{1}{2}(\text{Logarithmic Variance})</annotation></semantics></math></p>
 </div>
 <div class="section level3">
 <h3 id="regulatory-requirements">Regulatory Requirements<a class="anchor" aria-label="anchor" href="#regulatory-requirements"></a>
@@ -200,38 +218,13 @@ practice.</li>
 <li>The data should be transformed prior to analysis using a logarithmic
 transformation and subsequently be analyzed using ANOVA</li>
 </ul>
-</div>
-</div>
-<div class="section level2">
-<h2 id="log-transformation-and-parameter-adjustments-in-samplesize">Log-Transformation and Parameter Adjustments in sampleSize()<a class="anchor" aria-label="anchor" href="#log-transformation-and-parameter-adjustments-in-samplesize"></a>
-</h2>
-<p>In <a href="../reference/sampleSize.html">sampleSize()</a>, Ratio of
-Means (ROM) tests are converted to Difference of Means (DOM) tests by
-log-transforming the data. Equivalence limits are applied to the
-log-transformed data, and the results are back-transformed to the
-original scale for interpretation. This approach leverages the
-log-normal distribution of PK measures like AUC and Cmax.</p>
-<div class="section level3">
-<h3 id="logarithmic-mean">Logarithmic Mean<a class="anchor" aria-label="anchor" href="#logarithmic-mean"></a>
-</h3>
-<p>The logarithmic mean is derived from the provided
-<code>mu_list</code> (arithmetic means) and <code>sigma_list</code>
-(variances) using the following formula:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">Logarithmic Mean</mtext><mo>=</mo><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><mtext mathvariant="normal">Arithmetic Mean</mtext><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mtext mathvariant="normal">Variance</mtext></mrow><annotation encoding="application/x-tex">\text{Logarithmic Mean} = \log(\text{Arithmetic Mean}) - \frac{1}{2}\text{Variance}</annotation></semantics></math>
-This formula adjusts the arithmetic mean to account for the skewness of
-log-normal data, ensuring that the central tendency on the log scale
-aligns with the transformed data.</p>
-</div>
-<div class="section level3">
-<h3 id="logarithmic-variance-transformation">Logarithmic Variance Transformation<a class="anchor" aria-label="anchor" href="#logarithmic-variance-transformation"></a>
-</h3>
-<p>To fully operate within the log-normal framework, the variances on
-the original scale (<code>sigma_list</code>) must also be transformed.
-The variance on the log scale is calculated using the normalized
-variance formula:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">Logarithmic Variance</mtext><mo>=</mo><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>+</mo><mfrac><msup><mi>σ</mi><mn>2</mn></msup><msup><mi>μ</mi><mn>2</mn></msup></mfrac><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
-\text{Logarithmic Variance} = \log\left(1 + \frac{\sigma^2}{\mu^2}\right)
-</annotation></semantics></math></p>
+<p>When conducting a DOM test, The FDA recommends that the equivalence
+acceptance criterion (EAC) be defined as
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>δ</mi><mo>=</mo><mi>E</mi><mi>A</mi><mi>C</mi><mo>=</mo><mn>1.5</mn><msub><mi>σ</mi><mi>R</mi></msub></mrow><annotation encoding="application/x-tex">\delta = EAC = 1.5 \sigma_R</annotation></semantics></math>,
+where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>σ</mi><mi>R</mi></msub><annotation encoding="application/x-tex">\sigma_R</annotation></semantics></math>
+represents the variability of the log-transformed endpoint for the
+reference product.</p>
 </div>
 </div>
 <div class="section level2">
