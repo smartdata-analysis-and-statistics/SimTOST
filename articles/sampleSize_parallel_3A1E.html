@@ -49,7 +49,7 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/intopkg.html">Introduction</a>
+      <a href="../articles/intropkg.html">Introduction</a>
     </li>
     <li>
       <a href="../articles/sampleSize_crossover.html">Bioequivalence Tests for 2x2 Cross-Over Trial Designs with Log-Normal Data</a>
@@ -135,7 +135,7 @@ analysis:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/smartdata-analysis-and-statistics/SimTOST" class="external-link">SimTOST</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/data.table.html" class="external-link">data.table</a></span><span class="op">(</span>arm <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SB2"</span>,<span class="st">"EU_Remicade"</span>,<span class="st">"USA_Remicade"</span><span class="op">)</span>,</span>
+<span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/data.table.html" class="external-link">data.table</a></span><span class="op">(</span>arm <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SB2"</span>,<span class="st">"RemEU"</span>,<span class="st">"RemUSA"</span><span class="op">)</span>,</span>
 <span>                               mean <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">37162.0</span>, <span class="fl">37705.0</span>, <span class="fl">37702.8</span><span class="op">)</span>, </span>
 <span>                               sd <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">11113.62172</span>, <span class="fl">12332.41615</span>,<span class="fl">12113.72</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="section level2">
@@ -178,7 +178,7 @@ boundaries, as well as the list of comparators. Since we are only
 comparing two arms (SB2 and EU Remicade), the list of comparators
 contains a single element specifying these two arms:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">list_comparator</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"Comparison"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SB2"</span>,<span class="st">"EU_Remicade"</span><span class="op">)</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">list_comparator</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"Comparison"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SB2"</span>,<span class="st">"RemEU"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">list_lequi.tol</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"Comparison"</span> <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span></span>
 <span><span class="va">list_uequi.tol</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"Comparison"</span> <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">0.8</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -216,7 +216,7 @@ assumes:</p>
 <span><span class="co">#&gt; Study Design: parallel trial targeting 90% power with a 5% type-I error.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Comparisons:</span></span>
-<span><span class="co">#&gt;    SB2 vs. EU_Remicade </span></span>
+<span><span class="co">#&gt;    SB2 vs. RemEU </span></span>
 <span><span class="co">#&gt;     - Endpoints Tested: y1 </span></span>
 <span><span class="co">#&gt; -------------------------------------------------------------</span></span>
 <span><span class="co">#&gt;                  Parameter     Value</span></span>
@@ -243,8 +243,7 @@ distinct reference arms.</p>
 <p>Null Hypothesis (No Equivalence):</p>
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>H</mi><mn>0</mn></msub><mo>:</mo><mfrac><msub><mi>μ</mi><mrow><mi>S</mi><mi>B</mi><mn>2</mn></mrow></msub><msub><mi>μ</mi><mrow><mi>R</mi><mi>e</mi><mi>m</mi><mi>E</mi><mi>U</mi></mrow></msub></mfrac><mo>≤</mo><msub><mi>E</mi><mi>L</mi></msub><mspace width="0.222em"></mspace><mspace width="0.222em"></mspace><mi>o</mi><mi>r</mi><mspace width="0.222em"></mspace><mspace width="0.222em"></mspace><mfrac><msub><mi>μ</mi><mrow><mi>S</mi><mi>B</mi><mn>2</mn></mrow></msub><msub><mi>μ</mi><mrow><mi>R</mi><mi>e</mi><mi>m</mi><mi>E</mi><mi>U</mi></mrow></msub></mfrac><mo>≥</mo><msub><mi>E</mi><mi>U</mi></msub><mspace width="0.222em"></mspace><mspace width="0.222em"></mspace><mi>o</mi><mi>r</mi><mspace width="0.222em"></mspace><mspace width="0.222em"></mspace><mfrac><msub><mi>μ</mi><mrow><mi>S</mi><mi>B</mi><mn>2</mn></mrow></msub><msub><mi>μ</mi><mrow><mi>R</mi><mi>e</mi><mi>m</mi><mi>U</mi><mi>S</mi><mi>A</mi></mrow></msub></mfrac><mo>≤</mo><msub><mi>E</mi><mi>L</mi></msub><mspace width="0.222em"></mspace><mspace width="0.222em"></mspace><mi>o</mi><mi>r</mi><mspace width="0.222em"></mspace><mspace width="0.222em"></mspace><mfrac><msub><mi>μ</mi><mrow><mi>S</mi><mi>B</mi><mn>2</mn></mrow></msub><msub><mi>μ</mi><mrow><mi>R</mi><mi>e</mi><mi>m</mi><mi>U</mi><mi>S</mi><mi>A</mi></mrow></msub></mfrac><mo>≥</mo><msub><mi>E</mi><mi>U</mi></msub></mrow><annotation encoding="application/x-tex">H_0: \frac{\mu_{SB2}}{\mu_{RemEU}} \le E_L ~~ or~~ \frac{\mu_{SB2}}{\mu_{RemEU}} \ge E_U~~ or~~ \frac{\mu_{SB2}}{\mu_{RemUSA}} \le E_L ~~ or~~ \frac{\mu_{SB2}}{\mu_{RemUSA}} \ge E_U</annotation></semantics></math></p>
 <p>Alternative Hypothesis (Equivalence):</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>H</mi><mn>1</mn></msub><mo>:</mo><msub><mi>E</mi><mi>L</mi></msub><mo>&lt;</mo><mfrac><msub><mi>μ</mi><mrow><mi>S</mi><mi>B</mi><mn>2</mn></mrow></msub><msub><mi>μ</mi><mrow><mi>R</mi><mi>e</mi><mi>m</mi><mi>E</mi><mi>U</mi></mrow></msub></mfrac><mo>&lt;</mo><msub><mi>E</mi><mi>U</mi></msub><mspace width="0.222em"></mspace><mspace width="0.222em"></mspace><mi>a</mi><mi>n</mi><mi>d</mi><mspace width="0.222em"></mspace><mspace width="0.222em"></mspace><msub><mi>E</mi><mi>L</mi></msub><mo>&lt;</mo><mfrac><msub><mi>μ</mi><mrow><mi>S</mi><mi>B</mi><mn>2</mn></mrow></msub><msub><mi>μ</mi><mrow><mi>R</mi><mi>e</mi><mi>m</mi><mi>U</mi><mi>S</mi><mi>A</mi></mrow></msub></mfrac><mo>&lt;</mo><msub><mi>E</mi><mi>U</mi></msub></mrow><annotation encoding="application/x-tex">H_1: E_L&lt;\frac{\mu_{SB2}}{\mu_{RemEU}} &lt; E_U~~ and~~E_L&lt;\frac{\mu_{SB2}}{\mu_{RemUSA}} &lt; E_U</annotation></semantics></math>
-Key Considerations:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>H</mi><mn>1</mn></msub><mo>:</mo><msub><mi>E</mi><mi>L</mi></msub><mo>&lt;</mo><mfrac><msub><mi>μ</mi><mrow><mi>S</mi><mi>B</mi><mn>2</mn></mrow></msub><msub><mi>μ</mi><mrow><mi>R</mi><mi>e</mi><mi>m</mi><mi>E</mi><mi>U</mi></mrow></msub></mfrac><mo>&lt;</mo><msub><mi>E</mi><mi>U</mi></msub><mspace width="0.222em"></mspace><mspace width="0.222em"></mspace><mi>a</mi><mi>n</mi><mi>d</mi><mspace width="0.222em"></mspace><mspace width="0.222em"></mspace><msub><mi>E</mi><mi>L</mi></msub><mo>&lt;</mo><mfrac><msub><mi>μ</mi><mrow><mi>S</mi><mi>B</mi><mn>2</mn></mrow></msub><msub><mi>μ</mi><mrow><mi>R</mi><mi>e</mi><mi>m</mi><mi>U</mi><mi>S</mi><mi>A</mi></mrow></msub></mfrac><mo>&lt;</mo><msub><mi>E</mi><mi>U</mi></msub></mrow><annotation encoding="application/x-tex">H_1: E_L&lt;\frac{\mu_{SB2}}{\mu_{RemEU}} &lt; E_U~~ and~~E_L&lt;\frac{\mu_{SB2}}{\mu_{RemUSA}} &lt; E_U</annotation></semantics></math><strong>Key Considerations</strong></p>
 <ul>
 <li>The function <a href="../reference/sampleSize.html">sampleSize()</a>
 adjusts the alpha level for multiple comparisons within a single
@@ -270,8 +269,8 @@ products.</p>
 comparison individually. These boundaries define the acceptable range
 for equivalence and are provided separately for each comparator.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">list_comparator</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"EMA"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SB2"</span>, <span class="st">"EU_Remicade"</span><span class="op">)</span>,</span>
-<span>                        <span class="st">"FDA"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SB2"</span>, <span class="st">"USA_Remicade"</span><span class="op">)</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">list_comparator</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"EMA"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SB2"</span>, <span class="st">"RemEU"</span><span class="op">)</span>,</span>
+<span>                        <span class="st">"FDA"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SB2"</span>, <span class="st">"RemUSA"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">list_lequi.tol</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"EMA"</span> <span class="op">=</span> <span class="fl">0.8</span>, <span class="st">"FDA"</span> <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span>     <span class="co"># Lower equivalence boundary</span></span>
 <span><span class="va">list_uequi.tol</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"EMA"</span> <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">0.8</span>, <span class="st">"FDA"</span> <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">0.8</span><span class="op">)</span> <span class="co"># Upper equivalence boundary</span></span></code></pre></div>
 </div>
@@ -298,9 +297,9 @@ calculate the required sample size for multiple comparisons.</p>
 <span><span class="co">#&gt; Study Design: parallel trial targeting 90% power with a 5% type-I error.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Comparisons:</span></span>
-<span><span class="co">#&gt;    SB2 vs. EU_Remicade </span></span>
+<span><span class="co">#&gt;    SB2 vs. RemEU </span></span>
 <span><span class="co">#&gt;     - Endpoints Tested: y1 </span></span>
-<span><span class="co">#&gt;    SB2 vs. USA_Remicade </span></span>
+<span><span class="co">#&gt;    SB2 vs. RemUSA </span></span>
 <span><span class="co">#&gt;     - Endpoints Tested: y1 </span></span>
 <span><span class="co">#&gt; -------------------------------------------------------------</span></span>
 <span><span class="co">#&gt;                  Parameter     Value</span></span>

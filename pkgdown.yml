@@ -2,11 +2,11 @@ pandoc: 3.1.11
 pkgdown: 2.1.1
 pkgdown_sha: ~
 articles:
-  intopkg: intopkg.html
+  intropkg: intropkg.html
   sampleSize_crossover: sampleSize_crossover.html
   sampleSize_parallel_2A1E: sampleSize_parallel_2A1E.html
   sampleSize_parallel_2A3E: sampleSize_parallel_2A3E.html
   sampleSize_parallel_3A1E: sampleSize_parallel_3A1E.html
   sampleSize_parallel_3A3E: sampleSize_parallel_3A3E.html
   sampleSize_parallel: sampleSize_parallel.html
-last_built: 2025-01-22T09:21Z
+last_built: 2025-01-22T09:38Z
