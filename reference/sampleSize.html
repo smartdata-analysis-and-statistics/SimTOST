@@ -282,22 +282,22 @@
     <div id="value">
     <h2>Value</h2>
     <p>An object simss that contains the following elements :</p><dl><dt>"response"</dt>
-<dd><p>array with the sample sizes for each arm and aproximated achieved power with confidence intervals</p></dd>
+<dd><p>An array summarizing the results of the simulation, including the estimated sample sizes for each arm, the approximated achieved power, and the corresponding confidence interval.</p></dd>
 
 <dt>"table.iter"</dt>
-<dd><p>data frame with the estimated sample size for each arm and power calculated at each searching iteration</p></dd>
+<dd><p>A data frame detailing the estimated sample size for each arm and the calculated power at each iteration during the sample size searching process.</p></dd>
 
 <dt>"table.test"</dt>
-<dd><p>data frame that collects the total information of the simulation at each iteration</p></dd>
+<dd><p>A data frame containing the test results for all simulated trials, including relevant metrics for each tested sample size</p></dd>
 
 <dt>"param.u"</dt>
-<dd><p>parameters provided by the user</p></dd>
+<dd><p>The original set of parameters provided by the user for the simulation.</p></dd>
 
 <dt>"param"</dt>
-<dd><p>parameters used for the sample size calculation; as param.u are checked and modified in case of any inconsistent or missing information provided</p></dd>
+<dd><p>The final set of parameters used for the sample size calculation. These are based on <code>param.u</code> but adjusted to address any inconsistencies or missing information.</p></dd>
 
 <dt>"param.d"</dt>
-<dd><p>parameters of design</p></dd>
+<dd><p>The design parameters used in the simulation, including details relevant to the trial design.</p></dd>
 
 
 </dl></div>
