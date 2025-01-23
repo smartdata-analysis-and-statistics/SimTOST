@@ -165,50 +165,14 @@ sampleSize <- function(mu_list, varcov_list = NA, sigma_list = NA, cor_mat = NA,
     mu_list[[i]] <- mu
   }
 
+  # Derive the list of covariance matrices
+  varcov_list <- derive_varcov_list(mu_list = mu_list, sigma_list = sigma_list,
+                                    ynames_list = ynames_list,
+                                    varcov_list = varcov_list, cor_mat = cor_mat,
+                                    rho = rho)
 
 
 
-  # Varcov specfication
-  if (any(is.na(varcov_list))) {
-    if (any(is.na(sigma_list))) {
-      stop("No variance-covariance matrix provided, and a standard deviation list is also missing. Either a variance-covariance matrix or a standard deviation list is required.")
-    }
-
-    # length in terms of endpoints
-    len_mu <- sapply(mu_list,length)
-    len_sd <- sapply(sigma_list,length)
-    len_y <- sapply(ynames_list,length) # number of endpoints
-
-    if (any((len_mu != len_sd) | (len_mu != len_y))) {
-      stop("In each arm, 'mu', 'sigma', and 'y_name' must have the same length.")
-    }
-
-    varcov_list <- NULL
-
-    for (i in 1:n) {
-      m <- length(sigma_list[[i]]) # number of endpoints
-
-      if (m == 1) {
-        varcov <- as.matrix(sigma_list[[i]]^2)
-
-      } else {
-        R <- matrix(rho, m, m)
-        diag(R) <- 1 # correlation matrix
-
-        if (any(!is.na(cor_mat))) {
-          if ((nrow(cor_mat) == m) & (ncol(cor_mat) == m)) {
-            R <- as.matrix(cor_mat)
-          } else {
-            warning("An uncorrelated matrix will be used as the provided matrix does not have the expected dimensions.")
-          }
-        }
-
-        varcov <- diag(sigma_list[[i]]) %*% R %*% diag(sigma_list[[i]])
-      }
-
-      varcov_list[[i]] <-  varcov
-    }
-  }
 
   weight_seq <- NA
   param.u <- list(mu = mu_list, varcov = varcov_list, TAR_list = TAR_list,
@@ -697,4 +661,78 @@ derive_allocation_rate <- function(TAR = NULL, arm_names, verbose = FALSE) {
   return(TAR_list)
 }
 
+#' Derive Variance-Covariance Matrix List
+#'
+#' Constructs a list of variance-covariance matrices for multiple treatment arms based on provided standard deviations,
+#' means, and correlation structures.
+#'
+#' @param mu_list A list of numeric vectors representing the means (\eqn{\mu}) for each treatment arm. Each element corresponds to one arm.
+#' @param sigma_list A list of numeric vectors representing the standard deviations (\eqn{\sigma}) for each treatment arm. Each element corresponds to one arm.
+#' @param ynames_list A list of character vectors specifying the names of the endpoints for each arm. Each element corresponds to one arm.
+#' @param varcov_list (Optional) A pre-specified list of variance-covariance matrices for each arm. If provided, it will override the construction of variance-covariance matrices.
+#' @param cor_mat (Optional) A correlation matrix to be used for constructing the variance-covariance matrices when there are multiple endpoints. If dimensions do not match the number of endpoints, a warning is issued.
+#' @param rho (Optional) A numeric value specifying the constant correlation coefficient to be used between all pairs of endpoints if no correlation matrix is provided. Default is 0 (uncorrelated endpoints).
+#'
+#' @details
+#' This function creates a list of variance-covariance matrices for multiple treatment arms. If the \code{varcov_list} is not provided,
+#' the function uses the \code{sigma_list} to compute the matrices. For single endpoints, the variance is simply the square of the standard deviation.
+#' For multiple endpoints, the function constructs the matrices using either a provided \code{cor_mat} or the constant correlation coefficient \code{rho}.
+#'
+#' The function ensures that the lengths of \code{mu_list}, \code{sigma_list}, and \code{ynames_list} match for each arm. If dimensions mismatch,
+#' or if neither a variance-covariance matrix (\code{varcov_list}) nor a standard deviation list (\code{sigma_list}) is provided, an error is raised.
+#'
+#' @return A list of variance-covariance matrices, one for each treatment arm.
+#'
+#' @author Thomas Debray \email{tdebray@fromdatatowisdom.com}
+derive_varcov_list <- function(mu_list, sigma_list, ynames_list, varcov_list = NULL, cor_mat = NULL, rho = 0) {
+  # Check if variance-covariance matrix is missing
+  if (any(is.na(varcov_list))) {
+    if (any(is.na(sigma_list))) {
+      stop("No variance-covariance matrix provided, and a standard deviation list is also missing. Either a variance-covariance matrix or a standard deviation list is required.")
+    }
+
+    # Validate lengths of inputs
+    len_mu <- sapply(mu_list, length)
+    len_sd <- sapply(sigma_list, length)
+    len_y <- sapply(ynames_list, length) # Number of endpoints
+
+    if (any((len_mu != len_sd) | (len_mu != len_y))) {
+      stop("In each arm, 'mu', 'sigma', and 'y_name' must have the same length.")
+    }
+
+    # Initialize the varcov_list
+    varcov_list <- vector("list", length(mu_list))
+
+    # Loop through each arm to construct the variance-covariance matrices
+    for (i in seq_along(sigma_list)) {
+      m <- length(sigma_list[[i]]) # Number of endpoints
+
+      if (m == 1) {
+        # Single endpoint: variance is the square of the standard deviation
+        varcov <- as.matrix(sigma_list[[i]]^2)
+      } else {
+        # Multiple endpoints: construct the correlation matrix
+        R <- matrix(rho, m, m)
+        diag(R) <- 1 # Set diagonal to 1 (self-correlation)
+
+        # Use the provided correlation matrix if dimensions match
+        if (any(!is.na(cor_mat))) {
+          if ((nrow(cor_mat) == m) & (ncol(cor_mat) == m)) {
+            R <- as.matrix(cor_mat)
+          } else {
+            warning("An uncorrelated matrix will be used as the provided matrix does not have the expected dimensions.")
+          }
+        }
+
+        # Construct the variance-covariance matrix
+        varcov <- diag(sigma_list[[i]]) %*% R %*% diag(sigma_list[[i]])
+      }
+
+      # Add the matrix to the list
+      varcov_list[[i]] <- varcov
+    }
+  }
+
+  return(varcov_list)
+}
 

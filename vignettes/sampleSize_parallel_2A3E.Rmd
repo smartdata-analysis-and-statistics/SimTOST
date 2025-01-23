@@ -91,10 +91,10 @@ library(SimTOST)
 ))
 ```
 
-When testing each PK measure independently, the total sample size is `r sim_AUCinf$response$n_total` for AUCinf, `r sim_AUClast$response$n_total` for AUClast, and `r sim_Cmax$response$n_total` for Cmax. This means that we would have to enroll `r sim_AUCinf$response$n_total` + `r sim_AUClast$response$n_total` + `r sim_Cmax$response$n_total` = `r sim_AUCinf$response$n_total + sim_AUClast$response$n_total + sim_Cmax$response$n_total` patients in order to reject $H_0$ at a significance level of 5\%. For context, the original trial was a randomized, single-blind, three-arm, parallel-group study conducted in 159 healthy subjects, slightly more than the `r sim_AUCinf$response$n_total + sim_AUClast$response$n_total + sim_Cmax$response$n_total` patients estimated to be necessary. This suggests that the original trial had a small buffer above the calculated sample size requirements.
+When testing each PK measure independently, the total sample size is `r sim_AUCinf$response$n_total` for AUCinf, `r sim_AUClast$response$n_total` for AUClast, and `r sim_Cmax$response$n_total` for Cmax. This means that we would have to enroll `r sim_AUCinf$response$n_total` + `r sim_AUClast$response$n_total` + `r sim_Cmax$response$n_total` = `r sim_AUCinf$response$n_total + sim_AUClast$response$n_total + sim_Cmax$response$n_total` patients in order to reject $H_0$. Note that the significance level of this combined test is then $0.05^3$. For context, the original trial was a randomized, single-blind, three-arm, parallel-group study conducted in 159 healthy subjects, slightly more than the `r sim_AUCinf$response$n_total + sim_AUClast$response$n_total + sim_Cmax$response$n_total` patients estimated to be necessary.
 
 # Simultaneous Testing of Independent Co-Primary Endpoints
-This approach focuses on simultaneous testing of PK measures while assuming independence between endpoints. Unlike the previous approach, which tested each PK measure independently, this method integrates comparisons across multiple endpoints, accounting for correlations (or lack thereof) between them, thus enabling simultaneous testing for equivalence without inflating the overall Type I error rate.
+This approach focuses on simultaneous testing of PK measures while assuming independence between endpoints. Unlike the previous approach, which tested each PK measure independently, this approach integrates comparisons across multiple endpoints while directly controlling the overall Type I error rate at a pre-specified level.
 
 ## Key Assumptions
 In the calculations below, the following assumptions are made:
@@ -213,7 +213,7 @@ Imagine that we are interested in demonstrating equivalence for at least $k=1$ o
   seed = 1234                # Random seed for reproducibility
 ))
 ```
-As mentioned in [the Introduction](../articles/intopkg.html), Bonferroni adjustment is often overly conservative, especially in scenarios with correlated tests. A less restrictive alternative is the *k*-adjustment, which specifically accounts for the number of tests and the number of endpoints required for equivalence.
+As mentioned in [the Introduction](../articles/intropkg.html), Bonferroni adjustment is often overly conservative, especially in scenarios with correlated tests. A less restrictive alternative is the *k*-adjustment, which specifically accounts for the number of tests and the number of endpoints required for equivalence.
 
 ```{r}
 (N_mp_k <- sampleSize(
