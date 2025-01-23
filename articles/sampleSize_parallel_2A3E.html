@@ -101,7 +101,7 @@
                         <h4 data-toc-skip class="author">Thomas
 Debray</h4>
             
-            <h4 data-toc-skip class="date">January 22, 2025</h4>
+            <h4 data-toc-skip class="date">January 23, 2025</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/smartdata-analysis-and-statistics/SimTOST/blob/main/vignettes/sampleSize_parallel_2A3E.Rmd" class="external-link"><code>vignettes/sampleSize_parallel_2A3E.Rmd</code></a></small>
       <div class="hidden name"><code>sampleSize_parallel_2A3E.Rmd</code></div>
@@ -301,22 +301,21 @@ calculated for each PK measure separately.</p>
 <p>When testing each PK measure independently, the total sample size is
 78 for AUCinf, 54 for AUClast, and 18 for Cmax. This means that we would
 have to enroll 78 + 54 + 18 = 150 patients in order to reject
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>H</mi><mn>0</mn></msub><annotation encoding="application/x-tex">H_0</annotation></semantics></math>
-at a significance level of 5%. For context, the original trial was a
-randomized, single-blind, three-arm, parallel-group study conducted in
-159 healthy subjects, slightly more than the 150 patients estimated to
-be necessary. This suggests that the original trial had a small buffer
-above the calculated sample size requirements.</p>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>H</mi><mn>0</mn></msub><annotation encoding="application/x-tex">H_0</annotation></semantics></math>.
+Note that the significance level of this combined test is then
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mn>0.05</mn><mn>3</mn></msup><annotation encoding="application/x-tex">0.05^3</annotation></semantics></math>.
+For context, the original trial was a randomized, single-blind,
+three-arm, parallel-group study conducted in 159 healthy subjects,
+slightly more than the 150 patients estimated to be necessary.</p>
 </div>
 <div class="section level2">
 <h2 id="simultaneous-testing-of-independent-co-primary-endpoints">Simultaneous Testing of Independent Co-Primary Endpoints<a class="anchor" aria-label="anchor" href="#simultaneous-testing-of-independent-co-primary-endpoints"></a>
 </h2>
 <p>This approach focuses on simultaneous testing of PK measures while
 assuming independence between endpoints. Unlike the previous approach,
-which tested each PK measure independently, this method integrates
-comparisons across multiple endpoints, accounting for correlations (or
-lack thereof) between them, thus enabling simultaneous testing for
-equivalence without inflating the overall Type I error rate.</p>
+which tested each PK measure independently, this approach integrates
+comparisons across multiple endpoints while directly controlling the
+overall Type I error rate at a pre-specified level.</p>
 <div class="section level3">
 <h3 id="key-assumptions">Key Assumptions<a class="anchor" aria-label="anchor" href="#key-assumptions"></a>
 </h3>
@@ -512,7 +511,7 @@ rate.</p>
 <span><span class="co">#&gt;             Achieved Power        90.6</span></span>
 <span><span class="co">#&gt;  Power Confidence Interval 88.6 - 92.3</span></span>
 <span><span class="co">#&gt; -------------------------------------------------------------</span></span></code></pre></div>
-<p>As mentioned in <a href="../articles/intopkg.html">the
+<p>As mentioned in <a href="../articles/intropkg.html">the
 Introduction</a>, Bonferroni adjustment is often overly conservative,
 especially in scenarios with correlated tests. A less restrictive
 alternative is the <em>k</em>-adjustment, which specifically accounts
