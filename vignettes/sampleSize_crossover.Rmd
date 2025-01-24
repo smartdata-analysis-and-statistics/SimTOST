@@ -30,9 +30,11 @@ library(SimTOST)
 ```
 
 # Bioequivalence Tests for AUC and Cmax
-We consider Example 1 from the PASS Sample Size Software [Chapter 351](https://www.ncss.com/wp-content/themes/ncss/pdf/Procedures/PASS/Bioequivalence_Tests_for_AUC_and_Cmax_in_a_2x2_Cross-Over_Design-Log-Normal_Data.pdf). We aim to estimate the sample size required to demonstrate bioequivalence between a test and reference product for two pharmacokinetic parameters: the area under the curve (AUC) and the maximum concentration (Cmax). We assume a 2x2 cross-over design. The true ratio of the test to the reference product is assumed to be 1.02 for AUC and 1.03 for Cmax. Based on previous studies, it is assumed that the standard deviation for $\log(AUC)$ = 0.25 and the standard deviation for $\log(Cmax = 0.3)$. The equivalence limits for the ratio of means are set at 0.80 and 1.25. 
+We consider Example 1 from the PASS Sample Size Software [Chapter 351](https://www.ncss.com/wp-content/themes/ncss/pdf/Procedures/PASS/Bioequivalence_Tests_for_AUC_and_Cmax_in_a_2x2_Cross-Over_Design-Log-Normal_Data.pdf). We aim to estimate the sample size required to demonstrate bioequivalence between a test and reference product for two pharmacokinetic parameters: the area under the curve (AUC) and the maximum concentration (Cmax). We assume a 2x2 cross-over design. The true ratio of the test to the reference product is assumed to be 1.02 for AUC and 1.03 for Cmax. Based on previous studies, it is assumed that the standard deviation for log(AUC) = 0.25 and the standard deviation for log(Cmax = 0.3). The equivalence limits for the ratio of means are set at 0.80 and 1.25. 
 
-The significance level is set to 5\%, and the sample size is calculated to achieve 80\% power. Additionally, the correlation between AUC and Cmax is assumed to be 0.25. A difference-of-means test on the log scale is employed to determine bioequivalence. Using PASS software, this scenario yielded a total sample size of $n=37$ patients. In **SimTOST**, we can estimate the sample size using the [sampleSize()](../reference/sampleSize.html) function.
+The significance level is set to 5\%, and the sample size is calculated to achieve 80\% power. Additionally, the correlation between AUC and Cmax is assumed to be 0.25. A difference-of-means test on the log scale is employed to determine bioequivalence.
+
+In **SimTOST**, we can estimate the sample size using the [sampleSize()](../reference/sampleSize.html) function.
 
 ```{r, eval = TRUE}
 mu_r <- c(AUC = log(1.00), Cmax = log(1.00))
@@ -41,7 +43,7 @@ sigma <- c(AUC = 0.25, Cmax = 0.3)
 lequi_lower <- c(AUC = log(0.80), Cmax = log(0.80))
 lequi_upper <- c(AUC = log(1.25), Cmax = log(1.25))
 
-ss <- sampleSize(power = 0.8, alpha = 0.05,
+(ss <- sampleSize(power = 0.8, alpha = 0.05,
                  mu_list = list("R" = mu_r, "T" = mu_t),
                  sigma_list = list("R" = sigma, "T" = sigma),
                  list_comparator = list("T_vs_R" = c("R", "T")),
@@ -49,8 +51,8 @@ ss <- sampleSize(power = 0.8, alpha = 0.05,
                  list_lequi.tol = list("T_vs_R" = lequi_lower),
                  list_uequi.tol = list("T_vs_R" = lequi_upper),
                  dtype = "2x2", ctype = "DOM", lognorm = FALSE, 
-                 adjust = "no", ncores = 1, nsim = 10000, seed = 1234)
-ss
+                 adjust = "no", ncores = 1, nsim = 10000, seed = 1234))
 ```
-The total sample size required is `r ss$response$n_total` subjects.
+The total sample size required is `r ss$response$n_total` subjects, which corresponds to the estimate obtained using the PASS software ($n=37$).
+ patients
 

@@ -110,12 +110,6 @@ For all endpoints, bioequivalence is established if the 90% confidence intervals
 Below we define the equivalence boundaries for each comparison:
 
 ```{r}
-# Define comparators and equivalence boundaries
-list_comparator <- list(
-  "EMA" = c("SB2", "EUINF"),
-  "FDA" = c("SB2", "USINF")
-)
-
 list_lequi.tol <- list(
   "EMA" = c(AUCinf = 0.8, Cmax = 0.8),
   "FDA" = c(AUClast = 0.8, Cmax = 0.8)
