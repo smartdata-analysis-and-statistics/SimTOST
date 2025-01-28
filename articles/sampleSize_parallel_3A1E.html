@@ -109,6 +109,17 @@ Debray</h4>
 
     
     
+<p>In the <code>SimTOST</code> R package, which is specifically designed
+for sample size estimation for bioequivalence studies, hypothesis
+testing is based on the Two One-Sided Tests (TOST) procedure. <span class="citation">(<a href="#ref-sozu_sample_2015">Sozu et al.
+2015</a>)</span> In TOST, the equivalence test is framed as a comparison
+between the the null hypothesis of ‘new product is worse by a clinically
+relevant quantity’ and the alternative hypothesis of ‘difference between
+products is too small to be clinically relevant’. This vignette focuses
+on a parallel design, with 3 arms/treatments and 1 primary endpoint.</p>
+<div class="section level2">
+<h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
+</h2>
 <p>This vignette demonstrates advanced sample size calculation
 techniques for parallel trial designs involving three arms and one
 endpoint. Specifically, we calculate the required sample size to test
@@ -138,6 +149,7 @@ analysis:</p>
 <span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/data.table.html" class="external-link">data.table</a></span><span class="op">(</span>arm <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SB2"</span>,<span class="st">"RemEU"</span>,<span class="st">"RemUSA"</span><span class="op">)</span>,</span>
 <span>                               mean <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">37162.0</span>, <span class="fl">37705.0</span>, <span class="fl">37702.8</span><span class="op">)</span>, </span>
 <span>                               sd <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">11113.62172</span>, <span class="fl">12332.41615</span>,<span class="fl">12113.72</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+</div>
 <div class="section level2">
 <h2 id="sample-size-calculation-for-aucinf-equivalence-to-eu-remicade">Sample Size Calculation for AUCinf: Equivalence to EU Remicade<a class="anchor" aria-label="anchor" href="#sample-size-calculation-for-aucinf-equivalence-to-eu-remicade"></a>
 </h2>
@@ -329,8 +341,17 @@ plot for the <code>AUCinf_2comp</code> object.</p>
 </div>
 </div>
 <div class="section level2">
-<h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+<h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="ref-sozu_sample_2015" class="csl-entry">
+Sozu, Takashi, Tomoyuki Sugimoto, Toshimitsu Hamasaki, and Scott R.
+Evans. 2015. <em>Sample <span>Size Determination</span> in
+<span>Clinical Trials</span> with <span>Multiple Endpoints</span></em>.
+<span>SpringerBriefs</span> in <span>Statistics</span>. Cham: Springer
+International Publishing. <a href="https://doi.org/10.1007/978-3-319-22005-5" class="external-link">https://doi.org/10.1007/978-3-319-22005-5</a>.
+</div>
+</div>
 </div>
   </div>
 
