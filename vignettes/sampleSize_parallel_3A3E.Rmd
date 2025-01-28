@@ -22,6 +22,8 @@ options(rmarkdown.html_vignette.check_title = FALSE) #title of doc does not matc
 doc.cache <- T #for cran; change to F
 ```
 
+In the `SimTOST` R package, which is specifically designed for sample size estimation for bioequivalence studies, hypothesis testing is based on the Two One-Sided Tests (TOST) procedure. [@sozu_sample_2015]  In TOST, the equivalence test is framed as a comparison between the the null hypothesis of ‘new product is worse by a clinically relevant quantity’ and the alternative hypothesis of ‘difference between products is too small to be clinically relevant’. This vignette focuses on a parallel design, with 3 arms/treatments and 3 primary endpoints.
+
 # Introduction
 Similar to the example presented in [Bioequivalence Tests for Parallel Trial Designs: 2 Arms, 3 Endpoints](sampleSize_parallel_2A3E.html), where equivalence across multiple endpoints was assessed, this vignette extends the framework to trials involving two reference products. This scenario arises when regulators from different regions require comparisons with their locally sourced reference biosimilars.
 
