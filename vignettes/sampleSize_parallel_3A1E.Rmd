@@ -22,6 +22,9 @@ options(rmarkdown.html_vignette.check_title = FALSE) #title of doc does not matc
 doc.cache <- T #for cran; change to F
 ```
 
+In the `SimTOST` R package, which is specifically designed for sample size estimation for bioequivalence studies, hypothesis testing is based on the Two One-Sided Tests (TOST) procedure. [@sozu_sample_2015]  In TOST, the equivalence test is framed as a comparison between the the null hypothesis of ‘new product is worse by a clinically relevant quantity’ and the alternative hypothesis of ‘difference between products is too small to be clinically relevant’. This vignette focuses on a parallel design, with 3 arms/treatments and 1 primary endpoint.
+
+# Introduction
 This vignette demonstrates advanced sample size calculation techniques for parallel trial designs involving three arms and one endpoint. Specifically, we calculate the required sample size to test bioequivalence between a new treatment (SB2) and a reference product (Remicade) administered in two different locations ("EU_Remicade" and "USA_Remicade"). The endpoint of interest is the Area Under the Curve (AUCinf), a commonly used pharmacokinetic measure.
 
 In this example, we assume the endpoint follows a log-normal distribution with equal variances across arms. The goal is to determine the sample size needed to achieve 90\% power while controlling the type I error rate at 5\%. The equivalence margin is defined as $E_L = 80\%$ and $E_U = 125\%$ of the reference mean on the original scale.
