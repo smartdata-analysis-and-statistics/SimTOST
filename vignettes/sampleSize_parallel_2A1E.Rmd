@@ -22,8 +22,9 @@ options(rmarkdown.html_vignette.check_title = FALSE) #title of doc does not matc
 doc.cache <- T #for cran; change to F
 ```
 
-# Introduction
 In the `SimTOST` R package, which is specifically designed for sample size estimation for bioequivalence studies, hypothesis testing is based on the Two One-Sided Tests (TOST) procedure. [@sozu_sample_2015]  In TOST, the equivalence test is framed as a comparison between the the null hypothesis of ‘new product is worse by a clinically relevant quantity’ and the alternative hypothesis of ‘difference between products is too small to be clinically relevant’. This vignette focuses on a parallel design, with 2 arms/treatments and 1 primary endpoint.
+
+# Introduction
 
 ## Difference of Means Test
 This example, adapted from Example 1 in the PASS manual chapter titled [*"Biosimilarity Tests for the Difference Between Means Using a Parallel Two-Group Design"*](https://www.ncss.com/wp-content/themes/ncss/pdf/Procedures/PASS/Biosimilarity_Tests_for_the_Difference_Between_Means_using_a_Parallel_Two-Group_Design.pdf), illustrates the process of planning a clinical trial to assess biosimilarity. Specifically, the trial aims to compare blood pressure outcomes between two groups.
