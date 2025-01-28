@@ -1,12 +1,7 @@
 ---
 title: "Bioequivalence Tests for Parallel Trial Designs: 3 Arms, 3 Endpoints"
-author: "Thomas Debray"
-date: "`r format(Sys.time(), '%B %d, %Y')`"
 output: 
-  html_document:
-    fig_caption: yes
-    fig_width: 9
-    fig_height: 6
+  rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Bioequivalence Tests for Parallel Trial Designs: 3 Arms, 3 Endpoints}
   %\VignetteEngine{knitr::rmarkdown}

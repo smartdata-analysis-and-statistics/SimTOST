@@ -1,9 +1,7 @@
 ---
 title: "Introduction"
 output: 
-  rmarkdown::html_vignette:
-    number_sections: true
-    toc: true
+  rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Introduction}
   %\VignetteEngine{knitr::rmarkdown}

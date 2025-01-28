@@ -1,12 +1,7 @@
 ---
 title: "Bioequivalence Tests for 2x2 Cross-Over Trial Designs with Log-Normal Data"
-author: "Thomas Debray"
-date: "`r format(Sys.time(), '%B %d, %Y')`"
 output: 
-  html_document:
-    fig_caption: yes
-    fig_width: 9
-    fig_height: 6
+  rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Bioequivalence Tests for 2x2 Cross-Over Trial Designs with Log-Normal Data}
   %\VignetteEngine{knitr::rmarkdown}
@@ -22,7 +17,6 @@ options(rmarkdown.html_vignette.check_title = FALSE) #title of doc does not matc
 doc.cache <- T #for cran; change to F
 ```
 
-In the `SimTOST` R package, which is specifically designed for sample size estimation for bioequivalence studies, hypothesis testing is based on the Two One-Sided Tests (TOST) procedure. [@sozu_sample_2015]  In TOST, the equivalence test is framed as a comparison between the the null hypothesis of ‘new product is worse by a clinically relevant quantity’ and the alternative hypothesis of ‘difference between products is too small to be clinically relevant’. This vignette focuses on a cross-over design, with 2 arms/treatments and 2 primary endpoints.
 
 In the example below, we illustrate the use of `SimTOST` for 2x2 cross-over trials. As a first step, we load the package.
 
@@ -31,7 +25,7 @@ library(SimTOST)
 ```
 
 # Bioequivalence Tests for AUC and Cmax
-We consider Example 1 from the PASS Sample Size Software [Chapter 351](https://www.ncss.com/wp-content/themes/ncss/pdf/Procedures/PASS/Bioequivalence_Tests_for_AUC_and_Cmax_in_a_2x2_Cross-Over_Design-Log-Normal_Data.pdf). We aim to estimate the sample size required to demonstrate bioequivalence between a test and reference product for two pharmacokinetic parameters: the area under the curve (AUC) and the maximum concentration (Cmax). We assume a 2x2 cross-over design. The true ratio of the test to the reference product is assumed to be 1.02 for AUC and 1.03 for Cmax. Based on previous studies, it is assumed that the standard deviation for log(AUC) = 0.25 and the standard deviation for log(Cmax = 0.3). The equivalence limits for the ratio of means are set at 0.80 and 1.25. 
+We consider Example 1 from the PASS Sample Size Software Chapter 351 [@PASSch351]. We aim to estimate the sample size required to demonstrate bioequivalence between a test and reference product for two pharmacokinetic parameters: the area under the curve (AUC) and the maximum concentration (Cmax). We assume a 2x2 cross-over design. The true ratio of the test to the reference product is assumed to be 1.02 for AUC and 1.03 for Cmax. Based on previous studies, it is assumed that the standard deviation for log(AUC) = 0.25 and the standard deviation for log(Cmax = 0.3). The equivalence limits for the ratio of means are set at 0.80 and 1.25. 
 
 The significance level is set to 5\%, and the sample size is calculated to achieve 80\% power. Additionally, the correlation between AUC and Cmax is assumed to be 0.25. A difference-of-means test on the log scale is employed to determine bioequivalence.
 
@@ -54,6 +48,7 @@ lequi_upper <- c(AUC = log(1.25), Cmax = log(1.25))
                  dtype = "2x2", ctype = "DOM", lognorm = FALSE, 
                  adjust = "no", ncores = 1, nsim = 10000, seed = 1234))
 ```
-The total sample size required is `r ss$response$n_total` subjects, which corresponds to the estimate obtained using the PASS software ($n=37$).
- patients
+The total sample size required is `r ss$response$n_total` subjects, which corresponds to the estimate obtained using the PASS software (n=37).
+
+# References
 

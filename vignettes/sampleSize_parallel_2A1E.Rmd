@@ -1,12 +1,7 @@
 ---
 title: "Bioequivalence Tests for Parallel Trial Designs: 2 Arms, 1 Endpoint"
-author: "Thomas Debray"
-date: "`r format(Sys.time(), '%B %d, %Y')`"
 output: 
-  html_document:
-    fig_caption: yes
-    fig_width: 9
-    fig_height: 6
+  rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Bioequivalence Tests for Parallel Trial Designs: 2 Arms, 1 Endpoint}
   %\VignetteEngine{knitr::rmarkdown}
@@ -27,7 +22,7 @@ In the `SimTOST` R package, which is specifically designed for sample size estim
 # Introduction
 
 ## Difference of Means Test
-This example, adapted from Example 1 in the PASS manual chapter titled [*"Biosimilarity Tests for the Difference Between Means Using a Parallel Two-Group Design"*](https://www.ncss.com/wp-content/themes/ncss/pdf/Procedures/PASS/Biosimilarity_Tests_for_the_Difference_Between_Means_using_a_Parallel_Two-Group_Design.pdf), illustrates the process of planning a clinical trial to assess biosimilarity. Specifically, the trial aims to compare blood pressure outcomes between two groups.
+This example, adapted from Example 1 in the PASS manual chapter 685 [@PASSch685], illustrates the process of planning a clinical trial to assess biosimilarity. Specifically, the trial aims to compare blood pressure outcomes between two groups.
 
 ### Scenario
 Drug B is a well-established biologic drug used to control blood pressure. Its exclusive marketing license has expired, creating an opportunity for other companies to develop biosimilars. Drug A is a new competing drug being developed as a potential biosimilar to Drug B. The goal is to determine whether Drug A meets FDA biosimilarity requirements in terms of safety, purity, and therapeutic response when compared to Drug B.
@@ -121,4 +116,4 @@ To account for an anticipated dropout rate of 20% in each group, we need to adju
 
 Previously, finding the required sample size took `r nrow(N_ss$table.iter)` iterations. With the custom optimization routine, the number of iterations was reduced to `r nrow(N_ss_dropout$table.iter)`, significantly improving efficiency.
  
-
+# References
