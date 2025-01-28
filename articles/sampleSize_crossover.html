@@ -97,10 +97,7 @@
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Bioequivalence Tests for 2x2 Cross-Over Trial
 Designs with Log-Normal Data</h1>
-                        <h4 data-toc-skip class="author">Thomas
-Debray</h4>
             
-            <h4 data-toc-skip class="date">January 28, 2025</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/smartdata-analysis-and-statistics/SimTOST/blob/main/vignettes/sampleSize_crossover.Rmd" class="external-link"><code>vignettes/sampleSize_crossover.Rmd</code></a></small>
       <div class="hidden name"><code>sampleSize_crossover.Rmd</code></div>
@@ -109,15 +106,6 @@ Debray</h4>
 
     
     
-<p>In the <code>SimTOST</code> R package, which is specifically designed
-for sample size estimation for bioequivalence studies, hypothesis
-testing is based on the Two One-Sided Tests (TOST) procedure. <span class="citation">(<a href="#ref-sozu_sample_2015">Sozu et al.
-2015</a>)</span> In TOST, the equivalence test is framed as a comparison
-between the the null hypothesis of ‘new product is worse by a clinically
-relevant quantity’ and the alternative hypothesis of ‘difference between
-products is too small to be clinically relevant’. This vignette focuses
-on a cross-over design, with 2 arms/treatments and 2 primary
-endpoints.</p>
 <p>In the example below, we illustrate the use of <code>SimTOST</code>
 for 2x2 cross-over trials. As a first step, we load the package.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
@@ -125,8 +113,9 @@ for 2x2 cross-over trials. As a first step, we load the package.</p>
 <div class="section level2">
 <h2 id="bioequivalence-tests-for-auc-and-cmax">Bioequivalence Tests for AUC and Cmax<a class="anchor" aria-label="anchor" href="#bioequivalence-tests-for-auc-and-cmax"></a>
 </h2>
-<p>We consider Example 1 from the PASS Sample Size Software <a href="https://www.ncss.com/wp-content/themes/ncss/pdf/Procedures/PASS/Bioequivalence_Tests_for_AUC_and_Cmax_in_a_2x2_Cross-Over_Design-Log-Normal_Data.pdf" class="external-link">Chapter
-351</a>. We aim to estimate the sample size required to demonstrate
+<p>We consider Example 1 from the PASS Sample Size Software Chapter 351
+<span class="citation">(<a href="#ref-PASSch351">NCSS 2025</a>)</span>.
+We aim to estimate the sample size required to demonstrate
 bioequivalence between a test and reference product for two
 pharmacokinetic parameters: the area under the curve (AUC) and the
 maximum concentration (Cmax). We assume a 2x2 cross-over design. The
@@ -173,16 +162,16 @@ function.</p>
 <span><span class="co">#&gt;  Power Confidence Interval 80.1 - 81.7</span></span>
 <span><span class="co">#&gt; -------------------------------------------------------------</span></span></code></pre></div>
 <p>The total sample size required is 37 subjects, which corresponds to
-the estimate obtained using the PASS software
-(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>=</mo><mn>37</mn></mrow><annotation encoding="application/x-tex">n=37</annotation></semantics></math>).
-patients</p>
+the estimate obtained using the PASS software (n=37).</p>
+</div>
+<div class="section level2">
+<h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+</h2>
 <div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
-<div id="ref-sozu_sample_2015" class="csl-entry">
-Sozu, Takashi, Tomoyuki Sugimoto, Toshimitsu Hamasaki, and Scott R.
-Evans. 2015. <em>Sample <span>Size Determination</span> in
-<span>Clinical Trials</span> with <span>Multiple Endpoints</span></em>.
-<span>SpringerBriefs</span> in <span>Statistics</span>. Cham: Springer
-International Publishing. <a href="https://doi.org/10.1007/978-3-319-22005-5" class="external-link">https://doi.org/10.1007/978-3-319-22005-5</a>.
+<div id="ref-PASSch351" class="csl-entry">
+NCSS. 2025. <span>“Bioequivalence Tests for AUC and Cmax in a 2x2
+Cross-over Design (Log-Normal Data).”</span> In <em>PASS Sample Size
+Software</em>. NCSS Statistical Software. <a href="https://www.ncss.com/wp-content/themes/ncss/pdf/Procedures/PASS/Bioequivalence_Tests_for_AUC_and_Cmax_in_a_2x2_Cross-Over_Design-Log-Normal_Data.pdf" class="external-link">https://www.ncss.com/wp-content/themes/ncss/pdf/Procedures/PASS/Bioequivalence_Tests_for_AUC_and_Cmax_in_a_2x2_Cross-Over_Design-Log-Normal_Data.pdf</a>.
 </div>
 </div>
 </div>
