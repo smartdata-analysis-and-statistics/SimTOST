@@ -24,6 +24,8 @@ doc.cache <- T #for cran; change to F
 
 # Introduction
 
+In the `SimTOST` R package, which is specifically designed for sample size estimation for bioequivalence studies, hypothesis testing is based on the Two One-Sided Tests (TOST) procedure. [@sozu_sample_2015]  In TOST, the equivalence test is framed as a comparison between the the null hypothesis of ‘new product is worse by a clinically relevant quantity’ and the alternative hypothesis of ‘difference between products is too small to be clinically relevant’. This vignette focuses on a parallel design, with 2 arms/treatments and 3 primary endpoints.
+
 In many studies, the aim is to evaluate equivalence across multiple primary endpoints. The European Medicines Agency (EMA) recommends demonstrating bioequivalence for both **Area Under the Curve** (AUC) and **maximum concentration** (Cmax) when assessing pharmacokinetic properties. This vignette presents advanced techniques for calculating sample size in parallel trial designs involving three treatment arms and two endpoints.
 
 As an illustrative example, we consider published data from the phase-1 trial [NCT01922336](https://clinicaltrials.gov/study/NCT01922336#study-overview). This trial measured the pharmacokinetics (PK) of SB2 compared to its EU-sourced reference product (EU_Remicade). The following PK measures were reported following a single dose of SB2 or its EU reference product Remicade [@shin_randomized_2015]:
