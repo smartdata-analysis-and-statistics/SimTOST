@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{test_2x2_dom}
 \alias{test_2x2_dom}
-\title{test_2x2_dom_cpp}
+\title{Simulate a 2x2 Crossover Design and Compute Difference of Means (DOM)}
 \usage{
 test_2x2_dom(
   n,
@@ -57,5 +57,6 @@ test_2x2_dom(
 mat(vector) with ptost and other simulated statistics such as mean (mu) and standard deviation(std) per sequence (0,1)-endpoint
 }
 \description{
-Description : to simulate a 2x2 design and return the p-tost for difference of means (DOM)
+Simulates a 2x2 crossover design and calculates the p-value for the
+difference of means (DOM) using a two-sequence, two-period (2x2) study design.
 }

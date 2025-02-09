@@ -2,20 +2,23 @@
 % Please edit documentation in R/RcppExports.R
 \name{ptv}
 \alias{ptv}
-\title{ptv}
+\title{Compute p-values with Fixed Degrees of Freedom}
 \usage{
 ptv(x, df, lower)
 }
 \arguments{
-\item{x}{mat(vector) random variable}
+\item{x}{A numeric matrix (or vector) of random variables.}
 
-\item{df}{double degrees of freedom}
+\item{df}{A double specifying the degrees of freedom.}
 
-\item{lower}{boolean, calculate the probability of the region where the random variable is less than or equal to x}
+\item{lower}{A boolean indicating whether to calculate the lower-tail probability
+(i.e., P(T <= x)). If \code{false}, computes the upper-tail probability (P(T > x)).}
 }
 \value{
-mat(vector) with the cumulative distribution function (p-values)
+A numeric matrix containing the computed CDF values (p-values).
 }
 \description{
-Description : to get the p-value with fixed degrees of freedom across the endpoints
+Computes the cumulative distribution function (CDF) values (p-values)
+for a given set of random variables, assuming a t-distribution with fixed
+degrees of freedom.
 }

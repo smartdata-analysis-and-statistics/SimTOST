@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{test_par_rom}
 \alias{test_par_rom}
-\title{test_par_rom_cpp}
+\title{Simulate a Parallel Design and Compute Ratio of Means (ROM)}
 \usage{
 test_par_rom(
   n,
@@ -57,11 +57,30 @@ test_par_rom(
 
 \item{TARR}{double treatment allocation rate for the reference arm}
 
-\item{vareq}{boolean assumed equivalence variance between arms for the t-test}
+\item{vareq}{Boolean. If \code{TRUE}, assumes equal variance between arms and applies
+Schuirmann’s two one-sided tests (TOST) for equivalence using a pooled variance.}
 }
 \value{
-mat(vector) with ptost and other simulated statistics such as mean (mu) and standard deviation(std) per sequence (0,1)-endpoint
+A numeric matrix containing the following simulated statistics:
+\itemize{
+\item \code{ptost}: p-values for equivalence testing.
+\item \code{mu0}, \code{mu1}: Mean values for the reference and treatment groups.
+\item \code{sd0}, \code{sd1}: Standard deviations for the reference and treatment groups.
+\item \code{totaly}: Indicator (1/0) for equivalence success.
+}
 }
 \description{
-Description : to simulate a parallel design and return the p-tost for ratio of means (ROM)
+Simulates a parallel-group design and calculates the p-value for the
+ratio of means (ROM) using an equivalence test.
+}
+\details{
+\itemize{
+\item The function simulates a parallel-group study design and applies an equivalence test
+using the ratio of means (ROM) approach.
+\item Adjusts for dropout rates (\code{dropout}) and treatment allocation rates (\code{TART}, \code{TARR}).
+\item Computes test statistics and determines whether the number of significant endpoints meets \code{k}.
+\item Uses sequential testing if \code{adseq = TRUE}.
+\item If \code{vareq = TRUE}, assumes equal variance between treatment and reference groups,
+applying Schuirmann’s two one-sided tests (TOST) for equivalence.
+}
 }

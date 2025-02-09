@@ -93,9 +93,9 @@
 #'            lognorm = TRUE, ncores = 1, nsim = 50, seed = 1234)
 #' @export
 sampleSize <- function(mu_list, varcov_list = NA, sigma_list = NA, cor_mat = NA,
-                       sigmaB = NA, Eper, Eco, rho = 0, TAR = NULL,
-                       arm_names = NA,
-                    ynames_list=NA,
+                       sigmaB = NA, Eper, Eco, rho = 0,
+                       TAR = rep(1, length(mu_list)), arm_names = NA,
+                       ynames_list = NA,
                     type_y=NA,
                     list_comparator=NA,
                     list_y_comparator=NA,

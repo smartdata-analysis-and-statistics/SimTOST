@@ -13,7 +13,7 @@ sampleSize(
   Eper,
   Eco,
   rho = 0,
-  TAR = NULL,
+  TAR = rep(1, length(mu_list)),
   arm_names = NA,
   ynames_list = NA,
   type_y = NA,

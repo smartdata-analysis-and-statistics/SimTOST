@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{test_2x2_rom}
 \alias{test_2x2_rom}
-\title{test_2x2_rom_cpp}
+\title{Simulate a 2x2 Crossover Design and Compute Ratio of Means (ROM)}
 \usage{
 test_2x2_rom(
   n,
@@ -57,5 +57,6 @@ test_2x2_rom(
 mat(vector) with ptost and other simulated statistics such as mean (mu) and standard deviation(std) per sequence (0,1)-endpoint
 }
 \description{
-Description : to simulate a 2x2 design and return the p-tost for ratio of means (ROM)
+Simulates a 2x2 crossover design and calculates the p-value for the
+ratio of means (ROM) using a two-sequence, two-period (2x2) study design.
 }
