@@ -212,30 +212,47 @@ test_studies <- function(nsim, n, comp, param, param.d, arm_seed, ncores){
     uequi.tol <- log(uequi.tol)
   }
 
+  # Get typey the positions of the primarly in C++
+  if (any(param$type_y[endp] == 1) ) {
+    typey <- which(param$type_y[endp] == 1) - 1
+  } else { # in case no primary endpoint is specified
+    typey = -1
+  }
+
+
   result <- mcsapply(1:nsim, function(i){
     arm_seedx <- arm_seed[i,]
-    if (param.d$dtype == "parallel"){
-      if(param.d$ctype == "DOM"|(param.d$ctype=="ROM"&param.d$lognorm == TRUE)){
-
-        outtest <- as.vector(test_par_dom(n=n, muT=muT, muR =muR,
-                                          SigmaT = as.matrix(SigmaT),SigmaR = as.matrix(SigmaR),
+    if(param.d$dtype == "parallel" ) {
+      if(param.d$ctype == "DOM"|(param.d$ctype=="ROM"&param.d$lognorm == TRUE) ) {
+        outtest <- as.vector(test_par_dom(n = n, muT=muT, muR = muR,
+                                          SigmaT = as.matrix(SigmaT),
+                                          SigmaR = as.matrix(SigmaR),
                                           lequi_tol = lequi.tol ,uequi_tol = uequi.tol,
-                                          alpha = alpha, k = k, dropout = as.numeric(c(dropout[treat1],dropout[treat2])),
-                                          typey = ifelse(any(param$type_y[endp] == 1),which(param$type_y[endp] == 1) - 1,-1),
-                                          adseq=param.d$adjust=="seq",
-                                          arm_seedT = arm_seedx[treat1], arm_seedR = arm_seedx[treat2],
-                                          TART = param$TAR_list[[treat1]], TARR = param$TAR_list[[treat2]],
+                                          alpha = alpha, k = k,
+                                          dropout = as.numeric(c(dropout[treat1], dropout[treat2])),
+                                          typey = typey,
+                                          adseq = param.d$adjust == "seq",
+                                          arm_seedT = arm_seedx[treat1],
+                                          arm_seedR = arm_seedx[treat2],
+                                          TART = param$TAR_list[[treat1]],
+                                          TARR = param$TAR_list[[treat2]],
                                           vareq =param.d$vareq))
+
 
       }else{ #ROM & normal distribution
         outtest <- as.vector(test_par_rom(n=n, muT=muT, muR =muR,
-                                          SigmaT = as.matrix(SigmaT),SigmaR = as.matrix(SigmaR),
-                                          lequi_tol = lequi.tol ,uequi_tol = uequi.tol,
-                                          alpha = alpha, k = k, dropout = as.numeric(c(dropout[treat1],dropout[treat2])),
-                                          typey = ifelse(any(param$type_y[endp] == 1),which(param$type_y[endp] == 1) - 1,-1),
+                                          SigmaT = as.matrix(SigmaT),
+                                          SigmaR = as.matrix(SigmaR),
+                                          lequi_tol = lequi.tol,
+                                          uequi_tol = uequi.tol,
+                                          alpha = alpha, k = k,
+                                          dropout = as.numeric(c(dropout[treat1],dropout[treat2])),
+                                          typey = typey,
                                           adseq = param.d$adjust=="seq",
-                                          arm_seedT = arm_seedx[treat1], arm_seedR = arm_seedx[treat2],
-                                          TART = param$TAR_list[[treat1]], TARR = param$TAR_list[[treat2]],
+                                          arm_seedT = arm_seedx[treat1],
+                                          arm_seedR = arm_seedx[treat2],
+                                          TART = param$TAR_list[[treat1]],
+                                          TARR = param$TAR_list[[treat2]],
                                           vareq =param.d$vareq))
       }
 
@@ -253,9 +270,11 @@ test_studies <- function(nsim, n, comp, param, param.d, arm_seed, ncores){
                                           uequi_tol = uequi.tol,
                                           sigmaB= sigmaB,
                                           dropout=dropout,
-                                          typey = which(param$type_y[endp] == 1) - 1, adseq=param.d$adjust=="seq",
-                                          Eper=param$Eper, Eco=param$Eco, arm_seed=arm_seedx[comp],
-                                          alpha=alpha,
+                                          typey = typey,
+                                          adseq=param.d$adjust=="seq",
+                                          Eper = param$Eper, Eco=param$Eco,
+                                          arm_seed = arm_seedx[comp],
+                                          alpha = alpha,
                                           k=k))
         names(outtest) <- paste0(c("totaly", endp,
                                    paste0("mu_",endp,"_",treat1),
@@ -270,7 +289,8 @@ test_studies <- function(nsim, n, comp, param, param.d, arm_seed, ncores){
                                           uequi_tol = uequi.tol,
                                           sigmaB= sigmaB,
                                           dropout=dropout,
-                                          typey = which(param$type_y[endp] == 1) - 1, adseq=param.d$adjust=="seq",
+                                          typey = typey,
+                                          adseq=param.d$adjust=="seq",
                                           Eper=param$Eper, Eco=param$Eco, arm_seed=arm_seedx[comp],
                                           alpha=alpha,
                                           k=k))
