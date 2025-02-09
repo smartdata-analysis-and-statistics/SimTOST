@@ -180,7 +180,7 @@ arma::mat test_2x2_dom(int n, arma::vec muT, arma::vec muR,
    // total number of primary endpoints
    double lentypey = typey.n_elem;
 
-   if(adseq == TRUE){
+   if(adseq == true){
      sumpe =  sumtypey == lentypey;
    }
 
@@ -483,7 +483,7 @@ arma::mat test_par_dom(int n, arma::vec muT, arma::vec muR,
    // total number of primary endpoints
    double lentypey = typey.n_elem;
 
-   if(adseq == TRUE){
+   if(adseq == true){
      sumpe =  sumtypey == lentypey;
    }
 
@@ -564,7 +564,6 @@ arma::mat test_par_rom(int n, arma::vec muT, arma::vec muR,
    int n1 = ceil((1 - dropout[1])*n1i);
    if (n1 < 2) n1 = 2;
 
-
    RNGScope scope;
    Environment base_env("package:base");
    Function set_seed = base_env["set.seed"];
@@ -594,12 +593,10 @@ arma::mat test_par_rom(int n, arma::vec muT, arma::vec muR,
      sde_u = arma::pow(arma::pow(sd0, 2)/n0 + arma::pow(uequi_tol, 2)%arma::pow(sd1, 2)/n1,0.5);
    }
 
-
    mat tlb = (mu0 - mu1%lequi_tol)/sde_l ;
    mat tub = (mu0 - mu1%uequi_tol)/sde_u ;
 
    // Calculate p-value
-
    mat plb = ptv(tlb,df,false);
    mat pub = ptv(tub,df,true);
    mat ptost = max(plb, pub);
@@ -620,7 +617,7 @@ arma::mat test_par_rom(int n, arma::vec muT, arma::vec muR,
 
    // total number of primary endpoints
    double lentypey = typey.n_elem;
-   if(adseq == TRUE){
+   if(adseq == true){
      sumpe =  sumtypey == lentypey;
    }
 
