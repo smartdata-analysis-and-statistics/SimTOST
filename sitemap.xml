@@ -13,6 +13,7 @@
 <url><loc>/index.html</loc></url>
 <url><loc>/news/index.html</loc></url>
 <url><loc>/reference/SimTOST.html</loc></url>
+<url><loc>/reference/derive_TAR.html</loc></url>
 <url><loc>/reference/derive_allocation_rate.html</loc></url>
 <url><loc>/reference/derive_arm_names.html</loc></url>
 <url><loc>/reference/derive_endpoint_names.html</loc></url>
@@ -40,6 +41,5 @@
 <url><loc>/reference/uniroot.integer.mod.html</loc></url>
 <url><loc>/reference/validate_positive_definite.html</loc></url>
 <url><loc>/reference/validate_sample_size_limits.html</loc></url>
-<url><loc>/reference/validate_tar.html</loc></url>
 </urlset>
 
