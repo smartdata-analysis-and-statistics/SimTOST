@@ -221,7 +221,8 @@ test_studies <- function(nsim, n, comp, param, param.d, arm_seed, ncores){
                                           SigmaT = as.matrix(SigmaT),SigmaR = as.matrix(SigmaR),
                                           lequi_tol = lequi.tol ,uequi_tol = uequi.tol,
                                           alpha = alpha, k = k, dropout = as.numeric(c(dropout[treat1],dropout[treat2])),
-                                          typey = which(param$type_y[endp] == 1) - 1, adseq=param.d$adjust=="seq",
+                                          typey = ifelse(any(param$type_y[endp] == 1),which(param$type_y[endp] == 1) - 1,-1),
+                                          adseq=param.d$adjust=="seq",
                                           arm_seedT = arm_seedx[treat1], arm_seedR = arm_seedx[treat2],
                                           TART = param$TAR_list[[treat1]], TARR = param$TAR_list[[treat2]],
                                           vareq =param.d$vareq))
@@ -231,7 +232,7 @@ test_studies <- function(nsim, n, comp, param, param.d, arm_seed, ncores){
                                           SigmaT = as.matrix(SigmaT),SigmaR = as.matrix(SigmaR),
                                           lequi_tol = lequi.tol ,uequi_tol = uequi.tol,
                                           alpha = alpha, k = k, dropout = as.numeric(c(dropout[treat1],dropout[treat2])),
-                                          typey = which(param$type_y[endp] == 1) - 1,
+                                          typey = ifelse(any(param$type_y[endp] == 1),which(param$type_y[endp] == 1) - 1,-1),
                                           adseq = param.d$adjust=="seq",
                                           arm_seedT = arm_seedx[treat1], arm_seedR = arm_seedx[treat2],
                                           TART = param$TAR_list[[treat1]], TARR = param$TAR_list[[treat2]],

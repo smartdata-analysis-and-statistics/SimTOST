@@ -144,7 +144,7 @@ sampleSize <- function(mu_list, varcov_list = NA, sigma_list = NA, cor_mat = NA,
 
   # Conduct validations
   validate_sample_size_limits(lower = lower, upper = upper)
-  validate_tar(TAR = TAR, n_arms = n)
+  TAR <- derive_TAR(TAR = TAR, n_arms = n)
 
 
   # Derive the Arm Names
@@ -734,5 +734,57 @@ derive_varcov_list <- function(mu_list, sigma_list, ynames_list, varcov_list = N
   }
 
   return(varcov_list)
+}
+
+#' Derive Treatment Allocation Rate (TAR)
+#'
+#' This function validates and adjusts the treatment allocation rate (`TAR`) to ensure it matches
+#' the number of treatment arms (`n_arms`). If `TAR` is missing or NULL, it is set to a default
+#' vector of ones. If `TAR` is shorter than `n_arms`, missing values are replaced with ones.
+#' If `TAR` contains NA values, they are replaced with ones. If `TAR` exceeds `n_arms` in length
+#' or contains non-positive values, an error is raised.
+#'
+#' @param TAR Numeric vector. Treatment allocation rates for each arm.
+#' @param n_arms Numeric. The number of treatment arms that `TAR` must correspond to.
+#'
+#' @details
+#' - If `TAR` is NULL or missing, it is set to a vector of ones of length `n_arms`.
+#' - If `TAR` is shorter than `n_arms`, missing values are replaced with ones and a warning is issued.
+#' - If `TAR` is longer than `n_arms`, an error is raised.
+#' - If `TAR` contains NA values, they are replaced with ones and a warning is issued.
+#' - If `TAR` contains negative or zero values, an error is raised.
+#'
+#' @author
+#' Thomas Debray \email{tdebray@fromdatatowisdom.com}
+#'
+#' @return A numeric vector of length `n_arms`, where any missing or NA values in `TAR`
+#' have been replaced with ones.
+derive_TAR <- function(TAR = NULL, n_arms) {
+
+  if (missing(TAR) || is.null(TAR)) {
+    warning("Warning: TAR is missing or NULL. Setting TAR to a default vector of ones.")
+    TAR <- rep(1, n_arms)
+  }
+
+  # Ensure TAR has the correct length by filling missing values with 1
+  if (length(TAR) < n_arms) {
+    warning("Warning: TAR length is shorter than the number of arms. Missing values will be replaced with 1.")
+    TAR <- c(TAR, rep(1, n_arms - length(TAR)))
+  } else if (length(TAR) > n_arms) {
+    stop("Validation Error: The length of TAR must not exceed the number of arms specified by n_arms.")
+  }
+
+  # Replace any NA values with 1
+  if (any(is.na(TAR))) {
+    warning("Warning: NA values detected in TAR. These will be replaced with 1.")
+    TAR[is.na(TAR)] <- 1
+  }
+
+  # Validate that all values are positive
+  if (any(TAR <= 0, na.rm = TRUE)) {
+    stop("Validation Error: TAR must contain only positive values. Negative or zero values are not allowed.")
+  }
+
+  return(TAR)
 }
 

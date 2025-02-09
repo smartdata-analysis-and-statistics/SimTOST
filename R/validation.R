@@ -63,34 +63,5 @@ validate_positive_definite <- function(varcov_list) {
   }
 }
 
-#' Validate Treatment Allocation Rate (TAR)
-#'
-#' This function validates whether the length of the treatment allocation rate (`TAR`) matches
-#' the number of treatment arms (`arm_names`). If the lengths do not match, it throws an error.
-#'
-#' @param TAR Numeric vector. Treatment allocation rates for each arm.
-#' @param n_arms Numeric. The number of treatment arms that `TAR` must correspond to.
-#'
-#' @author
-#' Thomas Debray \email{tdebray@fromdatatowisdom.com}
-#' @return NULL (used for validation only).
-validate_tar <- function(TAR = NULL, n_arms) {
-  if (missing(TAR)) {
-    return(NULL)
-  }
-  if (is.null(TAR)) {
-    return(NULL)
-  }
 
-  # Validate TAR length
-  if (length(TAR) != n_arms) {
-    stop("Validation Error: The length of TAR must match the number of arms specified by arm_names.")
-  }
-
-  if (any(TAR <= 0, na.rm = TRUE)) {
-    stop("Validation Error: TAR must contain only positive values. Negative or zero values are not allowed.")
-  }
-
-
-}
 
