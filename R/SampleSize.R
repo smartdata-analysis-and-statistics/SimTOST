@@ -141,6 +141,10 @@ sampleSize <- function(mu_list, varcov_list = NA, sigma_list = NA, cor_mat = NA,
   if (all(is.na(mu_list))) {
     stop("mu_list must be provided")
   }
+  # TAR is not provided?
+  if(is.na(TAR)){
+    TAR <- rep(1,n)
+  }
 
   # Conduct validations
   validate_sample_size_limits(lower = lower, upper = upper)
