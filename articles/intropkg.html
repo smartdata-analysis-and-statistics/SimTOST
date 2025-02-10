@@ -262,38 +262,57 @@ to meet the study’s objectives.</li>
 <div class="section level3">
 <h3 id="testing-multiple-co-primary-endpoints">Testing multiple co-primary endpoints<a class="anchor" aria-label="anchor" href="#testing-multiple-co-primary-endpoints"></a>
 </h3>
-<p>If the aim of a trial is to evaluate joint effects across all
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>m</mi><annotation encoding="application/x-tex">m</annotation></semantics></math>
-co-primary endpoints <span class="citation">(<a href="#ref-sozu_sample_2015">Sozu et al. 2015b</a>)</span>, a
-multiplicity adjustment is not required to control the Type I error
-rate, as all null hypotheses must be rejected to establish equivalence.
-However, as the number of endpoints
+<p>When a trial defines multiple co-primary endpoints, equivalence must
+be demonstrated for all of them to claim overall treatment equivalence.
+In this setting, each endpoint is tested separately at the usual
+significance level
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>α</mi><annotation encoding="application/x-tex">\alpha</annotation></semantics></math>),
+and equivalence is established only if all individual tests are
+statistically significant. Because conclusions require rejecting all
+null hypotheses, a formal multiplicity adjustment is not needed to
+control the Type I error rate. <span class="citation">(<a href="#ref-cpmp_points_2002">Committee for Propietary Medicinal Products
+(CPMP) 2002</a>)</span> However, as the number of co-primary endpoints
 (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>K</mi><annotation encoding="application/x-tex">K</annotation></semantics></math>)
-increases, the Type II error rate also increases. <span class="citation">(<a href="#ref-mielke_sample_2018">Mielke et al.
-2018</a>)</span> This leads to the following implications:</p>
+increases, the likelihood of failing to meet equivalence on at least one
+endpoint also rises, resulting in a higher Type II error rate (i.e., a
+greater risk of incorrectly concluding non-equivalence) <span class="citation">(<a href="#ref-mielke_sample_2018">Mielke et al.
+2018</a>)</span></p>
+<p>This has several important implications:</p>
 <ul>
-<li>The power to detect equivalence decreases for a fixed sample
-size.</li>
-<li>The probability of trial success is reduced as more endpoints are
-evaluated simultaneously.</li>
-</ul>
-<p>Previous studies have demonstrated that the sample size required to
-achieve a given power level increases as the number of endpoints
-increases <span class="citation">(<a href="#ref-mielke_sample_2018">Mielke et al. 2018</a>)</span>. This
-increase in sample size can be substantial, particularly when there is
-no correlation between the test statistics and/or when a large number of
-tests are conducted. The impact of the number of endpoints on the
-required sample size is less pronounced when the correlation between
-endpoints is high.</p>
-<p>One possible solution, if the required sample size is not feasible,
-is to power the study so that at least
+<li>
+<strong>Reduced Power in Rare Diseases</strong>. Previous studies
+have shown that the sample size required to maintain a given power level
+increases as the number of endpoints increases. <span class="citation">(<a href="#ref-mielke_sample_2018">Mielke et al.
+2018</a>)</span> This effect is particularly pronounced when the test
+statistics are uncorrelated or when a large number of tests are
+performed. In common conditions, this loss of power can often be
+compensated by increasing the sample size. In rare diseases, however,
+patient recruitment is often limited, making it more challenging to
+achieve equivalence across all endpoints and increasing the risk of an
+inconclusive result.</li>
+<li>
+<strong>Alternative Statistical Approaches</strong>. To address
+power loss from requiring equivalence across multiple endpoints,
+alternative methods have been proposed. For example, one option is to
+power the study so that equivalence can be demonstrated for at least
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>
-out of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>m</mi><annotation encoding="application/x-tex">m</annotation></semantics></math>
-tests have to meet the equivalence criterion.</p>
+tests, rather than requiring all endpoints to meet the equivalence
+criterion. Another approach is hierarchical testing, where endpoints are
+tested sequentially based on predefined rules, allowing for partial
+conclusions when equivalence is demonstrated in a subset of endpoints.
+See <a href="#multiple-primary">Testing multiple primary endpoints</a>
+for more details.</li>
+<li>
+<strong>Regulatory Considerations</strong>. Regulatory agencies
+often require a pre-specified statistical strategy to handle multiple
+endpoints in equivalence trials. Without proper planning, the risk of
+failing to establish equivalence in all endpoints may lead to
+inconclusive results, even if the treatments are meaningfully
+similar.</li>
+</ul>
 </div>
 <div class="section level3">
-<h3 id="testing-multiple-primary-endpoints">Testing multiple primary endpoints<a class="anchor" aria-label="anchor" href="#testing-multiple-primary-endpoints"></a>
+<h3 id="multiple-primary">Testing multiple primary endpoints<a class="anchor" aria-label="anchor" href="#multiple-primary"></a>
 </h3>
 <p>When a trial aims to evaluate equivalence for at least
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>
@@ -372,27 +391,51 @@ is the total number of endpoints evaluated.</p>
 <div class="section level4">
 <h4 id="sequential-adjustment">Sequential adjustment<a class="anchor" aria-label="anchor" href="#sequential-adjustment"></a>
 </h4>
-<p>In this approach, the user specifies which endpoints are primary and
-which are secondary using the <code>type_y</code> vector parameter.
-Tests are then performed sequentially, starting with the primary
-endpoints. If the tests on the primary endpoints are accepted, the
-procedure proceeds with testing of the secondary endpoints.</p>
-<p>The significance level
+<p>Sequential adjustment methods are commonly used in
+<strong>hierarchical testing</strong>, where endpoints are tested in a
+predefined order. The testing sequence continues until a hypothesis
+fails to be rejected, at which point no further hypotheses are tested.
+This approach maintains strong control over the family-wise error rate
+(FWER) while allowing for partial conclusions when not all test
+statistics meet the critical threshold.</p>
+<p>This hierarchical procedure extends the classical co-primary endpoint
+test:</p>
+<ul>
+<li>If all endpoints demonstrate equivalence, all hypotheses are
+rejected.</li>
+<li>If only some endpoints reach significance, individual hypotheses may
+still be rejected, providing additional inference beyond an
+all-or-nothing conclusion.</li>
+</ul>
+<p>The user defines primary and secondary endpoints using the
+<code>type_y</code> vector parameter. The procedure follows a stepwise
+approach, where the significance level
 (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>α</mi><annotation encoding="application/x-tex">\alpha</annotation></semantics></math>)
 is adjusted separately for each group of endpoints:</p>
+<ol style="list-style-type: decimal">
+<li>
+<strong>Evaluate primary endpoints</strong>
 <ul>
+<li>The procedure begins by testing the pre-specified primary
+endpoints.</li>
+<li>A Bonferroni adjustment is applied based on the number of primary
+endpoints.</li>
+<li>If any primary hypothesis fails to be rejected, the procedure stops,
+and secondary endpoints are not tested.</li>
+</ul>
+</li>
 <li>
-<strong>Primary Endpoints</strong>: A Bonferroni adjustment is
-applied based on the number of primary endpoints.</li>
-<li>
-<strong>Secondary Endpoints</strong>: If the primary endpoints meet
-the equivalence criteria, the secondary endpoints are tested. These are
-also adjusted using the Bonferroni method, based on the number of
+<strong>Proceed to secondary endpoints (if applicable)</strong>
+<ul>
+<li>If all primary endpoints demonstrate equivalence, testing continues
+to the secondary endpoints.</li>
+<li>A Bonferroni adjustment is applied again, based on the number of
 secondary endpoints.</li>
 </ul>
-<p>Sequential adjustment ensures that the Type I error is controlled
-while prioritizing the evaluation of primary endpoints before moving on
-to secondary ones.</p>
+</li>
+</ol>
+<p>An example of hierarchical testing can be found in <a href="sampleSize_parallel_2A3E.html#hierarchical-testing">this
+vignette</a>.</p>
 </div>
 </div>
 </div>
@@ -419,6 +462,12 @@ treatment arms.</p>
 Committee for Medicinal Products for Human Use (CHMP). 2010.
 <span>“Guideline on the Investigation of Bioequivalence.”</span>
 CPMP/EWP/QWP/1401/98. London, UK: European Medicines Agency. <a href="https://www.ema.europa.eu/en/documents/scientific-guideline/guideline-investigation-bioequivalence-rev1_en.pdf" class="external-link">https://www.ema.europa.eu/en/documents/scientific-guideline/guideline-investigation-bioequivalence-rev1_en.pdf</a>.
+</div>
+<div id="ref-cpmp_points_2002" class="csl-entry">
+Committee for Propietary Medicinal Products (CPMP). 2002. <span>“Points
+to Consider on Multiplicity Issues in Clinical Trials.”</span>
+Scientific Guideline CPMP/EWP/908/99. London, UK: The European Agency
+for the Evaluation of Medicinal Products.
 </div>
 <div id="ref-mielke_sample_2018" class="csl-entry">
 Mielke, Johanna, Byron Jones, Bernd Jilma, and Franz König. 2018.
