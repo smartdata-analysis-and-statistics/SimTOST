@@ -104,16 +104,17 @@ A decision must be made as to whether it is desirable to
 
 ## Testing multiple co-primary endpoints
 
-If the aim of a trial is to evaluate joint effects across all $m$ co-primary endpoints [@sozu_sample_2015], a multiplicity adjustment is not required to control the Type I error rate, as all null hypotheses must be rejected to establish equivalence. However, as the number of endpoints ($K$) increases, the Type II error rate also increases. [@mielke_sample_2018] This leads to the following implications:
+When a trial defines multiple co-primary endpoints, equivalence must be demonstrated for all of them to claim overall treatment equivalence. In this setting, each endpoint is tested separately at the usual significance level ($\alpha$), and equivalence is established only if all individual tests are statistically significant. Because conclusions require rejecting all null hypotheses, a formal multiplicity adjustment is not needed to control the Type I error rate. [@cpmp_points_2002] However, as the number of co-primary endpoints ($K$) increases, the likelihood of failing to meet equivalence on at least one endpoint also rises, resulting in a higher Type II error rate (i.e., a greater risk of incorrectly concluding non-equivalence) [@mielke_sample_2018]
 
-* The power to detect equivalence decreases for a fixed sample size.
-* The probability of trial success is reduced as more endpoints are evaluated simultaneously.
+This has several important implications:
 
-Previous studies have demonstrated that the sample size required to achieve a given power level increases as the number of endpoints increases [@mielke_sample_2018]. This increase in sample size can be substantial, particularly when there is no correlation between the test statistics and/or when a large number of tests are conducted. The impact of the number of endpoints on the required sample size is less pronounced when the correlation between endpoints is high.
+* **Reduced Power in Rare Diseases**. Previous studies have shown that the sample size required to maintain a given power level increases as the number of endpoints increases. [@mielke_sample_2018] This effect is particularly pronounced when the test statistics are uncorrelated or when a large number of tests are performed. In common conditions, this loss of power can often be compensated by increasing the sample size. In rare diseases, however, patient recruitment is often limited, making it more challenging to achieve equivalence across all endpoints and increasing the risk of an inconclusive result.
+* **Alternative Statistical Approaches**. To address power loss from requiring equivalence across multiple endpoints, alternative methods have been proposed. For example, one option is to power the study so that equivalence can be demonstrated for at least $k$ tests, rather than requiring all endpoints to meet the equivalence criterion. Another approach is hierarchical testing, where endpoints are tested sequentially based on predefined rules, allowing for partial conclusions when equivalence is demonstrated in a subset of endpoints. See [Testing multiple primary endpoints](#multiple-primary) for more details. 
+* **Regulatory Considerations**. Regulatory agencies often require a pre-specified statistical strategy to handle multiple endpoints in equivalence trials. Without proper planning, the risk of failing to establish equivalence in all endpoints may lead to inconclusive results, even if the treatments are meaningfully similar.
 
-One possible solution, if the required sample size is not feasible, is to power the study so that at least $k$ out of $m$ tests have to meet the equivalence criterion.
 
-## Testing multiple primary endpoints
+
+## Testing multiple primary endpoints {#multiple-primary}
 
 When a trial aims to evaluate equivalence for at least $k$ primary endpoints, adjustment for the increased probability of a Type I error due to multiple hypothesis testing is required [@sozu_continuous_2015]. For example, with $m=3$ independent primary endpoints and a significance level of $\alpha = 5\%$, the probability of making a Type I error on at least one hypothesis test is:
 
@@ -149,15 +150,24 @@ $$\alpha_k= \frac{k*\alpha}{m}$$
 where $k$ is the number of endpoints required for equivalence, and $m$ is the total number of endpoints evaluated.
 
 ### Sequential adjustment
-In this approach, the user specifies which endpoints are primary and which are secondary using the `type_y` vector parameter. Tests are then performed sequentially, starting with the primary endpoints. If the tests on the primary endpoints are accepted, the procedure proceeds with testing of the secondary endpoints.
+Sequential adjustment methods are commonly used in **hierarchical testing**, where endpoints are tested in a predefined order. The testing sequence continues until a hypothesis fails to be rejected, at which point no further hypotheses are tested. This approach maintains strong control over the family-wise error rate (FWER) while allowing for partial conclusions when not all test statistics meet the critical threshold.
 
-The significance level ($\alpha$) is adjusted separately for each group of endpoints:
+This hierarchical procedure extends the classical co-primary endpoint test:
 
-* **Primary Endpoints**: A Bonferroni adjustment is applied based on the number of primary endpoints.
-* **Secondary Endpoints**: If the primary endpoints meet the equivalence criteria, the secondary endpoints are tested. These are also adjusted using the Bonferroni method, based on the number of secondary endpoints.
+* If all endpoints demonstrate equivalence, all hypotheses are rejected.
+* If only some endpoints reach significance, individual hypotheses may still be rejected, providing additional inference beyond an all-or-nothing conclusion.
 
-Sequential adjustment ensures that the Type I error is controlled while prioritizing the evaluation of primary endpoints before moving on to secondary ones.
+The user defines primary and secondary endpoints using the `type_y` vector parameter. The procedure follows a stepwise approach, where the significance level ($\alpha$) is adjusted separately for each group of endpoints:
 
+1. **Evaluate primary endpoints**  
+   - The procedure begins by testing the pre-specified primary endpoints.
+   - A Bonferroni adjustment is applied based on the number of primary endpoints. 
+   - If any primary hypothesis fails to be rejected, the procedure stops, and secondary endpoints are not tested.
+2. **Proceed to secondary endpoints (if applicable)**  
+   - If all primary endpoints demonstrate equivalence, testing continues to the secondary endpoints.
+   - A Bonferroni adjustment is applied again, based on the number of secondary endpoints.
+
+An example of hierarchical testing can be found in [this vignette](sampleSize_parallel_2A3E.html#hierarchical-testing).
 
 # Testing of multiple treatments
 In certain cases, it may be necessary to compare multiple treatments simultaneously. This can be achieved by specifying multiple comparators in the `mu_list` and `sigma_list` parameters. The [sampleSize()](../reference/sampleSize.html) function can accommodate multiple treatments, allowing for the evaluation of equivalence across different products or formulations.   
