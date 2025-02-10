@@ -60,6 +60,90 @@ arma::mat ptvdf(arma::mat x, arma::mat df, bool lower) {
   return arma::reshape(y, 1, n);
 }
 
+//' @title Check Equivalence
+//'
+//' @description
+//' This function evaluates whether equivalence criteria are met.
+//' It first checks whether all primary endpoints satisfy
+//' equivalence (if sequential testing is enabled). Then, it determines whether the
+//' required number of endpoints (`k`) meet the equivalence threshold.
+//' The function returns a structured matrix that includes equivalence decisions,
+//' test results, mean estimates, and standard deviations.
+//'
+//' @param typey An unsigned integer vector (`arma::uvec`) indicating the type of each endpoint:
+//'              - `1` = Primary endpoint
+//'              - `2` = Secondary endpoint
+//' @param adseq A boolean flag (`TRUE` if sequential testing is enabled).
+//'              - If `TRUE`, all primary endpoints must pass equivalence for secondary endpoints to be evaluated.
+//'              - If `FALSE`, primary and secondary endpoints are evaluated independently.
+//' @param tbioq A matrix (`arma::mat`) indicating the equivalence test results:
+//'              - `1` = Equivalence met
+//'              - `0` = Equivalence not met
+//' @param k An integer specifying the minimum number of endpoints required to establish equivalence.
+//' @param mu0 A matrix (`arma::mat`) containing the estimated means for the reference treatment group.
+//' @param mu1 A matrix (`arma::mat`) containing the estimated means for the treatment under evaluation.
+//' @param sd0 A matrix (`arma::mat`) containing the standard deviations for the reference treatment group.
+//' @param sd1 A matrix (`arma::mat`) containing the standard deviations for the treatment under evaluation.
+//'
+//' @details
+//' - **Sequential Adjustment (`adseq = TRUE`)**:
+//'   - Ensures that all primary endpoints must meet equivalence before secondary endpoints are evaluated.
+//' - **Non-Sequential Testing (`adseq = FALSE`)**:
+//'   - Evaluates all endpoints simultaneously without enforcing hierarchical constraints.
+//' - **Final Equivalence Decision (`totaly`)**:
+//'   - `1` if at least `k` endpoints meet equivalence and (if sequential testing is enabled) all primary endpoints pass.
+//'   - `0` otherwise.
+//'
+//' @return
+//' An `arma::mat` containing the final equivalence decision along with test statistics:
+//' - `totaly` (1 × 1 matrix): Binary indicator (1 = equivalence established, 0 = not established).
+//' - `tbioq` (m × n matrix): Equivalence test results for each endpoint.
+//' - `mu0, mu1` (m × n matrices): Mean estimates for the reference and treatment groups.
+//' - `sd0, sd1` (m × n matrices): Standard deviations for the reference and treatment groups.
+//' @export
+// [[Rcpp::export]]
+arma::mat check_equivalence(const arma::uvec& typey, bool adseq,
+                            const arma::mat& tbioq, int k,
+                            const arma::mat& mu0, const arma::mat& mu1,
+                            const arma::mat& sd0, const arma::mat& sd1) {
+  // primary endpoints in case of sequencial adjustment
+  int sumtypey;
+  // in case no primary endpoint is added.
+  if( accu(typey) >= 0) {
+    sumtypey = accu(tbioq.cols(typey)); // sum of primary endpoint rejected
+  }else{
+    sumtypey = 1;
+  }
+
+  // Total number of primary endpoints
+  int lentypey = typey.n_elem;
+
+  // Determine if all primary endpoints meet the equivalence criteria under sequential adjustment.
+  //
+  // If `adseq` (sequential testing) is disabled (`false`), equivalence is not required for all primary endpoints,
+  // so `sumpe` is automatically set to `true`.
+  //
+  // If `adseq` is enabled (`true`), `sumpe` is set to `true` only if all primary endpoints (`sumtypey`) meet
+  // the required equivalence criteria (`lentypey`), meaning all must pass.
+  bool sumpe = !adseq || (sumtypey == lentypey);
+
+  // Check if at least `k` endpoints meet equivalence criteria
+  bool sumt = accu(tbioq) >= k;
+
+  // Store final equivalence decision
+  arma::mat totaly(1,1);
+  totaly(0, 0) = (sumt && sumpe) ? 1 : 0;
+
+  // Combine results into a response matrix
+  arma::mat response0 = join_rows(totaly, tbioq);
+  arma::mat response1 = join_rows(mu0, mu1);
+  arma::mat response2 = join_rows(sd0, sd1);
+  arma::mat response3 = join_rows(response0, response1);
+
+  return join_rows(response3, response2);
+}
+
+
 //' @title Simulate a 2x2 Crossover Design and Compute Difference of Means (DOM)
 //'
 //' @description
@@ -168,9 +252,6 @@ arma::mat test_2x2_dom(int n, arma::vec muT, arma::vec muR,
    mat alpha0 = conv_to<mat>::from(alpha);
    mat tbioq  = conv_to<mat>::from((ptost < alpha0));
 
-   // Initialize `sumpe` (Sequential Pass Status) to `true` (assume success by default)
-   bool sumpe = true;
-
    // `sumtypey` stores the number of primary endpoints that meet equivalence criteria.
    // Default to 1 in case no primary endpoints are specified.
    int sumtypey = 1;
@@ -184,10 +265,16 @@ arma::mat test_2x2_dom(int n, arma::vec muT, arma::vec muR,
    // Store the total number of primary endpoints
    int lentypey = typey.n_elem;
 
-   // If sequential adjustment (`adseq`) is enabled, ensure all primary endpoints meet equivalence
-   if (adseq) {
-     sumpe = (sumtypey == lentypey);  // `true` if all primary endpoints pass, `false` otherwise
-   }
+   // Determine if all primary endpoints meet the equivalence criteria under sequential adjustment.
+   //
+   // If `adseq` (sequential testing) is disabled (`false`), equivalence is not required for all primary endpoints,
+   // so `sumpe` is automatically set to `true`.
+   //
+   // If `adseq` is enabled (`true`), `sumpe` is set to `true` only if all primary endpoints (`sumtypey`) meet
+   // the required equivalence criteria (`lentypey`), meaning all must pass.
+   //
+   // This ensures that secondary endpoints are tested only if all primary endpoints demonstrate equivalence.
+   bool sumpe = !adseq || (sumtypey == lentypey);
 
    // Check the Total Number of Endpoints Meeting Equivalence Criteria
    bool sumt = accu(tbioq) >= k;
@@ -330,7 +417,6 @@ arma::mat test_2x2_rom(int n, arma::vec muT, arma::vec muR,
    mat tbioq  = conv_to<mat>::from((ptost < alpha0));
 
    // primary endpoints in case of sequencial adjustment
-   bool sumpe = true;
    int sumtypey;
    // in case no primary endpoint is added.
    if( accu(typey) >= 0) {
@@ -342,9 +428,16 @@ arma::mat test_2x2_rom(int n, arma::vec muT, arma::vec muR,
 
    int lentypey = typey.n_elem;
 
-   if(adseq == true){
-     sumpe =  sumtypey == lentypey;
-   }
+   // Determine if all primary endpoints meet the equivalence criteria under sequential adjustment.
+   //
+   // If `adseq` (sequential testing) is disabled (`false`), equivalence is not required for all primary endpoints,
+   // so `sumpe` is automatically set to `true`.
+   //
+   // If `adseq` is enabled (`true`), `sumpe` is set to `true` only if all primary endpoints (`sumtypey`) meet
+   // the required equivalence criteria (`lentypey`), meaning all must pass.
+   //
+   // This ensures that secondary endpoints are tested only if all primary endpoints demonstrate equivalence.
+   bool sumpe = !adseq || (sumtypey == lentypey);
 
    bool sumt = accu(tbioq) >= k;
 
@@ -476,39 +569,8 @@ arma::mat test_par_dom(int n, arma::vec muT, arma::vec muR,
    mat alpha0 = conv_to<mat>::from(alpha);
    mat tbioq  = conv_to<mat>::from((ptost < alpha0));
 
-   // primary endpoints in case of sequencial adjustment
-   // primary endpoints in case of sequencial adjustment
-   bool sumpe = true;
-   int sumtypey;
-   // in case no primary endpoint is added.
-   if( accu(typey) >= 0) {
-     sumtypey = accu(tbioq.cols(typey)); // sum of primary endpoint rejected
-   }else{
-     sumtypey = 1;
-   }
-   // total number of primary endpoints
-   int lentypey = typey.n_elem;
-
-   if(adseq == true){
-     sumpe =  sumtypey == lentypey;
-   }
-
-   bool sumt = accu(tbioq) >= k;
-
-   mat totaly(1,1);
-
-   if(sumt&sumpe){
-     totaly(0, 0) = 1;
-   }else{
-     totaly(0, 0) = 0;
-   }
-
-   mat response0 = join_rows<mat>(totaly,tbioq);
-   mat response1 = join_rows<mat>(mu0,mu1);
-   mat response2 = join_rows<mat>(sd0,sd1);
-   mat response3 = join_rows<mat>(response0,response1);
-
-   return join_rows<mat>(response3,response2);
+   // Call the check_equivalence function
+   return check_equivalence(typey, adseq, tbioq, k, mu0, mu1, sd0, sd1);
 }
 
 //' @title Simulate a Parallel Design and Compute Ratio of Means (ROM)
@@ -611,39 +673,8 @@ arma::mat test_par_rom(int n, arma::vec muT, arma::vec muR,
    mat alpha0 = conv_to<mat>::from(alpha);
    mat tbioq  = conv_to<mat>::from((ptost < alpha0));
 
-   // primary endpoints in case of sequencial adjustment
-   bool sumpe = true;
-   int sumtypey;
-   // in case no primary endpoint is added.
-   if( accu(typey) >= 0) {
-     sumtypey = accu(tbioq.cols(typey)); // sum of primary endpoint rejected
-   }else{
-     sumtypey = 1;
-   }
-
-   // total number of primary endpoints
-   int lentypey = typey.n_elem;
-   if(adseq == true){
-     sumpe =  sumtypey == lentypey;
-   }
-
-   bool sumt = accu(tbioq) >= k;
-
-   mat totaly(1,1);
-
-   if(sumt&sumpe){
-     totaly(0, 0) = 1;
-   }else{
-     totaly(0, 0) = 0;
-   }
-
-
-   mat response0 = join_rows<mat>(totaly,tbioq);
-   mat response1 = join_rows<mat>(mu0,mu1);
-   mat response2 = join_rows<mat>(sd0,sd1);
-   mat response3 = join_rows<mat>(response0,response1);
-
-   return join_rows<mat>(response3,response2);
+   // Call the check_equivalence function
+   return check_equivalence(typey, adseq, tbioq, k, mu0, mu1, sd0, sd1);
 }
 
 
