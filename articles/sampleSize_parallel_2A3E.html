@@ -459,7 +459,7 @@ we can use the Bonferroni correction:</p>
 <span>  ctype <span class="op">=</span> <span class="st">"ROM"</span>,             <span class="co"># Test type (Ratio of Means)</span></span>
 <span>  vareq <span class="op">=</span> <span class="cn">TRUE</span>,              <span class="co"># Assume equal variances</span></span>
 <span>  lognorm <span class="op">=</span> <span class="cn">TRUE</span>,            <span class="co"># Log-normal distribution assumption</span></span>
-<span>  k <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"EMA"</span> <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>,          <span class="co"># Reject at least one null hypothesis</span></span>
+<span>  k <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"EMA"</span> <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>,          <span class="co"># Demonstrate equivalence for at least 1 endpoint</span></span>
 <span>  adjust <span class="op">=</span> <span class="st">"bon"</span>,            <span class="co"># Bonferroni adjustment method</span></span>
 <span>  ncores <span class="op">=</span> <span class="fl">1</span>,                <span class="co"># Number of cores for computation</span></span>
 <span>  nsim <span class="op">=</span> <span class="fl">1000</span>,               <span class="co"># Number of stochastic simulations</span></span>
@@ -474,7 +474,7 @@ we can use the Bonferroni correction:</p>
 <span><span class="co">#&gt;     - Endpoints Tested: AUCinf, AUClast, Cmax </span></span>
 <span><span class="co">#&gt;       (multiple primary endpoints, k =  1 )</span></span>
 <span><span class="co">#&gt;     - Multiplicity Correction: Bonferroni </span></span>
-<span><span class="co">#&gt;       - Adjusted Significance Levels: alpha = 0.0167 </span></span>
+<span><span class="co">#&gt;       Adjusted Significance Levels: alpha = 0.0167 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; -------------------------------------------------------------</span></span>
 <span><span class="co">#&gt;                  Parameter       Value</span></span>
@@ -502,7 +502,7 @@ less conservative than the Bonferroni method.</p>
 <span>  ctype <span class="op">=</span> <span class="st">"ROM"</span>,             <span class="co"># Test type (Ratio of Means)</span></span>
 <span>  vareq <span class="op">=</span> <span class="cn">TRUE</span>,              <span class="co"># Assume equal variances</span></span>
 <span>  lognorm <span class="op">=</span> <span class="cn">TRUE</span>,            <span class="co"># Log-normal distribution assumption</span></span>
-<span>  k <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"EMA"</span> <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>,          <span class="co"># Reject at least one null hypothesis</span></span>
+<span>  k <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"EMA"</span> <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>,          <span class="co"># Demonstrate equivalence for at least 1 endpoint</span></span>
 <span>  adjust <span class="op">=</span> <span class="st">"sid"</span>,            <span class="co"># Sidak adjustment method</span></span>
 <span>  ncores <span class="op">=</span> <span class="fl">1</span>,                <span class="co"># Number of cores for computation</span></span>
 <span>  nsim <span class="op">=</span> <span class="fl">1000</span>,               <span class="co"># Number of stochastic simulations</span></span>
@@ -517,7 +517,7 @@ less conservative than the Bonferroni method.</p>
 <span><span class="co">#&gt;     - Endpoints Tested: AUCinf, AUClast, Cmax </span></span>
 <span><span class="co">#&gt;       (multiple primary endpoints, k =  1 )</span></span>
 <span><span class="co">#&gt;     - Multiplicity Correction: Sidak </span></span>
-<span><span class="co">#&gt;       - Adjusted Significance Levels: alpha = 0.017 </span></span>
+<span><span class="co">#&gt;       Adjusted Significance Levels: alpha = 0.017 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; -------------------------------------------------------------</span></span>
 <span><span class="co">#&gt;                  Parameter       Value</span></span>
@@ -545,7 +545,7 @@ endpoints required for equivalence.</p>
 <span>  ctype <span class="op">=</span> <span class="st">"ROM"</span>,             <span class="co"># Test type (Ratio of Means)</span></span>
 <span>  vareq <span class="op">=</span> <span class="cn">TRUE</span>,              <span class="co"># Assume equal variances</span></span>
 <span>  lognorm <span class="op">=</span> <span class="cn">TRUE</span>,            <span class="co"># Log-normal distribution assumption</span></span>
-<span>  k <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"EMA"</span> <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>,          <span class="co"># Reject at least one null hypothesis</span></span>
+<span>  k <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"EMA"</span> <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>,          <span class="co"># Demonstrate equivalence for at least 2 endpoints</span></span>
 <span>  adjust <span class="op">=</span> <span class="st">"k"</span>,              <span class="co"># Adjustment method</span></span>
 <span>  ncores <span class="op">=</span> <span class="fl">1</span>,                <span class="co"># Number of cores for computation</span></span>
 <span>  nsim <span class="op">=</span> <span class="fl">1000</span>,               <span class="co"># Number of stochastic simulations</span></span>
@@ -560,7 +560,7 @@ endpoints required for equivalence.</p>
 <span><span class="co">#&gt;     - Endpoints Tested: AUCinf, AUClast, Cmax </span></span>
 <span><span class="co">#&gt;       (multiple primary endpoints, k =  2 )</span></span>
 <span><span class="co">#&gt;     - Multiplicity Correction: k-adjustment </span></span>
-<span><span class="co">#&gt;       - Adjusted Significance Levels: alpha = 0.0333 </span></span>
+<span><span class="co">#&gt;       Adjusted Significance Levels: alpha = 0.0333 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; -------------------------------------------------------------</span></span>
 <span><span class="co">#&gt;                  Parameter       Value</span></span>
@@ -583,13 +583,7 @@ met.</p>
 the argument <code>adjust = "seq"</code>. Each endpoint’s type is
 specified using the <code>type_y</code> argument. For instance, we
 define “AUCinf” as a primary endpoint, while “AUClast” and “Cmax” are
-designated as secondary endpoints. The argument <code>k</code> is
-configured to require:</p>
-<ul>
-<li>Equivalence for at least one primary endpoint.</li>
-<li>Equivalence for at least one secondary endpoint if the primary
-requirement is met.</li>
-</ul>
+designated as secondary endpoints.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="op">(</span><span class="va">N_mp_seq1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sampleSize.html">sampleSize</a></span><span class="op">(</span></span>
 <span>  power           <span class="op">=</span> <span class="fl">0.9</span>,                              <span class="co"># Target power</span></span>
@@ -604,7 +598,6 @@ requirement is met.</li>
 <span>  ctype           <span class="op">=</span> <span class="st">"ROM"</span>,                            <span class="co"># Test type (Ratio of Means)</span></span>
 <span>  vareq           <span class="op">=</span> <span class="cn">TRUE</span>,                             <span class="co"># Assume equal variances</span></span>
 <span>  lognorm         <span class="op">=</span> <span class="cn">TRUE</span>,                             <span class="co"># Log-normal distribution assumption</span></span>
-<span>  k               <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"EMA"</span> <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>,                     <span class="co"># Reject at least one null hypothesis</span></span>
 <span>  adjust          <span class="op">=</span> <span class="st">"seq"</span>,                            <span class="co"># Sequential adjustment method</span></span>
 <span>  type_y          <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AUCinf"</span> <span class="op">=</span> <span class="fl">1</span>, <span class="st">"AUClast"</span> <span class="op">=</span> <span class="fl">2</span>, <span class="st">"Cmax"</span> <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>, <span class="co"># Endpoint types</span></span>
 <span>  ncores          <span class="op">=</span> <span class="fl">1</span>,                                <span class="co"># Number of cores for computation</span></span>
@@ -618,61 +611,20 @@ requirement is met.</li>
 <span><span class="co">#&gt; Comparisons:</span></span>
 <span><span class="co">#&gt;    SB2 vs. EUREF </span></span>
 <span><span class="co">#&gt;     - Endpoints Tested: AUCinf, AUClast, Cmax </span></span>
-<span><span class="co">#&gt;       (multiple primary endpoints, k =  1 )</span></span>
+<span><span class="co">#&gt;       (hierarchical testing applied to multiple endpoints, m = 3 )</span></span>
 <span><span class="co">#&gt;     - Multiplicity Correction: Sequential </span></span>
-<span><span class="co">#&gt;       - Adjusted Significance Levels: alpha = 0.050; 0.025; 0.025 </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; -------------------------------------------------------------</span></span>
-<span><span class="co">#&gt;                  Parameter     Value</span></span>
-<span><span class="co">#&gt;          Total Sample Size        80</span></span>
-<span><span class="co">#&gt;             Achieved Power      90.1</span></span>
-<span><span class="co">#&gt;  Power Confidence Interval 88 - 91.8</span></span>
-<span><span class="co">#&gt; -------------------------------------------------------------</span></span></code></pre></div>
-<p>Recall we needed 78 patients to demonstrate equivalence for AUCinf.
-We now need 80 patients to demonstrate equivalence for AUCinf, and if
-equivalence holds, to also demonstrate equivalence for AUClast and
-Cmax.</p>
-<p>Note that if we change the primary endpoint to AUClast, we have:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="op">(</span><span class="va">N_mp_seq2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sampleSize.html">sampleSize</a></span><span class="op">(</span></span>
-<span>  power           <span class="op">=</span> <span class="fl">0.9</span>,                              <span class="co"># Target power</span></span>
-<span>  alpha           <span class="op">=</span> <span class="fl">0.05</span>,                             <span class="co"># Significance level</span></span>
-<span>  mu_list         <span class="op">=</span> <span class="va">mu_list</span>,                          <span class="co"># List of means</span></span>
-<span>  sigma_list      <span class="op">=</span> <span class="va">sigma_list</span>,                       <span class="co"># List of standard deviations</span></span>
-<span>  list_comparator <span class="op">=</span> <span class="va">list_comparator</span>,                  <span class="co"># Comparator configurations</span></span>
-<span>  list_lequi.tol  <span class="op">=</span> <span class="va">list_lequi.tol</span>,                   <span class="co"># Lower equivalence boundaries</span></span>
-<span>  list_uequi.tol  <span class="op">=</span> <span class="va">list_uequi.tol</span>,                   <span class="co"># Upper equivalence boundaries</span></span>
-<span>  rho             <span class="op">=</span> <span class="fl">0.6</span>,                              <span class="co"># Correlation between endpoints</span></span>
-<span>  dtype           <span class="op">=</span> <span class="st">"parallel"</span>,                       <span class="co"># Trial design type</span></span>
-<span>  ctype           <span class="op">=</span> <span class="st">"ROM"</span>,                            <span class="co"># Test type (Ratio of Means)</span></span>
-<span>  vareq           <span class="op">=</span> <span class="cn">TRUE</span>,                             <span class="co"># Assume equal variances</span></span>
-<span>  lognorm         <span class="op">=</span> <span class="cn">TRUE</span>,                             <span class="co"># Log-normal distribution assumption</span></span>
-<span>  k               <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"EMA"</span> <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>,                     <span class="co"># Reject at least one null hypothesis</span></span>
-<span>  adjust          <span class="op">=</span> <span class="st">"seq"</span>,                            <span class="co"># Sequential adjustment method</span></span>
-<span>  type_y          <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AUCinf"</span> <span class="op">=</span> <span class="fl">2</span>, <span class="st">"AUClast"</span> <span class="op">=</span> <span class="fl">1</span>, <span class="st">"Cmax"</span> <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> , <span class="co"># Endpoint types</span></span>
-<span>  ncores          <span class="op">=</span> <span class="fl">1</span>,                                <span class="co"># Number of cores for computation</span></span>
-<span>  nsim            <span class="op">=</span> <span class="fl">1000</span>,                             <span class="co"># Number of stochastic simulations</span></span>
-<span>  seed            <span class="op">=</span> <span class="fl">1234</span>                              <span class="co"># Random seed for reproducibility</span></span>
-<span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Sample Size Calculation Results</span></span>
-<span><span class="co">#&gt; -------------------------------------------------------------</span></span>
-<span><span class="co">#&gt; Study Design: parallel trial targeting 90% power with a 5% type-I error.</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Comparisons:</span></span>
-<span><span class="co">#&gt;    SB2 vs. EUREF </span></span>
-<span><span class="co">#&gt;     - Endpoints Tested: AUCinf, AUClast, Cmax </span></span>
-<span><span class="co">#&gt;       (multiple primary endpoints, k =  1 )</span></span>
-<span><span class="co">#&gt;     - Multiplicity Correction: Sequential </span></span>
-<span><span class="co">#&gt;       - Adjusted Significance Levels: alpha = 0.025; 0.050; 0.025 </span></span>
+<span><span class="co">#&gt;       Adjusted Significance Levels: alpha = 0.050; 0.025; 0.025 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; -------------------------------------------------------------</span></span>
 <span><span class="co">#&gt;                  Parameter       Value</span></span>
-<span><span class="co">#&gt;          Total Sample Size          54</span></span>
-<span><span class="co">#&gt;             Achieved Power          90</span></span>
-<span><span class="co">#&gt;  Power Confidence Interval 87.9 - 91.8</span></span>
+<span><span class="co">#&gt;          Total Sample Size          86</span></span>
+<span><span class="co">#&gt;             Achieved Power        90.2</span></span>
+<span><span class="co">#&gt;  Power Confidence Interval 88.1 - 91.9</span></span>
 <span><span class="co">#&gt; -------------------------------------------------------------</span></span></code></pre></div>
-<p>The required sample size is now similar to the independent test for
-AUClast, which is 54.</p>
+<p>Recall we needed 78 patients to demonstrate equivalence for AUCinf.
+We now need 86 patients to demonstrate equivalence for AUCinf, and if
+equivalence holds, to also demonstrate equivalence for AUClast and
+Cmax.</p>
 </div>
 </div>
 <div class="section level2">
