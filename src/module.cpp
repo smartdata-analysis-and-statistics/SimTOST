@@ -168,30 +168,36 @@ arma::mat test_2x2_dom(int n, arma::vec muT, arma::vec muR,
    mat alpha0 = conv_to<mat>::from(alpha);
    mat tbioq  = conv_to<mat>::from((ptost < alpha0));
 
-   // primary endpoints in case of sequencial adjustment
+   // Initialize `sumpe` (Sequential Pass Status) to `true` (assume success by default)
    bool sumpe = true;
-   double sumtypey;
-   // in case no primary endpoint is added.
+
+   // `sumtypey` stores the number of primary endpoints that meet equivalence criteria.
+   // Default to 1 in case no primary endpoints are specified.
+   int sumtypey = 1;
+
+   // Check if primary endpoints are defined in `typey`
    if( accu(typey) >= 0) {
-     sumtypey = accu(tbioq.cols(typey)); // sum of primary endpoint rejected
-   }else{
-     sumtypey = 1;
-   }
-   // total number of primary endpoints
-   double lentypey = typey.n_elem;
-
-   if(adseq == true){
-     sumpe =  sumtypey == lentypey;
+     // Count the number of primary endpoints that satisfy the equivalence criteria
+     sumtypey = accu(tbioq.cols(typey));
    }
 
+   // Store the total number of primary endpoints
+   int lentypey = typey.n_elem;
+
+   // If sequential adjustment (`adseq`) is enabled, ensure all primary endpoints meet equivalence
+   if (adseq) {
+     sumpe = (sumtypey == lentypey);  // `true` if all primary endpoints pass, `false` otherwise
+   }
+
+   // Check the Total Number of Endpoints Meeting Equivalence Criteria
    bool sumt = accu(tbioq) >= k;
 
    mat totaly(1,1);
 
    if(sumt&sumpe){
-     totaly(0, 0) = 1;
+     totaly(0, 0) = 1; // Trial success
    }else{
-     totaly(0, 0) = 0;
+     totaly(0, 0) = 0; // Trial failure
    }
 
    mat response0 = join_rows<mat>(totaly,tbioq);
@@ -325,7 +331,7 @@ arma::mat test_2x2_rom(int n, arma::vec muT, arma::vec muR,
 
    // primary endpoints in case of sequencial adjustment
    bool sumpe = true;
-   double sumtypey;
+   int sumtypey;
    // in case no primary endpoint is added.
    if( accu(typey) >= 0) {
      sumtypey = accu(tbioq.cols(typey)); // sum of primary endpoint rejected
@@ -334,7 +340,7 @@ arma::mat test_2x2_rom(int n, arma::vec muT, arma::vec muR,
    }
    // total number of primary endpoints
 
-   double lentypey = typey.n_elem;
+   int lentypey = typey.n_elem;
 
    if(adseq == true){
      sumpe =  sumtypey == lentypey;
@@ -473,7 +479,7 @@ arma::mat test_par_dom(int n, arma::vec muT, arma::vec muR,
    // primary endpoints in case of sequencial adjustment
    // primary endpoints in case of sequencial adjustment
    bool sumpe = true;
-   double sumtypey;
+   int sumtypey;
    // in case no primary endpoint is added.
    if( accu(typey) >= 0) {
      sumtypey = accu(tbioq.cols(typey)); // sum of primary endpoint rejected
@@ -481,7 +487,7 @@ arma::mat test_par_dom(int n, arma::vec muT, arma::vec muR,
      sumtypey = 1;
    }
    // total number of primary endpoints
-   double lentypey = typey.n_elem;
+   int lentypey = typey.n_elem;
 
    if(adseq == true){
      sumpe =  sumtypey == lentypey;
@@ -607,7 +613,7 @@ arma::mat test_par_rom(int n, arma::vec muT, arma::vec muR,
 
    // primary endpoints in case of sequencial adjustment
    bool sumpe = true;
-   double sumtypey;
+   int sumtypey;
    // in case no primary endpoint is added.
    if( accu(typey) >= 0) {
      sumtypey = accu(tbioq.cols(typey)); // sum of primary endpoint rejected
@@ -616,7 +622,7 @@ arma::mat test_par_rom(int n, arma::vec muT, arma::vec muR,
    }
 
    // total number of primary endpoints
-   double lentypey = typey.n_elem;
+   int lentypey = typey.n_elem;
    if(adseq == true){
      sumpe =  sumtypey == lentypey;
    }

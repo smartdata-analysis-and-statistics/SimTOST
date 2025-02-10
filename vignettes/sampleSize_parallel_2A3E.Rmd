@@ -191,7 +191,7 @@ Imagine that we are interested in demonstrating equivalence for at least $k$ pri
   ctype = "ROM",             # Test type (Ratio of Means)
   vareq = TRUE,              # Assume equal variances
   lognorm = TRUE,            # Log-normal distribution assumption
-  k = c("EMA" = 1),          # Reject at least one null hypothesis
+  k = c("EMA" = 1),          # Demonstrate equivalence for at least 1 endpoint
   adjust = "bon",            # Bonferroni adjustment method
   ncores = 1,                # Number of cores for computation
   nsim = 1000,               # Number of stochastic simulations
@@ -214,7 +214,7 @@ As mentioned in [the Introduction](../articles/intropkg.html), Bonferroni adjust
   ctype = "ROM",             # Test type (Ratio of Means)
   vareq = TRUE,              # Assume equal variances
   lognorm = TRUE,            # Log-normal distribution assumption
-  k = c("EMA" = 1),          # Reject at least one null hypothesis
+  k = c("EMA" = 1),          # Demonstrate equivalence for at least 1 endpoint
   adjust = "sid",            # Sidak adjustment method
   ncores = 1,                # Number of cores for computation
   nsim = 1000,               # Number of stochastic simulations
@@ -238,7 +238,7 @@ When $k>1$, Bonferroni and Sidak correction methods become increasingly conserva
   ctype = "ROM",             # Test type (Ratio of Means)
   vareq = TRUE,              # Assume equal variances
   lognorm = TRUE,            # Log-normal distribution assumption
-  k = c("EMA" = 2),          # Reject at least one null hypothesis
+  k = c("EMA" = 2),          # Demonstrate equivalence for at least 2 endpoints
   adjust = "k",              # Adjustment method
   ncores = 1,                # Number of cores for computation
   nsim = 1000,               # Number of stochastic simulations
@@ -251,10 +251,7 @@ In this trial, the primary objective is to demonstrate equivalence for the AUCin
 
 This hierarchical testing approach prioritizes the most critical endpoint first, ensuring a more efficient use of resources by limiting further testing to cases where the primary equivalence condition is met.
 
-In the example below, sequential adjustment is implemented by setting the argument `adjust = "seq"`. Each endpoint's type is specified using the `type_y` argument. For instance, we define "AUCinf" as a primary endpoint, while "AUClast" and "Cmax" are designated as secondary endpoints. The argument `k` is configured to require:
-
-* Equivalence for at least one primary endpoint.
-* Equivalence for at least one secondary endpoint if the primary requirement is met.
+In the example below, sequential adjustment is implemented by setting the argument `adjust = "seq"`. Each endpoint's type is specified using the `type_y` argument. For instance, we define "AUCinf" as a primary endpoint, while "AUClast" and "Cmax" are designated as secondary endpoints. 
 
 ```{r}
 (N_mp_seq1 <- sampleSize(
@@ -270,7 +267,6 @@ In the example below, sequential adjustment is implemented by setting the argume
   ctype           = "ROM",                            # Test type (Ratio of Means)
   vareq           = TRUE,                             # Assume equal variances
   lognorm         = TRUE,                             # Log-normal distribution assumption
-  k               = c("EMA" = 1),                     # Reject at least one null hypothesis
   adjust          = "seq",                            # Sequential adjustment method
   type_y          = c("AUCinf" = 1, "AUClast" = 2, "Cmax" = 2), # Endpoint types
   ncores          = 1,                                # Number of cores for computation
@@ -280,34 +276,6 @@ In the example below, sequential adjustment is implemented by setting the argume
 ```
 
 Recall we needed `r sim_AUCinf$response$n_total` patients to demonstrate equivalence for AUCinf. We now need `r N_mp_seq1$response$n_total` patients to demonstrate equivalence for AUCinf, and if equivalence holds, to also demonstrate equivalence for AUClast and Cmax.
-
-Note that if we change the primary endpoint to AUClast, we have:
-
-```{r}
-(N_mp_seq2 <- sampleSize(
-  power           = 0.9,                              # Target power
-  alpha           = 0.05,                             # Significance level
-  mu_list         = mu_list,                          # List of means
-  sigma_list      = sigma_list,                       # List of standard deviations
-  list_comparator = list_comparator,                  # Comparator configurations
-  list_lequi.tol  = list_lequi.tol,                   # Lower equivalence boundaries
-  list_uequi.tol  = list_uequi.tol,                   # Upper equivalence boundaries
-  rho             = 0.6,                              # Correlation between endpoints
-  dtype           = "parallel",                       # Trial design type
-  ctype           = "ROM",                            # Test type (Ratio of Means)
-  vareq           = TRUE,                             # Assume equal variances
-  lognorm         = TRUE,                             # Log-normal distribution assumption
-  k               = c("EMA" = 1),                     # Reject at least one null hypothesis
-  adjust          = "seq",                            # Sequential adjustment method
-  type_y          = c("AUCinf" = 2, "AUClast" = 1, "Cmax" = 2) , # Endpoint types
-  ncores          = 1,                                # Number of cores for computation
-  nsim            = 1000,                             # Number of stochastic simulations
-  seed            = 1234                              # Random seed for reproducibility
-))
-```
-
-The required sample size is now similar to the independent test for AUClast, which is `r sim_AUClast$response$n_total`.
-
 
 
 

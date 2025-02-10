@@ -2,7 +2,7 @@
 % Please edit documentation in R/SampleSize.R
 \name{derive_allocation_rate}
 \alias{derive_allocation_rate}
-\title{Derive Treatment Allocation Rate (TAR)}
+\title{Derive and Validate Treatment Allocation Rate (TAR)}
 \usage{
 derive_allocation_rate(TAR = NULL, arm_names, verbose = FALSE)
 }
@@ -15,12 +15,23 @@ equal allocation rate is assigned.}
 \item{verbose}{Logical, if \code{TRUE}, displays messages about the status of \code{TAR} derivation or assignment.}
 }
 \value{
-A list representing the treatment allocation rate for each arm.
+A named list representing the treatment allocation rate for each arm.
 }
 \description{
-This function checks if \code{TAR} (treatment allocation rate) is provided. If \code{TAR} is missing, it assigns a default
-equal allocation rate across all arms and ensures the \code{TAR} values correspond to the specified \code{arm_names}. It then
-converts \code{TAR} to a named list for further use. Informational messages are displayed if \code{verbose} is set to \code{TRUE}.
+This function validates and adjusts the treatment allocation rate (\code{TAR}) to ensure it is correctly specified
+for the given number of treatment arms (\code{n_arms}). If \code{TAR} is missing or NULL, it is assigned a default
+vector of ones, ensuring equal allocation across all arms. The function also handles cases where \code{TAR}
+is shorter than \code{n_arms}, contains NA values, or has invalid values.
+}
+\details{
+This function ensures \code{TAR} meets the following conditions:
+\itemize{
+\item If \code{TAR} is \strong{NULL} or \strong{missing}, it is set to a vector of ones of length \code{n_arms}.
+\item If \code{TAR} is \strong{shorter} than \code{n_arms}, missing values are replaced with ones, and a \strong{warning} is issued.
+\item If \code{TAR} is \strong{longer} than \code{n_arms}, an \strong{error} is raised.
+\item If \code{TAR} contains \strong{NA values}, they are replaced with ones, and a \strong{warning} is issued.
+\item If \code{TAR} contains \strong{zero or negative values}, an \strong{error} is raised.
+}
 }
 \author{
 Thomas Debray \email{tdebray@fromdatatowisdom.com}

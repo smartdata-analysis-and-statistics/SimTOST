@@ -32,7 +32,11 @@ print.simss <- function(x, ...) {
     if (nendp > 1 & x$param.d$k[i] < nendp) {
       cat("      (multiple primary endpoints, k = ", x$param.d$k[i], ")\n")
     } else if (nendp > 1 & x$param.d$k[i] == nendp) {
-      cat("      (multiple co-primary endpoints, m = ", x$param.d$k[i], ")\n")
+      if (x$param.d$adjust == "seq") {
+        cat("      (hierarchical testing applied to multiple endpoints, m =", x$param.d$k[i], ")\n")
+      } else {
+        cat("      (multiple co-primary endpoints, m = ", x$param.d$k[i], ")\n")
+      }
     }
     if (x$param.d$adjust == "no") {
       multiplicity_correction <- "No Adjustment"
@@ -52,9 +56,9 @@ print.simss <- function(x, ...) {
     }
 
     # Generate the description of the multiplicity correction in case of multiple primary endpoints
-    if (nendp > 1 & x$param.d$k[i] < nendp) {
+    if (nendp > 1 & (x$param.d$k[i] < nendp | x$param.d$adjust == "seq" )) {
       cat("    - Multiplicity Correction:", multiplicity_correction, "\n")
-      cat("      - Adjusted Significance Levels: alpha =", paste(format(alphau, digits = 3, nsmall = 3), collapse = "; "), "\n\n")
+      cat("      Adjusted Significance Levels: alpha =", paste(format(alphau, digits = 3, nsmall = 3), collapse = "; "), "\n\n")
     }
 
   }

@@ -144,8 +144,6 @@ sampleSize <- function(mu_list, varcov_list = NA, sigma_list = NA, cor_mat = NA,
 
   # Conduct validations
   validate_sample_size_limits(lower = lower, upper = upper)
-  TAR <- derive_TAR(TAR = TAR, n_arms = n)
-
 
   # Derive the Arm Names
   arm_names <- derive_arm_names(arm_names = arm_names, mu_list = mu_list,
@@ -451,8 +449,6 @@ sampleSize <- function(mu_list, varcov_list = NA, sigma_list = NA, cor_mat = NA,
                 sigmaB = sigmaB,
                 Eper = Eper, Eco = Eco)
 
-  # Parameters related to design ----
-
   if (lognorm == TRUE & ctype == "DOM"){
     stop("Testing is not supported for DOM when variables follow a log-normal distribution.")
   }
@@ -627,38 +623,60 @@ derive_endpoint_names <- function(ynames_list, mu_list, verbose = FALSE) {
   return(ynames_list)
 }
 
-#' Derive Treatment Allocation Rate (TAR)
+#' Derive and Validate Treatment Allocation Rate (TAR)
 #'
-#' This function checks if `TAR` (treatment allocation rate) is provided. If `TAR` is missing, it assigns a default
-#' equal allocation rate across all arms and ensures the `TAR` values correspond to the specified `arm_names`. It then
-#' converts `TAR` to a named list for further use. Informational messages are displayed if `verbose` is set to `TRUE`.
+#' This function validates and adjusts the treatment allocation rate (`TAR`) to ensure it is correctly specified
+#' for the given number of treatment arms (`n_arms`). If `TAR` is missing or NULL, it is assigned a default
+#' vector of ones, ensuring equal allocation across all arms. The function also handles cases where `TAR`
+#' is shorter than `n_arms`, contains NA values, or has invalid values.
 #'
 #' @param TAR Optional numeric vector specifying the allocation rate for each treatment arm. If missing, a default
 #' equal allocation rate is assigned.
 #' @param arm_names Character vector specifying the names of the treatment arms. Used to name the elements of `TAR`.
 #' @param verbose Logical, if `TRUE`, displays messages about the status of `TAR` derivation or assignment.
 #'
-#' @author Thomas Debray \email{tdebray@fromdatatowisdom.com}
+#' @details
+#' This function ensures `TAR` meets the following conditions:
+#' - If `TAR` is **NULL** or **missing**, it is set to a vector of ones of length `n_arms`.
+#' - If `TAR` is **shorter** than `n_arms`, missing values are replaced with ones, and a **warning** is issued.
+#' - If `TAR` is **longer** than `n_arms`, an **error** is raised.
+#' - If `TAR` contains **NA values**, they are replaced with ones, and a **warning** is issued.
+#' - If `TAR` contains **zero or negative values**, an **error** is raised.
 #'
-#' @return A list representing the treatment allocation rate for each arm.
+#' @return A named list representing the treatment allocation rate for each arm.
+#'
+#' @author Thomas Debray \email{tdebray@fromdatatowisdom.com}
 derive_allocation_rate <- function(TAR = NULL, arm_names, verbose = FALSE) {
 
   n_arms <- length(arm_names)
 
-  # Check if TAR is missing and assign default if necessary
-  if (any(is.na(TAR)) | is.null(TAR)) {
-    TAR <- rep(1, n_arms)  # Default equal allocation across all arms
-    names(TAR) <- arm_names  # Assign names to correspond with arm names
-    info_msg(paste("TAR not provided. Assigning equal allocation rate across all arms: ", paste(TAR, collapse = ":")), verbose)
-  } else {
-    names(TAR) <- arm_names  # Ensure TAR values are named to match arm names
-    info_msg(paste("Using user-provided TAR: ", paste(TAR, collapse = ":")), verbose)
+  # Handle missing or NULL TAR
+  if (missing(TAR) || is.null(TAR)) {
+    info_msg("Warning: TAR is missing or NULL. Setting TAR to a default vector of ones.", verbose = verbose)
+    TAR <- rep(1, n_arms)
   }
 
-  # Convert TAR to list format
-  TAR_list <- as.list(TAR)
+  # Check for incorrect length
+  if (length(TAR) > n_arms) {
+    stop("Validation Error: TAR cannot exceed the number of treatment arms.")
+  } else if (length(TAR) < n_arms) {
+    warning("TAR length is shorter than the number of arms. Missing values will be replaced with 1.")
+    TAR <- c(TAR, rep(1, n_arms - length(TAR)))
+  }
 
-  return(TAR_list)
+  # Replace any NA values with 1
+  if (any(is.na(TAR))) {
+    warning("Warning: NA values detected in TAR. These will be replaced with 1.")
+    TAR[is.na(TAR)] <- 1
+  }
+
+  # Validate that all values are positive
+  if (any(TAR <= 0, na.rm = TRUE)) {
+    stop("Validation Error: TAR must contain only positive values. Negative or zero values are not allowed.")
+  }
+
+  # Assign names and return as a named list
+  return(stats::setNames(as.list(TAR), arm_names))
 }
 
 #' Derive Variance-Covariance Matrix List
@@ -735,56 +753,3 @@ derive_varcov_list <- function(mu_list, sigma_list, ynames_list, varcov_list = N
 
   return(varcov_list)
 }
-
-#' Derive Treatment Allocation Rate (TAR)
-#'
-#' This function validates and adjusts the treatment allocation rate (`TAR`) to ensure it matches
-#' the number of treatment arms (`n_arms`). If `TAR` is missing or NULL, it is set to a default
-#' vector of ones. If `TAR` is shorter than `n_arms`, missing values are replaced with ones.
-#' If `TAR` contains NA values, they are replaced with ones. If `TAR` exceeds `n_arms` in length
-#' or contains non-positive values, an error is raised.
-#'
-#' @param TAR Numeric vector. Treatment allocation rates for each arm.
-#' @param n_arms Numeric. The number of treatment arms that `TAR` must correspond to.
-#'
-#' @details
-#' - If `TAR` is NULL or missing, it is set to a vector of ones of length `n_arms`.
-#' - If `TAR` is shorter than `n_arms`, missing values are replaced with ones and a warning is issued.
-#' - If `TAR` is longer than `n_arms`, an error is raised.
-#' - If `TAR` contains NA values, they are replaced with ones and a warning is issued.
-#' - If `TAR` contains negative or zero values, an error is raised.
-#'
-#' @author
-#' Thomas Debray \email{tdebray@fromdatatowisdom.com}
-#'
-#' @return A numeric vector of length `n_arms`, where any missing or NA values in `TAR`
-#' have been replaced with ones.
-derive_TAR <- function(TAR = NULL, n_arms) {
-
-  if (missing(TAR) || is.null(TAR)) {
-    warning("Warning: TAR is missing or NULL. Setting TAR to a default vector of ones.")
-    TAR <- rep(1, n_arms)
-  }
-
-  # Ensure TAR has the correct length by filling missing values with 1
-  if (length(TAR) < n_arms) {
-    warning("Warning: TAR length is shorter than the number of arms. Missing values will be replaced with 1.")
-    TAR <- c(TAR, rep(1, n_arms - length(TAR)))
-  } else if (length(TAR) > n_arms) {
-    stop("Validation Error: The length of TAR must not exceed the number of arms specified by n_arms.")
-  }
-
-  # Replace any NA values with 1
-  if (any(is.na(TAR))) {
-    warning("Warning: NA values detected in TAR. These will be replaced with 1.")
-    TAR[is.na(TAR)] <- 1
-  }
-
-  # Validate that all values are positive
-  if (any(TAR <= 0, na.rm = TRUE)) {
-    stop("Validation Error: TAR must contain only positive values. Negative or zero values are not allowed.")
-  }
-
-  return(TAR)
-}
-

@@ -194,7 +194,8 @@ test_studies <- function(nsim, n, comp, param, param.d, arm_seed, ncores){
   if (adjust=="sid") {alpha <- rep(1-(1-alphau)^{1/m},m)}
   if (adjust=="k") { alpha <- rep(k*alphau/(m),m)}
   if (adjust=="seq"){
-    alpha <- alphau*param$weight_seq[endp]}
+    alpha <- alphau*param$weight_seq[endp]
+    }
 
   if(param.d$ctype=="ROM"&param.d$lognorm == TRUE){
     if (param.d$dtype == "parallel"){
