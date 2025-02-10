@@ -570,13 +570,15 @@ endpoints required for equivalence.</p>
 <span><span class="co">#&gt; -------------------------------------------------------------</span></span></code></pre></div>
 </div>
 <div class="section level3">
-<h3 id="hierarchical-testing">Hierarchical Testing of Primary Endpoints<a class="anchor" aria-label="anchor" href="#hierarchical-testing"></a>
+<h3 id="hierarchical-testing">Hierarchical Testing of Endpoints<a class="anchor" aria-label="anchor" href="#hierarchical-testing"></a>
 </h3>
-<p>Consider that our primary objective is to demonstrate equivalence for
-the AUCinf endpoint. If this null hypothesis is rejected, we proceed to
-test AUClast and Cmax. This hierarchical testing approach allows for a
-more efficient use of resources by focusing on the most critical
-endpoints first.</p>
+<p>In this trial, the primary objective is to demonstrate equivalence
+for the AUCinf endpoint. If the null hypothesis for AUCinf is rejected,
+testing proceeds to AUClast and Cmax.</p>
+<p>This hierarchical testing approach prioritizes the most critical
+endpoint first, ensuring a more efficient use of resources by limiting
+further testing to cases where the primary equivalence condition is
+met.</p>
 <p>In the example below, sequential adjustment is implemented by setting
 the argument <code>adjust = "seq"</code>. Each endpoint’s type is
 specified using the <code>type_y</code> argument. For instance, we
