@@ -246,8 +246,10 @@ When $k>1$, Bonferroni and Sidak correction methods become increasingly conserva
 ))
 ```
 
-## Hierarchical Testing of Primary Endpoints {#hierarchical-testing}
-Consider that our primary objective is to demonstrate equivalence for the AUCinf endpoint. If this null hypothesis is rejected, we proceed to test AUClast and Cmax. This hierarchical testing approach allows for a more efficient use of resources by focusing on the most critical endpoints first.
+## Hierarchical Testing of Endpoints {#hierarchical-testing}
+In this trial, the primary objective is to demonstrate equivalence for the AUCinf endpoint. If the null hypothesis for AUCinf is rejected, testing proceeds to AUClast and Cmax.
+
+This hierarchical testing approach prioritizes the most critical endpoint first, ensuring a more efficient use of resources by limiting further testing to cases where the primary equivalence condition is met.
 
 In the example below, sequential adjustment is implemented by setting the argument `adjust = "seq"`. Each endpoint's type is specified using the `type_y` argument. For instance, we define "AUCinf" as a primary endpoint, while "AUClast" and "Cmax" are designated as secondary endpoints. The argument `k` is configured to require:
 
