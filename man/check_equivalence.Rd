@@ -51,3 +51,6 @@ The function returns a binary matrix indicating whether equivalence is establish
 }
 }
 }
+\author{
+Thomas Debray \email{tdebray@fromdatatowisdom.com}
+}

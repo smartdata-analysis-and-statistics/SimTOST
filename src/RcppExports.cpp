@@ -155,6 +155,36 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// run_simulations_par
+arma::mat run_simulations_par(const int nsim, const int n, const arma::vec& muT, const arma::vec& muR, const arma::mat& SigmaT, const arma::mat& SigmaR, const arma::rowvec& lequi_tol, const arma::rowvec& uequi_tol, const arma::rowvec& alpha, const arma::vec& dropout, const arma::uvec& typey, const bool adseq, const int k, const arma::ivec& arm_seed_T, const arma::ivec& arm_seed_R, const std::string ctype, const bool lognorm, const double TART, const double TARR, const bool vareq);
+RcppExport SEXP _SimTOST_run_simulations_par(SEXP nsimSEXP, SEXP nSEXP, SEXP muTSEXP, SEXP muRSEXP, SEXP SigmaTSEXP, SEXP SigmaRSEXP, SEXP lequi_tolSEXP, SEXP uequi_tolSEXP, SEXP alphaSEXP, SEXP dropoutSEXP, SEXP typeySEXP, SEXP adseqSEXP, SEXP kSEXP, SEXP arm_seed_TSEXP, SEXP arm_seed_RSEXP, SEXP ctypeSEXP, SEXP lognormSEXP, SEXP TARTSEXP, SEXP TARRSEXP, SEXP vareqSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const int >::type nsim(nsimSEXP);
+    Rcpp::traits::input_parameter< const int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type muT(muTSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type muR(muRSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type SigmaT(SigmaTSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type SigmaR(SigmaRSEXP);
+    Rcpp::traits::input_parameter< const arma::rowvec& >::type lequi_tol(lequi_tolSEXP);
+    Rcpp::traits::input_parameter< const arma::rowvec& >::type uequi_tol(uequi_tolSEXP);
+    Rcpp::traits::input_parameter< const arma::rowvec& >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type dropout(dropoutSEXP);
+    Rcpp::traits::input_parameter< const arma::uvec& >::type typey(typeySEXP);
+    Rcpp::traits::input_parameter< const bool >::type adseq(adseqSEXP);
+    Rcpp::traits::input_parameter< const int >::type k(kSEXP);
+    Rcpp::traits::input_parameter< const arma::ivec& >::type arm_seed_T(arm_seed_TSEXP);
+    Rcpp::traits::input_parameter< const arma::ivec& >::type arm_seed_R(arm_seed_RSEXP);
+    Rcpp::traits::input_parameter< const std::string >::type ctype(ctypeSEXP);
+    Rcpp::traits::input_parameter< const bool >::type lognorm(lognormSEXP);
+    Rcpp::traits::input_parameter< const double >::type TART(TARTSEXP);
+    Rcpp::traits::input_parameter< const double >::type TARR(TARRSEXP);
+    Rcpp::traits::input_parameter< const bool >::type vareq(vareqSEXP);
+    rcpp_result_gen = Rcpp::wrap(run_simulations_par(nsim, n, muT, muR, SigmaT, SigmaR, lequi_tol, uequi_tol, alpha, dropout, typey, adseq, k, arm_seed_T, arm_seed_R, ctype, lognorm, TART, TARR, vareq));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 RcppExport SEXP _rcpp_module_boot_test();
 
@@ -166,6 +196,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_SimTOST_test_2x2_rom", (DL_FUNC) &_SimTOST_test_2x2_rom, 15},
     {"_SimTOST_test_par_dom", (DL_FUNC) &_SimTOST_test_par_dom, 17},
     {"_SimTOST_test_par_rom", (DL_FUNC) &_SimTOST_test_par_rom, 17},
+    {"_SimTOST_run_simulations_par", (DL_FUNC) &_SimTOST_run_simulations_par, 20},
     {"_rcpp_module_boot_test", (DL_FUNC) &_rcpp_module_boot_test, 0},
     {NULL, NULL, 0}
 };

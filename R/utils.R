@@ -161,7 +161,8 @@ power_cal <- function(n,nsim,param,param.d,seed,ncores){
 
 test_studies <- function(nsim, n, comp, param, param.d, arm_seed, ncores){
   if(is.na(ncores)){
-    ncores <- parallel::detectCores() -1}
+    ncores <- parallel::detectCores() -1
+  }
   treat1 <- param$list_comparator[[comp]][[1]]
   treat2 <- param$list_comparator[[comp]][[2]]
   endp <- param$list_y_comparator[[comp]]
@@ -220,6 +221,30 @@ test_studies <- function(nsim, n, comp, param, param.d, arm_seed, ncores){
     typey = -1
   }
 
+  # Use C++ code to run the simulations for parallel design
+  if (ncores == 1 & param.d$dtype == "parallel") {
+    result <- run_simulations_par(nsim = nsim, n = n, muT = muT, muR = muR,
+                                   SigmaT = as.matrix(SigmaT),
+                                   SigmaR = as.matrix(SigmaR),
+                                   lequi_tol = lequi.tol, uequi_tol = uequi.tol,
+                                   alpha = alpha,
+                                   dropout = as.numeric(c(dropout[treat1], dropout[treat2])),
+                                   typey = typey,
+                                   adseq = param.d$adjust == "seq", k = k,
+                                   arm_seed_T = arm_seed[,treat1],
+                                   arm_seed_R = arm_seed[,treat2],
+                                   ctype = param.d$ctype,
+                                   lognorm = param.d$lognorm,
+                                   TART = param$TAR_list[[treat1]],
+                                   TARR = param$TAR_list[[treat2]],
+                                   vareq = param.d$vareq)
+    rownames(result) <- paste0(c("totaly", endp,
+                               paste0("mu_",endp,"_",treat1),
+                               paste0("mu_",endp,"_",treat2),
+                               paste0("sd_",endp,"_",treat1),
+                               paste0("sd_",endp,"_",treat1)),"Comp:",treat1," vs ",treat2)
+    return(result)
+  }
 
   result <- mcsapply(1:nsim, function(i){
     arm_seedx <- arm_seed[i,]

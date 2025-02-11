@@ -93,30 +93,50 @@ arma::mat ptvdf(arma::mat x, arma::mat df, const bool lower) {
 //' - `1` = Equivalence established.
 //' - `0` = Equivalence not established.
 //'
+//' @author Thomas Debray \email{tdebray@fromdatatowisdom.com}
 //' @export
 // [[Rcpp::export]]
 arma::mat check_equivalence(const arma::uvec& typey,
                             const bool adseq,
                             const arma::mat& tbioq,
                             const int k) {
-  // primary endpoints in case of sequencial adjustment
-  int sumtypey = 1;
-  // in case no primary endpoint is added.
-  if (!typey.empty() && all(typey >= 0)) {
-    sumtypey = accu(tbioq.cols(typey)); // sum of primary endpoint rejected
+
+  // Initialize final equivalence decision
+  arma::mat totaly(1, 1, arma::fill::zeros);
+
+  // If no sequential testing is required, evaluate equivalence criteria directly
+  if (!adseq || typey.empty() || any(typey < 0)) {
+    if (k < 0) {
+      totaly(0, 0) = (accu(tbioq) == tbioq.n_cols) ? 1 : 0; // All endpoints must pass
+    } else {
+      totaly(0, 0) = (accu(tbioq) >= k) ? 1 : 0; // At least k endpoints must pass
+    }
+    return totaly;
   }
 
-  // Total number of primary endpoints
-  int lentypey = typey.n_elem;
+  // Count number of primary endpoints
+  int num_primary = accu(typey == 1);
 
-  // Determine if all primary endpoints meet the equivalence criteria under sequential adjustment
-  bool sumpe = !adseq || (sumtypey == lentypey);
+  // If no primary endpoints exist, assume sequential test passes automatically
+  bool sumpe = (num_primary == 0);
+  int sumtypey = 0;
 
-  // Check if at least `k` endpoints meet equivalence criteria
+  // Count number of primary endpoints that meet equivalence
+  for (size_t i = 0; i < typey.n_elem; i++) {
+    if (typey(i) == 1) {
+      sumtypey += tbioq(0, i);
+    }
+  }
+
+  // Ensure all primary endpoints pass if sequential testing is enabled
+  if (num_primary > 0) {
+    sumpe = (sumtypey == num_primary);
+  }
+
+  // Check if at least `k` endpoints meet equivalence
   bool sumt = accu(tbioq) >= k;
 
-  // Store final equivalence decision
-  arma::mat totaly(1,1);
+  // Final decision: must meet `k` and (if adseq enabled) all primary must pass
   totaly(0, 0) = (sumt && sumpe) ? 1 : 0;
 
   return totaly;
@@ -712,6 +732,115 @@ arma::mat test_par_rom(const int n,
    return join_rows(response3, response2);
 }
 
+
+//' @title Run Simulations for a Parallel Design
+//'
+//' @description
+//' This function simulates a parallel-group trial across multiple iterations (nsim).
+//' It evaluates equivalence testing for multiple endpoints using either the
+//' Difference of Means (DOM) or Ratio of Means (ROM) approach.
+//'
+//' @param nsim Integer. The number of simulations to run.
+//' @param n Integer. The sample size per arm (before dropout).
+//' @param muT arma::vec. Mean vector for the treatment arm.
+//' @param muR arma::vec. Mean vector for the reference arm.
+//' @param SigmaT arma::mat. Covariance matrix for the treatment arm.
+//' @param SigmaR arma::mat. Covariance matrix for the reference arm.
+//' @param lequi_tol arma::rowvec. Lower equivalence thresholds for each endpoint.
+//' @param uequi_tol arma::rowvec. Upper equivalence thresholds for each endpoint.
+//' @param alpha arma::rowvec. Significance level (α) for each endpoint.
+//' @param dropout arma::vec. Dropout rates for each arm (T, R).
+//' @param typey arma::uvec. Endpoint classification: `1` = primary, `2` = secondary.
+//' @param adseq Boolean. If `TRUE`, applies sequential (hierarchical) testing.
+//' @param k Integer. Minimum number of endpoints required for equivalence.
+//' @param arm_seed_T arma::ivec. Random seed vector for the treatment group (one per simulation).
+//' @param arm_seed_R arma::ivec. Random seed vector for the reference group (one per simulation).
+//' @param ctype String. Testing method (`"DOM"` for Difference of Means, `"ROM"` for Ratio of Means).
+//' @param lognorm Boolean. If `TRUE`, assumes log-normal distribution for endpoints.
+//' @param TART Double. Treatment allocation ratio (proportion of subjects in treatment arm).
+//' @param TARR Double. Reference allocation ratio (proportion of subjects in reference arm).
+//' @param vareq Boolean. If `TRUE`, assumes equal variances across treatment and reference groups.
+//'
+//' @details
+//' - **Equivalence Testing**:
+//'   - Uses either Difference of Means (DOM) or Ratio of Means (ROM).
+//'   - Applies equivalence thresholds (`lequi_tol`, `uequi_tol`) and significance level (`alpha`).
+//' - **Hierarchical Testing (`adseq`)**:
+//'   - If `TRUE`, all primary endpoints must demonstrate equivalence before secondary endpoints are tested.
+//' - **Dropout Adjustment**:
+//'   - Sample size per arm is adjusted based on the specified dropout rates.
+//' - **Randomization and Reproducibility**:
+//'   - Uses separate random seeds (`arm_seed_T`, `arm_seed_R`) for treatment and reference arms to ensure reproducibility.
+//'
+//' @return An `arma::mat` of dimensions `(num_cols x nsim)`, where:
+//' - **First row** (`totaly`): Overall equivalence decision (1 = success, 0 = failure).
+//' - **Subsequent rows**:
+//'   - `E1, E2, ...` (p-values for equivalence testing per endpoint).
+//'   - `mu_E1_T`, `mu_E2_T`, ... (mean estimates for the treatment group).
+//'   - `mu_E1_R`, `mu_E2_R`, ... (mean estimates for the reference group).
+//'   - `sd_E1_T`, `sd_E2_T`, ... (standard deviations for treatment).
+//'   - `sd_E1_R`, `sd_E2_R`, ... (standard deviations for reference).
+//'
+//' @export
+// [[Rcpp::export]]
+arma::mat run_simulations_par(const int nsim,
+                              const int n,
+                              const arma::vec& muT,
+                              const arma::vec& muR,
+                              const arma::mat& SigmaT,
+                              const arma::mat& SigmaR,
+                              const arma::rowvec& lequi_tol,
+                              const arma::rowvec& uequi_tol,
+                              const arma::rowvec& alpha,
+                              const arma::vec& dropout,
+                              const arma::uvec& typey,
+                              const bool adseq,
+                              const int k,
+                              const arma::ivec& arm_seed_T, // Integer vector of seeds for Treatment
+                              const arma::ivec& arm_seed_R, // Integer vector of seeds for Reference
+                              const std::string ctype,
+                              const bool lognorm,
+                              const double TART,
+                              const double TARR,
+                              const bool vareq) {
+
+  // **Determine number of endpoints**
+  int num_endpoints = muT.n_elem; // Assuming muT and muR have the same number of elements
+
+  // **Define the number of columns in result matrix**
+  int num_cols = 1 + num_endpoints * 5; // totaly + 5 columns per endpoint
+
+  // **Initialize result matrix**
+  arma::mat results(nsim, num_cols, arma::fill::zeros);
+
+  for (int i = 0; i < nsim; i++) {
+    arma::mat outtest;
+
+    if (ctype == "DOM" || (ctype == "ROM" && lognorm)) {
+      outtest = test_par_dom(n, muT, muR,
+                             SigmaT, SigmaR,
+                             lequi_tol, uequi_tol,
+                             alpha, dropout,
+                             typey, adseq, k,
+                             arm_seed_T(i), arm_seed_R(i),
+                             TART, TARR, vareq);
+    } else { // ROM & Normal distribution
+      outtest = test_par_rom(n, muT, muR,
+                             SigmaT, SigmaR,
+                             lequi_tol, uequi_tol,
+                             alpha, dropout,
+                             typey, adseq, k,
+                             arm_seed_T(i), arm_seed_R(i),
+                             TART, TARR, vareq);
+    }
+
+    // **Store results in the output matrix**
+    results.row(i) = outtest;
+  }
+
+  // Transpose results to match R's output format
+  return results.t(); // Transpose before returning
+}
 
 RCPP_MODULE(test)
 {
