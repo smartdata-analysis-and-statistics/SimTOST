@@ -235,6 +235,7 @@ sampleSize <- function(mu_list, varcov_list = NA, sigma_list = NA, cor_mat = NA,
 
   names(type_y) <- uynames
 
+
   weight <- 1/table(type_y)
   weight_seq <- type_y
 

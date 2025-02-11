@@ -2,9 +2,9 @@
 % Please edit documentation in R/RcppExports.R
 \name{check_equivalence}
 \alias{check_equivalence}
-\title{Check Equivalence}
+\title{Check Equivalence for Multiple Endpoints}
 \usage{
-check_equivalence(typey, adseq, tbioq, k, mu0, mu1, sd0, sd1)
+check_equivalence(typey, adseq, tbioq, k)
 }
 \arguments{
 \item{typey}{An unsigned integer vector (\code{arma::uvec}) indicating the type of each endpoint:
@@ -15,36 +15,24 @@ check_equivalence(typey, adseq, tbioq, k, mu0, mu1, sd0, sd1)
 - If \code{TRUE}, all primary endpoints must pass equivalence for secondary endpoints to be evaluated.
 - If \code{FALSE}, primary and secondary endpoints are evaluated independently.}
 
-\item{tbioq}{A matrix (\code{arma::mat}) indicating the equivalence test results:
+\item{tbioq}{A matrix (\code{arma::mat}) containing the equivalence test results for each endpoint:
 - \code{1} = Equivalence met
 - \code{0} = Equivalence not met}
 
 \item{k}{An integer specifying the minimum number of endpoints required to establish equivalence.}
-
-\item{mu0}{A matrix (\code{arma::mat}) containing the estimated means for the reference treatment group.}
-
-\item{mu1}{A matrix (\code{arma::mat}) containing the estimated means for the treatment under evaluation.}
-
-\item{sd0}{A matrix (\code{arma::mat}) containing the standard deviations for the reference treatment group.}
-
-\item{sd1}{A matrix (\code{arma::mat}) containing the standard deviations for the treatment under evaluation.}
 }
 \value{
-An \code{arma::mat} containing the final equivalence decision along with test statistics:
+An \code{arma::mat} (1 × 1 matrix) containing a binary equivalence decision:
 \itemize{
-\item \code{totaly} (1 × 1 matrix): Binary indicator (1 = equivalence established, 0 = not established).
-\item \code{tbioq} (m × n matrix): Equivalence test results for each endpoint.
-\item \verb{mu0, mu1} (m × n matrices): Mean estimates for the reference and treatment groups.
-\item \verb{sd0, sd1} (m × n matrices): Standard deviations for the reference and treatment groups.
+\item \code{1} = Equivalence established.
+\item \code{0} = Equivalence not established.
 }
 }
 \description{
-This function evaluates whether equivalence criteria are met.
-It first checks whether all primary endpoints satisfy
-equivalence (if sequential testing is enabled). Then, it determines whether the
-required number of endpoints (\code{k}) meet the equivalence threshold.
-The function returns a structured matrix that includes equivalence decisions,
-test results, mean estimates, and standard deviations.
+This function evaluates whether equivalence criteria are met based on a predefined set of endpoints.
+It first checks whether all primary endpoints satisfy equivalence (if sequential testing is enabled).
+Then, it determines whether the required number of endpoints (\code{k}) meet the equivalence threshold.
+The function returns a binary matrix indicating whether equivalence is established.
 }
 \details{
 \itemize{

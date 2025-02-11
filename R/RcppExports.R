@@ -35,15 +35,13 @@ ptvdf <- function(x, df, lower) {
     .Call(`_SimTOST_ptvdf`, x, df, lower)
 }
 
-#' @title Check Equivalence
+#' @title Check Equivalence for Multiple Endpoints
 #'
 #' @description
-#' This function evaluates whether equivalence criteria are met.
-#' It first checks whether all primary endpoints satisfy
-#' equivalence (if sequential testing is enabled). Then, it determines whether the
-#' required number of endpoints (`k`) meet the equivalence threshold.
-#' The function returns a structured matrix that includes equivalence decisions,
-#' test results, mean estimates, and standard deviations.
+#' This function evaluates whether equivalence criteria are met based on a predefined set of endpoints.
+#' It first checks whether all primary endpoints satisfy equivalence (if sequential testing is enabled).
+#' Then, it determines whether the required number of endpoints (`k`) meet the equivalence threshold.
+#' The function returns a binary matrix indicating whether equivalence is established.
 #'
 #' @param typey An unsigned integer vector (`arma::uvec`) indicating the type of each endpoint:
 #'              - `1` = Primary endpoint
@@ -51,14 +49,10 @@ ptvdf <- function(x, df, lower) {
 #' @param adseq A boolean flag (`TRUE` if sequential testing is enabled).
 #'              - If `TRUE`, all primary endpoints must pass equivalence for secondary endpoints to be evaluated.
 #'              - If `FALSE`, primary and secondary endpoints are evaluated independently.
-#' @param tbioq A matrix (`arma::mat`) indicating the equivalence test results:
+#' @param tbioq A matrix (`arma::mat`) containing the equivalence test results for each endpoint:
 #'              - `1` = Equivalence met
 #'              - `0` = Equivalence not met
 #' @param k An integer specifying the minimum number of endpoints required to establish equivalence.
-#' @param mu0 A matrix (`arma::mat`) containing the estimated means for the reference treatment group.
-#' @param mu1 A matrix (`arma::mat`) containing the estimated means for the treatment under evaluation.
-#' @param sd0 A matrix (`arma::mat`) containing the standard deviations for the reference treatment group.
-#' @param sd1 A matrix (`arma::mat`) containing the standard deviations for the treatment under evaluation.
 #'
 #' @details
 #' - **Sequential Adjustment (`adseq = TRUE`)**:
@@ -70,14 +64,13 @@ ptvdf <- function(x, df, lower) {
 #'   - `0` otherwise.
 #'
 #' @return
-#' An `arma::mat` containing the final equivalence decision along with test statistics:
-#' - `totaly` (1 × 1 matrix): Binary indicator (1 = equivalence established, 0 = not established).
-#' - `tbioq` (m × n matrix): Equivalence test results for each endpoint.
-#' - `mu0, mu1` (m × n matrices): Mean estimates for the reference and treatment groups.
-#' - `sd0, sd1` (m × n matrices): Standard deviations for the reference and treatment groups.
-#' @expor
-check_equivalence <- function(typey, adseq, tbioq, k, mu0, mu1, sd0, sd1) {
-    .Call(`_SimTOST_check_equivalence`, typey, adseq, tbioq, k, mu0, mu1, sd0, sd1)
+#' An `arma::mat` (1 × 1 matrix) containing a binary equivalence decision:
+#' - `1` = Equivalence established.
+#' - `0` = Equivalence not established.
+#'
+#' @export
+check_equivalence <- function(typey, adseq, tbioq, k) {
+    .Call(`_SimTOST_check_equivalence`, typey, adseq, tbioq, k)
 }
 
 #' @title Simulate a 2x2 Crossover Design and Compute Difference of Means (DOM)

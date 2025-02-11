@@ -150,20 +150,19 @@ $$\alpha_k= \frac{k*\alpha}{m}$$
 where $k$ is the number of endpoints required for equivalence, and $m$ is the total number of endpoints evaluated.
 
 ## Hierarchical testing of multiple endpoints
-Hierarchical testing is an approach to multiple endpoint testing where endpoints are tested in a predefined order, typically based on their clinical or regulatory importance. A fallback testing strategy is applied, allowing sequential hypothesis testing. If a hypothesis earlier in the sequence fails to be rejected, testing stops, and subsequent hypotheses are not evaluated.
+Hierarchical testing is an approach to multiple endpoint testing where endpoints are tested in a predefined order, typically based on their clinical or regulatory importance. A fallback testing strategy is applied, allowing sequential hypothesis testing. If a hypothesis earlier in the sequence fails to be rejected, testing stops, and subsequent hypotheses are not evaluated. [@chowdhry_finding_2024]
 
-To implement hierarchical testing in SimTOST, the user defines primary and secondary endpoints using the `type_y` vector argument. The significance level ($\alpha$) is adjusted separately for each endpoint group:
+To implement hierarchical testing in SimTOST, the user specifies `adjust = "seq"` in the [sampleSize()](../reference/sampleSize.html) function and defines primary and secondary endpoints using the `type_y` vector argument. The significance level ($\alpha$) is adjusted separately for each group of endpoints, ensuring strong control of the Family-Wise Error Rate (FWER) while maintaining interpretability.
 
 1. **Evaluate primary endpoints**  
    - Testing begins with the pre-specified primary endpoints.
-   - The adjusted significance level for a primary endpoint $p$ is: $$\alpha_H= \frac{\alpha}{\text{Number of primary endpoints}}$$
-   - If any primary hypothesis fails to be rejected, testing stops, and secondary endpoints are not tested.
+   - The adjusted significance level for a primary endpoint $p$ is: $$\alpha_p= \frac{\alpha}{\text{Number of primary endpoints}}$$
+   - If any primary endpoint fails to meet the equivalence criteria, testing stops, and secondary endpoints are not tested.
 2. **Proceed to secondary endpoints (if applicable)**  
-   - If all primary endpoints demonstrate equivalence, testing continues to the secondary endpoints.
-   - A Bonferroni adjustment is applied again, based on the number of secondary endpoints.
-
-The adjusted significance level is determined using a weighting approach, ensuring that primary and secondary endpoints are tested sequentially while maintaining strong control over the Family-Wise Error Rate (FWER). The sequential adjustment correction can be implemented by specifying `adjust = "seq"` in the [sampleSize()](../reference/sampleSize.html) function.
-
+   - If all primary endpoints meet the equivalence criteria, testing proceeds to the secondary endpoints.
+   - The significance level for a secondary endpoint $s$ is adjusted as: $$\alpha_s= \frac{\alpha}{\text{Number of secondary endpoints}}$$
+3. **Final Decision**
+   - The test is considered successful if at least `k` endpoints meet equivalence and all primary endpoints pass.
 
 An example of hierarchical testing can be found in [this vignette](sampleSize_parallel_2A3E.html#hierarchical-testing).
 

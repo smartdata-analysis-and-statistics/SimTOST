@@ -60,15 +60,13 @@ arma::mat ptvdf(arma::mat x, arma::mat df, bool lower) {
   return arma::reshape(y, 1, n);
 }
 
-//' @title Check Equivalence
+//' @title Check Equivalence for Multiple Endpoints
 //'
 //' @description
-//' This function evaluates whether equivalence criteria are met.
-//' It first checks whether all primary endpoints satisfy
-//' equivalence (if sequential testing is enabled). Then, it determines whether the
-//' required number of endpoints (`k`) meet the equivalence threshold.
-//' The function returns a structured matrix that includes equivalence decisions,
-//' test results, mean estimates, and standard deviations.
+//' This function evaluates whether equivalence criteria are met based on a predefined set of endpoints.
+//' It first checks whether all primary endpoints satisfy equivalence (if sequential testing is enabled).
+//' Then, it determines whether the required number of endpoints (`k`) meet the equivalence threshold.
+//' The function returns a binary matrix indicating whether equivalence is established.
 //'
 //' @param typey An unsigned integer vector (`arma::uvec`) indicating the type of each endpoint:
 //'              - `1` = Primary endpoint
@@ -76,14 +74,10 @@ arma::mat ptvdf(arma::mat x, arma::mat df, bool lower) {
 //' @param adseq A boolean flag (`TRUE` if sequential testing is enabled).
 //'              - If `TRUE`, all primary endpoints must pass equivalence for secondary endpoints to be evaluated.
 //'              - If `FALSE`, primary and secondary endpoints are evaluated independently.
-//' @param tbioq A matrix (`arma::mat`) indicating the equivalence test results:
+//' @param tbioq A matrix (`arma::mat`) containing the equivalence test results for each endpoint:
 //'              - `1` = Equivalence met
 //'              - `0` = Equivalence not met
 //' @param k An integer specifying the minimum number of endpoints required to establish equivalence.
-//' @param mu0 A matrix (`arma::mat`) containing the estimated means for the reference treatment group.
-//' @param mu1 A matrix (`arma::mat`) containing the estimated means for the treatment under evaluation.
-//' @param sd0 A matrix (`arma::mat`) containing the standard deviations for the reference treatment group.
-//' @param sd1 A matrix (`arma::mat`) containing the standard deviations for the treatment under evaluation.
 //'
 //' @details
 //' - **Sequential Adjustment (`adseq = TRUE`)**:
@@ -95,36 +89,25 @@ arma::mat ptvdf(arma::mat x, arma::mat df, bool lower) {
 //'   - `0` otherwise.
 //'
 //' @return
-//' An `arma::mat` containing the final equivalence decision along with test statistics:
-//' - `totaly` (1 × 1 matrix): Binary indicator (1 = equivalence established, 0 = not established).
-//' - `tbioq` (m × n matrix): Equivalence test results for each endpoint.
-//' - `mu0, mu1` (m × n matrices): Mean estimates for the reference and treatment groups.
-//' - `sd0, sd1` (m × n matrices): Standard deviations for the reference and treatment groups.
+//' An `arma::mat` (1 × 1 matrix) containing a binary equivalence decision:
+//' - `1` = Equivalence established.
+//' - `0` = Equivalence not established.
+//'
 //' @export
 // [[Rcpp::export]]
 arma::mat check_equivalence(const arma::uvec& typey, bool adseq,
-                            const arma::mat& tbioq, int k,
-                            const arma::mat& mu0, const arma::mat& mu1,
-                            const arma::mat& sd0, const arma::mat& sd1) {
+                            const arma::mat& tbioq, int k) {
   // primary endpoints in case of sequencial adjustment
-  int sumtypey;
+  int sumtypey = 1;
   // in case no primary endpoint is added.
-  if( accu(typey) >= 0) {
+  if (!typey.empty() && all(typey >= 0)) {
     sumtypey = accu(tbioq.cols(typey)); // sum of primary endpoint rejected
-  }else{
-    sumtypey = 1;
   }
 
   // Total number of primary endpoints
   int lentypey = typey.n_elem;
 
-  // Determine if all primary endpoints meet the equivalence criteria under sequential adjustment.
-  //
-  // If `adseq` (sequential testing) is disabled (`false`), equivalence is not required for all primary endpoints,
-  // so `sumpe` is automatically set to `true`.
-  //
-  // If `adseq` is enabled (`true`), `sumpe` is set to `true` only if all primary endpoints (`sumtypey`) meet
-  // the required equivalence criteria (`lentypey`), meaning all must pass.
+  // Determine if all primary endpoints meet the equivalence criteria under sequential adjustment
   bool sumpe = !adseq || (sumtypey == lentypey);
 
   // Check if at least `k` endpoints meet equivalence criteria
@@ -134,13 +117,7 @@ arma::mat check_equivalence(const arma::uvec& typey, bool adseq,
   arma::mat totaly(1,1);
   totaly(0, 0) = (sumt && sumpe) ? 1 : 0;
 
-  // Combine results into a response matrix
-  arma::mat response0 = join_rows(totaly, tbioq);
-  arma::mat response1 = join_rows(mu0, mu1);
-  arma::mat response2 = join_rows(sd0, sd1);
-  arma::mat response3 = join_rows(response0, response1);
-
-  return join_rows(response3, response2);
+  return totaly;
 }
 
 
@@ -569,8 +546,16 @@ arma::mat test_par_dom(int n, arma::vec muT, arma::vec muR,
    mat alpha0 = conv_to<mat>::from(alpha);
    mat tbioq  = conv_to<mat>::from((ptost < alpha0));
 
-   // Call the check_equivalence function
-   return check_equivalence(typey, adseq, tbioq, k, mu0, mu1, sd0, sd1);
+   // Call the check_equivalence function to determine if equivalence is established
+   arma::mat totaly = check_equivalence(typey, adseq, tbioq, k);
+
+   // Combine results into a response matrix
+   arma::mat response0 = join_rows(totaly, tbioq);
+   arma::mat response1 = join_rows(mu0, mu1);
+   arma::mat response2 = join_rows(sd0, sd1);
+   arma::mat response3 = join_rows(response0, response1);
+
+   return join_rows(response3, response2);
 }
 
 //' @title Simulate a Parallel Design and Compute Ratio of Means (ROM)
@@ -673,8 +658,16 @@ arma::mat test_par_rom(int n, arma::vec muT, arma::vec muR,
    mat alpha0 = conv_to<mat>::from(alpha);
    mat tbioq  = conv_to<mat>::from((ptost < alpha0));
 
-   // Call the check_equivalence function
-   return check_equivalence(typey, adseq, tbioq, k, mu0, mu1, sd0, sd1);
+   // Call the check_equivalence function to determine if equivalence is established
+   arma::mat totaly = check_equivalence(typey, adseq, tbioq, k);
+
+   // Combine results into a response matrix
+   arma::mat response0 = join_rows(totaly, tbioq);
+   arma::mat response1 = join_rows(mu0, mu1);
+   arma::mat response2 = join_rows(sd0, sd1);
+   arma::mat response3 = join_rows(response0, response1);
+
+   return join_rows(response3, response2);
 }
 
 

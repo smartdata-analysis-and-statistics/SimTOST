@@ -38,8 +38,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // check_equivalence
-arma::mat check_equivalence(const arma::uvec& typey, bool adseq, const arma::mat& tbioq, int k, const arma::mat& mu0, const arma::mat& mu1, const arma::mat& sd0, const arma::mat& sd1);
-RcppExport SEXP _SimTOST_check_equivalence(SEXP typeySEXP, SEXP adseqSEXP, SEXP tbioqSEXP, SEXP kSEXP, SEXP mu0SEXP, SEXP mu1SEXP, SEXP sd0SEXP, SEXP sd1SEXP) {
+arma::mat check_equivalence(const arma::uvec& typey, bool adseq, const arma::mat& tbioq, int k);
+RcppExport SEXP _SimTOST_check_equivalence(SEXP typeySEXP, SEXP adseqSEXP, SEXP tbioqSEXP, SEXP kSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -47,11 +47,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< bool >::type adseq(adseqSEXP);
     Rcpp::traits::input_parameter< const arma::mat& >::type tbioq(tbioqSEXP);
     Rcpp::traits::input_parameter< int >::type k(kSEXP);
-    Rcpp::traits::input_parameter< const arma::mat& >::type mu0(mu0SEXP);
-    Rcpp::traits::input_parameter< const arma::mat& >::type mu1(mu1SEXP);
-    Rcpp::traits::input_parameter< const arma::mat& >::type sd0(sd0SEXP);
-    Rcpp::traits::input_parameter< const arma::mat& >::type sd1(sd1SEXP);
-    rcpp_result_gen = Rcpp::wrap(check_equivalence(typey, adseq, tbioq, k, mu0, mu1, sd0, sd1));
+    rcpp_result_gen = Rcpp::wrap(check_equivalence(typey, adseq, tbioq, k));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -165,7 +161,7 @@ RcppExport SEXP _rcpp_module_boot_test();
 static const R_CallMethodDef CallEntries[] = {
     {"_SimTOST_ptv", (DL_FUNC) &_SimTOST_ptv, 3},
     {"_SimTOST_ptvdf", (DL_FUNC) &_SimTOST_ptvdf, 3},
-    {"_SimTOST_check_equivalence", (DL_FUNC) &_SimTOST_check_equivalence, 8},
+    {"_SimTOST_check_equivalence", (DL_FUNC) &_SimTOST_check_equivalence, 4},
     {"_SimTOST_test_2x2_dom", (DL_FUNC) &_SimTOST_test_2x2_dom, 15},
     {"_SimTOST_test_2x2_rom", (DL_FUNC) &_SimTOST_test_2x2_rom, 15},
     {"_SimTOST_test_par_dom", (DL_FUNC) &_SimTOST_test_par_dom, 17},
