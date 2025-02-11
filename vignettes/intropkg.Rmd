@@ -116,7 +116,9 @@ This has several important implications:
 
 ## Testing multiple primary endpoints {#multiple-primary}
 
-When a trial aims to evaluate equivalence for at least $k$ primary endpoints, adjustment for the increased probability of a Type I error due to multiple hypothesis testing is required [@sozu_continuous_2015]. For example, with $m=3$ independent primary endpoints and a significance level of $\alpha = 5\%$, the probability of making a Type I error on at least one hypothesis test is:
+When a trial aims to establish equivalence for at least $k$ primary endpoints, adjustments are necessary to account for the increased risk of Type I error due to multiple hypothesis testing [@sozu_continuous_2015]. Without such adjustments, the likelihood of incorrectly concluding equivalence for at least one endpoint increases as the number of endpoints grows.
+
+For example, if a study includes $m = 3$ independent primary endpoints and uses a significance level of $\alpha = 5%$ for each test, the overall probability of falsely concluding equivalence for at least one endpoint is:
 
 $$ 1 – (1-\alpha)^m  = 1 - (1-0.05)^3 = 0.1426. $$
 This means that the overall probability of making any false positive error, also known as the **family-wise error rate (FWER)**, increases to approximately 14%. 

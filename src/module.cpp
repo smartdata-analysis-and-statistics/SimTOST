@@ -24,7 +24,7 @@ using namespace arma;
 //' @return A numeric matrix containing the computed CDF values (p-values).
 //' @export
 // [[Rcpp::export]]
-arma::mat ptv(arma::mat x, double df, bool lower) {
+arma::mat ptv(arma::mat x, const double df, const bool lower) {
   Rcpp::NumericVector x_rcpp= as<NumericVector>(wrap(x));
   int n = x_rcpp.size();
   Rcpp::NumericVector y(n);
@@ -47,7 +47,7 @@ arma::mat ptv(arma::mat x, double df, bool lower) {
 //' The result is returned as a 1xN matrix, where N is the number of elements in `x`.
 //' @export
 // [[Rcpp::export]]
-arma::mat ptvdf(arma::mat x, arma::mat df, bool lower) {
+arma::mat ptvdf(arma::mat x, arma::mat df, const bool lower) {
   std::size_t n = x.n_elem;  // Get the number of elements in x
   arma::vec y(n);  // Create an Armadillo vector for the result
 
@@ -95,8 +95,10 @@ arma::mat ptvdf(arma::mat x, arma::mat df, bool lower) {
 //'
 //' @export
 // [[Rcpp::export]]
-arma::mat check_equivalence(const arma::uvec& typey, bool adseq,
-                            const arma::mat& tbioq, int k) {
+arma::mat check_equivalence(const arma::uvec& typey,
+                            const bool adseq,
+                            const arma::mat& tbioq,
+                            const int k) {
   // primary endpoints in case of sequencial adjustment
   int sumtypey = 1;
   // in case no primary endpoint is added.
@@ -145,10 +147,21 @@ arma::mat check_equivalence(const arma::uvec& typey, bool adseq,
 //' @return mat(vector) with ptost and other simulated statistics such as mean (mu) and standard deviation(std) per sequence (0,1)-endpoint
 //' @export
 // [[Rcpp::export]]
-arma::mat test_2x2_dom(int n, arma::vec muT, arma::vec muR,
-                        arma::mat SigmaW, arma::rowvec lequi_tol, arma::rowvec uequi_tol,
-                        arma::rowvec alpha, double sigmaB, arma::vec dropout,
-                        arma::vec Eper, arma::vec Eco, arma::uvec typey, bool adseq, int k, int arm_seed){
+arma::mat test_2x2_dom(const int n,
+                       const arma::vec& muT,
+                       const arma::vec& muR,
+                       const arma::mat& SigmaW,
+                       const arma::rowvec& lequi_tol,
+                       const arma::rowvec& uequi_tol,
+                       const arma::rowvec& alpha,
+                       const double sigmaB,
+                       const arma::vec& dropout,
+                       const arma::vec& Eper,
+                       const arma::vec& Eco,
+                       const arma::uvec& typey,
+                       const bool adseq,
+                       const int k,
+                       const int arm_seed){
 
   // Transform drop out
    int n0i = ceil(n/2);
@@ -296,10 +309,21 @@ arma::mat test_2x2_dom(int n, arma::vec muT, arma::vec muR,
 //' @return mat(vector) with ptost and other simulated statistics such as mean (mu) and standard deviation(std) per sequence (0,1)-endpoint
 //' @export
 // [[Rcpp::export]]
-arma::mat test_2x2_rom(int n, arma::vec muT, arma::vec muR,
-                        arma::mat SigmaW, arma::rowvec lequi_tol, arma::rowvec uequi_tol,
-                        arma::rowvec alpha, double sigmaB, arma::vec dropout,
-                        arma::vec Eper, arma::vec Eco, arma::uvec typey, bool adseq, int k, int arm_seed){
+arma::mat test_2x2_rom(const int n,
+                       const arma::vec& muT,
+                       const arma::vec& muR,
+                       const arma::mat& SigmaW,
+                       const arma::rowvec& lequi_tol,
+                       const arma::rowvec& uequi_tol,
+                       const arma::rowvec& alpha,
+                       const double sigmaB,
+                       const arma::vec& dropout,
+                       const arma::vec& Eper,
+                       const arma::vec& Eco,
+                       const arma::uvec& typey,
+                       const bool adseq,
+                       const int k,
+                       const int arm_seed){
 
   // Power test based on Hauschke et al, 1999
    // Transform drop out
@@ -476,14 +500,23 @@ arma::mat test_2x2_rom(int n, arma::vec muT, arma::vec muR,
 //'
 //' @export
 // [[Rcpp::export]]
-arma::mat test_par_dom(int n, arma::vec muT, arma::vec muR,
-                        arma::mat SigmaT, arma::mat SigmaR,
-                        arma::rowvec lequi_tol, arma::rowvec uequi_tol,
-                        arma::rowvec alpha, arma::vec dropout,
-                        arma::uvec typey, bool adseq, int k,
-                        int arm_seedT, int arm_seedR,
-                        double TART, double TARR,
-                        bool vareq){
+arma::mat test_par_dom(const int n,
+                       const arma::vec& muT,
+                       const arma::vec& muR,
+                       const arma::mat& SigmaT,
+                       const arma::mat& SigmaR,
+                       const arma::rowvec& lequi_tol,
+                       const arma::rowvec& uequi_tol,
+                       const arma::rowvec& alpha,
+                       const arma::vec& dropout,
+                       const arma::uvec& typey,
+                       const bool adseq,
+                       const int k,
+                       const int arm_seedT,
+                       const int arm_seedR,
+                       const double TART,
+                       const double TARR,
+                       const bool vareq){
 
   // Transform drop out
    int n0i = ceil(n*TART);
@@ -599,14 +632,23 @@ arma::mat test_par_dom(int n, arma::vec muT, arma::vec muR,
 //'   applying Schuirmann’s two one-sided tests (TOST) for equivalence.
 //' @export
 // [[Rcpp::export]]
-arma::mat test_par_rom(int n, arma::vec muT, arma::vec muR,
-                        arma::mat SigmaT, arma::mat SigmaR,
-                        arma::rowvec lequi_tol, arma::rowvec uequi_tol,
-                        arma::rowvec alpha,  arma::vec dropout,
-                        arma::uvec typey, bool adseq,int k,
-                        int arm_seedT, int arm_seedR,
-                        double TART, double TARR,
-                        bool vareq){
+arma::mat test_par_rom(const int n,
+                       const arma::vec& muT,
+                       const arma::vec& muR,
+                       const arma::mat& SigmaT,
+                       const arma::mat& SigmaR,
+                       const arma::rowvec& lequi_tol,
+                       const arma::rowvec& uequi_tol,
+                       const arma::rowvec& alpha,
+                       const arma::vec& dropout,
+                       const arma::uvec& typey,
+                       const bool adseq,
+                       const int k,
+                       const int arm_seedT,
+                       const int arm_seedR,
+                       const double TART,
+                       const double TARR,
+                       const bool vareq){
   // Transform drop out
    int n0i = ceil(n*TART);
    int n1i = ceil(n*TARR);
