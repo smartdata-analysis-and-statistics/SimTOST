@@ -397,12 +397,15 @@ where endpoints are tested in a predefined order, typically based on
 their clinical or regulatory importance. A fallback testing strategy is
 applied, allowing sequential hypothesis testing. If a hypothesis earlier
 in the sequence fails to be rejected, testing stops, and subsequent
-hypotheses are not evaluated.</p>
-<p>To implement hierarchical testing in SimTOST, the user defines
-primary and secondary endpoints using the <code>type_y</code> vector
-argument. The significance level
+hypotheses are not evaluated. <span class="citation">(<a href="#ref-chowdhry_finding_2024">Chowdhry et al. 2024</a>)</span></p>
+<p>To implement hierarchical testing in SimTOST, the user specifies
+<code>adjust = "seq"</code> in the <a href="../reference/sampleSize.html">sampleSize()</a> function and
+defines primary and secondary endpoints using the <code>type_y</code>
+vector argument. The significance level
 (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>α</mi><annotation encoding="application/x-tex">\alpha</annotation></semantics></math>)
-is adjusted separately for each endpoint group:</p>
+is adjusted separately for each group of endpoints, ensuring strong
+control of the Family-Wise Error Rate (FWER) while maintaining
+interpretability.</p>
 <ol style="list-style-type: decimal">
 <li>
 <strong>Evaluate primary endpoints</strong>
@@ -411,27 +414,32 @@ is adjusted separately for each endpoint group:</p>
 <li>The adjusted significance level for a primary endpoint
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>p</mi><annotation encoding="application/x-tex">p</annotation></semantics></math>
 is:
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>α</mi><mi>H</mi></msub><mo>=</mo><mfrac><mi>α</mi><mtext mathvariant="normal">Number of primary endpoints</mtext></mfrac></mrow><annotation encoding="application/x-tex">\alpha_H= \frac{\alpha}{\text{Number of primary endpoints}}</annotation></semantics></math>
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>α</mi><mi>p</mi></msub><mo>=</mo><mfrac><mi>α</mi><mtext mathvariant="normal">Number of primary endpoints</mtext></mfrac></mrow><annotation encoding="application/x-tex">\alpha_p= \frac{\alpha}{\text{Number of primary endpoints}}</annotation></semantics></math>
 </li>
-<li>If any primary hypothesis fails to be rejected, testing stops, and
-secondary endpoints are not tested.</li>
+<li>If any primary endpoint fails to meet the equivalence criteria,
+testing stops, and secondary endpoints are not tested.</li>
 </ul>
 </li>
 <li>
 <strong>Proceed to secondary endpoints (if applicable)</strong>
 <ul>
-<li>If all primary endpoints demonstrate equivalence, testing continues
-to the secondary endpoints.</li>
-<li>A Bonferroni adjustment is applied again, based on the number of
-secondary endpoints.</li>
+<li>If all primary endpoints meet the equivalence criteria, testing
+proceeds to the secondary endpoints.</li>
+<li>The significance level for a secondary endpoint
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>s</mi><annotation encoding="application/x-tex">s</annotation></semantics></math>
+is adjusted as:
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>α</mi><mi>s</mi></msub><mo>=</mo><mfrac><mi>α</mi><mtext mathvariant="normal">Number of secondary endpoints</mtext></mfrac></mrow><annotation encoding="application/x-tex">\alpha_s= \frac{\alpha}{\text{Number of secondary endpoints}}</annotation></semantics></math>
+</li>
+</ul>
+</li>
+<li>
+<strong>Final Decision</strong>
+<ul>
+<li>The test is considered successful if at least <code>k</code>
+endpoints meet equivalence and all primary endpoints pass.</li>
 </ul>
 </li>
 </ol>
-<p>The adjusted significance level is determined using a weighting
-approach, ensuring that primary and secondary endpoints are tested
-sequentially while maintaining strong control over the Family-Wise Error
-Rate (FWER). The sequential adjustment correction can be implemented by
-specifying <code>adjust = "seq"</code> in the <a href="../reference/sampleSize.html">sampleSize()</a> function.</p>
 <p>An example of hierarchical testing can be found in <a href="sampleSize_parallel_2A3E.html#hierarchical-testing">this
 vignette</a>.</p>
 </div>
@@ -455,6 +463,13 @@ treatment arms.</p>
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
 <div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="ref-chowdhry_finding_2024" class="csl-entry">
+Chowdhry, Amit K., John Park, John Kang, Gukan Sakthivel, and Stephanie
+Pugh. 2024. <span>“Finding <span>Multiple Signals</span> in the
+<span>Noise</span>: <span>Handling Multiplicity</span> in <span>Clinical
+Trials</span>.”</span> <em>International Journal of Radiation
+Oncology*Biology*Physics</em> 119 (3): 750–55. <a href="https://doi.org/10.1016/j.ijrobp.2023.12.007" class="external-link">https://doi.org/10.1016/j.ijrobp.2023.12.007</a>.
+</div>
 <div id="ref-CHMP2010" class="csl-entry">
 Committee for Medicinal Products for Human Use (CHMP). 2010.
 <span>“Guideline on the Investigation of Bioequivalence.”</span>

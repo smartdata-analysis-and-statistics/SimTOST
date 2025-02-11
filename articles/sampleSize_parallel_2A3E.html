@@ -572,20 +572,26 @@ endpoints required for equivalence.</p>
 <div class="section level3">
 <h3 id="hierarchical-testing">Hierarchical Testing of Endpoints<a class="anchor" aria-label="anchor" href="#hierarchical-testing"></a>
 </h3>
-<p>In this trial, the primary objective is to demonstrate equivalence
-for the AUCinf endpoint. If the null hypothesis for AUCinf is rejected,
-testing proceeds to AUClast and Cmax.</p>
-<p>This hierarchical testing approach prioritizes the most critical
-endpoint first, ensuring a more efficient use of resources by limiting
-further testing to cases where the primary equivalence condition is
-met.</p>
-<p>In the example below, sequential adjustment is implemented by setting
-the argument <code>adjust = "seq"</code>. Each endpoint’s type is
-specified using the <code>type_y</code> argument. For instance, we
-define “AUCinf” as a primary endpoint, while “AUClast” and “Cmax” are
-designated as secondary endpoints.</p>
+<p>This trial follows a hierarchical testing strategy where Cmax and
+AUCinf are the primary endpoints. If equivalence is established for
+both, testing proceeds to the secondary endpoint AUClast.</p>
+<p>To implement this approach in SimTOST, we:</p>
+<ul>
+<li>Use sequential adjustment by setting
+<code>adjust = "seq"</code>.</li>
+<li>Specify endpoint hierarchy with the <code>type_y</code> argument:
+<ul>
+<li>Primary endpoints: <code>"Cmax"</code> and <code>"AUCinf"</code>
+(coded as 1).</li>
+<li>Secondary endpoint: <code>"AUClast"</code> (coded as 2).</li>
+</ul>
+</li>
+<li>Set <code>k=3</code>, ensuring all three endpoints must meet
+equivalence for trial success.</li>
+</ul>
+<p>Below is the implementation:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="op">(</span><span class="va">N_mp_seq1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sampleSize.html">sampleSize</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="op">(</span><span class="va">N_mp_seq</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sampleSize.html">sampleSize</a></span><span class="op">(</span></span>
 <span>  power           <span class="op">=</span> <span class="fl">0.9</span>,                              <span class="co"># Target power</span></span>
 <span>  alpha           <span class="op">=</span> <span class="fl">0.05</span>,                             <span class="co"># Significance level</span></span>
 <span>  mu_list         <span class="op">=</span> <span class="va">mu_list</span>,                          <span class="co"># List of means</span></span>
@@ -599,7 +605,8 @@ designated as secondary endpoints.</p>
 <span>  vareq           <span class="op">=</span> <span class="cn">TRUE</span>,                             <span class="co"># Assume equal variances</span></span>
 <span>  lognorm         <span class="op">=</span> <span class="cn">TRUE</span>,                             <span class="co"># Log-normal distribution assumption</span></span>
 <span>  adjust          <span class="op">=</span> <span class="st">"seq"</span>,                            <span class="co"># Sequential adjustment method</span></span>
-<span>  type_y          <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AUCinf"</span> <span class="op">=</span> <span class="fl">1</span>, <span class="st">"AUClast"</span> <span class="op">=</span> <span class="fl">2</span>, <span class="st">"Cmax"</span> <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>, <span class="co"># Endpoint types</span></span>
+<span>  type_y          <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AUCinf"</span> <span class="op">=</span> <span class="fl">1</span>, <span class="st">"AUClast"</span> <span class="op">=</span> <span class="fl">2</span>, <span class="st">"Cmax"</span> <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>, <span class="co"># Endpoint types</span></span>
+<span>  k               <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"EMA"</span> <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>,                     <span class="co"># Demonstrate equivalence for all 3 endpoints</span></span>
 <span>  ncores          <span class="op">=</span> <span class="fl">1</span>,                                <span class="co"># Number of cores for computation</span></span>
 <span>  nsim            <span class="op">=</span> <span class="fl">1000</span>,                             <span class="co"># Number of stochastic simulations</span></span>
 <span>  seed            <span class="op">=</span> <span class="fl">1234</span>                              <span class="co"># Random seed for reproducibility</span></span>
@@ -613,18 +620,32 @@ designated as secondary endpoints.</p>
 <span><span class="co">#&gt;     - Endpoints Tested: AUCinf, AUClast, Cmax </span></span>
 <span><span class="co">#&gt;       (hierarchical testing applied to multiple endpoints, m = 3 )</span></span>
 <span><span class="co">#&gt;     - Multiplicity Correction: Sequential </span></span>
-<span><span class="co">#&gt;       Adjusted Significance Levels: alpha = 0.050; 0.025; 0.025 </span></span>
+<span><span class="co">#&gt;       Adjusted Significance Levels: alpha = 0.025; 0.050; 0.025 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; -------------------------------------------------------------</span></span>
 <span><span class="co">#&gt;                  Parameter       Value</span></span>
-<span><span class="co">#&gt;          Total Sample Size          86</span></span>
-<span><span class="co">#&gt;             Achieved Power        90.2</span></span>
-<span><span class="co">#&gt;  Power Confidence Interval 88.1 - 91.9</span></span>
+<span><span class="co">#&gt;          Total Sample Size         100</span></span>
+<span><span class="co">#&gt;             Achieved Power        90.6</span></span>
+<span><span class="co">#&gt;  Power Confidence Interval 88.6 - 92.3</span></span>
 <span><span class="co">#&gt; -------------------------------------------------------------</span></span></code></pre></div>
-<p>Recall we needed 78 patients to demonstrate equivalence for AUCinf.
-We now need 86 patients to demonstrate equivalence for AUCinf, and if
-equivalence holds, to also demonstrate equivalence for AUClast and
-Cmax.</p>
+<p>Recall that 84 patients were required when testing all co-primary
+endpoints simultaneously. In this approach, the study is powered based
+on the most difficult endpoint to establish equivalence, meaning that
+the total sample size is determined by the endpoint with the weakest
+signal or highest variability. Since all endpoints must meet equivalence
+at the same time, no additional adjustment for multiple testing is
+required, leading to a lower sample size requirement.</p>
+<p>In contrast, hierarchical testing requires 100 patients because it
+follows a stepwise approach, where testing begins with the primary
+endpoints (Cmax and AUCinf). Only if equivalence is demonstrated for
+these endpoints does testing proceed to the secondary endpoint
+(AUClast). This structure ensures that the primary endpoints have
+sufficient power, reducing the risk of Type II error (failing to detect
+true equivalence). However, because later stages of testing depend on
+earlier ones passing, the total sample size must be larger to maintain
+adequate power at each step. This prioritization makes hierarchical
+testing particularly useful in scenarios where some endpoints are
+considered more clinically or regulatory important than others.</p>
 </div>
 </div>
 <div class="section level2">
