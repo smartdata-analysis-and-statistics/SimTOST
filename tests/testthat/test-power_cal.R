@@ -1,9 +1,8 @@
-test_that("test_studies executes correctly for parallel DOM design", {
+test_that("power_cal produces valid results for parallel DOM design", {
 
   # Define dummy input parameters
   nsim <- 5  # Small number of simulations for testing
   n <- 50    # Sample size per arm
-  comp <- 1  # Index of comparator
 
   # Create mock parameter lists
   param <- list(
@@ -49,35 +48,40 @@ test_that("test_studies executes correctly for parallel DOM design", {
     k = 1  # Require one endpoint to meet equivalence
   )
 
-  # Set a reproducible seed matrix
-  set.seed(123)
-  arm_seed <- matrix(sample(1:10000, nsim * 2, replace = TRUE), nrow = nsim, ncol = 2)
-  colnames(arm_seed) <- param$arm_names
+  # Run the function
+  result <- power_cal(n = n, nsim = nsim, param = param, param.d = param.d, seed = 1234, ncores = 1)
 
-  # Run test_studies function
-  result <- test_studies(nsim, n, comp, param, param.d, arm_seed, ncores = 1)
+  # Check structure
+  expect_type(result, "list")
+  expect_true("power" %in% names(result), "Output should contain 'power'")
+  expect_true("output.test" %in% names(result), "Output should contain 'output.test'")
 
-  # Expected output dimensions
-  expect_true(is.matrix(result))   # Should return a matrix
-  expect_equal(ncol(result), nsim) # Rows should match number of simulations
-  expect_equal(nrow(result), 1 + length(param$list_y_comparator[[comp]]) * 5) # Based on output structure
+  # Validate power
+  expect_type(result$power, "double")
+  expect_true(result$power >= 0 && result$power <= 1, "Power should be between 0 and 1")
 
-  # Ensure totaly column contains only 0 or 1
-  expect_true(all(result[1, ] %in% c(0, 1)))
+  # Validate output.test
+  expect_true(is.data.frame(result$output.test), "Output test should be a data frame")
+  expect_gt(nrow(result$output.test), 0, "Output test should have rows")
+  expect_gt(ncol(result$output.test), 0, "Output test should have columns")
+
+  # Check if power is computed correctly
+  expect_equal(result$power, sum(result$output.test[,1]) / nrow(result$output.test), tolerance = 1e-5)
+
+  # Check for NA values in output.test
+  expect_false(any(is.na(result$output.test)), "There should be no NA values in output.test")
 })
 
-
-test_that("test_studies executes correctly for 2x2 cross-over DOM design", {
+test_that("power_cal produces valid results for 2x2 cross-over DOM design", {
 
   # Define dummy input parameters
-  nsim <- 5  # Small number of simulations for testing
+  nsim <- 10  # Small number of simulations for testing
   n <- 50    # Sample size per arm
-  comp <- 1  # Index of comparator
 
   param <- list(
     mu = list(
       "R" = matrix(c(0, 0), nrow = 1, dimnames = list(NULL, c("AUC", "Cmax"))),
-      "T" = matrix(c(0.01980263, 0.0295588), nrow = 1, dimnames = list(NULL, c("AUC", "Cmax")))
+      "T" = matrix(c(log(1.02), log(1.03)), nrow = 1, dimnames = list(NULL, c("AUC", "Cmax")))
     ),
     varcov = list(
       "R" = matrix(c(0.06250, 0.01875, 0.01875, 0.09000), nrow = 2, byrow = TRUE,
@@ -89,7 +93,7 @@ test_that("test_studies executes correctly for 2x2 cross-over DOM design", {
       "R" = 1,
       "T" = 1
     ),
-    type_y = c(AUC = 1, Cmax = 1),
+    type_y = -1,
     weight_seq = c(AUC = 0.5, Cmax = 0.5),
     arm_names = c("R", "T"),
     ynames_list = list(
@@ -114,14 +118,13 @@ test_that("test_studies executes correctly for 2x2 cross-over DOM design", {
   )
 
   param.d <- list(
-    nsim = 10000,
     power = 0.8,
     alpha = 0.05,
     dtype = "2x2",
     ctype = "DOM",
     lognorm = FALSE,
     vareq = TRUE,
-    k = list(T_vs_R = 1),
+    k = 2,
     adjust = "no",
     dropout = c(0, 0),
 
@@ -134,22 +137,29 @@ test_that("test_studies executes correctly for 2x2 cross-over DOM design", {
     )
   )
 
-  # Set a reproducible seed matrix
-  set.seed(123)
-  arm_seed <- matrix(sample(1:10000, nsim * 1, replace = TRUE), nrow = nsim, ncol = 1)
+  # Run the function
+  result <- power_cal(n = n, nsim = nsim, param = param, param.d = param.d, seed = 1234, ncores = 1)
 
-  # Run test_studies function
-  result <- test_studies(nsim, n, comp = 1, param, param.d, arm_seed, ncores = 1)
+  # Check structure
+  expect_type(result, "list")
+  expect_true("power" %in% names(result), "Output should contain 'power'")
+  expect_true("output.test" %in% names(result), "Output should contain 'output.test'")
 
-  # Expected output dimensions
-  expect_true(is.matrix(result))   # Should return a matrix
-  expect_equal(ncol(result), nsim) # Rows should match number of simulations
-  expect_equal(nrow(result), 1 + length(param$list_y_comparator[[comp]]) * 5) # Based on output structure
+  # Validate power
+  expect_type(result$power, "double")
+  expect_true(result$power >= 0 && result$power <= 1, "Power should be between 0 and 1")
 
-  # Ensure totaly column contains only 0 or 1
-  expect_true(all(result[1, ] %in% c(0, 1)))
+  # Validate output.test
+  expect_true(is.data.frame(result$output.test), "Output test should be a data frame")
+  expect_gt(nrow(result$output.test), 0, "Output test should have rows")
+  expect_gt(ncol(result$output.test), 0, "Output test should have columns")
+
+  # Check if power is computed correctly
+  expect_equal(result$power, sum(result$output.test[,1]) / nrow(result$output.test), tolerance = 1e-5)
+
+  # Check for NA values in output.test
+  expect_false(any(is.na(result$output.test)), "There should be no NA values in output.test")
+
 
 
 })
-
-

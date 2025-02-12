@@ -65,7 +65,7 @@ power_cal <- function(n,nsim,param,param.d,seed,ncores){
     size[size < 2] <- 2
     size_ndrop <- ceiling((1 - param.d$dropout[names(size)])*size)
     size_ndrop[size_ndrop < 2] <- 2
-    n_drop <- sum(size)-sum(size_ndrop)
+    n_drop <- sum(size) - sum(size_ndrop)
 
   } else if (param.d$dtype == "2x2") {
     # expected
@@ -199,6 +199,7 @@ test_studies <- function(nsim, n, comp, param, param.d, arm_seed, ncores){
     }
 
   if(param.d$ctype=="ROM"&param.d$lognorm == TRUE){
+    # Convert data to lognorm scale
     if (param.d$dtype == "parallel"){
       SigmaT <-  as.matrix(log(SigmaT/(muT%*%t(muT))+1))
       SigmaR <-  as.matrix(log(SigmaR/(muR%*%t(muR))+1))
@@ -214,125 +215,42 @@ test_studies <- function(nsim, n, comp, param, param.d, arm_seed, ncores){
     uequi.tol <- log(uequi.tol)
   }
 
-  # Get typey the positions of the primarly in C++
-  if (any(param$type_y[endp] == 1) ) {
-    typey <- which(param$type_y[endp] == 1) - 1
-  } else { # in case no primary endpoint is specified
-    typey = -1
-  }
-
   # Use C++ code to run the simulations for parallel design
-  if (ncores == 1 & param.d$dtype == "parallel") {
+  if (param.d$dtype == "parallel") {
     result <- run_simulations_par(nsim = nsim, n = n, muT = muT, muR = muR,
-                                   SigmaT = as.matrix(SigmaT),
-                                   SigmaR = as.matrix(SigmaR),
-                                   lequi_tol = lequi.tol, uequi_tol = uequi.tol,
-                                   alpha = alpha,
-                                   dropout = as.numeric(c(dropout[treat1], dropout[treat2])),
-                                   typey = typey,
-                                   adseq = param.d$adjust == "seq", k = k,
-                                   arm_seed_T = arm_seed[,treat1],
-                                   arm_seed_R = arm_seed[,treat2],
-                                   ctype = param.d$ctype,
-                                   lognorm = param.d$lognorm,
-                                   TART = param$TAR_list[[treat1]],
-                                   TARR = param$TAR_list[[treat2]],
-                                   vareq = param.d$vareq)
+                                  SigmaT = as.matrix(SigmaT),
+                                  SigmaR = as.matrix(SigmaR),
+                                  lequi_tol = lequi.tol, uequi_tol = uequi.tol,
+                                  alpha = alpha,
+                                  dropout = as.numeric(c(dropout[treat1], dropout[treat2])),
+                                  typey = param$type_y,
+                                  adseq = param.d$adjust == "seq", k = k,
+                                  arm_seed_T = arm_seed[,treat1],
+                                  arm_seed_R = arm_seed[,treat2],
+                                  ctype = param.d$ctype,
+                                  lognorm = param.d$lognorm,
+                                  TART = param$TAR_list[[treat1]],
+                                  TARR = param$TAR_list[[treat2]],
+                                  vareq = param.d$vareq)
+    } else { # 2x2 cross-over design
+      result <- run_simulations_2x2(nsim = nsim, ctype = param.d$ctype,
+                                    lognorm = param.d$lognorm,
+                                    n = n, muT = muT, muR = muR,
+                                    SigmaW = as.matrix(SigmaW),
+                                    lequi_tol = lequi.tol, uequi_tol = uequi.tol,
+                                    alpha = alpha, sigmaB = sigmaB,
+                                    dropout = dropout,
+                                    Eper = param$Eper, Eco = param$Eco,
+                                    typey = param$type_y,
+                                    adseq = param.d$adjust == "seq", k = k,
+                                    arm_seed = arm_seed[,comp])
+    }
     rownames(result) <- paste0(c("totaly", endp,
-                               paste0("mu_",endp,"_",treat1),
-                               paste0("mu_",endp,"_",treat2),
-                               paste0("sd_",endp,"_",treat1),
-                               paste0("sd_",endp,"_",treat1)),"Comp:",treat1," vs ",treat2)
-    return(result)
-  }
-
-  result <- mcsapply(1:nsim, function(i){
-    arm_seedx <- arm_seed[i,]
-    if(param.d$dtype == "parallel" ) {
-      if(param.d$ctype == "DOM"|(param.d$ctype=="ROM"&param.d$lognorm == TRUE) ) {
-        outtest <- as.vector(test_par_dom(n = n, muT=muT, muR = muR,
-                                          SigmaT = as.matrix(SigmaT),
-                                          SigmaR = as.matrix(SigmaR),
-                                          lequi_tol = lequi.tol ,uequi_tol = uequi.tol,
-                                          alpha = alpha, k = k,
-                                          dropout = as.numeric(c(dropout[treat1], dropout[treat2])),
-                                          typey = typey,
-                                          adseq = param.d$adjust == "seq",
-                                          arm_seedT = arm_seedx[treat1],
-                                          arm_seedR = arm_seedx[treat2],
-                                          TART = param$TAR_list[[treat1]],
-                                          TARR = param$TAR_list[[treat2]],
-                                          vareq =param.d$vareq))
-
-
-      }else{ #ROM & normal distribution
-        outtest <- as.vector(test_par_rom(n=n, muT=muT, muR =muR,
-                                          SigmaT = as.matrix(SigmaT),
-                                          SigmaR = as.matrix(SigmaR),
-                                          lequi_tol = lequi.tol,
-                                          uequi_tol = uequi.tol,
-                                          alpha = alpha, k = k,
-                                          dropout = as.numeric(c(dropout[treat1],dropout[treat2])),
-                                          typey = typey,
-                                          adseq = param.d$adjust=="seq",
-                                          arm_seedT = arm_seedx[treat1],
-                                          arm_seedR = arm_seedx[treat2],
-                                          TART = param$TAR_list[[treat1]],
-                                          TARR = param$TAR_list[[treat2]],
-                                          vareq =param.d$vareq))
-      }
-
-      names(outtest) <- paste0(c("totaly", endp,
                                  paste0("mu_",endp,"_",treat1),
                                  paste0("mu_",endp,"_",treat2),
                                  paste0("sd_",endp,"_",treat1),
                                  paste0("sd_",endp,"_",treat1)),"Comp:",treat1," vs ",treat2)
-
-    }else{ # 2X2
-      if(param.d$ctype == "DOM"|(param.d$ctype=="ROM"&param.d$lognorm == TRUE)){
-        outtest <- as.vector(test_2x2_dom(n=n, muT=muT, muR=muR,
-                                          SigmaW = as.matrix(SigmaW),
-                                          lequi_tol = lequi.tol,
-                                          uequi_tol = uequi.tol,
-                                          sigmaB= sigmaB,
-                                          dropout=dropout,
-                                          typey = typey,
-                                          adseq=param.d$adjust=="seq",
-                                          Eper = param$Eper, Eco=param$Eco,
-                                          arm_seed = arm_seedx[comp],
-                                          alpha = alpha,
-                                          k=k))
-        names(outtest) <- paste0(c("totaly", endp,
-                                   paste0("mu_",endp,"_",treat1),
-                                   paste0("mu_",endp,"_",treat2),
-                                   paste0("sdw_",endp,"_",treat1),
-                                   paste0("sdb_",endp,"_",treat1)),"Comp:",treat1," vs ",treat2)
-
-      }else{ #ROM & normal distribution
-        outtest <- as.vector(test_2x2_rom(n=n, muT=muT, muR=muR,
-                                          SigmaW=as.matrix(SigmaW),
-                                          lequi_tol = lequi.tol,
-                                          uequi_tol = uequi.tol,
-                                          sigmaB= sigmaB,
-                                          dropout=dropout,
-                                          typey = typey,
-                                          adseq=param.d$adjust=="seq",
-                                          Eper=param$Eper, Eco=param$Eco, arm_seed=arm_seedx[comp],
-                                          alpha=alpha,
-                                          k=k))
-
-      }
-      names(outtest) <- paste0(c("totaly", endp,
-                                 paste0("mu_",endp,"_",treat1),
-                                 paste0("mu_",endp,"_",treat2),
-                                 paste0("sdw_",endp,"_",treat1),
-                                 paste0("sdb_",endp,"_",treat1)),"Comp:",treat1," vs ",treat2)
-
-    }
-
-    outtest
-  }, mc.cores = ncores)
-  return(result)
+    return(result)
 }
 
 
@@ -493,6 +411,7 @@ mcsapply <- function (X, FUN, ..., simplify = TRUE, USE.NAMES = TRUE) {
 #' @param verbose Logical, if `TRUE`, the message is displayed; if `FALSE`, the message is suppressed.
 #'
 #' @return NULL (invisible). This function is used for side effects (displaying messages).
+#' @keywords internal
 info_msg <- function(message, verbose) {
   if (verbose) message(message)
 }

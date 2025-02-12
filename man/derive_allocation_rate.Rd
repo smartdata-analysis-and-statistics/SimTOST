@@ -36,3 +36,4 @@ This function ensures \code{TAR} meets the following conditions:
 \author{
 Thomas Debray \email{tdebray@fromdatatowisdom.com}
 }
+\keyword{internal}

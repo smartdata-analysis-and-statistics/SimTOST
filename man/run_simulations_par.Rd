@@ -48,7 +48,7 @@ run_simulations_par(
 
 \item{dropout}{arma::vec. Dropout rates for each arm (T, R).}
 
-\item{typey}{arma::uvec. Endpoint classification: \code{1} = primary, \code{2} = secondary.}
+\item{typey}{Integer vector indicating the classification of each endpoint, where \code{1} corresponds to a primary endpoint and \code{2} corresponds to a secondary endpoint.}
 
 \item{adseq}{Boolean. If \code{TRUE}, applies sequential (hierarchical) testing.}
 
@@ -58,7 +58,7 @@ run_simulations_par(
 
 \item{arm_seed_R}{arma::ivec. Random seed vector for the reference group (one per simulation).}
 
-\item{ctype}{String. Testing method (\code{"DOM"} for Difference of Means, \code{"ROM"} for Ratio of Means).}
+\item{ctype}{Character string. Testing method (\code{"DOM"} for Difference of Means, \code{"ROM"} for Ratio of Means).}
 
 \item{lognorm}{Boolean. If \code{TRUE}, assumes log-normal distribution for endpoints.}
 
@@ -69,21 +69,21 @@ run_simulations_par(
 \item{vareq}{Boolean. If \code{TRUE}, assumes equal variances across treatment and reference groups.}
 }
 \value{
-An \code{arma::mat} of dimensions \verb{(num_cols x nsim)}, where:
+An \code{arma::mat} where simulation results are stored \strong{row-wise}, ensuring consistency with R's output format.
 \itemize{
 \item \strong{First row} (\code{totaly}): Overall equivalence decision (1 = success, 0 = failure).
-\item \strong{Subsequent rows}:
+\item \strong{Subsequent rows} containing results for each endpoint:
 \itemize{
-\item \verb{E1, E2, ...} (p-values for equivalence testing per endpoint).
-\item \code{mu_E1_T}, \code{mu_E2_T}, ... (mean estimates for the treatment group).
-\item \code{mu_E1_R}, \code{mu_E2_R}, ... (mean estimates for the reference group).
-\item \code{sd_E1_T}, \code{sd_E2_T}, ... (standard deviations for treatment).
-\item \code{sd_E1_R}, \code{sd_E2_R}, ... (standard deviations for reference).
+\item \verb{E1, E2, ...} : P-values from equivalence testing per endpoint.
+\item \code{mu_E1_T}, \code{mu_E2_T}, ... : Mean estimates for the treatment group.
+\item \code{mu_E1_R}, \code{mu_E2_R}, ... : Mean estimates for the reference group.
+\item \code{sd_E1_T}, \code{sd_E2_T}, ... : Standard deviations for the treatment group.
+\item \code{sd_E1_R}, \code{sd_E2_R}, ... : Standard deviations for the reference group.
 }
 }
 }
 \description{
-This function simulates a parallel-group trial across multiple iterations (nsim).
+This function simulates a parallel-group trial across multiple iterations.
 It evaluates equivalence testing for multiple endpoints using either the
 Difference of Means (DOM) or Ratio of Means (ROM) approach.
 }
@@ -107,4 +107,7 @@ Difference of Means (DOM) or Ratio of Means (ROM) approach.
 \item Uses separate random seeds (\code{arm_seed_T}, \code{arm_seed_R}) for treatment and reference arms to ensure reproducibility.
 }
 }
+}
+\author{
+Thomas Debray \email{tdebray@fromdatatowisdom.com}
 }

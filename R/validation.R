@@ -9,6 +9,7 @@
 #' @param upper Numeric. The initial upper limit for the search range.
 #'
 #' @return NULL. If the checks pass, the function returns nothing. If the checks fail, it stops execution with an error message.
+#' @keywords internal
 validate_sample_size_limits <- function(lower, upper) {
 
   # Check if both lower and upper are numeric
@@ -43,6 +44,7 @@ validate_sample_size_limits <- function(lower, upper) {
 #' @param varcov_list List of matrices. Each matrix is checked to ensure it is symmetric and positive semi-definite.
 #'
 #' @return NULL. If all matrices pass, the function returns nothing. If any matrix fails, it stops with an error message.
+#' @keywords internal
 validate_positive_definite <- function(varcov_list) {
   # Function to check if a matrix is positive semi-definite
   is_positive <- function(x) {

@@ -24,3 +24,4 @@ Informational messages are displayed if \code{verbose} is set to \code{TRUE}.
 \author{
 Thomas Debray \email{tdebray@fromdatatowisdom.com}
 }
+\keyword{internal}

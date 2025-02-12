@@ -21,3 +21,4 @@ It is useful for providing optional feedback to users during function execution.
 \author{
 Thomas Debray \email{tdebray@fromdatatowisdom.com}
 }
+\keyword{internal}

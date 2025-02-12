@@ -7,9 +7,7 @@
 check_equivalence(typey, adseq, tbioq, k)
 }
 \arguments{
-\item{typey}{An unsigned integer vector (\code{arma::uvec}) indicating the type of each endpoint:
-- \code{1} = Primary endpoint
-- \code{2} = Secondary endpoint}
+\item{typey}{An integer vector specifying the hierarchy of each endpoint, where \code{1} denotes a primary endpoint and \code{2} denotes a secondary endpoint.}
 
 \item{adseq}{A boolean flag (\code{TRUE} if sequential testing is enabled).
 - If \code{TRUE}, all primary endpoints must pass equivalence for secondary endpoints to be evaluated.
@@ -19,7 +17,9 @@ check_equivalence(typey, adseq, tbioq, k)
 - \code{1} = Equivalence met
 - \code{0} = Equivalence not met}
 
-\item{k}{An integer specifying the minimum number of endpoints required to establish equivalence.}
+\item{k}{An integer specifying the minimum number of endpoints required for overall equivalence.
+If \code{k > 0}, at least \code{k} endpoints must meet the equivalence criteria.
+If \code{k < 0}, all endpoints must meet the equivalence criteria.}
 }
 \value{
 An \code{arma::mat} (1 × 1 matrix) containing a binary equivalence decision:
@@ -32,7 +32,7 @@ An \code{arma::mat} (1 × 1 matrix) containing a binary equivalence decision:
 This function evaluates whether equivalence criteria are met based on a predefined set of endpoints.
 It first checks whether all primary endpoints satisfy equivalence (if sequential testing is enabled).
 Then, it determines whether the required number of endpoints (\code{k}) meet the equivalence threshold.
-The function returns a binary matrix indicating whether equivalence is established.
+The function returns a binary decision indicating whether overall equivalence is established.
 }
 \details{
 \itemize{
@@ -54,3 +54,4 @@ The function returns a binary matrix indicating whether equivalence is establish
 \author{
 Thomas Debray \email{tdebray@fromdatatowisdom.com}
 }
+\keyword{internal}

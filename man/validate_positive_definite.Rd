@@ -18,3 +18,4 @@ Validates that all matrices in a list are symmetric and positive semi-definite.
 \author{
 Thomas Debray \email{tdebray@fromdatatowisdom.com}
 }
+\keyword{internal}

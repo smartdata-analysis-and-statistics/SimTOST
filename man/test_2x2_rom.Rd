@@ -54,7 +54,11 @@ test_2x2_rom(
 \item{arm_seed}{seed for the simulation}
 }
 \value{
-mat(vector) with ptost and other simulated statistics such as mean (mu) and standard deviation(std) per sequence (0,1)-endpoint
+A numeric matrix containing the simulated hypothesis test results.
+The first column represents the overall equivalence decision, where 1 indicates
+success and 0 indicates failure. The subsequent columns contain the hypothesis
+test results for each endpoint, followed by mean estimates for the reference and
+treatment groups, and standard deviations for the reference and treatment groups.
 }
 \description{
 Simulates a 2x2 crossover design and calculates the p-value for the

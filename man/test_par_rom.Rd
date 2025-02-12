@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{test_par_rom}
 \alias{test_par_rom}
-\title{Simulate a Parallel Design and Compute Ratio of Means (ROM)}
+\title{Simulate a Parallel Design and Test Ratio of Means (ROM)}
 \usage{
 test_par_rom(
   n,
@@ -61,26 +61,25 @@ test_par_rom(
 Schuirmann’s two one-sided tests (TOST) for equivalence using a pooled variance.}
 }
 \value{
-A numeric matrix containing the following simulated statistics:
-\itemize{
-\item \code{ptost}: p-values for equivalence testing.
-\item \code{mu0}, \code{mu1}: Mean values for the reference and treatment groups.
-\item \code{sd0}, \code{sd1}: Standard deviations for the reference and treatment groups.
-\item \code{totaly}: Indicator (1/0) for equivalence success.
-}
+A numeric matrix containing the simulated hypothesis test results.
+The first column represents the overall equivalence decision, where 1 indicates
+success and 0 indicates failure. The subsequent columns contain the hypothesis
+test results for each endpoint, followed by mean estimates for the reference and
+treatment groups, and standard deviations for the reference and treatment groups.
 }
 \description{
-Simulates a parallel-group design and calculates the p-value for the
-ratio of means (ROM) using an equivalence test.
+Simulates a parallel-group design and performs equivalence testing using the ratio of means (ROM) approach.
+This function evaluates whether the treatment and reference groups are equivalent based on predefined
+equivalence margins and hypothesis testing criteria.
 }
 \details{
-\itemize{
-\item The function simulates a parallel-group study design and applies an equivalence test
-using the ratio of means (ROM) approach.
-\item Adjusts for dropout rates (\code{dropout}) and treatment allocation rates (\code{TART}, \code{TARR}).
-\item Computes test statistics and determines whether the number of significant endpoints meets \code{k}.
-\item Uses sequential testing if \code{adseq = TRUE}.
-\item If \code{vareq = TRUE}, assumes equal variance between treatment and reference groups,
-applying Schuirmann’s two one-sided tests (TOST) for equivalence.
-}
+The function simulates a parallel-group study design and evaluates equivalence
+using the ratio of means (ROM) approach. It accounts for dropout rates and
+treatment allocation proportions while generating simulated data based on the
+specified covariance structure. The test statistics are computed, and a final
+equivalence decision is made based on the predefined number of required significant
+endpoints (\code{k}). If sequential testing (\code{adseq}) is enabled, primary endpoints
+must establish equivalence before secondary endpoints are evaluated.
+When \code{vareq = TRUE}, the test assumes equal variances between groups and
+applies Schuirmann’s two one-sided tests (TOST).
 }

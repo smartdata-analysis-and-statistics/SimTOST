@@ -447,7 +447,6 @@ sampleSize <- function(mu_list, varcov_list = NA, sigma_list = NA, cor_mat = NA,
                 list_y_comparator = list_y_comparator,
                 list_lequi.tol = list_lequi.tol,
                 list_uequi.tol = list_uequi.tol,
-                sigmaB = sigmaB,
                 Eper = Eper, Eco = Eco)
 
   if (lognorm == TRUE & ctype == "DOM"){
@@ -570,6 +569,7 @@ sampleSize <- function(mu_list, varcov_list = NA, sigma_list = NA, cor_mat = NA,
 #' @param verbose Logical, if `TRUE`, displays messages about the derivation process.
 #'
 #' @return A vector of arm names.
+#' @keywords internal
 derive_arm_names <- function(arm_names, mu_list, verbose = FALSE) {
 
   # Check if arm_names is missing and attempt to derive from mu_list
@@ -601,6 +601,7 @@ derive_arm_names <- function(arm_names, mu_list, verbose = FALSE) {
 #' @param verbose Logical, if `TRUE`, displays messages about the derivation process.
 #'
 #' @return A list of endpoint names for each arm.
+#' @keywords internal
 derive_endpoint_names <- function(ynames_list, mu_list, verbose = FALSE) {
 
   # Check if ynames_list is missing and attempt to derive from mu_list
@@ -647,6 +648,7 @@ derive_endpoint_names <- function(ynames_list, mu_list, verbose = FALSE) {
 #' @return A named list representing the treatment allocation rate for each arm.
 #'
 #' @author Thomas Debray \email{tdebray@fromdatatowisdom.com}
+#' @keywords internal
 derive_allocation_rate <- function(TAR = NULL, arm_names, verbose = FALSE) {
 
   n_arms <- length(arm_names)
@@ -703,6 +705,7 @@ derive_allocation_rate <- function(TAR = NULL, arm_names, verbose = FALSE) {
 #' @return A list of variance-covariance matrices, one for each treatment arm.
 #'
 #' @author Thomas Debray \email{tdebray@fromdatatowisdom.com}
+#' @keywords internal
 derive_varcov_list <- function(mu_list, sigma_list, ynames_list, varcov_list = NULL, cor_mat = NULL, rho = 0) {
   # Check if variance-covariance matrix is missing
   if (any(is.na(varcov_list))) {

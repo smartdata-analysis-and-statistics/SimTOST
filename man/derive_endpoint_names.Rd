@@ -26,3 +26,4 @@ This function derives endpoint names (\code{ynames_list}) from \code{mu_list} if
 is missing. If \code{ynames_list} is already provided, it confirms the names to the user when
 \code{verbose} is set to \code{TRUE}.
 }
+\keyword{internal}

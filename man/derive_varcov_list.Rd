@@ -44,3 +44,4 @@ or if neither a variance-covariance matrix (\code{varcov_list}) nor a standard d
 \author{
 Thomas Debray \email{tdebray@fromdatatowisdom.com}
 }
+\keyword{internal}

@@ -20,3 +20,4 @@ Validates that the upper and lower limits are numeric and that the upper limit i
 \author{
 Thomas Debray \email{tdebray@fromdatatowisdom.com}
 }
+\keyword{internal}

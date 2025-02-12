@@ -22,3 +22,4 @@ Computes the cumulative distribution function (CDF) values (p-values)
 for a given set of random variables, assuming a t-distribution with fixed
 degrees of freedom.
 }
+\keyword{internal}

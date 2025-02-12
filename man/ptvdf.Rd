@@ -22,3 +22,4 @@ This function computes the cumulative distribution function (p-values) for a giv
 and corresponding degrees of freedom \code{df} using the t-distribution. The function can compute the lower or upper
 tail probabilities depending on the value of the \code{lower} parameter.
 }
+\keyword{internal}
