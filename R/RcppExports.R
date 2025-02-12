@@ -317,7 +317,7 @@ run_simulations_par <- function(nsim, n, muT, muR, SigmaT, SigmaR, lequi_tol, ue
 #' @param typey Integer vector indicating the classification of each endpoint, where `1` corresponds to a primary endpoint and `2` corresponds to a secondary endpoint.
 #' @param adseq Logical. If `TRUE`, applies sequential (hierarchical) testing.
 #' @param k Integer. Minimum number of endpoints required for equivalence.
-#' @param arm_seed arma::ivec. Random seed vector (one per simulation).
+#' @param arm_seed Integer vector. Random seed for each simulation.
 #'
 #' @details
 #' This function performs equivalence testing using either the Difference of Means (DOM) or Ratio of Means (ROM) approach.

@@ -123,14 +123,15 @@ arma::mat check_equivalence(const arma::uvec& typey,
 
   // If no primary endpoints exist, assume sequential test passes automatically
   bool sumpe = (num_primary == 0);
-  int sumtypey = 0;
+  int sumtypey = arma::accu(tbioq.cols(arma::find(typey == 1)));
 
+  //int sumtypey = 0;
   // Count number of primary endpoints that meet equivalence
-  for (size_t i = 0; i < typey.n_elem; i++) {
-    if (typey(i) == 1) {
-      sumtypey += tbioq(0, i);
-    }
-  }
+  //for (size_t i = 0; i < typey.n_elem; i++) {
+  //  if (typey(i) == 1) {
+  //    sumtypey += tbioq(0, i);
+  //  }
+  //}
 
   // Ensure all primary endpoints pass if sequential testing is enabled
   if (num_primary > 0) {
@@ -832,7 +833,7 @@ arma::mat run_simulations_par(const int nsim,
 //' @param typey Integer vector indicating the classification of each endpoint, where `1` corresponds to a primary endpoint and `2` corresponds to a secondary endpoint.
 //' @param adseq Logical. If `TRUE`, applies sequential (hierarchical) testing.
 //' @param k Integer. Minimum number of endpoints required for equivalence.
-//' @param arm_seed arma::ivec. Random seed vector (one per simulation).
+//' @param arm_seed Integer vector. Random seed for each simulation.
 //'
 //' @details
 //' This function performs equivalence testing using either the Difference of Means (DOM) or Ratio of Means (ROM) approach.
@@ -902,6 +903,7 @@ arma::mat run_simulations_2x2(const int nsim,
   // Transpose results to match R's output format
   return results.t(); // Transpose before returning
 }
+
 
 RCPP_MODULE(test)
 {

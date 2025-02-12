@@ -60,7 +60,7 @@ run_simulations_2x2(
 
 \item{k}{Integer. Minimum number of endpoints required for equivalence.}
 
-\item{arm_seed}{arma::ivec. Random seed vector (one per simulation).}
+\item{arm_seed}{Integer vector. Random seed for each simulation.}
 }
 \value{
 A numeric matrix where each column stores simulation results:
