@@ -18,7 +18,7 @@ difference of means (DOM) using a two-sequence, two-period (2x2) study design.">
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SimTOST</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.6.0</span>
       </span>
     </div>
 
@@ -168,7 +168,11 @@ difference of means (DOM) using a two-sequence, two-period (2x2) study design.</
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>mat(vector) with ptost and other simulated statistics such as mean (mu) and standard deviation(std) per sequence (0,1)-endpoint</p>
+    <p>A numeric matrix containing the simulated hypothesis test results.
+The first column represents the overall equivalence decision, where 1 indicates
+success and 0 indicates failure. The subsequent columns contain the hypothesis
+test results for each endpoint, followed by mean estimates for the reference and
+treatment groups, and standard deviations for the reference and treatment groups.</p>
     </div>
 
   </div>
