@@ -229,20 +229,24 @@ sampleSize <- function(mu_list, varcov_list = NA, sigma_list = NA, cor_mat = NA,
 
   # Define weights according to type of endpoint,i.e. primary, secondary
 
-  if (any(is.na(type_y)) | length(type_y) != length(uynames)) {
-    type_y <- rep(1,length(uynames))
+  if (adjust != "seq" | any(is.na(type_y)) | length(type_y) != length(uynames)) {
+    type_y <- -1
+    weight_seq <- rep(1, length(uynames))
+  } else {
+    names(type_y) <- uynames
+
+    # Count number of secondary endpoints (elements equal to 2 in type_y)
+    num_secondary_endpoints <- sum(type_y == 2)
+
+    # Initialize weight vector with 1s
+    weight_seq <- rep(1, length(type_y))
+
+    # Assign 1 / num_secondary_endpoints to secondary endpoints
+    if (num_secondary_endpoints > 0) {
+      weight_seq[type_y == 2] <- 1 / num_secondary_endpoints
+    }
+    names(weight_seq) <- uynames
   }
-
-  names(type_y) <- uynames
-
-
-  weight <- 1/table(type_y)
-  weight_seq <- type_y
-
-  for (x in unique(type_y)) {
-    weight_seq[weight_seq == x] <- weight[x]
-  }
-  names(weight_seq) <- uynames
 
   #if (len_mu[[1]] == 1){
   #  mu_list <- lapply(mu_list,FUN = function(x){array(unlist(x))})

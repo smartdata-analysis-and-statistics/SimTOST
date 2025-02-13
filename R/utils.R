@@ -160,8 +160,8 @@ power_cal <- function(n,nsim,param,param.d,seed,ncores){
 #' @keywords internal
 
 test_studies <- function(nsim, n, comp, param, param.d, arm_seed, ncores){
-  if(is.na(ncores)){
-    ncores <- parallel::detectCores() -1
+  if (is.na(ncores)) {
+    ncores <- parallel::detectCores() - 1
   }
   treat1 <- param$list_comparator[[comp]][[1]]
   treat2 <- param$list_comparator[[comp]][[2]]
@@ -169,88 +169,151 @@ test_studies <- function(nsim, n, comp, param, param.d, arm_seed, ncores){
 
   m <- length(endp) # number of endpoints
 
-  muT <- param$mu[[treat1]][,endp] # treatment given by user
-  muR <- param$mu[[treat2]][,endp] # reference given by user
-
-  if (param.d$dtype == "parallel"){
-    SigmaT<- param$varcov[[treat1]][endp,endp]
-    SigmaR<- param$varcov[[treat2]][endp,endp]
-  }else{
-    SigmaW <- param$varcov[[treat2]][endp,endp] # Within subjects variance in previous experiment
-    #To be added on main list of parameters
-    sigmaB <- param$sigmaB # Between subjects variance
-    sigmaB <- ifelse(is.na(sigmaB), if (length(SigmaW)==1) 2* sqrt(SigmaW) else 2 * sqrt(max(diag(SigmaW))), sigmaB) # Assumes to be at least the double of the max within variance
-  }
-
   # Set equivalence tolerance
   lequi.tol <- param.d$list_lequi.tol[[comp]][endp]
   uequi.tol <- param.d$list_uequi.tol[[comp]][endp]
+
   dropout <- param.d$dropout
   alphau <- param.d$alpha # alpha unique @Thomas, here we can divide by the number of comparators in case you want a bonberroni across comparators.Think about this!!
   adjust <- param.d$adjust
   k <- param.d$k[[comp]]
-  # alpha vector
-  if (adjust=="no") {alpha <- rep(alphau,m)}
-  if (adjust=="bon") {alpha <- rep(alphau/(m),m)}
-  if (adjust=="sid") {alpha <- rep(1-(1-alphau)^{1/m},m)}
-  if (adjust=="k") { alpha <- rep(k*alphau/(m),m)}
-  if (adjust == "seq"){
-    alpha <- alphau*param$weight_seq[endp]
-    }
 
-  if(param.d$ctype=="ROM"&param.d$lognorm == TRUE){
-    # Convert data to lognorm scale
-    if (param.d$dtype == "parallel"){
-      SigmaT <-  as.matrix(log(SigmaT/(muT%*%t(muT))+1))
-      SigmaR <-  as.matrix(log(SigmaR/(muR%*%t(muR))+1))
-      muT <- log(muT)-1/2*diag(SigmaT)
-      muR <- log(muR)-1/2*diag(SigmaR)
-    }else{
+  # alpha vector
+  if (adjust == "no") {alpha <- rep(alphau,m)}
+  if (adjust == "bon") {alpha <- rep(alphau/(m),m)}
+  if (adjust == "sid") {alpha <- rep(1-(1-alphau)^{1/m},m)}
+  if (adjust == "k") { alpha <- rep(k*alphau/(m),m)}
+  if (adjust == "seq"){ alpha <- alphau*param$weight_seq[endp]}
+
+
+  if (param.d$dtype == "parallel") {
+    # Derive mu
+    muT <- param$mu[[treat1]][,endp] # treatment given by user
+    muR <- param$mu[[treat2]][,endp] # reference given by user
+
+    # Derive Sigma
+    SigmaT <- param$varcov[[treat1]][endp,endp]
+    SigmaR <- param$varcov[[treat2]][endp,endp]
+
+    if (param.d$ctype == "DOM" & param.d$lognorm == FALSE) {
+      result <- run_simulations_par_dom(nsim = nsim, n = n, muT = muT, muR = muR,
+                                        SigmaT = as.matrix(SigmaT),
+                                        SigmaR = as.matrix(SigmaR),
+                                        lequi_tol = lequi.tol, uequi_tol = uequi.tol,
+                                        alpha = alpha,
+                                        dropout = as.numeric(c(dropout[treat1], dropout[treat2])),
+                                        typey = param$type_y,
+                                        adseq = param.d$adjust == "seq", k = k,
+                                        arm_seed_T = arm_seed[,treat1],
+                                        arm_seed_R = arm_seed[,treat2],
+                                        TART = param$TAR_list[[treat1]],
+                                        TARR = param$TAR_list[[treat2]],
+                                        vareq = param.d$vareq)
+    } else if (param.d$ctype == "ROM" & param.d$lognorm == TRUE) {
+      # Convert data to lognorm scale so we can perform a DOM test instead
+      SigmaT <-  as.matrix(log(SigmaT/(muT %*% t(muT)) + 1))
+      SigmaR <-  as.matrix(log(SigmaR/(muR %*% t(muR)) + 1))
+      muT <- log(muT) - 1/2*diag(SigmaT)
+      muR <- log(muR) - 1/2*diag(SigmaR)
+
+      result <- run_simulations_par_dom(nsim = nsim, n = n, muT = muT, muR = muR,
+                                        SigmaT = as.matrix(SigmaT),
+                                        SigmaR = as.matrix(SigmaR),
+                                        lequi_tol = log(lequi.tol),
+                                        uequi_tol = log(uequi.tol),
+                                         alpha = alpha,
+                                         dropout = as.numeric(c(dropout[treat1], dropout[treat2])),
+                                         typey = param$type_y,
+                                         adseq = param.d$adjust == "seq", k = k,
+                                         arm_seed_T = arm_seed[,treat1],
+                                         arm_seed_R = arm_seed[,treat2],
+                                         TART = param$TAR_list[[treat1]],
+                                         TARR = param$TAR_list[[treat2]],
+                                         vareq = param.d$vareq)
+    } else if (param.d$ctype == "ROM" & param.d$lognorm == FALSE) {
+      result <- run_simulations_par_rom(nsim = nsim, n = n, muT = muT, muR = muR,
+                                        SigmaT = as.matrix(SigmaT),
+                                        SigmaR = as.matrix(SigmaR),
+                                        lequi_tol = lequi.tol, uequi_tol = uequi.tol,
+                                        alpha = alpha,
+                                        dropout = as.numeric(c(dropout[treat1], dropout[treat2])),
+                                        typey = param$type_y,
+                                        adseq = param.d$adjust == "seq", k = k,
+                                        arm_seed_T = arm_seed[,treat1],
+                                        arm_seed_R = arm_seed[,treat2],
+                                        TART = param$TAR_list[[treat1]],
+                                        TARR = param$TAR_list[[treat2]],
+                                        vareq = param.d$vareq)
+    } else {
+      stop(paste("Error: Unsupported test type:", param.d$ctype,
+                 "with lognorm =", param.d$lognorm))
+    }
+  } else if (param.d$dtype == "2x2") {
+    # Derive mu
+    muT <- param$mu[[treat1]][,endp] # treatment given by user
+    muR <- param$mu[[treat2]][,endp] # reference given by user
+
+
+    SigmaW <- param$varcov[[treat2]][endp,endp] # Within subjects variance in previous experiment
+    #To be added on main list of parameters
+    sigmaB <- param$sigmaB # Between subjects variance
+    sigmaB <- ifelse(is.na(sigmaB), if (length(SigmaW)==1) 2* sqrt(SigmaW) else 2 * sqrt(max(diag(SigmaW))), sigmaB) # Assumes to be at least the double of the max within variance
+
+    if (param.d$ctype == "DOM" & param.d$lognorm == FALSE) {
+      result <- run_simulations_2x2_dom(nsim = nsim,
+                                        n = n, muT = muT, muR = muR,
+                                        SigmaW = as.matrix(SigmaW),
+                                        lequi_tol = lequi.tol, uequi_tol = uequi.tol,
+                                        alpha = alpha, sigmaB = sigmaB,
+                                        dropout = dropout,
+                                        Eper = param$Eper, Eco = param$Eco,
+                                        typey = param$type_y,
+                                        adseq = param.d$adjust == "seq", k = k,
+                                        arm_seed = arm_seed[,comp])
+    } else if (param.d$ctype == "ROM" & param.d$lognorm == TRUE){
+      # Convert data to lognorm scale
       SigmaW <-  as.matrix(log(SigmaW/(muR%*%t(muR))+1))
       sigmaB <-  sigmaB #log(sigmaB/(muR%*%t(muR))+1)
       muR <- log(muR)-1/2*diag(SigmaW)
       muT <- log(muT)-1/2*diag(SigmaW)
+
+      result <- run_simulations_2x2_dom(nsim = nsim,
+                                        n = n, muT = muT, muR = muR,
+                                        SigmaW = as.matrix(SigmaW),
+                                        lequi_tol = log(lequi.tol),
+                                        uequi_tol = log(uequi.tol),
+                                        alpha = alpha, sigmaB = sigmaB,
+                                        dropout = dropout,
+                                        Eper = param$Eper, Eco = param$Eco,
+                                        typey = param$type_y,
+                                        adseq = param.d$adjust == "seq", k = k,
+                                        arm_seed = arm_seed[,comp])
+    } else if (param.d$ctype == "ROM" & param.d$lognorm == FALSE) {
+      result <- run_simulations_2x2_rom(nsim = nsim,
+                                        n = n, muT = muT, muR = muR,
+                                        SigmaW = as.matrix(SigmaW),
+                                        lequi_tol = lequi.tol,
+                                        uequi_tol = uequi.tol,
+                                        alpha = alpha, sigmaB = sigmaB,
+                                        dropout = dropout,
+                                        Eper = param$Eper, Eco = param$Eco,
+                                        typey = param$type_y,
+                                        adseq = param.d$adjust == "seq", k = k,
+                                        arm_seed = arm_seed[,comp])
+    } else {
+    stop(paste("Error: Unsupported test type:", param.d$ctype,
+               "with lognorm =", param.d$lognorm))
     }
-    lequi.tol <- log(lequi.tol)
-    uequi.tol <- log(uequi.tol)
+  } else {
+    stop(paste("Error: Unsupported design:", param.d$dtype))
   }
 
-  # Use C++ code to run the simulations for parallel design
-  if (param.d$dtype == "parallel") {
-    result <- run_simulations_par(nsim = nsim, n = n, muT = muT, muR = muR,
-                                  SigmaT = as.matrix(SigmaT),
-                                  SigmaR = as.matrix(SigmaR),
-                                  lequi_tol = lequi.tol, uequi_tol = uequi.tol,
-                                  alpha = alpha,
-                                  dropout = as.numeric(c(dropout[treat1], dropout[treat2])),
-                                  typey = param$type_y,
-                                  adseq = param.d$adjust == "seq", k = k,
-                                  arm_seed_T = arm_seed[,treat1],
-                                  arm_seed_R = arm_seed[,treat2],
-                                  ctype = param.d$ctype,
-                                  lognorm = param.d$lognorm,
-                                  TART = param$TAR_list[[treat1]],
-                                  TARR = param$TAR_list[[treat2]],
-                                  vareq = param.d$vareq)
-    } else { # 2x2 cross-over design
-      result <- run_simulations_2x2(nsim = nsim, ctype = param.d$ctype,
-                                    lognorm = param.d$lognorm,
-                                    n = n, muT = muT, muR = muR,
-                                    SigmaW = as.matrix(SigmaW),
-                                    lequi_tol = lequi.tol, uequi_tol = uequi.tol,
-                                    alpha = alpha, sigmaB = sigmaB,
-                                    dropout = dropout,
-                                    Eper = param$Eper, Eco = param$Eco,
-                                    typey = param$type_y,
-                                    adseq = param.d$adjust == "seq", k = k,
-                                    arm_seed = arm_seed[,comp])
-    }
-    rownames(result) <- paste0(c("totaly", endp,
+  rownames(result) <- paste0(c("totaly", endp,
                                  paste0("mu_",endp,"_",treat1),
                                  paste0("mu_",endp,"_",treat2),
                                  paste0("sd_",endp,"_",treat1),
                                  paste0("sd_",endp,"_",treat1)),"Comp:",treat1," vs ",treat2)
-    return(result)
+  return(result)
 }
 
 

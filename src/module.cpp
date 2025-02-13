@@ -118,31 +118,32 @@ arma::mat check_equivalence(const arma::uvec& typey,
     return totaly;
   }
 
-  // Count number of primary endpoints
-  int num_primary = accu(typey == 1);
+  // Count the number of primary endpoints
+  int num_primary_endpoints = accu(typey == 1);
 
-  // If no primary endpoints exist, assume sequential test passes automatically
-  bool sumpe = (num_primary == 0);
-  int sumtypey = arma::accu(tbioq.cols(arma::find(typey == 1)));
+  // Count the number of secondary endpoints
+  int num_secondary_endpoints = accu(typey == 2);
 
-  //int sumtypey = 0;
-  // Count number of primary endpoints that meet equivalence
-  //for (size_t i = 0; i < typey.n_elem; i++) {
-  //  if (typey(i) == 1) {
-  //    sumtypey += tbioq(0, i);
-  //  }
-  //}
+  // If no primary endpoints exist, assume primary endpoint test is automatically passed
+  bool primary_test_passed = (num_primary_endpoints == 0);
+  int num_primary_successes = arma::accu(tbioq.cols(arma::find(typey == 1)));
+
+  // If no secondary endpoints exist, assume secondary endpoint test is automatically passed
+  bool secondary_test_passed = (num_secondary_endpoints == 0);
+  int num_secondary_successes = arma::accu(tbioq.cols(arma::find(typey == 2)));
 
   // Ensure all primary endpoints pass if sequential testing is enabled
-  if (num_primary > 0) {
-    sumpe = (sumtypey == num_primary);
+  if (num_primary_endpoints > 0) {
+    primary_test_passed = (num_primary_successes == num_primary_endpoints);
   }
 
-  // Check if at least `k` endpoints meet equivalence
-  bool sumt = accu(tbioq) >= k;
+  // Ensure at least k secondary endpoints pass
+  if (num_secondary_endpoints > 0) {
+    secondary_test_passed = (num_secondary_successes >= k);
+  }
 
-  // Final decision: must meet `k` and (if adseq enabled) all primary must pass
-  totaly(0, 0) = (sumt && sumpe) ? 1 : 0;
+  // Final decision: must meet `k` and all primary must pass
+  totaly(0, 0) = (secondary_test_passed && primary_test_passed) ? 1 : 0;
 
   return totaly;
 }
@@ -808,17 +809,194 @@ arma::mat run_simulations_par(const int nsim,
   return results.t(); // Transpose before returning
 }
 
-
-//' @title Run Simulations for a 2x2 Crossover Design
+//' @title Run Simulations for a Parallel Design with Difference of Means (DOM) test
 //'
 //' @description
-//' This function simulates a 2x2 crossover study design across multiple iterations (`nsim`).
-//' It evaluates equivalence testing for multiple endpoints using either the
-//' Difference of Means (DOM) or Ratio of Means (ROM) approach.
+//' This function simulates a parallel-group trial across multiple iterations.
+//' It evaluates equivalence across multiple endpoints using the
+//' Difference of Means (DOM) test.
 //'
 //' @param nsim Integer. The number of simulations to run.
-//' @param ctype Character string. Testing method (`"DOM"` for Difference of Means, `"ROM"` for Ratio of Means).
-//' @param lognorm Boolean. If `TRUE`, assumes log-normal distribution for endpoints.
+//' @param n Integer. The sample size per arm (before dropout).
+//' @param muT arma::vec. Mean vector for the treatment arm.
+//' @param muR arma::vec. Mean vector for the reference arm.
+//' @param SigmaT arma::mat. Covariance matrix for the treatment arm.
+//' @param SigmaR arma::mat. Covariance matrix for the reference arm.
+//' @param lequi_tol arma::rowvec. Lower equivalence thresholds for each endpoint.
+//' @param uequi_tol arma::rowvec. Upper equivalence thresholds for each endpoint.
+//' @param alpha arma::rowvec. Significance level (α) for each endpoint.
+//' @param dropout arma::vec. Dropout rates for each arm (T, R).
+//' @param typey Integer vector indicating the classification of each endpoint, where `1` corresponds to a primary endpoint and `2` corresponds to a secondary endpoint.
+//' @param adseq Boolean. If `TRUE`, applies sequential (hierarchical) testing.
+//' @param k Integer. Minimum number of endpoints required for equivalence.
+//' @param arm_seed_T arma::ivec. Random seed vector for the treatment group (one per simulation).
+//' @param arm_seed_R arma::ivec. Random seed vector for the reference group (one per simulation).
+//' @param TART Double. Treatment allocation ratio (proportion of subjects in treatment arm).
+//' @param TARR Double. Reference allocation ratio (proportion of subjects in reference arm).
+//' @param vareq Boolean. If `TRUE`, assumes equal variances across treatment and reference groups.
+//'
+//' @details
+//' Equivalence testing uses either the Difference of Means (DOM) test,
+//' applying predefined equivalence thresholds and significance levels. When hierarchical testing (`adseq`)
+//' is enabled, all primary endpoints must demonstrate equivalence before secondary endpoints are evaluated.
+//' Dropout rates are incorporated into the sample size calculation to ensure proper adjustment.
+//' Randomization is controlled through separate random seeds for the treatment and reference groups,
+//' enhancing reproducibility.
+//'
+//' @return
+//' The function returns an arma::mat storing simulation results row-wise for consistency
+//' with R's output format. The first row (`totaly`) contains the overall equivalence decision
+//' (1 for success, 0 for failure). The subsequent rows include equivalence deicisons for each endpoint,
+//' mean estimates for both treatment and reference groups, and corresponding standard deviations.
+//'
+//' @author Thomas Debray \email{tdebray@fromdatatowisdom.com}
+//' @export
+// [[Rcpp::export]]
+arma::mat run_simulations_par_dom(const int nsim,
+                                  const int n,
+                               const arma::vec& muT,
+                               const arma::vec& muR,
+                               const arma::mat& SigmaT,
+                               const arma::mat& SigmaR,
+                               const arma::rowvec& lequi_tol,
+                               const arma::rowvec& uequi_tol,
+                               const arma::rowvec& alpha,
+                               const arma::vec& dropout,
+                               const arma::uvec& typey,
+                               const bool adseq,
+                               const int k,
+                               const arma::ivec& arm_seed_T,
+                               const arma::ivec& arm_seed_R,
+                               const double TART,
+                               const double TARR,
+                               const bool vareq) {
+
+   // **Determine number of endpoints**
+   int num_endpoints = muT.n_elem; // Assuming muT and muR have the same number of elements
+
+   // **Define the number of columns in result matrix**
+   int num_cols = 1 + num_endpoints * 5; // totaly + 5 columns per endpoint
+
+   // **Initialize result matrix**
+   arma::mat results(nsim, num_cols, arma::fill::zeros);
+
+   for (int i = 0; i < nsim; i++) {
+     arma::mat outtest = test_par_dom(n, muT, muR,
+                                      SigmaT, SigmaR,
+                                      lequi_tol, uequi_tol,
+                                      alpha, dropout,
+                                      typey, adseq, k,
+                                      arm_seed_T(i), arm_seed_R(i),
+                                      TART, TARR, vareq);
+
+
+     // **Store results in the output matrix**
+     results.row(i) = outtest;
+   }
+
+   // Transpose results to match R's output format
+   return results.t(); // Transpose before returning
+}
+
+//' @title Run Simulations for a Parallel Design with Ratio of Means (ROM) test
+//'
+//' @description
+//' This function simulates a parallel-group trial across multiple iterations.
+//' It evaluates equivalence across multiple endpoints using the
+//' Ratio of Means (ROM) test.
+//'
+//' @param nsim Integer. The number of simulations to run.
+//' @param n Integer. The sample size per arm (before dropout).
+//' @param muT arma::vec. Mean vector for the treatment arm.
+//' @param muR arma::vec. Mean vector for the reference arm.
+//' @param SigmaT arma::mat. Covariance matrix for the treatment arm.
+//' @param SigmaR arma::mat. Covariance matrix for the reference arm.
+//' @param lequi_tol arma::rowvec. Lower equivalence thresholds for each endpoint.
+//' @param uequi_tol arma::rowvec. Upper equivalence thresholds for each endpoint.
+//' @param alpha arma::rowvec. Significance level (α) for each endpoint.
+//' @param dropout arma::vec. Dropout rates for each arm (T, R).
+//' @param typey Integer vector indicating the classification of each endpoint, where `1` corresponds to a primary endpoint and `2` corresponds to a secondary endpoint.
+//' @param adseq Boolean. If `TRUE`, applies sequential (hierarchical) testing.
+//' @param k Integer. Minimum number of endpoints required for equivalence.
+//' @param arm_seed_T arma::ivec. Random seed vector for the treatment group (one per simulation).
+//' @param arm_seed_R arma::ivec. Random seed vector for the reference group (one per simulation).
+//' @param TART Double. Treatment allocation ratio (proportion of subjects in treatment arm).
+//' @param TARR Double. Reference allocation ratio (proportion of subjects in reference arm).
+//' @param vareq Boolean. If `TRUE`, assumes equal variances across treatment and reference groups.
+//'
+//' @details
+//' Equivalence testing uses either the Ratio of Means (ROM) test,
+//' applying predefined equivalence thresholds and significance levels. When hierarchical testing (`adseq`)
+//' is enabled, all primary endpoints must demonstrate equivalence before secondary endpoints are evaluated.
+//' Dropout rates are incorporated into the sample size calculation to ensure proper adjustment.
+//' Randomization is controlled through separate random seeds for the treatment and reference groups,
+//' enhancing reproducibility.
+//'
+//' @return
+//' The function returns an arma::mat storing simulation results row-wise for consistency
+//' with R's output format. The first row (`totaly`) contains the overall equivalence decision
+//' (1 for success, 0 for failure). The subsequent rows include equivalence deicisons for each endpoint,
+//' mean estimates for both treatment and reference groups, and corresponding standard deviations.
+//'
+//' @author Thomas Debray \email{tdebray@fromdatatowisdom.com}
+//' @export
+// [[Rcpp::export]]
+arma::mat run_simulations_par_rom(const int nsim,
+                                   const int n,
+                                   const arma::vec& muT,
+                                   const arma::vec& muR,
+                                   const arma::mat& SigmaT,
+                                   const arma::mat& SigmaR,
+                                   const arma::rowvec& lequi_tol,
+                                   const arma::rowvec& uequi_tol,
+                                   const arma::rowvec& alpha,
+                                   const arma::vec& dropout,
+                                   const arma::uvec& typey,
+                                   const bool adseq,
+                                   const int k,
+                                   const arma::ivec& arm_seed_T,
+                                   const arma::ivec& arm_seed_R,
+                                   const double TART,
+                                   const double TARR,
+                                   const bool vareq) {
+
+   // **Determine number of endpoints**
+   int num_endpoints = muT.n_elem; // Assuming muT and muR have the same number of elements
+
+   // **Define the number of columns in result matrix**
+   int num_cols = 1 + num_endpoints * 5; // totaly + 5 columns per endpoint
+
+   // **Initialize result matrix**
+   arma::mat results(nsim, num_cols, arma::fill::zeros);
+
+   for (int i = 0; i < nsim; i++) {
+     arma::mat outtest = test_par_rom(n, muT, muR,
+                                      SigmaT, SigmaR,
+                                      lequi_tol, uequi_tol,
+                                      alpha, dropout,
+                                      typey, adseq, k,
+                                      arm_seed_T(i), arm_seed_R(i),
+                                      TART, TARR, vareq);
+
+
+     // **Store results in the output matrix**
+     results.row(i) = outtest;
+   }
+
+   // Transpose results to match R's output format
+   return results.t(); // Transpose before returning
+ }
+
+
+
+//' @title Run Simulations for a 2x2 Crossover Design with Difference of Means (DOM) test
+//'
+//' @description
+//' This function simulates a 2x2 crossover trial across multiple iterations.
+//' It evaluates equivalence across multiple endpoints using the
+//' Difference of Means (DOM) test.
+//'
+//' @param nsim Integer. The number of simulations to run.
 //' @param n Integer. The sample size per period.
 //' @param muT Numeric vector. Mean outcomes for the active treatment.
 //' @param muR Numeric vector. Mean outcomes for the reference treatment.
@@ -836,7 +1014,7 @@ arma::mat run_simulations_par(const int nsim,
 //' @param arm_seed Integer vector. Random seed for each simulation.
 //'
 //' @details
-//' This function performs equivalence testing using either the Difference of Means (DOM) or Ratio of Means (ROM) approach.
+//' This function evaluates equivalence using either the Difference of Means (DOM) test.
 //' Equivalence is determined based on predefined lower (`lequi_tol`) and upper (`uequi_tol`) equivalence thresholds,
 //' and hypothesis testing is conducted at the specified significance level (`alpha`).
 //' If `adseq` is `TRUE`, primary endpoints must establish equivalence before secondary endpoints are evaluated.
@@ -848,62 +1026,134 @@ arma::mat run_simulations_par(const int nsim,
 //' @return
 //' A numeric matrix where each column stores simulation results:
 //' The first row (`totaly`) represents the overall equivalence decision (1 = success, 0 = failure).
-//' Subsequent rows contain p-values for equivalence testing per endpoint (`E1, E2, ...`),
+//' Subsequent rows contain equivalence decisions per endpoint (`E1, E2, ...`),
 //' mean estimates for the treatment group (`mu_E1_T, mu_E2_T, ...`), mean estimates for the reference group (`mu_E1_R, mu_E2_R, ...`),
 //' standard deviations for treatment (`sd_E1_T, sd_E2_T, ...`), and standard deviations for reference (`sd_E1_R, sd_E2_R, ...`).
 //'
 //' @author Thomas Debray \email{tdebray@fromdatatowisdom.com}
 //' @export
 // [[Rcpp::export]]
-arma::mat run_simulations_2x2(const int nsim,
-                              const std::string ctype,
-                              const bool lognorm,
-                              const int n,
-                              const arma::vec& muT,
-                              const arma::vec& muR,
-                              const arma::mat& SigmaW,
-                              const arma::rowvec& lequi_tol,
-                              const arma::rowvec& uequi_tol,
-                              const arma::rowvec& alpha,
-                              const double sigmaB,
-                              const arma::vec& dropout,
-                              const arma::vec& Eper,
-                              const arma::vec& Eco,
-                              const arma::uvec& typey,
-                              const bool adseq,
-                              const int k,
-                              const arma::ivec& arm_seed){
+arma::mat run_simulations_2x2_dom(const int nsim,
+                                  const int n,
+                               const arma::vec& muT,
+                               const arma::vec& muR,
+                               const arma::mat& SigmaW,
+                               const arma::rowvec& lequi_tol,
+                               const arma::rowvec& uequi_tol,
+                               const arma::rowvec& alpha,
+                               const double sigmaB,
+                               const arma::vec& dropout,
+                               const arma::vec& Eper,
+                               const arma::vec& Eco,
+                               const arma::uvec& typey,
+                               const bool adseq,
+                               const int k,
+                               const arma::ivec& arm_seed){
 
-  // **Determine number of endpoints**
-  int num_endpoints = muT.n_elem; // Assuming muT and muR have the same number of elements
+   // **Determine number of endpoints**
+   int num_endpoints = muT.n_elem; // Assuming muT and muR have the same number of elements
 
-  // **Define the number of columns in result matrix**
-  int num_cols = 1 + num_endpoints * 5; // totaly + 5 columns per endpoint
+   // **Define the number of columns in result matrix**
+   int num_cols = 1 + num_endpoints * 5; // totaly + 5 columns per endpoint
 
-  // **Initialize result matrix**
-  arma::mat results(nsim, num_cols, arma::fill::zeros);
+   // **Initialize result matrix**
+   arma::mat results(nsim, num_cols, arma::fill::zeros);
 
-  for (int i = 0; i < nsim; i++) {
-    arma::mat outtest;
+   for (int i = 0; i < nsim; i++) {
+     arma::mat outtest = test_2x2_dom(n, muT, muR, SigmaW, lequi_tol, uequi_tol,
+                                      alpha, sigmaB, dropout, Eper, Eco, typey,
+                                      adseq, k, arm_seed(i));
 
-    if (ctype == "DOM" || (ctype == "ROM" && lognorm)) {
-      outtest = test_2x2_dom(n, muT, muR, SigmaW, lequi_tol, uequi_tol,
-                             alpha, sigmaB, dropout, Eper, Eco, typey,
-                             adseq, k, arm_seed(i));
-    } else { // ROM & Normal distribution
-      outtest = test_2x2_rom(n, muT, muR, SigmaW, lequi_tol, uequi_tol,
-                             alpha, sigmaB, dropout, Eper, Eco, typey,
-                             adseq, k, arm_seed(i));
-    }
+     // **Store results in the output matrix**
+     results.row(i) = outtest;
+   }
 
-    // **Store results in the output matrix**
-    results.row(i) = outtest;
-  }
+   // Transpose results to match R's output format
+   return results.t(); // Transpose before returning
+ }
 
-  // Transpose results to match R's output format
-  return results.t(); // Transpose before returning
-}
+//' @title Run Simulations for a 2x2 Crossover Design with Ratio of Means (ROM) test
+//'
+//' @description
+//' This function simulates a 2x2 crossover trial across multiple iterations.
+//' It evaluates equivalence across multiple endpoints using the
+//' Ratio of Means (ROM) test.
+//'
+//' @param nsim Integer. The number of simulations to run.
+//' @param n Integer. The sample size per period.
+//' @param muT Numeric vector. Mean outcomes for the active treatment.
+//' @param muR Numeric vector. Mean outcomes for the reference treatment.
+//' @param SigmaW Numeric matrix. Within-subject covariance matrix for endpoints.
+//' @param lequi_tol Numeric vector. Lower equivalence thresholds for each endpoint.
+//' @param uequi_tol Numeric vector. Upper equivalence thresholds for each endpoint.
+//' @param alpha Numeric vector. Significance levels for hypothesis testing across endpoints.
+//' @param sigmaB Numeric. Between-subject variance for the crossover model.
+//' @param dropout Numeric vector of size 2. Dropout rates for each sequence.
+//' @param Eper Numeric vector. Expected period effects for each sequence.
+//' @param Eco Numeric vector. Expected carryover effects for each sequence.
+//' @param typey Integer vector indicating the classification of each endpoint, where `1` corresponds to a primary endpoint and `2` corresponds to a secondary endpoint.
+//' @param adseq Logical. If `TRUE`, applies sequential (hierarchical) testing.
+//' @param k Integer. Minimum number of endpoints required for equivalence.
+//' @param arm_seed Integer vector. Random seed for each simulation.
+//'
+//'  @details
+//'  This function evaluates equivalence using either the Ratio of Means (ROM) test.
+//'  Equivalence is determined based on predefined lower (`lequi_tol`) and upper (`uequi_tol`) equivalence thresholds,
+//'  and hypothesis testing is conducted at the specified significance level (`alpha`).
+//'  If `adseq` is `TRUE`, primary endpoints must establish equivalence before secondary endpoints are evaluated.
+//'  The sample size per period is adjusted based on dropout rates, ensuring valid study conclusions.
+//'  The simulation incorporates within-subject correlation using `SigmaW` and accounts for between-subject variance with `sigmaB`.
+//'  Expected period effects (`Eper`) and carryover effects (`Eco`) are included in the model.
+//'  A fixed random seed (`arm_seed`) is used to ensure reproducibility across simulations.
+//'
+//'  @return
+//'  A numeric matrix where each column stores simulation results:
+//'  The first row (`totaly`) represents the overall equivalence decision (1 = success, 0 = failure).
+//'  Subsequent rows contain equivalence decisions per endpoint (`E1, E2, ...`),
+//'  mean estimates for the treatment group (`mu_E1_T, mu_E2_T, ...`), mean estimates for the reference group (`mu_E1_R, mu_E2_R, ...`),
+//'  standard deviations for treatment (`sd_E1_T, sd_E2_T, ...`), and standard deviations for reference (`sd_E1_R, sd_E2_R, ...`).
+//'
+//'  @author Thomas Debray \email{tdebray@fromdatatowisdom.com}
+//' @export
+// [[Rcpp::export]]
+ arma::mat run_simulations_2x2_rom(const int nsim,
+                                   const int n,
+                                   const arma::vec& muT,
+                                   const arma::vec& muR,
+                                   const arma::mat& SigmaW,
+                                   const arma::rowvec& lequi_tol,
+                                   const arma::rowvec& uequi_tol,
+                                   const arma::rowvec& alpha,
+                                   const double sigmaB,
+                                   const arma::vec& dropout,
+                                   const arma::vec& Eper,
+                                   const arma::vec& Eco,
+                                   const arma::uvec& typey,
+                                   const bool adseq,
+                                   const int k,
+                                   const arma::ivec& arm_seed){
 
+   // **Determine number of endpoints**
+   int num_endpoints = muT.n_elem; // Assuming muT and muR have the same number of elements
+
+   // **Define the number of columns in result matrix**
+   int num_cols = 1 + num_endpoints * 5; // totaly + 5 columns per endpoint
+
+   // **Initialize result matrix**
+   arma::mat results(nsim, num_cols, arma::fill::zeros);
+
+   for (int i = 0; i < nsim; i++) {
+     arma::mat outtest = test_2x2_rom(n, muT, muR, SigmaW, lequi_tol, uequi_tol,
+                                      alpha, sigmaB, dropout, Eper, Eco, typey,
+                                      adseq, k, arm_seed(i));
+
+     // **Store results in the output matrix**
+     results.row(i) = outtest;
+   }
+
+   // Transpose results to match R's output format
+   return results.t(); // Transpose before returning
+ }
 
 RCPP_MODULE(test)
 {

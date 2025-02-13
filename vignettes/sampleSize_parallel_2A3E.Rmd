@@ -247,17 +247,19 @@ When $k>1$, Bonferroni and Sidak correction methods become increasingly conserva
 ```
 
 ## Hierarchical Testing of Endpoints {#hierarchical-testing}
-This trial follows a hierarchical testing strategy where Cmax and AUCinf are the primary endpoints. If equivalence is established for both, testing proceeds to the secondary endpoint AUClast.
+Hierarchical testing is a structured approach that allows for a more nuanced evaluation of endpoints. Unlike a simple setup where at least $k$ endpoints must pass, hierarchical testing enforces that some endpoints are more critical and must always pass before proceeding to secondary endpoints. This ensures that primary endpoints receive higher priority, while still allowing flexibility in the evaluation of secondary endpoints.
 
-To implement this approach in SimTOST, we:
+In this example, the trial follows a hierarchical testing strategy where Cmax is designated as the primary endpoint. If equivalence is established for Cmax, testing proceeds to the secondary endpoints AUCinf and AUClast. The trial is considered successful if all primary endpoints demonstrate equivalence and at least $k=1$ secondary endpoints pass the equivalence criteria.
 
-* Use sequential adjustment by setting `adjust = "seq"`.
-* Specify endpoint hierarchy with the `type_y` argument:
-   - Primary endpoints: `"Cmax"` and `"AUCinf"` (coded as 1).
-   - Secondary endpoint: `"AUClast"` (coded as 2).
-* Set `k=3`, ensuring all three endpoints must meet equivalence for trial success.
+To implement this advanced hierarchical testing approach in SimTOST, we:
 
-Below is the implementation:
+1. Use sequential adjustment by setting `adjust = "seq"` to enforce the hierarchical structure.
+2. Define the endpoint hierarchy using the `type_y` argument:
+   - Primary endpoint: `Cmax` (coded as 1) is the most critical endpoint and must always pass.
+   - Secondary endpoints: `AUCinf` and `AUClast` (coded as 2) are less critical and only evaluated if `Cmax` passes.
+3. Set `k=1`, ensuring that at least one of the two secondary endpoints (`AUCinf` or `AUClast`) must pass for the trial to be considered successful.
+
+The following code demonstrates how to apply hierarchical testing in SimTOST
 
 ```{r}
 (N_mp_seq <- sampleSize(
@@ -274,16 +276,18 @@ Below is the implementation:
   vareq           = TRUE,                             # Assume equal variances
   lognorm         = TRUE,                             # Log-normal distribution assumption
   adjust          = "seq",                            # Sequential adjustment method
-  type_y          = c("AUCinf" = 1, "AUClast" = 2, "Cmax" = 1), # Endpoint types
-  k               = c("EMA" = 3),                     # Demonstrate equivalence for all 3 endpoints
+  type_y          = c("AUCinf" = 2, "AUClast" = 2, "Cmax" = 1), # Endpoint types
+  k               = c("EMA" = 1),                     # Demonstrate equivalence for all 3 endpoints
   ncores          = 1,                                # Number of cores for computation
   nsim            = 1000,                             # Number of stochastic simulations
   seed            = 1234                              # Random seed for reproducibility
 ))
 ```
 
-Recall that `r N_ss$response$n_total` patients were required when testing all co-primary endpoints simultaneously. In this approach, the study is powered based on the most difficult endpoint to establish equivalence, meaning that the total sample size is determined by the endpoint with the weakest signal or highest variability. Since all endpoints must meet equivalence at the same time, no additional adjustment for multiple testing is required, leading to a lower sample size requirement.
+The hierarchical testing strategy ensured that Cmax, the primary endpoint, had to pass before testing proceeded to the secondary endpoints AUCinf and AUClast. If Cmax failed, the trial was considered unsuccessful without evaluating the secondary endpoints. However, if Cmax passed, at least one of the two secondary endpoints had to demonstrate equivalence for the trial to be considered successful.
 
-In contrast, hierarchical testing requires `r N_mp_seq$response$n_total` patients because it follows a stepwise approach, where testing begins with the primary endpoints (Cmax and AUCinf). Only if equivalence is demonstrated for these endpoints does testing proceed to the secondary endpoint (AUClast). This structure ensures that the primary endpoints have sufficient power, reducing the risk of Type II error (failing to detect true equivalence). However, because later stages of testing depend on earlier ones passing, the total sample size must be larger to maintain adequate power at each step. This prioritization makes hierarchical testing particularly useful in scenarios where some endpoints are considered more clinically or regulatory important than others.
+In this particular study design, a total of `r N_mp_seq$response$n_total` patients were required to achieve an overall power of 90%. Previously, `r N_mp_k$response$n_total` patients were sufficient to demonstrate equivalence for at least two endpoints without enforcing a hierarchical structure. The increase in sample size by `r N_mp_seq$response$n_total - N_mp_k$response$n_total` additional patients was necessary to ensure equivalence for Cmax, the designated primary endpoint. This highlights the impact of hierarchical testing, where primary endpoints must be adequately powered before secondary endpoints are considered.
+
+
 
 # References

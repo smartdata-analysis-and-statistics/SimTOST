@@ -18,7 +18,7 @@ testthat::test_that("Return expected result", {
                      "USREF" = sigma_R2)
 
   # Same treatment allocation rate
-  TAR = c(1,1,1) # we assume same allocation rate in both arms
+  TAR = c("SB2" = 1, "EUREF" = 1, "USREF" = 1)
 
   # arms to be compared
   list_comparator <- list(EMA = c("SB2", "EUREF"),
@@ -28,17 +28,25 @@ testthat::test_that("Return expected result", {
   list_y_comparator <- list(EMA = c("AUCinf", "AUClast", "Cmax"),
                             FDA = c("AUCinf", "AUClast", "Cmax"))
 
-  # Equivalence boundaries
-  lequi.tol <- c(AUCinf = 0.8, AUClast = 0.8, Cmax = 0.8)
-  uequi.tol <- c(AUCinf = 1.25, AUClast = 1.25, Cmax = 1.25)
+  # Define lower equivalence boundaries for each comparator
+  list_lequi.tol <- list(
+    EMA = c(AUCinf = 0.8, AUClast = 0.8, Cmax = 0.8),
+    FDA = c(AUCinf = 0.8, AUClast = 0.8, Cmax = 0.8)
+  )
+
+  # Define upper equivalence boundaries for each comparator
+  list_uequi.tol <- list(
+    EMA = c(AUCinf = 1.25, AUClast = 1.25, Cmax = 1.25),
+    FDA = c(AUCinf = 1.25, AUClast = 1.25, Cmax = 1.25)
+  )
 
   # Pass the user parameters into a list of parameters and calculate the sample size
   res_cal <- sampleSize(mu_list = mu_list, sigma_list = sigma_list,
                         power = 0.9, dtype = "parallel", ctype = "ROM",
-                        vareq = T, lognorm = T, k = 3,
+                        vareq = T, lognorm = TRUE, k = 3,
                         list_comparator = list_comparator,
                         list_y_comparator = list_y_comparator,
-                        lequi.tol = lequi.tol, uequi.tol = uequi.tol,
+                        list_lequi.tol = list_lequi.tol, list_uequi.tol = list_uequi.tol,
                         seed = 1234,
                         ncores = 1)
 

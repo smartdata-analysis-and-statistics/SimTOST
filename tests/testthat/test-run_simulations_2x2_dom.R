@@ -24,7 +24,7 @@ test_that("run_simulations_2x2 produces valid results", {
   k <- 2            # Require equivalence for at least 2 endpoints
 
   # Run the function
-  result1 <- run_simulations_2x2(nsim = 5, ctype = "DOM", lognorm = FALSE, n,
+  result1 <- run_simulations_2x2_dom(nsim = 5,  n,
                                  muT, muR, SigmaW, lequi_tol, uequi_tol,
                                  alpha, sigmaB, dropout, Eper, Eco, typey,
                                  adseq, k, arm_seed = 1000:1005)
@@ -39,7 +39,7 @@ test_that("run_simulations_2x2 produces valid results", {
   expect_true(all(result1 <= 1 | result1 > 1), "Equivalence decisions should be 0 or 1, other values should be means/sd")
 
   # Test consistency with different seeds
-  result2 <- run_simulations_2x2(nsim = 5, ctype = "DOM", lognorm = FALSE, n,
+  result2 <- run_simulations_2x2_dom(nsim = 5, n,
                                  muT, muR, SigmaW, lequi_tol, uequi_tol,
                                  alpha, sigmaB, dropout, Eper, Eco, typey,
                                  adseq, k, arm_seed = 1000:1005)

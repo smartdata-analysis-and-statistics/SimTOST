@@ -157,12 +157,12 @@ Hierarchical testing is an approach to multiple endpoint testing where endpoints
 To implement hierarchical testing in SimTOST, the user specifies `adjust = "seq"` in the [sampleSize()](../reference/sampleSize.html) function and defines primary and secondary endpoints using the `type_y` vector argument. The significance level ($\alpha$) is adjusted separately for each group of endpoints, ensuring strong control of the Family-Wise Error Rate (FWER) while maintaining interpretability.
 
 1. **Evaluate primary endpoints**  
-   - Testing begins with the pre-specified primary endpoints.
-   - The adjusted significance level for a primary endpoint $p$ is: $$\alpha_p= \frac{\alpha}{\text{Number of primary endpoints}}$$
+   - Testing begins with the pre-specified primary endpoints at the nominal significance level
    - If any primary endpoint fails to meet the equivalence criteria, testing stops, and secondary endpoints are not tested.
 2. **Proceed to secondary endpoints (if applicable)**  
    - If all primary endpoints meet the equivalence criteria, testing proceeds to the secondary endpoints.
-   - The significance level for a secondary endpoint $s$ is adjusted as: $$\alpha_s= \frac{\alpha}{\text{Number of secondary endpoints}}$$
+   - The secondary endpoints are tested at k
+   - The significance level for a secondary endpoint $s$ is adjusted as: $$\alpha_s= \frac{ \alpha}{\text{Number of secondary endpoints}}$$
 3. **Final Decision**
    - The test is considered successful if at least `k` endpoints meet equivalence and all primary endpoints pass.
 

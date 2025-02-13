@@ -23,16 +23,16 @@ test_that("run_simulations_par runs correctly with standard settings", {
   vareq <- TRUE  # Assume equal variance
 
   # Run function
-  result <- run_simulations_par(nsim, n, muT, muR, SigmaT, SigmaR,
+  result <- run_simulations_par_dom(nsim, n, muT, muR, SigmaT, SigmaR,
                                 lequi_tol, uequi_tol, alpha, dropout,
                                 typey, adseq, k, arm_seed_T, arm_seed_R,
-                                ctype, lognorm, TART, TARR, vareq)
+                                TART, TARR, vareq)
 
   # Check structure of output
-  expect_silent(run_simulations_par(nsim, n, muT, muR, SigmaT, SigmaR,
+  expect_silent(run_simulations_par_dom(nsim, n, muT, muR, SigmaT, SigmaR,
                                     lequi_tol, uequi_tol, alpha, dropout,
                                     typey, adseq, k, arm_seed_T, arm_seed_R,
-                                    ctype, lognorm, TART, TARR, vareq))
+                                    TART, TARR, vareq))
 
   # Check if result is a matrix
   expect_true(is.matrix(result))
