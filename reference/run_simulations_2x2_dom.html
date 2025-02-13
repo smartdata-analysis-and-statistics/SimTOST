@@ -58,13 +58,7 @@ Difference of Means (DOM) test."><meta property="og:image" content="/logo.png"><
 <li>
   <a href="../news/index.html">Changelog</a>
 </li>
-      </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/smartdata-analysis-and-statistics/SimTOST/" class="external-link">
-    <span class="fab fa-github fa-lg"></span>
-
-  </a>
-</li>
-      </ul></div><!--/.nav-collapse -->
+      </ul><ul class="nav navbar-nav navbar-right"></ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
 
@@ -74,7 +68,7 @@ Difference of Means (DOM) test."><meta property="og:image" content="/logo.png"><
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Run Simulations for a 2x2 Crossover Design with Difference of Means (DOM) test</h1>
-    <small class="dont-index">Source: <a href="https://github.com/smartdata-analysis-and-statistics/SimTOST/blob/main/R/RcppExports.R" class="external-link"><code>R/RcppExports.R</code></a></small>
+
     <div class="hidden name"><code>run_simulations_2x2_dom.Rd</code></div>
     </div>
 
@@ -177,13 +171,13 @@ Difference of Means (DOM) test.</p>
     <h2>Value</h2>
     <p>A numeric matrix where each column stores simulation results:
 The first row (<code>totaly</code>) represents the overall equivalence decision (1 = success, 0 = failure).
-Subsequent rows contain equivalence decisions per endpoint (<code>E1, E2, ...</code>),
-mean estimates for the treatment group (<code>mu_E1_T, mu_E2_T, ...</code>), mean estimates for the reference group (<code>mu_E1_R, mu_E2_R, ...</code>),
-standard deviations for treatment (<code>sd_E1_T, sd_E2_T, ...</code>), and standard deviations for reference (<code>sd_E1_R, sd_E2_R, ...</code>).</p>
+Subsequent rows contain equivalence decisions per endpoint,
+mean estimates for the treatment group, mean estimates for the reference group,
+standard deviations for treatment, and standard deviations for reference.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
-    <p>This function evaluates equivalence using either the Difference of Means (DOM) test.
+    <p>This function evaluates equivalence using the Difference of Means (DOM) test.
 Equivalence is determined based on predefined lower (<code>lequi_tol</code>) and upper (<code>uequi_tol</code>) equivalence thresholds,
 and hypothesis testing is conducted at the specified significance level (<code>alpha</code>).
 If <code>adseq</code> is <code>TRUE</code>, primary endpoints must establish equivalence before secondary endpoints are evaluated.
@@ -205,7 +199,7 @@ A fixed random seed (<code>arm_seed</code>) is used to ensure reproducibility ac
 
 
       <footer><div class="copyright">
-  <p></p><p>Developed by Thomas Debray, Johanna Muñoz, Dewi Amaliah, Biogen Inc.</p>
+  <p></p><p>Developed by Thomas Debray, Johanna Munoz, Biogen Inc.</p>
 </div>
 
 <div class="pkgdown">

@@ -59,13 +59,7 @@ is shorter than n_arms, contains NA values, or has invalid values."><meta proper
 <li>
   <a href="../news/index.html">Changelog</a>
 </li>
-      </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/smartdata-analysis-and-statistics/SimTOST/" class="external-link">
-    <span class="fab fa-github fa-lg"></span>
-
-  </a>
-</li>
-      </ul></div><!--/.nav-collapse -->
+      </ul><ul class="nav navbar-nav navbar-right"></ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
 
@@ -75,7 +69,7 @@ is shorter than n_arms, contains NA values, or has invalid values."><meta proper
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Derive and Validate Treatment Allocation Rate (TAR)</h1>
-    <small class="dont-index">Source: <a href="https://github.com/smartdata-analysis-and-statistics/SimTOST/blob/main/R/SampleSize.R" class="external-link"><code>R/SampleSize.R</code></a></small>
+
     <div class="hidden name"><code>derive_allocation_rate.Rd</code></div>
     </div>
 
@@ -111,14 +105,6 @@ equal allocation rate is assigned.</p></dd>
     <h2>Value</h2>
     <p>A named list representing the treatment allocation rate for each arm.</p>
     </div>
-    <div id="details">
-    <h2>Details</h2>
-    <p>This function ensures <code>TAR</code> meets the following conditions:</p><ul><li><p>If <code>TAR</code> is <strong>NULL</strong> or <strong>missing</strong>, it is set to a vector of ones of length <code>n_arms</code>.</p></li>
-<li><p>If <code>TAR</code> is <strong>shorter</strong> than <code>n_arms</code>, missing values are replaced with ones, and a <strong>warning</strong> is issued.</p></li>
-<li><p>If <code>TAR</code> is <strong>longer</strong> than <code>n_arms</code>, an <strong>error</strong> is raised.</p></li>
-<li><p>If <code>TAR</code> contains <strong>NA values</strong>, they are replaced with ones, and a <strong>warning</strong> is issued.</p></li>
-<li><p>If <code>TAR</code> contains <strong>zero or negative values</strong>, an <strong>error</strong> is raised.</p></li>
-</ul></div>
     <div id="author">
     <h2>Author</h2>
     <p>Thomas Debray <a href="mailto:tdebray@fromdatatowisdom.com">tdebray@fromdatatowisdom.com</a></p>
@@ -132,7 +118,7 @@ equal allocation rate is assigned.</p></dd>
 
 
       <footer><div class="copyright">
-  <p></p><p>Developed by Thomas Debray, Johanna Muñoz, Dewi Amaliah, Biogen Inc.</p>
+  <p></p><p>Developed by Thomas Debray, Johanna Munoz, Biogen Inc.</p>
 </div>
 
 <div class="pkgdown">
