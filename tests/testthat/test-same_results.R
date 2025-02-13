@@ -1,4 +1,3 @@
-#context("Same result")
 testthat::test_that("Return expected result", {
   local_edition(3)
   mu_T <- c(AUCinf = 37162.0, AUClast = 35702.0, Cmax = 125.9)

@@ -12,7 +12,8 @@
 #' @param TAR Numeric vector. Treatment allocation rates for each arm, where the order of values corresponds to the order of `arm_names`. The length of `TAR` must match the number of arms. If not provided, a default equal allocation rate is assigned across all arms.
 #' @param arm_names Optional vector with the treatment names. If not supplied, it will be derived from mu_list.
 #' @param ynames_list Optional list of vectors with Endpoint names on each arm. When not all endpoint names are provided for each arm, arbitrary names (assigned by vector order) are used.
-#' @param type_y vector with the type of endpoints: primary endpoint(1), otherwise (2).
+#' @param type_y Vector indicating the type of each endpoint:
+#' 1 for co-primary endpoints, 2 for secondary endpoints.
 #' @param list_comparator list of comparators, i.e each comparator is a vector of size 1 X 2 where are specified the name of treatments
 #' @param list_y_comparator list of endpoints to be considered in each comparator. Each element of the list is a vector containing the names of the endpoints to compare. When it is not provided, all endpoints present in both compared arms are used.
 #' @param power target power (default = 0.8)
@@ -30,7 +31,9 @@
 #' @param dropout vector with proportion of total population with dropout per arm
 #' @param nsim number of simulated studies (default=5000)
 #' @param seed main seed
-#' @param ncores Integer. Number of processing cores to use for parallel computation. Defaults to one less than the total number of detected cores.
+#' @param ncores Integer. Number of processing cores to use for parallel computation.
+#' Defaults to 1. Set to NA for automatic detection of available cores (`ncores - 1` used)
+#' or specify a fixed number of cores. Note that multicore processing is currently not implemented.
 #' @param optimization_method Character. Method for determining the required sample size: "fast" (using modified root-finding algorithms) or "step-by-step". Defaults to "fast".
 #' @param lower Integer. Initial value of `N` for the search range. Defaults to 2.
 #' @param upper Integer. Maximum value of `N` for the search range. Defaults to 500.
@@ -114,7 +117,7 @@ sampleSize <- function(mu_list, varcov_list = NA, sigma_list = NA, cor_mat = NA,
                     dropout = NA,
                     nsim=5000,
                     seed=1234,
-                    ncores=NA,
+                    ncores = 1,
                     optimization_method = "fast",
                     lower=2,
                     upper=500,
@@ -243,7 +246,7 @@ sampleSize <- function(mu_list, varcov_list = NA, sigma_list = NA, cor_mat = NA,
 
     # Assign 1 / num_secondary_endpoints to secondary endpoints
     if (num_secondary_endpoints > 0) {
-      weight_seq[type_y == 2] <- 1 / num_secondary_endpoints
+      weight_seq[type_y == 2] <- min(k) / num_secondary_endpoints
     }
     names(weight_seq) <- uynames
   }
@@ -710,9 +713,9 @@ derive_allocation_rate <- function(TAR = NULL, arm_names, verbose = FALSE) {
 #'
 #' @author Thomas Debray \email{tdebray@fromdatatowisdom.com}
 #' @keywords internal
-derive_varcov_list <- function(mu_list, sigma_list, ynames_list, varcov_list = NULL, cor_mat = NULL, rho = 0) {
+derive_varcov_list <- function(mu_list, sigma_list, ynames_list = NULL, varcov_list = NULL, cor_mat = NULL, rho = 0) {
   # Check if variance-covariance matrix is missing
-  if (any(is.na(varcov_list))) {
+  if (is.null(varcov_list) | any(is.na(varcov_list))) {
     if (any(is.na(sigma_list))) {
       stop("No variance-covariance matrix provided, and a standard deviation list is also missing. Either a variance-covariance matrix or a standard deviation list is required.")
     }
@@ -720,11 +723,20 @@ derive_varcov_list <- function(mu_list, sigma_list, ynames_list, varcov_list = N
     # Validate lengths of inputs
     len_mu <- sapply(mu_list, length)
     len_sd <- sapply(sigma_list, length)
-    len_y <- sapply(ynames_list, length) # Number of endpoints
 
-    if (any((len_mu != len_sd) | (len_mu != len_y))) {
-      stop("In each arm, 'mu', 'sigma', and 'y_name' must have the same length.")
+    # Check ynames_list, allowing it to be NULL
+    if (!is.null(ynames_list)) {
+      len_y <- sapply(ynames_list, length)
+
+      if (any((len_mu != len_sd) | (len_mu != len_y))) {
+        stop("In each arm, 'mu', 'sigma', and 'y_name' must have the same length.")
+      }
+    } else {
+      if (any(len_mu != len_sd)) {
+        stop("In each arm, 'mu' and 'sigma' must have the same length.")
+      }
     }
+
 
     # Initialize the varcov_list
     varcov_list <- vector("list", length(mu_list))

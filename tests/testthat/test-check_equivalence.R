@@ -30,7 +30,7 @@ test_that("Hierarchical Testing Blocks Secondary Endpoints if Primary Fails", {
 })
 
 test_that("Hierarchical Testing All Endpoints Fail", {
-  typey <- c(1, 2, 1)
+  typey <- -1
   adseq <- FALSE
   tbioq <- matrix(c(0, 0, 0), nrow = 1)  # All fail
   k <- 2
@@ -38,4 +38,20 @@ test_that("Hierarchical Testing All Endpoints Fail", {
   result <- check_equivalence(typey, adseq, tbioq, k)
 
   expect_equal(result[1, 1], 0, info = "Equivalence should not be established when all endpoints fail.")
+})
+
+test_that("Hierarchical Testing Of k Secondary Endpoints", {
+
+  result <- check_equivalence(typey = c(1, 2, 1, 2, 2), adseq = TRUE, tbioq = matrix(c(1, 0, 1, 0, 1), nrow = 1), k = 1)
+  expect_equal(result[1, 1], 1, info = "Equivalence should hold when all primary endpoints are equivalent and 1 secondary endpoint is equivalent.")
+
+  result <- check_equivalence(typey = c(1, 2, 1, 2, 2), adseq = TRUE, tbioq = matrix(c(1, 0, 1, 1, 1), nrow = 1), k = 1)
+  expect_equal(result[1, 1], 1, info = "Equivalence should hold when all primary endpoints are equivalent and 1 secondary endpoint is equivalent.")
+
+  result <- check_equivalence(typey = c(1, 2, 1, 2, 2), adseq = TRUE, tbioq = matrix(c(1, 0, 1, 0, 1), nrow = 1), k = 2)
+  expect_equal(result[1, 1], 0, info = "Equivalence should not hold (not enough secondary endpoints pass).")
+
+  result <- check_equivalence(typey = c(1, 2, 1, 2, 2), adseq = TRUE, tbioq = matrix(c(0, 0, 1, 0, 1), nrow = 1), k = 2)
+  expect_equal(result[1, 1], 0, info = "Equivalence should not hold (one of the primary endpoints does not pass).")
+
 })

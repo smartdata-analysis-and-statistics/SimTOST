@@ -108,7 +108,6 @@ To account for an anticipated dropout rate of 20% in each group, we need to adju
   ctype = "DOM",                 # Comparison type
   lognorm = FALSE,               # Assumes normal distribution
   optimization_method = "fast",  # Fast optimization method
-  ncores = 1,                    # Single-core processing
   nsim = 1000,                   # Number of simulations
   seed = 1234                    # Random seed for reproducibility
 ))

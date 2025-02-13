@@ -239,60 +239,6 @@ test_par_rom <- function(n, muT, muR, SigmaT, SigmaR, lequi_tol, uequi_tol, alph
     .Call(`_SimTOST_test_par_rom`, n, muT, muR, SigmaT, SigmaR, lequi_tol, uequi_tol, alpha, dropout, typey, adseq, k, arm_seedT, arm_seedR, TART, TARR, vareq)
 }
 
-#' @title Run Simulations for a Parallel Design
-#'
-#' @description
-#' This function simulates a parallel-group trial across multiple iterations.
-#' It evaluates equivalence testing for multiple endpoints using either the
-#' Difference of Means (DOM) or Ratio of Means (ROM) approach.
-#'
-#' @param nsim Integer. The number of simulations to run.
-#' @param n Integer. The sample size per arm (before dropout).
-#' @param muT arma::vec. Mean vector for the treatment arm.
-#' @param muR arma::vec. Mean vector for the reference arm.
-#' @param SigmaT arma::mat. Covariance matrix for the treatment arm.
-#' @param SigmaR arma::mat. Covariance matrix for the reference arm.
-#' @param lequi_tol arma::rowvec. Lower equivalence thresholds for each endpoint.
-#' @param uequi_tol arma::rowvec. Upper equivalence thresholds for each endpoint.
-#' @param alpha arma::rowvec. Significance level (α) for each endpoint.
-#' @param dropout arma::vec. Dropout rates for each arm (T, R).
-#' @param typey Integer vector indicating the classification of each endpoint, where `1` corresponds to a primary endpoint and `2` corresponds to a secondary endpoint.
-#' @param adseq Boolean. If `TRUE`, applies sequential (hierarchical) testing.
-#' @param k Integer. Minimum number of endpoints required for equivalence.
-#' @param arm_seed_T arma::ivec. Random seed vector for the treatment group (one per simulation).
-#' @param arm_seed_R arma::ivec. Random seed vector for the reference group (one per simulation).
-#' @param ctype Character string. Testing method (`"DOM"` for Difference of Means, `"ROM"` for Ratio of Means).
-#' @param lognorm Boolean. If `TRUE`, assumes log-normal distribution for endpoints.
-#' @param TART Double. Treatment allocation ratio (proportion of subjects in treatment arm).
-#' @param TARR Double. Reference allocation ratio (proportion of subjects in reference arm).
-#' @param vareq Boolean. If `TRUE`, assumes equal variances across treatment and reference groups.
-#'
-#' @details
-#' - **Equivalence Testing**:
-#'   - Uses either Difference of Means (DOM) or Ratio of Means (ROM).
-#'   - Applies equivalence thresholds (`lequi_tol`, `uequi_tol`) and significance level (`alpha`).
-#' - **Hierarchical Testing (`adseq`)**:
-#'   - If `TRUE`, all primary endpoints must demonstrate equivalence before secondary endpoints are tested.
-#' - **Dropout Adjustment**:
-#'   - Sample size per arm is adjusted based on the specified dropout rates.
-#' - **Randomization and Reproducibility**:
-#'   - Uses separate random seeds (`arm_seed_T`, `arm_seed_R`) for treatment and reference arms to ensure reproducibility.
-#'
-#' @return An `arma::mat` where simulation results are stored **row-wise**, ensuring consistency with R's output format.
-#' - **First row** (`totaly`): Overall equivalence decision (1 = success, 0 = failure).
-#' - **Subsequent rows** containing results for each endpoint:
-#'   - `E1, E2, ...` : P-values from equivalence testing per endpoint.
-#'   - `mu_E1_T`, `mu_E2_T`, ... : Mean estimates for the treatment group.
-#'   - `mu_E1_R`, `mu_E2_R`, ... : Mean estimates for the reference group.
-#'   - `sd_E1_T`, `sd_E2_T`, ... : Standard deviations for the treatment group.
-#'   - `sd_E1_R`, `sd_E2_R`, ... : Standard deviations for the reference group.
-#'
-#' @author Thomas Debray \email{tdebray@fromdatatowisdom.com}
-#' @export
-run_simulations_par <- function(nsim, n, muT, muR, SigmaT, SigmaR, lequi_tol, uequi_tol, alpha, dropout, typey, adseq, k, arm_seed_T, arm_seed_R, ctype, lognorm, TART, TARR, vareq) {
-    .Call(`_SimTOST_run_simulations_par`, nsim, n, muT, muR, SigmaT, SigmaR, lequi_tol, uequi_tol, alpha, dropout, typey, adseq, k, arm_seed_T, arm_seed_R, ctype, lognorm, TART, TARR, vareq)
-}
-
 #' @title Run Simulations for a Parallel Design with Difference of Means (DOM) test
 #'
 #' @description

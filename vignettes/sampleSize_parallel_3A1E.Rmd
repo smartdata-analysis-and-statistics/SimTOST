@@ -93,7 +93,6 @@ AUCinf_1comp <- sampleSize(
   sigma_list = sigma_list,      # Standard deviation values
   list_lequi.tol = list_lequi.tol,   # Lower equivalence boundary
   list_uequi.tol = list_uequi.tol,   # Upper equivalence boundary
-  ncores = 1,                   # Number of cores for computation
   nsim = 1000                   # Number of stochastic simulations
 )
 
@@ -148,7 +147,6 @@ We then pass these values into the [sampleSize()](../reference/sampleSize.html) 
   sigma_list = sigma_list,      # Standard deviation values
   list_lequi.tol = list_lequi.tol,   # Lower equivalence boundary
   list_uequi.tol = list_uequi.tol,   # Upper equivalence boundary
-  ncores = 1,                   # Number of cores for computation
   nsim = 1000                   # Number of stochastic simulations
 ))
 ```

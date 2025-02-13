@@ -137,7 +137,6 @@ library(SimTOST)
                     ctype = "ROM",      # Test type: Ratio of Means
                     vareq = TRUE,       # Assume equal variances
                     lognorm = TRUE,     # Log-normal distribution assumption
-                    ncores = 1,         # Number of cores for computation
                     nsim = 1000,        # Number of stochastic simulations
                     seed = 1234))       # Random seed for reproducibility
 ```
@@ -196,7 +195,6 @@ Finally, we calculate the required sample size:
                     ctype = "ROM",      # Test type: Ratio of Means
                     vareq = TRUE,       # Assume equal variances across arms
                     lognorm = TRUE,     # Log-normal distribution assumption
-                    ncores = 1,         # Number of cores for computation
                     nsim = 1000,        # Number of stochastic simulations
                     seed = 1234))       # Random seed for reproducibility
 ```
@@ -222,7 +220,6 @@ This can be achieved by specifying the treatment allocation rate parameter (`TAR
                      ctype = "ROM",      # Test type: Ratio of Means
                      vareq = TRUE,       # Assume equal variances across arms
                      lognorm = TRUE,     # Log-normal distribution assumption
-                     ncores = 1,         # Number of cores for computation
                      nsim = 1000,        # Number of stochastic simulations
                      seed = 1234))       # Random seed for reproducibility
 ```
@@ -249,7 +246,6 @@ In the examples above, the sample size calculations assumed that all enrolled pa
                      ctype = "ROM",      # Test type: Ratio of Means
                      vareq = TRUE,       # Assume equal variances across arms
                      lognorm = TRUE,     # Log-normal distribution assumption
-                     ncores = 1,         # Number of cores for computation
                      nsim = 1000,        # Number of stochastic simulations
                      seed = 1234))       # Random seed for reproducibility
 ```

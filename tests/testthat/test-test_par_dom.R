@@ -86,7 +86,7 @@ test_that("test_par_dom runs correctly with co-primary log-normal endpoints", {
   expect_true(is.matrix(result))
 
   # Check that the number of columns matches expectations (depends on the function's return structure)
-  expect_equal(ncol(result), 11) # totaly[overall], totaly[y0], totaly[y1], mu0[0], mu0[1], mu1[0], mu1[1], sd0[0], sd0[1], sd1[0], sd1[1]
+  expect_equal(ncol(result), 1+5*length(muT)) # totaly[overall], totaly[y0], totaly[y1], mu0[0], mu0[1], mu1[0], mu1[1], sd0[0], sd0[1], sd1[0], sd1[1]
 
   # Ensure output contains valid numeric values
   expect_true(all(is.finite(result)))

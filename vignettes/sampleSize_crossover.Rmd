@@ -46,7 +46,7 @@ lequi_upper <- c(AUC = log(1.25), Cmax = log(1.25))
                  list_lequi.tol = list("T_vs_R" = lequi_lower),
                  list_uequi.tol = list("T_vs_R" = lequi_upper),
                  dtype = "2x2", ctype = "DOM", lognorm = FALSE, 
-                 adjust = "no", ncores = 1, nsim = 5000, seed = 1234))
+                 adjust = "no", nsim = 5000, seed = 1234))
 ```
 The total sample size required is `r ss$response$n_total` subjects, which corresponds to the estimate obtained using the PASS software (n=37).
 

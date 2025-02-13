@@ -154,17 +154,18 @@ where $k$ is the number of endpoints required for equivalence, and $m$ is the to
 ## Hierarchical testing of multiple endpoints
 Hierarchical testing is an approach to multiple endpoint testing where endpoints are tested in a predefined order, typically based on their clinical or regulatory importance. A fallback testing strategy is applied, allowing sequential hypothesis testing. If a hypothesis earlier in the sequence fails to be rejected, testing stops, and subsequent hypotheses are not evaluated. [@chowdhry_finding_2024]
 
-To implement hierarchical testing in SimTOST, the user specifies `adjust = "seq"` in the [sampleSize()](../reference/sampleSize.html) function and defines primary and secondary endpoints using the `type_y` vector argument. The significance level ($\alpha$) is adjusted separately for each group of endpoints, ensuring strong control of the Family-Wise Error Rate (FWER) while maintaining interpretability.
+To implement hierarchical testing in `simTOST`, the user specifies `adjust = "seq"` in the [sampleSize()](../reference/sampleSize.html) function and defines primary and secondary endpoints using the `type_y` vector argument. The significance level ($\alpha$) is adjusted separately for each group of endpoints, ensuring strong control of the Family-Wise Error Rate (FWER) while maintaining interpretability.
 
-1. **Evaluate primary endpoints**  
-   - Testing begins with the pre-specified primary endpoints at the nominal significance level
-   - If any primary endpoint fails to meet the equivalence criteria, testing stops, and secondary endpoints are not tested.
+1. **Evaluate (co-)primary endpoints**  
+   - Testing begins with the pre-specified (co-)primary endpoints at the nominal significance level.
+   - Equivalence must be demonstrated for *all* (co-)primary endpoints.
+   - If any primary endpoint fails to meet the equivalence criteria, testing stops, and secondary endpoints are not evaluated.
 2. **Proceed to secondary endpoints (if applicable)**  
    - If all primary endpoints meet the equivalence criteria, testing proceeds to the secondary endpoints.
-   - The secondary endpoints are tested at k
-   - The significance level for a secondary endpoint $s$ is adjusted as: $$\alpha_s= \frac{ \alpha}{\text{Number of secondary endpoints}}$$
-3. **Final Decision**
-   - The test is considered successful if at least `k` endpoints meet equivalence and all primary endpoints pass.
+   - Equivalence must be demonstrated for at least `k` secondary endpoints.
+   - The significance level for secondary endpoints is adjusted using `k-adjustment`.
+3. **Final Decision**  
+   - The test is considered successful if *all* (co-)primary endpoints meet the equivalence criteria and at least `k` secondary endpoints demonstrate equivalence.
 
 An example of hierarchical testing can be found in [this vignette](sampleSize_parallel_2A3E.html#hierarchical-testing).
 
