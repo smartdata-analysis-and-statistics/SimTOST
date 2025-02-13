@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SimTOST</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.6.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.0</span>
       </span>
     </div>
 
@@ -401,8 +401,8 @@ their clinical or regulatory importance. A fallback testing strategy is
 applied, allowing sequential hypothesis testing. If a hypothesis earlier
 in the sequence fails to be rejected, testing stops, and subsequent
 hypotheses are not evaluated. <span class="citation">(<a href="#ref-chowdhry_finding_2024">Chowdhry et al. 2024</a>)</span></p>
-<p>To implement hierarchical testing in SimTOST, the user specifies
-<code>adjust = "seq"</code> in the <a href="../reference/sampleSize.html">sampleSize()</a> function and
+<p>To implement hierarchical testing in <code>simTOST</code>, the user
+specifies <code>adjust = "seq"</code> in the <a href="../reference/sampleSize.html">sampleSize()</a> function and
 defines primary and secondary endpoints using the <code>type_y</code>
 vector argument. The significance level
 (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>α</mi><annotation encoding="application/x-tex">\alpha</annotation></semantics></math>)
@@ -411,12 +411,14 @@ control of the Family-Wise Error Rate (FWER) while maintaining
 interpretability.</p>
 <ol style="list-style-type: decimal">
 <li>
-<strong>Evaluate primary endpoints</strong>
+<strong>Evaluate (co-)primary endpoints</strong>
 <ul>
-<li>Testing begins with the pre-specified primary endpoints at the
-nominal significance level</li>
+<li>Testing begins with the pre-specified (co-)primary endpoints at the
+nominal significance level.</li>
+<li>Equivalence must be demonstrated for <em>all</em> (co-)primary
+endpoints.</li>
 <li>If any primary endpoint fails to meet the equivalence criteria,
-testing stops, and secondary endpoints are not tested.</li>
+testing stops, and secondary endpoints are not evaluated.</li>
 </ul>
 </li>
 <li>
@@ -424,19 +426,18 @@ testing stops, and secondary endpoints are not tested.</li>
 <ul>
 <li>If all primary endpoints meet the equivalence criteria, testing
 proceeds to the secondary endpoints.</li>
-<li>The secondary endpoints are tested at k</li>
-<li>The significance level for a secondary endpoint
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>s</mi><annotation encoding="application/x-tex">s</annotation></semantics></math>
-is adjusted as:
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>α</mi><mi>s</mi></msub><mo>=</mo><mfrac><mi>α</mi><mtext mathvariant="normal">Number of secondary endpoints</mtext></mfrac></mrow><annotation encoding="application/x-tex">\alpha_s= \frac{ \alpha}{\text{Number of secondary endpoints}}</annotation></semantics></math>
-</li>
+<li>Equivalence must be demonstrated for at least <code>k</code>
+secondary endpoints.</li>
+<li>The significance level for secondary endpoints is adjusted using
+<code>k-adjustment</code>.</li>
 </ul>
 </li>
 <li>
 <strong>Final Decision</strong>
 <ul>
-<li>The test is considered successful if at least <code>k</code>
-endpoints meet equivalence and all primary endpoints pass.</li>
+<li>The test is considered successful if <em>all</em> (co-)primary
+endpoints meet the equivalence criteria and at least <code>k</code>
+secondary endpoints demonstrate equivalence.</li>
 </ul>
 </li>
 </ol>
