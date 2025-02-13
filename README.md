@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# SimTOST <img src="man/figures/logo.png" align="right" height="116" alt="" />
+# SimTOST <img src="man/figures/logo.png" align="right" width="150" alt="" />
 
 <!-- badges: start -->
 

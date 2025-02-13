@@ -17,11 +17,6 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
-library(SimTOST)
-```
-
-
 In the `SimTOST` R package, which is specifically designed for sample size estimation for bioequivalence studies, hypothesis testing is based on the Two One-Sided Tests (TOST) procedure. [@sozu_sample_2015] In TOST, the equivalence test is framed as a comparison between the the null hypothesis of ‘new product is worse by a clinically relevant quantity’ and the alternative hypothesis of ‘difference between products is too small to be clinically relevant’.
 
 # Hypotheses
@@ -29,7 +24,7 @@ In the `SimTOST` R package, which is specifically designed for sample size estim
 The null and alternative hypotheses for the equivalence test are presented below for two different approaches:
 
 ## Difference of Means (DOM)
-One common approach for assessing bioequivalence involves comparing pharmacokinetic (PK) measures between test and reference products. This is done using the following interval (null) hypothesis:
+One common approach for assessing bio-equivalence involves comparing pharmacokinetic (PK) measures between test and reference products. This is done using the following interval (null) hypothesis:
 
 Null Hypothesis ($H_0$): At least one endpoint does not meet the equivalence criteria:
  

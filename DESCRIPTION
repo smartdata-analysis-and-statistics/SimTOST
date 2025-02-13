@@ -1,5 +1,5 @@
 Package: SimTOST
-Title: Sample Size Estimation for Bioequivalence Trials Through Simulation
+Title: Sample Size Estimation for Bio-Equivalence Trials Through Simulation
 Version: 1.0.0
 Authors@R: c(
     person(given = "Thomas", 
@@ -29,7 +29,7 @@ Authors@R: c(
            role = c("ctb")),
     person("Biogen Inc", role = c("cph", "fnd"))
     )
-Description: Conducts sample size estimation for bioequivalence studies using the Two One-Sided Tests (TOST) procedure. A simulation-based approach enables flexible hypothesis testing, supports multiple treatments, and accommodates correlated endpoints.
+Description: Conducts sample size estimation for bio-equivalence trials using the Two One-Sided Tests procedure. A simulation-based approach enables flexible hypothesis testing, supports multiple treatments, and accommodates correlated endpoints.
 License: Apache License (== 2.0)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
