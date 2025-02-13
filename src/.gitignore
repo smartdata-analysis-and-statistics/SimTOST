@@ -1,1 +1,24 @@
+# Ignore compiled object files
+*.o
+
+# Ignore shared object libraries (Linux/macOS)
+*.so
+
+# Ignore dynamic libraries (macOS)
+*.dylib
+
+# Ignore Windows DLL files
+*.dll
+
+# Ignore static libraries
+*.a
+
+# Ignore debug symbol files
+*.dSYM/
+
+# Ignore macOS system files
 .DS_Store
+
+# Ignore intermediate build files
+*.log
+*.out
