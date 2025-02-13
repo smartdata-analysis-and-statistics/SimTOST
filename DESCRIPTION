@@ -6,7 +6,7 @@ Authors@R: c(
            family = "Debray", 
            email = "tdebray@fromdatatowisdom.com", 
            role = c("aut", "cre"),
-           comment= c(ORCID = "0000-0002-1790-2719")),
+           comment = c(ORCID = "0000-0002-1790-2719")),
     person(given = "Johanna", 
            family = "Munoz", 
            email = "johanna.munoz@fromdatatowisdom.com", 
@@ -30,25 +30,25 @@ Authors@R: c(
     person("Biogen Inc", role = c("cph", "fnd"))
     )
 Description: Conducts sample size estimation for bioequivalence studies using the Two One-Sided Tests (TOST) procedure. A simulation-based approach enables flexible hypothesis testing, supports multiple treatments, and accommodates correlated endpoints.
-License: Apache License 2.0
+License: Apache License (== 2.0)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 Imports: 
     MASS,
-    matrixcalc,
-    parallel,
+    Rcpp (>= 1.0.13),
     data.table,
-    Rcpp (>= 1.0.13)
+    matrixcalc,
+    parallel
 Suggests: 
+    PowerTOST,
+    ggplot2,
+    kableExtra,
     knitr,
     rmarkdown,
     testthat (>= 3.0.0),
-    tinytest,
-    ggplot2,
-    kableExtra,
     tibble,
-    PowerTOST
+    tinytest
 VignetteBuilder: knitr
 Config/testthat/edition: 3
 LinkingTo: Rcpp, RcppArmadillo

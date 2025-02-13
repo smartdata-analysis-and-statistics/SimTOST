@@ -318,29 +318,33 @@ test_studies <- function(nsim, n, comp, param, param.d, arm_seed, ncores){
 
 
 
-#' @title uniroot.integer.mod
-#' @description  Optimizer Uniroot integer modified from the ssanv function package https://github.com/cran/ssanv/blob/master/R/uniroot.integer.R
+#' @title Optimizer for Uniroot Integer (Modified)
 #'
-#' @param f  function for which a root is needed
-#' @param power target power value
-#' @param lower minimum allowable root
-#' @param upper maximum allowable root
-#' @param step.power initial step size is 2^step.power
-#' @param step.up if TRUE steps up from 'lower', if FALSE steps down from 'upper'
-#' @param pos.side if TRUE finds integer, i, closest to the root such that f(i) >0
-#' @param maxiter maximum number of iterations
-#' @param ... additional arguments to 'f'.
+#' @description A modified integer-based root-finding algorithm for determining the sample size required to achieve a target power.
+#' This function extends the uniroot integer search method to handle cases with stepwise power searches while considering constraints on search limits.
 #'
-#' @return a list with the following elements:
-#' root= the integer on the correct side of the root
-#' f.root	= value of f at root  (output= main output with final power, output.test= output table with test at endpoint level)
-#' iter	= number of times f was evaluated
-#' table.iter = data.frame with the estimated N and power at each iteration
-#' table.test = data.frame with the test at endpoint level for a given N and each simulation draw
+#' @param f Function for which a root is needed.
+#' @param power Numeric. Target power value.
+#' @param lower Integer. Minimum allowable root value.
+#' @param upper Integer. Maximum allowable root value.
+#' @param step.power Numeric. Initial step size defined as \code{2^step.power}.
+#' @param step.up Logical. If \code{TRUE}, the search increments from \code{lower}; if \code{FALSE}, it decrements from \code{upper}.
+#' @param pos.side Logical. If \code{TRUE}, finds the closest integer \code{i} such that \code{f(i) > 0}.
+#' @param maxiter Integer. Maximum number of iterations allowed.
+#' @param ... Additional arguments passed to \code{f}.
+#'
+#' @return A list containing:
+#' \describe{
+#'   \item{\code{root}}{The integer value closest to the root on the correct side.}
+#'   \item{\code{f.root}}{Value of \code{f} at the estimated root.}
+#'   \item{\code{iter}}{Number of function evaluations performed.}
+#'   \item{\code{table.iter}}{A data frame showing estimated sample size (\code{N}) and corresponding power at each iteration.}
+#'   \item{\code{table.test}}{A data frame containing endpoint-level test results for each simulation and corresponding \code{N}.}
+#' }
 #'
 #' @keywords internal
-
 uniroot.integer.mod <-function (f, power, lower = lower, upper = upper, step.power=step.power, step.up=step.up, pos.side=pos.side, maxiter = maxiter,...) {
+  # Function adapted from ssanv https://github.com/cran/ssanv/blob/master/R/uniroot.integer.R
   iter <- 0
   table.test<-data.frame()
   if (!is.numeric(lower) || !is.numeric(upper) || lower >= upper)

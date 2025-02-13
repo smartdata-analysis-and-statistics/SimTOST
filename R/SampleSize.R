@@ -35,8 +35,8 @@
 #' @param seed Integer. Seed for reproducibility.
 #' @param ncores Integer. Number of processing cores for parallel computation. Defaults to \code{1}. Set to \code{NA} for automatic detection (\code{ncores - 1}).
 #' @param optimization_method Character. Sample size optimization method: \code{"fast"} (default, root-finding algorithm) or \code{"step-by-step"}.
-#' @param lower Integer. Minimum sample size (\code{N}) for search range (default = 2).
-#' @param upper Integer. Maximum sample size (\code{N}) for search range (default = 500).
+#' @param lower Integer. Minimum sample size for search range (default = 2).
+#' @param upper Integer. Maximum sample size for search range (default = 500).
 #' @param step.power Numeric. Initial step size for sample size search, defined as \code{2^step.power}. Used when \code{optimization_method = "fast"}.
 #' @param step.up Logical. If \code{TRUE} (default), search increments upward from \code{lower}; if \code{FALSE}, decrements downward from \code{upper}. Used when \code{optimization_method = "fast"}.
 #' @param pos.side Logical. If \code{TRUE}, finds the smallest integer \code{i} closest to the root such that \code{f(i) > 0}. Used when \code{optimization_method = "fast"}.

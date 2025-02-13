@@ -108,9 +108,9 @@ sampleSize(
 
 \item{optimization_method}{Character. Sample size optimization method: \code{"fast"} (default, root-finding algorithm) or \code{"step-by-step"}.}
 
-\item{lower}{Integer. Minimum sample size (\code{N}) for search range (default = 2).}
+\item{lower}{Integer. Minimum sample size for search range (default = 2).}
 
-\item{upper}{Integer. Maximum sample size (\code{N}) for search range (default = 500).}
+\item{upper}{Integer. Maximum sample size for search range (default = 500).}
 
 \item{step.power}{Numeric. Initial step size for sample size search, defined as \code{2^step.power}. Used when \code{optimization_method = "fast"}.}
 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{uniroot.integer.mod}
 \alias{uniroot.integer.mod}
-\title{uniroot.integer.mod}
+\title{Optimizer for Uniroot Integer (Modified)}
 \usage{
 uniroot.integer.mod(
   f,
@@ -17,33 +17,36 @@ uniroot.integer.mod(
 )
 }
 \arguments{
-\item{f}{function for which a root is needed}
+\item{f}{Function for which a root is needed.}
 
-\item{power}{target power value}
+\item{power}{Numeric. Target power value.}
 
-\item{lower}{minimum allowable root}
+\item{lower}{Integer. Minimum allowable root value.}
 
-\item{upper}{maximum allowable root}
+\item{upper}{Integer. Maximum allowable root value.}
 
-\item{step.power}{initial step size is 2^step.power}
+\item{step.power}{Numeric. Initial step size defined as \code{2^step.power}.}
 
-\item{step.up}{if TRUE steps up from 'lower', if FALSE steps down from 'upper'}
+\item{step.up}{Logical. If \code{TRUE}, the search increments from \code{lower}; if \code{FALSE}, it decrements from \code{upper}.}
 
-\item{pos.side}{if TRUE finds integer, i, closest to the root such that f(i) >0}
+\item{pos.side}{Logical. If \code{TRUE}, finds the closest integer \code{i} such that \code{f(i) > 0}.}
 
-\item{maxiter}{maximum number of iterations}
+\item{maxiter}{Integer. Maximum number of iterations allowed.}
 
-\item{...}{additional arguments to 'f'.}
+\item{...}{Additional arguments passed to \code{f}.}
 }
 \value{
-a list with the following elements:
-root= the integer on the correct side of the root
-f.root	= value of f at root  (output= main output with final power, output.test= output table with test at endpoint level)
-iter	= number of times f was evaluated
-table.iter = data.frame with the estimated N and power at each iteration
-table.test = data.frame with the test at endpoint level for a given N and each simulation draw
+A list containing:
+\describe{
+\item{\code{root}}{The integer value closest to the root on the correct side.}
+\item{\code{f.root}}{Value of \code{f} at the estimated root.}
+\item{\code{iter}}{Number of function evaluations performed.}
+\item{\code{table.iter}}{A data frame showing estimated sample size (\code{N}) and corresponding power at each iteration.}
+\item{\code{table.test}}{A data frame containing endpoint-level test results for each simulation and corresponding \code{N}.}
+}
 }
 \description{
-Optimizer Uniroot integer modified from the ssanv function package https://github.com/cran/ssanv/blob/master/R/uniroot.integer.R
+A modified integer-based root-finding algorithm for determining the sample size required to achieve a target power.
+This function extends the uniroot integer search method to handle cases with stepwise power searches while considering constraints on search limits.
 }
 \keyword{internal}
