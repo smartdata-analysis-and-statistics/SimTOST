@@ -572,18 +572,18 @@ are more critical and must always pass before proceeding to secondary
 endpoints. This ensures that primary endpoints receive higher priority,
 while still allowing flexibility in the evaluation of secondary
 endpoints.</p>
-<p>In this example, the trial follows a hierarchical testing strategy
-where Cmax is designated as the primary endpoint. If equivalence is
-established for Cmax, testing proceeds to the secondary endpoints AUCinf
-and AUClast. The trial is considered successful if all primary endpoints
-demonstrate equivalence and at least
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">k=1</annotation></semantics></math>
-secondary endpoints pass the equivalence criteria.</p>
+<p>In this example, the trial follows a hierarchical testing strategy,
+with Cmax as the primary endpoint. Equivalence testing begins with Cmax;
+if established, the analysis proceeds to the secondary endpoints AUCinf
+and AUClast. The trial is considered successful if equivalence holds for
+Cmax and at least one
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi><mo>≥</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">k \geq 1</annotation></semantics></math>)
+of the secondary endpoints.</p>
 <p>To implement this advanced hierarchical testing approach in SimTOST,
 we:</p>
 <ol style="list-style-type: decimal">
-<li>Use sequential adjustment by setting <code>adjust = "seq"</code> to
-enforce the hierarchical structure.</li>
+<li>Use hierarchical testing by setting
+<code>adjust = "seq"</code>.</li>
 <li>Define the endpoint hierarchy using the <code>type_y</code>
 argument:
 <ul>
