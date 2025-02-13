@@ -23,16 +23,6 @@ for the given number of treatment arms (\code{n_arms}). If \code{TAR} is missing
 vector of ones, ensuring equal allocation across all arms. The function also handles cases where \code{TAR}
 is shorter than \code{n_arms}, contains NA values, or has invalid values.
 }
-\details{
-This function ensures \code{TAR} meets the following conditions:
-\itemize{
-\item If \code{TAR} is \strong{NULL} or \strong{missing}, it is set to a vector of ones of length \code{n_arms}.
-\item If \code{TAR} is \strong{shorter} than \code{n_arms}, missing values are replaced with ones, and a \strong{warning} is issued.
-\item If \code{TAR} is \strong{longer} than \code{n_arms}, an \strong{error} is raised.
-\item If \code{TAR} contains \strong{NA values}, they are replaced with ones, and a \strong{warning} is issued.
-\item If \code{TAR} contains \strong{zero or negative values}, an \strong{error} is raised.
-}
-}
 \author{
 Thomas Debray \email{tdebray@fromdatatowisdom.com}
 }

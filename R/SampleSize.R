@@ -1,67 +1,68 @@
 #' @title Sample Size Calculation for Bioequivalence and Multi-Endpoint Studies
-#' @description This function calculates the required sample size to achieve a target power in studies with multiple endpoints and treatment arms. The function leverages modified root-finding algorithms to estimate sample size while considering correlation structures, variance assumptions, and equivalence bounds across endpoints. It is especially useful for bioequivalence trials or multi-arm trials with complex endpoint structures.
 #'
-#' @param mu_list Named list of arithmetic means per treatment arm. Each element contains a vector (i.e., one per treatment arm) with the expected outcomes for all endpoints of interest.
-#' @param varcov_list list of var-cov matrices, each element corresponds to a comparator with a varcov matrix of size number of endpoints X number of endpoints.
-#' @param sigma_list  list of sigma vectors, each element corresponds to a comparator with a sigma vector of size number of endpoints.
-#' @param cor_mat matrix specifying the correlation matrix between endpoints, used along with sigma_list  to calculate the varcov list in case it is not provided.
-#' @param sigmaB number between subject variance only for 2x2 design.
-#' @param Eper Optional. Vector of length 2 specifying the period effect in a `dtype = "2x2"` design, applied to c(Period 0, Period 1). Defaults to `c(0, 0)` if not provided. Ignored for `dtype = "parallel"`.
-#' @param Eco Optional. Vector of length 2 specifying the carry-over effect for each arm in a `dtype = "2x2"` design, applied to c(Reference, Treatment). Defaults to `c(0, 0)` if not provided. Ignored for `dtype = "parallel"`.
-#' @param rho Correlation parameter applied uniformly across all endpoint pairs, used with sigma_list to calculate varcov if cor_mat or varcov_list are not provided.
-#' @param TAR Numeric vector. Treatment allocation rates for each arm, where the order of values corresponds to the order of `arm_names`. The length of `TAR` must match the number of arms. If not provided, a default equal allocation rate is assigned across all arms.
-#' @param arm_names Optional vector with the treatment names. If not supplied, it will be derived from mu_list.
-#' @param ynames_list Optional list of vectors with Endpoint names on each arm. When not all endpoint names are provided for each arm, arbitrary names (assigned by vector order) are used.
-#' @param type_y Vector indicating the type of each endpoint:
-#' 1 for co-primary endpoints, 2 for secondary endpoints.
-#' @param list_comparator list of comparators, i.e each comparator is a vector of size 1 X 2 where are specified the name of treatments
-#' @param list_y_comparator list of endpoints to be considered in each comparator. Each element of the list is a vector containing the names of the endpoints to compare. When it is not provided, all endpoints present in both compared arms are used.
-#' @param power target power (default = 0.8)
-#' @param alpha alpha level (default = 0.05)
-#' @param lequi.tol lower equivalence bounds (e.g., -0.5) expressed in raw scale units (e.g., scalepoints) of endpoint repeated on all endpoints and comparators
-#' @param uequi.tol upper equivalence bounds (e.g., -0.5) expressed in raw scale units (e.g., scalepoints) of endpoint repeated on all endpoints and comparators
-#' @param list_lequi.tol list of lower equivalence bounds (e.g., -0.5) expressed in raw scale units (e.g., scalepoints) of endpoint in comparator
-#' @param list_uequi.tol list of upper equivalence bounds (e.g., -0.5) expressed in raw scale units (e.g., scalepoints) of endpoint in comparator
-#' @param vareq Logical indicating whether variances are assumed equal across arms (default = FALSE).
-#' @param dtype Character. Design type for the trial: `"parallel"` (default) for parallel group design or `"2x2"` for crossover design (applicable only for trials with 2 arms).
-#' @param lognorm Is data log-normally distributed? (TRUE, FALSE)
-#' @param k Vector with the number of endpoints that must be successful (integer) for global bioequivalence for each comparator. If no k vector is provided, it will be set to the total number of endpoints on each comparator.
-#' @param adjust Character. Method for alpha adjustment: `"k"` (K-fold), `"bon"` (Bonferroni), `"sid"` (Sidak), `"no"` (no adjustment, default), or `"seq"` (sequential adjustment).
-#' @param ctype Character. Specifies the type of hypothesis test for comparison: `"DOM"` for Difference of Means or `"ROM"` for Ratio of Means.
-#' @param dropout vector with proportion of total population with dropout per arm
-#' @param nsim number of simulated studies (default=5000)
-#' @param seed main seed
-#' @param ncores Integer. Number of processing cores to use for parallel computation.
-#' Defaults to 1. Set to NA for automatic detection of available cores (`ncores - 1` used)
-#' or specify a fixed number of cores. Note that multicore processing is currently not implemented.
-#' @param optimization_method Character. Method for determining the required sample size: "fast" (using modified root-finding algorithms) or "step-by-step". Defaults to "fast".
-#' @param lower Integer. Initial value of `N` for the search range. Defaults to 2.
-#' @param upper Integer. Maximum value of `N` for the search range. Defaults to 500.
-#' @param step.power Numeric. The initial step size for the sample size search, defined as `2^step.power`. Relevant when `optimization_method` is `"fast"`.
-#' @param step.up Logical. If `TRUE` (default), the sample size search increments upward from the `lower` limit; if `FALSE`, it decrements downward from the `upper` limit. Used only when `optimization_method` is `"fast"`.
-#' @param pos.side Logical. If `TRUE`, finds the smallest integer, `i`, closest to the root such that `f(i) > 0`. Used only when `optimization_method` is `"fast"`.
-#' @param maxiter Integer. Maximum number of iterations allowed for finding the sample size. Defaults to 1000. Used only when `optimization_method` is `"fast"`.
-#' @param verbose Logical. If `TRUE`, the function displays progress and informational messages during execution. Defaults to `FALSE`.
-#' @return An object simss that contains the following elements :
+#' @description Computes the required sample size to achieve a target power in studies with multiple endpoints and treatment arms.
+#' The function employs modified root-finding algorithms to estimate sample size while accounting for correlation structures, variance assumptions,
+#' and equivalence bounds across endpoints. It is particularly useful for bioequivalence trials and multi-arm studies with complex endpoint structures.
+#'
+#' @param mu_list Named list of arithmetic means per treatment arm. Each element is a vector representing expected outcomes for all endpoints in that arm.
+#' @param varcov_list List of variance-covariance matrices, where each element corresponds to a comparator. Each matrix has dimensions: number of endpoints × number of endpoints.
+#' @param sigma_list List of standard deviation vectors, where each element corresponds to a comparator and contains one standard deviation per endpoint.
+#' @param cor_mat Matrix specifying the correlation structure between endpoints, used along with \code{sigma_list} to calculate \code{varcov_list} if not provided.
+#' @param sigmaB Numeric. Between-subject variance for a 2×2 crossover design.
+#' @param Eper Optional numeric vector of length 2 specifying the period effect in a \code{dtype = "2x2"} design, applied as \code{c(Period 0, Period 1)}. Defaults to \code{c(0, 0)}. Ignored for \code{dtype = "parallel"}.
+#' @param Eco Optional numeric vector of length 2 specifying the carry-over effect per arm in a \code{dtype = "2x2"} design, applied as \code{c(Reference, Treatment)}. Defaults to \code{c(0, 0)}. Ignored for \code{dtype = "parallel"}.
+#' @param rho Numeric. Correlation parameter applied uniformly across all endpoint pairs. Used with \code{sigma_list} to compute \code{varcov_list} when \code{cor_mat} or \code{varcov_list} are not provided.
+#' @param TAR Numeric vector specifying treatment allocation rates per arm. The order must match \code{arm_names}. Defaults to equal allocation across arms if not provided.
+#' @param arm_names Optional character vector of treatment names. If not supplied, names are derived from \code{mu_list}.
+#' @param ynames_list Optional list of vectors specifying endpoint names per arm. If names are missing, arbitrary names are assigned based on order.
+#' @param type_y Integer vector indicating endpoint types: \code{1} for co-primary endpoints, \code{2} for secondary endpoints.
+#' @param list_comparator List of comparators. Each element is a vector of length 2 specifying the treatment names being compared.
+#' @param list_y_comparator List of endpoint sets per comparator. Each element is a vector containing endpoint names to compare. If not provided, all endpoints common to both comparator arms are used.
+#' @param power Numeric. Target power (default = 0.8).
+#' @param alpha Numeric. Significance level (default = 0.05).
+#' @param lequi.tol Numeric. Lower equivalence bounds (e.g., -0.5) applied uniformly across all endpoints and comparators.
+#' @param uequi.tol Numeric. Upper equivalence bounds (e.g., 0.5) applied uniformly across all endpoints and comparators.
+#' @param list_lequi.tol List of numeric vectors specifying lower equivalence bounds per comparator.
+#' @param list_uequi.tol List of numeric vectors specifying upper equivalence bounds per comparator.
+#' @param vareq Logical. Assumes equal variances across arms if \code{TRUE} (default = \code{FALSE}).
+#' @param dtype Character. Trial design: \code{"parallel"} (default) for parallel-group or \code{"2x2"} for crossover (only for 2-arm studies).
+#' @param lognorm Logical. Whether data follows a log-normal distribution (\code{TRUE} or \code{FALSE}).
+#' @param k Integer vector. Minimum number of successful endpoints required for global bioequivalence per comparator. Defaults to all endpoints per comparator.
+#' @param adjust Character. Alpha adjustment method: \code{"k"} (K-fold), \code{"bon"} (Bonferroni), \code{"sid"} (Sidak), \code{"no"} (default, no adjustment), or \code{"seq"} (sequential).
+#' @param ctype Character. Hypothesis test type: \code{"DOM"} (Difference of Means) or \code{"ROM"} (Ratio of Means).
+#' @param dropout Numeric vector specifying dropout proportion per arm.
+#' @param nsim Integer. Number of simulated studies (default = 5000).
+#' @param seed Integer. Seed for reproducibility.
+#' @param ncores Integer. Number of processing cores for parallel computation. Defaults to \code{1}. Set to \code{NA} for automatic detection (\code{ncores - 1}).
+#' @param optimization_method Character. Sample size optimization method: \code{"fast"} (default, root-finding algorithm) or \code{"step-by-step"}.
+#' @param lower Integer. Minimum sample size (\code{N}) for search range (default = 2).
+#' @param upper Integer. Maximum sample size (\code{N}) for search range (default = 500).
+#' @param step.power Numeric. Initial step size for sample size search, defined as \code{2^step.power}. Used when \code{optimization_method = "fast"}.
+#' @param step.up Logical. If \code{TRUE} (default), search increments upward from \code{lower}; if \code{FALSE}, decrements downward from \code{upper}. Used when \code{optimization_method = "fast"}.
+#' @param pos.side Logical. If \code{TRUE}, finds the smallest integer \code{i} closest to the root such that \code{f(i) > 0}. Used when \code{optimization_method = "fast"}.
+#' @param maxiter Integer. Maximum iterations allowed for sample size estimation (default = 1000). Used when \code{optimization_method = "fast"}.
+#' @param verbose Logical. If \code{TRUE}, prints progress and messages during execution (default = \code{FALSE}).
+#'
+#' @return A list containing:
 #' \describe{
-#'  \item{"response"}{ An array summarizing the results of the simulation, including the estimated sample sizes for each arm, the approximated achieved power, and the corresponding confidence interval.}
-#'  \item{"table.iter"}{A data frame detailing the estimated sample size for each arm and the calculated power at each iteration during the sample size searching process.}
-#'  \item{"table.test"}{A data frame containing the test results for all simulated trials, including relevant metrics for each tested sample size}
-#'  \item{"param.u"}{The original set of parameters provided by the user for the simulation.}
-#'  \item{"param"}{ The final set of parameters used for the sample size calculation. These are based on \code{param.u} but adjusted to address any inconsistencies or missing information.}
-#'  \item{"param.d"}{ The design parameters used in the simulation, including details relevant to the trial design.}
-#'}
+#'   \item{\code{response}}{Array summarizing simulation results, including estimated sample sizes, achieved power, and confidence intervals.}
+#'   \item{\code{table.iter}}{Data frame showing estimated sample sizes and calculated power at each iteration.}
+#'   \item{\code{table.test}}{Data frame containing test results for all simulated trials.}
+#'   \item{\code{param.u}}{Original input parameters.}
+#'   \item{\code{param}}{Final adjusted parameters used in sample size calculation.}
+#'   \item{\code{param.d}}{Trial design parameters used in the simulation.}
+#' }
 #'
 #' @references
-#' Mielke, J., Jones, B., Jilma, B., & König, F. (2018). Sample size for multiple hypothesis testing in biosimilar development. Statistics in Biopharmaceutical Research, 10(1), 39-49.
+#' Mielke, J., Jones, B., Jilma, B., & König, F. (2018). Sample size for multiple hypothesis testing in biosimilar development. \emph{Statistics in Biopharmaceutical Research, 10}(1), 39-49.
 #'
-#' Berger, R. L., & Hsu, J. C. (1996). Bioequivalence trials, intersection-union tests and equivalence confidence sets. Statistical Science, 283-302.
+#' Berger, R. L., & Hsu, J. C. (1996). Bioequivalence trials, intersection-union tests, and equivalence confidence sets. \emph{Statistical Science}, 283-302.
 #'
-#' @author
-#' Johanna Muñoz \email{johanna.munoz@fromdatatowisdom.com}
+#' @author Johanna Muñoz \email{johanna.munoz@fromdatatowisdom.com}
+#'
+#' @export
 #'
 #' @examples
-#'
 #' mu_list <- list(SB2 = c(AUCinf = 38703, AUClast = 36862, Cmax = 127.0),
 #'                 EUREF = c(AUCinf = 39360, AUClast = 37022, Cmax = 126.2),
 #'                 USREF = c(AUCinf = 39270, AUClast = 37368, Cmax = 129.2))
@@ -94,7 +95,6 @@
 #'            list_uequi.tol = list("EMA" = lequi_upper, "FDA" = lequi_upper),
 #'            adjust = "no", dtype = "parallel", ctype = "ROM", vareq = FALSE,
 #'            lognorm = TRUE, ncores = 1, nsim = 50, seed = 1234)
-#' @export
 sampleSize <- function(mu_list, varcov_list = NA, sigma_list = NA, cor_mat = NA,
                        sigmaB = NA, Eper, Eco, rho = 0,
                        TAR = rep(1, length(mu_list)), arm_names = NA,
@@ -599,13 +599,13 @@ derive_arm_names <- function(arm_names, mu_list, verbose = FALSE) {
 #'
 #' @author Thomas Debray \email{tdebray@fromdatatowisdom.com}
 #'
-#' This function derives endpoint names (`ynames_list`) from `mu_list` if `ynames_list`
-#' is missing. If `ynames_list` is already provided, it confirms the names to the user when
-#' `verbose` is set to `TRUE`.
+#' This function derives endpoint names (\code{ynames_list}) from \code{mu_list} if \code{ynames_list}
+#' is missing. If \code{ynames_list} is already provided, it confirms the names to the user when
+#' \code{verbose} is set to \code{TRUE}.
 #'
 #' @param ynames_list Optional list of vectors with endpoint names for each arm.
 #' @param mu_list Named list of means per treatment arm, where names can be used as endpoint names.
-#' @param verbose Logical, if `TRUE`, displays messages about the derivation process.
+#' @param verbose Logical, if \code{TRUE}, displays messages about the derivation process.
 #'
 #' @return A list of endpoint names for each arm.
 #' @keywords internal
@@ -634,23 +634,15 @@ derive_endpoint_names <- function(ynames_list, mu_list, verbose = FALSE) {
 
 #' Derive and Validate Treatment Allocation Rate (TAR)
 #'
-#' This function validates and adjusts the treatment allocation rate (`TAR`) to ensure it is correctly specified
-#' for the given number of treatment arms (`n_arms`). If `TAR` is missing or NULL, it is assigned a default
-#' vector of ones, ensuring equal allocation across all arms. The function also handles cases where `TAR`
-#' is shorter than `n_arms`, contains NA values, or has invalid values.
+#' This function validates and adjusts the treatment allocation rate (\code{TAR}) to ensure it is correctly specified
+#' for the given number of treatment arms (\code{n_arms}). If \code{TAR} is missing or NULL, it is assigned a default
+#' vector of ones, ensuring equal allocation across all arms. The function also handles cases where \code{TAR}
+#' is shorter than \code{n_arms}, contains NA values, or has invalid values.
 #'
 #' @param TAR Optional numeric vector specifying the allocation rate for each treatment arm. If missing, a default
 #' equal allocation rate is assigned.
-#' @param arm_names Character vector specifying the names of the treatment arms. Used to name the elements of `TAR`.
-#' @param verbose Logical, if `TRUE`, displays messages about the status of `TAR` derivation or assignment.
-#'
-#' @details
-#' This function ensures `TAR` meets the following conditions:
-#' - If `TAR` is **NULL** or **missing**, it is set to a vector of ones of length `n_arms`.
-#' - If `TAR` is **shorter** than `n_arms`, missing values are replaced with ones, and a **warning** is issued.
-#' - If `TAR` is **longer** than `n_arms`, an **error** is raised.
-#' - If `TAR` contains **NA values**, they are replaced with ones, and a **warning** is issued.
-#' - If `TAR` contains **zero or negative values**, an **error** is raised.
+#' @param arm_names Character vector specifying the names of the treatment arms. Used to name the elements of \code{TAR}.
+#' @param verbose Logical, if \code{TRUE}, displays messages about the status of \code{TAR} derivation or assignment.
 #'
 #' @return A named list representing the treatment allocation rate for each arm.
 #'

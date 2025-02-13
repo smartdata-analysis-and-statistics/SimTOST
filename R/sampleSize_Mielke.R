@@ -1,31 +1,57 @@
-#' @title Simulated Test Statistic for Given Settings in Noninferiority/Equivalence Trials
+#' @title Simulated Test Statistic for Noninferiority/Equivalence Trials
 #'
-#' @description This function simulates test statistics for multiple hypothesis testing in the context of biosimilar development, using the approach described by Mielke et al. (2018). It calculates the necessary sample size for meeting equivalence criteria across multiple endpoints, considering correlation structures, and applying multiplicity adjustments.
+#' @description
+#' Simulates test statistics for multiple hypothesis testing in biosimilar development,
+#' following the approach described by Mielke et al. (2018). It calculates the necessary
+#' sample size for meeting equivalence criteria across multiple endpoints while
+#' considering correlation structures and applying multiplicity adjustments.
 #'
-#' @details Following the methodology by Mielke et al. (2018), this function is designed for multiple endpoint clinical trials where success is defined as meeting equivalence criteria on at least a subset of tests. The function simulates test statistics based on multivariate normal distribution assumptions and supports k-out-of-m success criteria for regulatory approval. Additionally, Type I error control is achieved through multiplicity adjustments as proposed by Lehmann and Romano (2005) to ensure rigorous error rate management.
+#' @details
+#' This function is designed for multiple-endpoint clinical trials, where success
+#' is defined as meeting equivalence criteria for at least a subset of tests.
+#' Simulated test statistics are based on multivariate normal distribution assumptions,
+#' and the function supports k-out-of-m success criteria for regulatory approval.
 #'
-#' The approach is particularly relevant for biosimilar studies where sample size estimation must account for multiple comparisons across endpoints, doses, or populations, as regulatory agencies often require equivalence across all relevant comparisons. This method provides a framework for estimating power and sample size, even when equivalence is not required on all endpoints.
+#' Type I error control is achieved through multiplicity adjustments as proposed by
+#' Lehmann and Romano (2005) to ensure rigorous error rate management. This approach
+#' is particularly relevant for biosimilar studies, where sample size estimation must
+#' account for multiple comparisons across endpoints, doses, or populations.
 #'
-#' @param N Integer. The number of subjects per sequence.
-#' @param m Integer. The number of endpoints.
-#' @param k Integer. The number of endpoints that must be successful to consider the test a success.
-#' @param R Matrix. The correlation matrix between the endpoints (e.g., generated with the `variance.const.corr()` function), with dimensions m x m.
-#' @param sigma Numeric. The standard deviation of the endpoints. This can either be a vector of length m (one for each endpoint) or a single value. If a single value is provided, it is assumed that the standard deviation is constant across all endpoints. In the case of a 2x2 crossover design, the input is the within-subject variance; for a parallel group design, it represents the standard deviation in the treatment group, assumed identical for both test and reference groups.
-#' @param true.diff Numeric. The assumed true difference between the test and reference. This can be a vector of length m (one for each endpoint) or a single value.
-#' @param equi.tol Numeric. Equivalence margins, with the interval being (-equi.tol, +equi.tol).
-#' @param design Character. The study design, either "22co" for a 2x2 crossover design or "parallel" for a parallel groups design.
-#' @param alpha Numeric. The significance level.
-#' @param adjust Character. The method for multiplicity adjustment. Options are "no" for no adjustment, "bon" for Bonferroni correction, or "k" for k-adjustment.
+#' @param N Integer specifying the number of subjects per sequence.
+#' @param m Integer specifying the number of endpoints.
+#' @param k Integer specifying the number of endpoints that must meet equivalence
+#' to consider the test successful.
+#' @param R Matrix specifying the correlation structure between endpoints.
+#' This should be an \code{m x m} matrix, e.g., generated using \code{variance.const.corr()}.
+#' @param sigma Numeric specifying the standard deviation of endpoints.
+#' Can be a vector of length \code{m} (one per endpoint) or a single value.
+#' In a 2x2 crossover design, this represents within-subject variance.
+#' In a parallel-group design, it represents the treatment group standard deviation.
+#' @param true.diff Numeric specifying the assumed true difference between test and reference.
+#' Can be a vector of length \code{m} or a single value.
+#' @param equi.tol Numeric specifying the equivalence margins.
+#' The interval is defined as \code{(-equi.tol, +equi.tol)}.
+#' @param design Character specifying the study design.
+#' Options are \code{"22co"} for a 2x2 crossover design or \code{"parallel"} for a parallel-group design.
+#' @param alpha Numeric specifying the significance level.
+#' @param adjust Character specifying the method for multiplicity adjustment.
+#' Options include \code{"no"} for no adjustment, \code{"bon"} for Bonferroni correction,
+#' and \code{"k"} for k-adjustment.
 #'
 #' @references
+#' Kong, L., Kohberger, R. C., & Koch, G. G. (2004). Type I Error and Power in
+#' Noninferiority/Equivalence Trials with Correlated Multiple Endpoints: An Example
+#' from Vaccine Development Trials. \emph{Journal of Biopharmaceutical Statistics, 14}(4), 893–907.
 #'
-#' Kong, L., Kohberger, R. C. & Koch, G. G. Type I Error and Power in Noninferiority/Equivalence Trials with Correlated Multiple Endpoints: An Example from Vaccine Development Trials. Journal of Biopharmaceutical Statistics 14, 893–907 (2004).
+#' Lehmann, E. L., & Romano, J. P. (2005). Generalizations of the Familywise Error Rate.
+#' \emph{The Annals of Statistics, 33}(2), 1138–1154.
 #'
-#' Lehmann, E. L. & Romano, J. P. Generalizations of the Familywise Error Rate. The Annals of Statistics 33, 1138–1154 (2005).
+#' Mielke, J., Jones, B., Jilma, B., & König, F. (2018). Sample Size for Multiple
+#' Hypothesis Testing in Biosimilar Development. \emph{Statistics in Biopharmaceutical Research, 10}(1), 39–49.
 #'
-#' Mielke, J., Jones, B., Jilma, B. & König, F. Sample Size for Multiple Hypothesis Testing in Biosimilar Development. Statistics in Biopharmaceutical Research 10, 39–49 (2018).
+#' @return
+#' A numeric vector representing a realization of the simulated test statistic for the given setting.
 #'
-#' @return A realization of the simulated test statistic for the given setting. If values are provided as a single number (constant for all endpoints), a vector is created.
 #'
 #' @keywords internal
 sign_Mielke <- function(N, m, k, R, sigma, true.diff, equi.tol = log(1.25),
@@ -69,25 +95,39 @@ sign_Mielke <- function(N, m, k, R, sigma, true.diff, equi.tol = log(1.25),
   return(dec = test.dec)
 }
 
-#' @title Power Calculation for Hypothesis Testing Using Mielke's Method
-#' @description Calculate power of hypothesis testing using Mielke's
+#' @title Power Calculation for Hypothesis Testing in Equivalence Trials
 #'
-#' @param N Integer. The number of subjects per sequence.
-#' @param m Integer. The number of endpoints.
-#' @param k Integer. The number of endpoints that must be successful to consider the test a success.
-#' @param R Matrix. The correlation matrix between the endpoints (e.g., generated with the `variance.const.corr()` function), with dimensions m x m.
-#' @param sigma Numeric. The standard deviation of the endpoints. This can either be a vector of length m (one for each endpoint) or a single value. If a single value is provided, it is assumed that the standard deviation is constant across all endpoints. In the case of a 2x2 crossover design, the input is the within-subject variance; for a parallel group design, it represents the standard deviation in the treatment group, assumed identical for both test and reference groups.
-#' @param true.diff Numeric. The assumed true difference between the test and reference. This can be a vector of length m (one for each endpoint) or a single value.
-#' @param equi.tol Numeric. Equivalence margins, with the interval being (-equi.tol, +equi.tol). Default is log(1.25).
-#' @param design Character. The study design, either "22co" for a 2x2 crossover design or "parallel" for a parallel groups design.
-#' @param alpha Numeric. The significance level. Default is 0.05.
-#' @param adjust Character. The method for multiplicity adjustment. Options are "no" for no adjustment, "bon" for Bonferroni correction, or "k" for k-adjustment.
-#' @param nsim Integer. The number of simulations to perform. Default is 10,000.
+#' @description
+#' Estimates the power of hypothesis testing in equivalence trials using
+#' the method described by Mielke et al. This approach accounts for multiple
+#' endpoints, correlation structures, and multiplicity adjustments.
 #'
-#' @return Numeric. The estimated power based on the simulations.
+#' @param N Integer specifying the number of subjects per sequence.
+#' @param m Integer specifying the number of endpoints.
+#' @param k Integer specifying the number of endpoints that must meet equivalence
+#' to consider the test successful.
+#' @param R Matrix specifying the correlation structure between endpoints.
+#' This should be an \code{m x m} matrix, e.g., generated using \code{variance.const.corr()}.
+#' @param sigma Numeric specifying the standard deviation of endpoints.
+#' Can be a vector of length \code{m} (one per endpoint) or a single value.
+#' In a 2x2 crossover design, this represents within-subject variance.
+#' In a parallel-group design, it represents the treatment group standard deviation.
+#' @param true.diff Numeric specifying the assumed true difference between test and reference.
+#' Can be a vector of length \code{m} or a single value.
+#' @param equi.tol Numeric specifying the equivalence margins, with the interval defined as
+#' \code{(-equi.tol, +equi.tol)}. Default is \code{log(1.25)}.
+#' @param design Character specifying the study design.
+#' Options are \code{"22co"} for a 2x2 crossover design or \code{"parallel"} for a parallel-group design.
+#' @param alpha Numeric specifying the significance level. Default is \code{0.05}.
+#' @param adjust Character specifying the method for multiplicity adjustment.
+#' Options include \code{"no"} for no adjustment, \code{"bon"} for Bonferroni correction,
+#' and \code{"k"} for k-adjustment.
+#' @param nsim Integer specifying the number of simulations to perform. Default is \code{10,000}.
+#'
+#' @return
+#' A numeric value representing the estimated power based on the simulations.
 #'
 #' @keywords internal
-#'
 power_Mielke <- function(N, m, k, R, sigma, true.diff, equi.tol = log(1.25),
                          design, alpha=0.05, adjust="no", nsim = 10000) {
   mean(replicate(nsim, sign_Mielke(N = N, m = m, k = k, R = R, sigma = sigma,
@@ -96,23 +136,23 @@ power_Mielke <- function(N, m, k, R, sigma, true.diff, equi.tol = log(1.25),
                                    adjust = adjust)))
 }
 
-#' @title Power Calculation for Hypothesis Testing of Difference of Means (DOM)
+#' @title Power Calculation for Difference of Means (DOM) Hypothesis Test
 #'
-#' @description This function calculates the power of hypothesis testing for the difference of means (DOM) between two groups, using simulations to estimate the achieved power based on the provided parameters such as sample sizes, means, standard deviations, and significance level.
+#' @description Computes the statistical power for testing the difference of means (DOM) between two groups using Monte Carlo simulations. The power is estimated based on specified sample sizes, means, standard deviations, and significance level.
 #'
-#' @param seed Integer. A seed value for reproducibility of the simulations.
-#' @param mu_test Numeric. The arithmetic mean of the test group.
-#' @param mu_control Numeric. The arithmetic mean of the control group.
-#' @param sigma_test Numeric. The standard deviation of the test group.
-#' @param sigma_control Numeric. The standard deviation of the control group.
-#' @param N_test Integer. The sample size of the test group.
-#' @param N_control Integer. The sample size of the control group.
-#' @param alpha Numeric. The significance level for the hypothesis test. Default is 0.05.
-#' @param nsim Integer. The number of simulations to perform. Default is 10,000.
+#' @param seed Integer. Seed for reproducibility.
+#' @param mu_test Numeric. Mean of the test group.
+#' @param mu_control Numeric. Mean of the control group.
+#' @param sigma_test Numeric. Standard deviation of the test group.
+#' @param sigma_control Numeric. Standard deviation of the control group.
+#' @param N_test Integer. Sample size of the test group.
+#' @param N_control Integer. Sample size of the control group.
+#' @param lb Numeric. Lower bound for the equivalence margin.
+#' @param ub Numeric. Upper bound for the equivalence margin.
+#' @param alpha Numeric. Significance level (default = 0.05).
+#' @param nsim Integer. Number of simulations (default = 10,000).
 #'
-#' @return Numeric. The estimated power based on the simulations.
-#'
-#' @keywords internal
+#' @return Numeric. Estimated power (probability between 0 and 1).
 power_dom <- function(seed, mu_test, mu_control, sigma_test, sigma_control,
                       N_test, N_control, lb, ub, alpha = 0.05, nsim = 10000) {
   set.seed(seed)

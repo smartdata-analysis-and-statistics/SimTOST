@@ -2,7 +2,7 @@
 % Please edit documentation in R/sampleSize_Mielke.R
 \name{power_Mielke}
 \alias{power_Mielke}
-\title{Power Calculation for Hypothesis Testing Using Mielke's Method}
+\title{Power Calculation for Hypothesis Testing in Equivalence Trials}
 \usage{
 power_Mielke(
   N,
@@ -19,32 +19,44 @@ power_Mielke(
 )
 }
 \arguments{
-\item{N}{Integer. The number of subjects per sequence.}
+\item{N}{Integer specifying the number of subjects per sequence.}
 
-\item{m}{Integer. The number of endpoints.}
+\item{m}{Integer specifying the number of endpoints.}
 
-\item{k}{Integer. The number of endpoints that must be successful to consider the test a success.}
+\item{k}{Integer specifying the number of endpoints that must meet equivalence
+to consider the test successful.}
 
-\item{R}{Matrix. The correlation matrix between the endpoints (e.g., generated with the \code{variance.const.corr()} function), with dimensions m x m.}
+\item{R}{Matrix specifying the correlation structure between endpoints.
+This should be an \code{m x m} matrix, e.g., generated using \code{variance.const.corr()}.}
 
-\item{sigma}{Numeric. The standard deviation of the endpoints. This can either be a vector of length m (one for each endpoint) or a single value. If a single value is provided, it is assumed that the standard deviation is constant across all endpoints. In the case of a 2x2 crossover design, the input is the within-subject variance; for a parallel group design, it represents the standard deviation in the treatment group, assumed identical for both test and reference groups.}
+\item{sigma}{Numeric specifying the standard deviation of endpoints.
+Can be a vector of length \code{m} (one per endpoint) or a single value.
+In a 2x2 crossover design, this represents within-subject variance.
+In a parallel-group design, it represents the treatment group standard deviation.}
 
-\item{true.diff}{Numeric. The assumed true difference between the test and reference. This can be a vector of length m (one for each endpoint) or a single value.}
+\item{true.diff}{Numeric specifying the assumed true difference between test and reference.
+Can be a vector of length \code{m} or a single value.}
 
-\item{equi.tol}{Numeric. Equivalence margins, with the interval being (-equi.tol, +equi.tol). Default is log(1.25).}
+\item{equi.tol}{Numeric specifying the equivalence margins, with the interval defined as
+\code{(-equi.tol, +equi.tol)}. Default is \code{log(1.25)}.}
 
-\item{design}{Character. The study design, either "22co" for a 2x2 crossover design or "parallel" for a parallel groups design.}
+\item{design}{Character specifying the study design.
+Options are \code{"22co"} for a 2x2 crossover design or \code{"parallel"} for a parallel-group design.}
 
-\item{alpha}{Numeric. The significance level. Default is 0.05.}
+\item{alpha}{Numeric specifying the significance level. Default is \code{0.05}.}
 
-\item{adjust}{Character. The method for multiplicity adjustment. Options are "no" for no adjustment, "bon" for Bonferroni correction, or "k" for k-adjustment.}
+\item{adjust}{Character specifying the method for multiplicity adjustment.
+Options include \code{"no"} for no adjustment, \code{"bon"} for Bonferroni correction,
+and \code{"k"} for k-adjustment.}
 
-\item{nsim}{Integer. The number of simulations to perform. Default is 10,000.}
+\item{nsim}{Integer specifying the number of simulations to perform. Default is \code{10,000}.}
 }
 \value{
-Numeric. The estimated power based on the simulations.
+A numeric value representing the estimated power based on the simulations.
 }
 \description{
-Calculate power of hypothesis testing using Mielke's
+Estimates the power of hypothesis testing in equivalence trials using
+the method described by Mielke et al. This approach accounts for multiple
+endpoints, correlation structures, and multiplicity adjustments.
 }
 \keyword{internal}

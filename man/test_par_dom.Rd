@@ -80,5 +80,5 @@ equivalence decision is made based on the predefined number of required signific
 endpoints (\code{k}). If sequential testing (\code{adseq}) is enabled, primary endpoints
 must establish equivalence before secondary endpoints are evaluated.
 When \code{vareq = TRUE}, the test assumes equal variances between groups and
-applies Schuirmann’s two one-sided tests (TOST).
+applies Schuirmann's two one-sided tests (TOST).
 }

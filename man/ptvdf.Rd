@@ -14,12 +14,9 @@ ptvdf(x, df, lower)
 \item{lower}{bool - If \code{TRUE}, calculates the lower-tail probability (P(T <= x)); if \code{FALSE}, calculates the upper-tail probability.}
 }
 \value{
-arma::mat (vector) - A matrix containing the computed cumulative distribution function (p-values) for each element in \code{x}.
-The result is returned as a 1xN matrix, where N is the number of elements in \code{x}.
+arma::mat (vector) - A matrix containing the computed cumulative distribution function (p-values) for each element in \code{x}. The result is returned as a 1xN matrix, where N is the number of elements in \code{x}.
 }
 \description{
-This function computes the cumulative distribution function (p-values) for a given random variable \code{x}
-and corresponding degrees of freedom \code{df} using the t-distribution. The function can compute the lower or upper
-tail probabilities depending on the value of the \code{lower} parameter.
+This function computes the cumulative distribution function (p-values) for a given random variable \code{x} and corresponding degrees of freedom \code{df} using the t-distribution. The function can compute the lower or upper tail probabilities depending on the value of the \code{lower} argument.
 }
 \keyword{internal}

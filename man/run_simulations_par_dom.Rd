@@ -42,7 +42,7 @@ run_simulations_par_dom(
 
 \item{uequi_tol}{arma::rowvec. Upper equivalence thresholds for each endpoint.}
 
-\item{alpha}{arma::rowvec. Significance level (α) for each endpoint.}
+\item{alpha}{arma::rowvec. Significance level for each endpoint.}
 
 \item{dropout}{arma::vec. Dropout rates for each arm (T, R).}
 

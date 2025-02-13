@@ -2,7 +2,7 @@
 % Please edit documentation in R/sampleSize_Mielke.R
 \name{power_dom}
 \alias{power_dom}
-\title{Power Calculation for Hypothesis Testing of Difference of Means (DOM)}
+\title{Power Calculation for Difference of Means (DOM) Hypothesis Test}
 \usage{
 power_dom(
   seed,
@@ -19,28 +19,31 @@ power_dom(
 )
 }
 \arguments{
-\item{seed}{Integer. A seed value for reproducibility of the simulations.}
+\item{seed}{Integer. Seed for reproducibility.}
 
-\item{mu_test}{Numeric. The arithmetic mean of the test group.}
+\item{mu_test}{Numeric. Mean of the test group.}
 
-\item{mu_control}{Numeric. The arithmetic mean of the control group.}
+\item{mu_control}{Numeric. Mean of the control group.}
 
-\item{sigma_test}{Numeric. The standard deviation of the test group.}
+\item{sigma_test}{Numeric. Standard deviation of the test group.}
 
-\item{sigma_control}{Numeric. The standard deviation of the control group.}
+\item{sigma_control}{Numeric. Standard deviation of the control group.}
 
-\item{N_test}{Integer. The sample size of the test group.}
+\item{N_test}{Integer. Sample size of the test group.}
 
-\item{N_control}{Integer. The sample size of the control group.}
+\item{N_control}{Integer. Sample size of the control group.}
 
-\item{alpha}{Numeric. The significance level for the hypothesis test. Default is 0.05.}
+\item{lb}{Numeric. Lower bound for the equivalence margin.}
 
-\item{nsim}{Integer. The number of simulations to perform. Default is 10,000.}
+\item{ub}{Numeric. Upper bound for the equivalence margin.}
+
+\item{alpha}{Numeric. Significance level (default = 0.05).}
+
+\item{nsim}{Integer. Number of simulations (default = 10,000).}
 }
 \value{
-Numeric. The estimated power based on the simulations.
+Numeric. Estimated power (probability between 0 and 1).
 }
 \description{
-This function calculates the power of hypothesis testing for the difference of means (DOM) between two groups, using simulations to estimate the achieved power based on the provided parameters such as sample sizes, means, standard deviations, and significance level.
+Computes the statistical power for testing the difference of means (DOM) between two groups using Monte Carlo simulations. The power is estimated based on specified sample sizes, means, standard deviations, and significance level.
 }
-\keyword{internal}

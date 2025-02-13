@@ -9,47 +9,20 @@ check_equivalence(typey, adseq, tbioq, k)
 \arguments{
 \item{typey}{An integer vector specifying the hierarchy of each endpoint, where \code{1} denotes a primary endpoint and \code{2} denotes a secondary endpoint.}
 
-\item{adseq}{A boolean flag (\code{TRUE} if sequential testing is enabled).
-- If \code{TRUE}, all primary endpoints must pass equivalence for secondary endpoints to be evaluated.
-- If \code{FALSE}, primary and secondary endpoints are evaluated independently.}
+\item{adseq}{A boolean flag indicating whether sequential testing is enabled. If set to \code{TRUE}, all primary endpoints must pass equivalence before secondary endpoints are evaluated. If set to \code{FALSE}, primary and secondary endpoints are assessed independently.}
 
-\item{tbioq}{A matrix (\code{arma::mat}) containing the equivalence test results for each endpoint:
-- \code{1} = Equivalence met
-- \code{0} = Equivalence not met}
+\item{tbioq}{A matrix containing the equivalence test results for each endpoint, where \code{1} indicates that equivalence is met and \code{0} indicates that equivalence is not met.}
 
-\item{k}{An integer specifying the minimum number of endpoints required for overall equivalence.
-If \code{k > 0}, at least \code{k} endpoints must meet the equivalence criteria.
-If \code{k < 0}, all endpoints must meet the equivalence criteria.}
+\item{k}{An integer specifying the minimum number of endpoints required for overall equivalence.}
 }
 \value{
-An \code{arma::mat} (1 × 1 matrix) containing a binary equivalence decision:
-\itemize{
-\item \code{1} = Equivalence established.
-\item \code{0} = Equivalence not established.
-}
+Returns a (1 × 1 matrix) containing a binary equivalence decision. A value of \code{1} indicates that equivalence is established, while \code{0} indicates that equivalence is not established.
 }
 \description{
-This function evaluates whether equivalence criteria are met based on a predefined set of endpoints.
-It first checks whether all primary endpoints satisfy equivalence (if sequential testing is enabled).
-Then, it determines whether the required number of endpoints (\code{k}) meet the equivalence threshold.
-The function returns a binary decision indicating whether overall equivalence is established.
+This function evaluates whether equivalence criteria are met based on a predefined set of endpoints. It first checks whether all primary endpoints satisfy equivalence (if sequential testing is enabled). Then, it determines whether the required number of endpoints (\code{k}) meet the equivalence threshold. The function returns a binary decision indicating whether overall equivalence is established.
 }
 \details{
-\itemize{
-\item \strong{Sequential Adjustment (\code{adseq = TRUE})}:
-\itemize{
-\item Ensures that all primary endpoints must meet equivalence before secondary endpoints are evaluated.
-}
-\item \strong{Non-Sequential Testing (\code{adseq = FALSE})}:
-\itemize{
-\item Evaluates all endpoints simultaneously without enforcing hierarchical constraints.
-}
-\item \strong{Final Equivalence Decision (\code{totaly})}:
-\itemize{
-\item \code{1} if at least \code{k} endpoints meet equivalence and (if sequential testing is enabled) all primary endpoints pass.
-\item \code{0} otherwise.
-}
-}
+When sequential testing is enabled (\code{adseq = TRUE}), all primary endpoints must meet equivalence before secondary endpoints are considered. If sequential testing is disabled (\code{adseq = FALSE}), all endpoints are evaluated simultaneously without hierarchical constraints. The function then determines whether at least \code{k} endpoints meet the equivalence criteria. If the conditions are satisfied, the final equivalence decision (\code{totaly}) is \code{1}; otherwise, it is \code{0}.
 }
 \author{
 Thomas Debray \email{tdebray@fromdatatowisdom.com}

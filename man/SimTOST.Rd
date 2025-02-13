@@ -23,14 +23,15 @@ Mielke, J., Jones, B., Jilma, B. & König, F. Sample Size for Multiple Hypothesi
 
 Authors:
 \itemize{
-  \item Johanna Muñoz \email{johanna.munoz@fromdatatowisdom.com}
-  \item Dewi Amaliah \email{dewi.amaliah@fromdatatowisdom.com}
+  \item Johanna Munoz \email{johanna.munoz@fromdatatowisdom.com}
 }
 
 Other contributors:
 \itemize{
+  \item Dewi Amaliah \email{dewi.amaliah@fromdatatowisdom.com} [contributor]
   \item Wei Wei \email{wei.wei@biogen.com} [contributor]
   \item Marian Mitroiu \email{marian.mitroiu@biogen.com} [contributor]
+  \item Scott McDonald \email{scott.mcdonald@fromdatatowisdom.com} [contributor]
   \item Biogen Inc [copyright holder, funder]
 }
 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/sampleSize_Mielke.R
 \name{sign_Mielke}
 \alias{sign_Mielke}
-\title{Simulated Test Statistic for Given Settings in Noninferiority/Equivalence Trials}
+\title{Simulated Test Statistic for Noninferiority/Equivalence Trials}
 \usage{
 sign_Mielke(
   N,
@@ -18,42 +18,65 @@ sign_Mielke(
 )
 }
 \arguments{
-\item{N}{Integer. The number of subjects per sequence.}
+\item{N}{Integer specifying the number of subjects per sequence.}
 
-\item{m}{Integer. The number of endpoints.}
+\item{m}{Integer specifying the number of endpoints.}
 
-\item{k}{Integer. The number of endpoints that must be successful to consider the test a success.}
+\item{k}{Integer specifying the number of endpoints that must meet equivalence
+to consider the test successful.}
 
-\item{R}{Matrix. The correlation matrix between the endpoints (e.g., generated with the \code{variance.const.corr()} function), with dimensions m x m.}
+\item{R}{Matrix specifying the correlation structure between endpoints.
+This should be an \code{m x m} matrix, e.g., generated using \code{variance.const.corr()}.}
 
-\item{sigma}{Numeric. The standard deviation of the endpoints. This can either be a vector of length m (one for each endpoint) or a single value. If a single value is provided, it is assumed that the standard deviation is constant across all endpoints. In the case of a 2x2 crossover design, the input is the within-subject variance; for a parallel group design, it represents the standard deviation in the treatment group, assumed identical for both test and reference groups.}
+\item{sigma}{Numeric specifying the standard deviation of endpoints.
+Can be a vector of length \code{m} (one per endpoint) or a single value.
+In a 2x2 crossover design, this represents within-subject variance.
+In a parallel-group design, it represents the treatment group standard deviation.}
 
-\item{true.diff}{Numeric. The assumed true difference between the test and reference. This can be a vector of length m (one for each endpoint) or a single value.}
+\item{true.diff}{Numeric specifying the assumed true difference between test and reference.
+Can be a vector of length \code{m} or a single value.}
 
-\item{equi.tol}{Numeric. Equivalence margins, with the interval being (-equi.tol, +equi.tol).}
+\item{equi.tol}{Numeric specifying the equivalence margins.
+The interval is defined as \code{(-equi.tol, +equi.tol)}.}
 
-\item{design}{Character. The study design, either "22co" for a 2x2 crossover design or "parallel" for a parallel groups design.}
+\item{design}{Character specifying the study design.
+Options are \code{"22co"} for a 2x2 crossover design or \code{"parallel"} for a parallel-group design.}
 
-\item{alpha}{Numeric. The significance level.}
+\item{alpha}{Numeric specifying the significance level.}
 
-\item{adjust}{Character. The method for multiplicity adjustment. Options are "no" for no adjustment, "bon" for Bonferroni correction, or "k" for k-adjustment.}
+\item{adjust}{Character specifying the method for multiplicity adjustment.
+Options include \code{"no"} for no adjustment, \code{"bon"} for Bonferroni correction,
+and \code{"k"} for k-adjustment.}
 }
 \value{
-A realization of the simulated test statistic for the given setting. If values are provided as a single number (constant for all endpoints), a vector is created.
+A numeric vector representing a realization of the simulated test statistic for the given setting.
 }
 \description{
-This function simulates test statistics for multiple hypothesis testing in the context of biosimilar development, using the approach described by Mielke et al. (2018). It calculates the necessary sample size for meeting equivalence criteria across multiple endpoints, considering correlation structures, and applying multiplicity adjustments.
+Simulates test statistics for multiple hypothesis testing in biosimilar development,
+following the approach described by Mielke et al. (2018). It calculates the necessary
+sample size for meeting equivalence criteria across multiple endpoints while
+considering correlation structures and applying multiplicity adjustments.
 }
 \details{
-Following the methodology by Mielke et al. (2018), this function is designed for multiple endpoint clinical trials where success is defined as meeting equivalence criteria on at least a subset of tests. The function simulates test statistics based on multivariate normal distribution assumptions and supports k-out-of-m success criteria for regulatory approval. Additionally, Type I error control is achieved through multiplicity adjustments as proposed by Lehmann and Romano (2005) to ensure rigorous error rate management.
+This function is designed for multiple-endpoint clinical trials, where success
+is defined as meeting equivalence criteria for at least a subset of tests.
+Simulated test statistics are based on multivariate normal distribution assumptions,
+and the function supports k-out-of-m success criteria for regulatory approval.
 
-The approach is particularly relevant for biosimilar studies where sample size estimation must account for multiple comparisons across endpoints, doses, or populations, as regulatory agencies often require equivalence across all relevant comparisons. This method provides a framework for estimating power and sample size, even when equivalence is not required on all endpoints.
+Type I error control is achieved through multiplicity adjustments as proposed by
+Lehmann and Romano (2005) to ensure rigorous error rate management. This approach
+is particularly relevant for biosimilar studies, where sample size estimation must
+account for multiple comparisons across endpoints, doses, or populations.
 }
 \references{
-Kong, L., Kohberger, R. C. & Koch, G. G. Type I Error and Power in Noninferiority/Equivalence Trials with Correlated Multiple Endpoints: An Example from Vaccine Development Trials. Journal of Biopharmaceutical Statistics 14, 893–907 (2004).
+Kong, L., Kohberger, R. C., & Koch, G. G. (2004). Type I Error and Power in
+Noninferiority/Equivalence Trials with Correlated Multiple Endpoints: An Example
+from Vaccine Development Trials. \emph{Journal of Biopharmaceutical Statistics, 14}(4), 893–907.
 
-Lehmann, E. L. & Romano, J. P. Generalizations of the Familywise Error Rate. The Annals of Statistics 33, 1138–1154 (2005).
+Lehmann, E. L., & Romano, J. P. (2005). Generalizations of the Familywise Error Rate.
+\emph{The Annals of Statistics, 33}(2), 1138–1154.
 
-Mielke, J., Jones, B., Jilma, B. & König, F. Sample Size for Multiple Hypothesis Testing in Biosimilar Development. Statistics in Biopharmaceutical Research 10, 39–49 (2018).
+Mielke, J., Jones, B., Jilma, B., & König, F. (2018). Sample Size for Multiple
+Hypothesis Testing in Biosimilar Development. \emph{Statistics in Biopharmaceutical Research, 10}(1), 39–49.
 }
 \keyword{internal}

@@ -54,13 +54,8 @@ test_2x2_rom(
 \item{arm_seed}{seed for the simulation}
 }
 \value{
-A numeric matrix containing the simulated hypothesis test results.
-The first column represents the overall equivalence decision, where 1 indicates
-success and 0 indicates failure. The subsequent columns contain the hypothesis
-test results for each endpoint, followed by mean estimates for the reference and
-treatment groups, and standard deviations for the reference and treatment groups.
+A numeric matrix containing the simulated hypothesis test results. The first column represents the overall equivalence decision, where 1 indicates success and 0 indicates failure. The subsequent columns contain the hypothesis test results for each endpoint, followed by mean estimates for the reference and treatment groups, and standard deviations for the reference and treatment groups.
 }
 \description{
-Simulates a 2x2 crossover design and calculates the p-value for the
-ratio of means (ROM) using a two-sequence, two-period (2x2) study design.
+Simulates a two-sequence, two-period (2x2) crossover design and evaluate equivalence for the ratio of means (ROM).
 }

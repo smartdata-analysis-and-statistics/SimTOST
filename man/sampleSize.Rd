@@ -46,101 +46,99 @@ sampleSize(
 )
 }
 \arguments{
-\item{mu_list}{Named list of arithmetic means per treatment arm. Each element contains a vector (i.e., one per treatment arm) with the expected outcomes for all endpoints of interest.}
+\item{mu_list}{Named list of arithmetic means per treatment arm. Each element is a vector representing expected outcomes for all endpoints in that arm.}
 
-\item{varcov_list}{list of var-cov matrices, each element corresponds to a comparator with a varcov matrix of size number of endpoints X number of endpoints.}
+\item{varcov_list}{List of variance-covariance matrices, where each element corresponds to a comparator. Each matrix has dimensions: number of endpoints × number of endpoints.}
 
-\item{sigma_list}{list of sigma vectors, each element corresponds to a comparator with a sigma vector of size number of endpoints.}
+\item{sigma_list}{List of standard deviation vectors, where each element corresponds to a comparator and contains one standard deviation per endpoint.}
 
-\item{cor_mat}{matrix specifying the correlation matrix between endpoints, used along with sigma_list  to calculate the varcov list in case it is not provided.}
+\item{cor_mat}{Matrix specifying the correlation structure between endpoints, used along with \code{sigma_list} to calculate \code{varcov_list} if not provided.}
 
-\item{sigmaB}{number between subject variance only for 2x2 design.}
+\item{sigmaB}{Numeric. Between-subject variance for a 2×2 crossover design.}
 
-\item{Eper}{Optional. Vector of length 2 specifying the period effect in a \code{dtype = "2x2"} design, applied to c(Period 0, Period 1). Defaults to \code{c(0, 0)} if not provided. Ignored for \code{dtype = "parallel"}.}
+\item{Eper}{Optional numeric vector of length 2 specifying the period effect in a \code{dtype = "2x2"} design, applied as \code{c(Period 0, Period 1)}. Defaults to \code{c(0, 0)}. Ignored for \code{dtype = "parallel"}.}
 
-\item{Eco}{Optional. Vector of length 2 specifying the carry-over effect for each arm in a \code{dtype = "2x2"} design, applied to c(Reference, Treatment). Defaults to \code{c(0, 0)} if not provided. Ignored for \code{dtype = "parallel"}.}
+\item{Eco}{Optional numeric vector of length 2 specifying the carry-over effect per arm in a \code{dtype = "2x2"} design, applied as \code{c(Reference, Treatment)}. Defaults to \code{c(0, 0)}. Ignored for \code{dtype = "parallel"}.}
 
-\item{rho}{Correlation parameter applied uniformly across all endpoint pairs, used with sigma_list to calculate varcov if cor_mat or varcov_list are not provided.}
+\item{rho}{Numeric. Correlation parameter applied uniformly across all endpoint pairs. Used with \code{sigma_list} to compute \code{varcov_list} when \code{cor_mat} or \code{varcov_list} are not provided.}
 
-\item{TAR}{Numeric vector. Treatment allocation rates for each arm, where the order of values corresponds to the order of \code{arm_names}. The length of \code{TAR} must match the number of arms. If not provided, a default equal allocation rate is assigned across all arms.}
+\item{TAR}{Numeric vector specifying treatment allocation rates per arm. The order must match \code{arm_names}. Defaults to equal allocation across arms if not provided.}
 
-\item{arm_names}{Optional vector with the treatment names. If not supplied, it will be derived from mu_list.}
+\item{arm_names}{Optional character vector of treatment names. If not supplied, names are derived from \code{mu_list}.}
 
-\item{ynames_list}{Optional list of vectors with Endpoint names on each arm. When not all endpoint names are provided for each arm, arbitrary names (assigned by vector order) are used.}
+\item{ynames_list}{Optional list of vectors specifying endpoint names per arm. If names are missing, arbitrary names are assigned based on order.}
 
-\item{type_y}{Vector indicating the type of each endpoint:
-1 for co-primary endpoints, 2 for secondary endpoints.}
+\item{type_y}{Integer vector indicating endpoint types: \code{1} for co-primary endpoints, \code{2} for secondary endpoints.}
 
-\item{list_comparator}{list of comparators, i.e each comparator is a vector of size 1 X 2 where are specified the name of treatments}
+\item{list_comparator}{List of comparators. Each element is a vector of length 2 specifying the treatment names being compared.}
 
-\item{list_y_comparator}{list of endpoints to be considered in each comparator. Each element of the list is a vector containing the names of the endpoints to compare. When it is not provided, all endpoints present in both compared arms are used.}
+\item{list_y_comparator}{List of endpoint sets per comparator. Each element is a vector containing endpoint names to compare. If not provided, all endpoints common to both comparator arms are used.}
 
-\item{power}{target power (default = 0.8)}
+\item{power}{Numeric. Target power (default = 0.8).}
 
-\item{alpha}{alpha level (default = 0.05)}
+\item{alpha}{Numeric. Significance level (default = 0.05).}
 
-\item{lequi.tol}{lower equivalence bounds (e.g., -0.5) expressed in raw scale units (e.g., scalepoints) of endpoint repeated on all endpoints and comparators}
+\item{lequi.tol}{Numeric. Lower equivalence bounds (e.g., -0.5) applied uniformly across all endpoints and comparators.}
 
-\item{uequi.tol}{upper equivalence bounds (e.g., -0.5) expressed in raw scale units (e.g., scalepoints) of endpoint repeated on all endpoints and comparators}
+\item{uequi.tol}{Numeric. Upper equivalence bounds (e.g., 0.5) applied uniformly across all endpoints and comparators.}
 
-\item{list_lequi.tol}{list of lower equivalence bounds (e.g., -0.5) expressed in raw scale units (e.g., scalepoints) of endpoint in comparator}
+\item{list_lequi.tol}{List of numeric vectors specifying lower equivalence bounds per comparator.}
 
-\item{list_uequi.tol}{list of upper equivalence bounds (e.g., -0.5) expressed in raw scale units (e.g., scalepoints) of endpoint in comparator}
+\item{list_uequi.tol}{List of numeric vectors specifying upper equivalence bounds per comparator.}
 
-\item{dtype}{Character. Design type for the trial: \code{"parallel"} (default) for parallel group design or \code{"2x2"} for crossover design (applicable only for trials with 2 arms).}
+\item{dtype}{Character. Trial design: \code{"parallel"} (default) for parallel-group or \code{"2x2"} for crossover (only for 2-arm studies).}
 
-\item{ctype}{Character. Specifies the type of hypothesis test for comparison: \code{"DOM"} for Difference of Means or \code{"ROM"} for Ratio of Means.}
+\item{ctype}{Character. Hypothesis test type: \code{"DOM"} (Difference of Means) or \code{"ROM"} (Ratio of Means).}
 
-\item{vareq}{Logical indicating whether variances are assumed equal across arms (default = FALSE).}
+\item{vareq}{Logical. Assumes equal variances across arms if \code{TRUE} (default = \code{FALSE}).}
 
-\item{lognorm}{Is data log-normally distributed? (TRUE, FALSE)}
+\item{lognorm}{Logical. Whether data follows a log-normal distribution (\code{TRUE} or \code{FALSE}).}
 
-\item{k}{Vector with the number of endpoints that must be successful (integer) for global bioequivalence for each comparator. If no k vector is provided, it will be set to the total number of endpoints on each comparator.}
+\item{k}{Integer vector. Minimum number of successful endpoints required for global bioequivalence per comparator. Defaults to all endpoints per comparator.}
 
-\item{adjust}{Character. Method for alpha adjustment: \code{"k"} (K-fold), \code{"bon"} (Bonferroni), \code{"sid"} (Sidak), \code{"no"} (no adjustment, default), or \code{"seq"} (sequential adjustment).}
+\item{adjust}{Character. Alpha adjustment method: \code{"k"} (K-fold), \code{"bon"} (Bonferroni), \code{"sid"} (Sidak), \code{"no"} (default, no adjustment), or \code{"seq"} (sequential).}
 
-\item{dropout}{vector with proportion of total population with dropout per arm}
+\item{dropout}{Numeric vector specifying dropout proportion per arm.}
 
-\item{nsim}{number of simulated studies (default=5000)}
+\item{nsim}{Integer. Number of simulated studies (default = 5000).}
 
-\item{seed}{main seed}
+\item{seed}{Integer. Seed for reproducibility.}
 
-\item{ncores}{Integer. Number of processing cores to use for parallel computation.
-Defaults to 1. Set to NA for automatic detection of available cores (\code{ncores - 1} used)
-or specify a fixed number of cores. Note that multicore processing is currently not implemented.}
+\item{ncores}{Integer. Number of processing cores for parallel computation. Defaults to \code{1}. Set to \code{NA} for automatic detection (\code{ncores - 1}).}
 
-\item{optimization_method}{Character. Method for determining the required sample size: "fast" (using modified root-finding algorithms) or "step-by-step". Defaults to "fast".}
+\item{optimization_method}{Character. Sample size optimization method: \code{"fast"} (default, root-finding algorithm) or \code{"step-by-step"}.}
 
-\item{lower}{Integer. Initial value of \code{N} for the search range. Defaults to 2.}
+\item{lower}{Integer. Minimum sample size (\code{N}) for search range (default = 2).}
 
-\item{upper}{Integer. Maximum value of \code{N} for the search range. Defaults to 500.}
+\item{upper}{Integer. Maximum sample size (\code{N}) for search range (default = 500).}
 
-\item{step.power}{Numeric. The initial step size for the sample size search, defined as \code{2^step.power}. Relevant when \code{optimization_method} is \code{"fast"}.}
+\item{step.power}{Numeric. Initial step size for sample size search, defined as \code{2^step.power}. Used when \code{optimization_method = "fast"}.}
 
-\item{step.up}{Logical. If \code{TRUE} (default), the sample size search increments upward from the \code{lower} limit; if \code{FALSE}, it decrements downward from the \code{upper} limit. Used only when \code{optimization_method} is \code{"fast"}.}
+\item{step.up}{Logical. If \code{TRUE} (default), search increments upward from \code{lower}; if \code{FALSE}, decrements downward from \code{upper}. Used when \code{optimization_method = "fast"}.}
 
-\item{pos.side}{Logical. If \code{TRUE}, finds the smallest integer, \code{i}, closest to the root such that \code{f(i) > 0}. Used only when \code{optimization_method} is \code{"fast"}.}
+\item{pos.side}{Logical. If \code{TRUE}, finds the smallest integer \code{i} closest to the root such that \code{f(i) > 0}. Used when \code{optimization_method = "fast"}.}
 
-\item{maxiter}{Integer. Maximum number of iterations allowed for finding the sample size. Defaults to 1000. Used only when \code{optimization_method} is \code{"fast"}.}
+\item{maxiter}{Integer. Maximum iterations allowed for sample size estimation (default = 1000). Used when \code{optimization_method = "fast"}.}
 
-\item{verbose}{Logical. If \code{TRUE}, the function displays progress and informational messages during execution. Defaults to \code{FALSE}.}
+\item{verbose}{Logical. If \code{TRUE}, prints progress and messages during execution (default = \code{FALSE}).}
 }
 \value{
-An object simss that contains the following elements :
+A list containing:
 \describe{
-\item{"response"}{ An array summarizing the results of the simulation, including the estimated sample sizes for each arm, the approximated achieved power, and the corresponding confidence interval.}
-\item{"table.iter"}{A data frame detailing the estimated sample size for each arm and the calculated power at each iteration during the sample size searching process.}
-\item{"table.test"}{A data frame containing the test results for all simulated trials, including relevant metrics for each tested sample size}
-\item{"param.u"}{The original set of parameters provided by the user for the simulation.}
-\item{"param"}{ The final set of parameters used for the sample size calculation. These are based on \code{param.u} but adjusted to address any inconsistencies or missing information.}
-\item{"param.d"}{ The design parameters used in the simulation, including details relevant to the trial design.}
+\item{\code{response}}{Array summarizing simulation results, including estimated sample sizes, achieved power, and confidence intervals.}
+\item{\code{table.iter}}{Data frame showing estimated sample sizes and calculated power at each iteration.}
+\item{\code{table.test}}{Data frame containing test results for all simulated trials.}
+\item{\code{param.u}}{Original input parameters.}
+\item{\code{param}}{Final adjusted parameters used in sample size calculation.}
+\item{\code{param.d}}{Trial design parameters used in the simulation.}
 }
 }
 \description{
-This function calculates the required sample size to achieve a target power in studies with multiple endpoints and treatment arms. The function leverages modified root-finding algorithms to estimate sample size while considering correlation structures, variance assumptions, and equivalence bounds across endpoints. It is especially useful for bioequivalence trials or multi-arm trials with complex endpoint structures.
+Computes the required sample size to achieve a target power in studies with multiple endpoints and treatment arms.
+The function employs modified root-finding algorithms to estimate sample size while accounting for correlation structures, variance assumptions,
+and equivalence bounds across endpoints. It is particularly useful for bioequivalence trials and multi-arm studies with complex endpoint structures.
 }
 \examples{
-
 mu_list <- list(SB2 = c(AUCinf = 38703, AUClast = 36862, Cmax = 127.0),
                 EUREF = c(AUCinf = 39360, AUClast = 37022, Cmax = 126.2),
                 USREF = c(AUCinf = 39270, AUClast = 37368, Cmax = 129.2))
@@ -175,9 +173,9 @@ sampleSize(power = 0.9, alpha = 0.05, mu_list = mu_list,
            lognorm = TRUE, ncores = 1, nsim = 50, seed = 1234)
 }
 \references{
-Mielke, J., Jones, B., Jilma, B., & König, F. (2018). Sample size for multiple hypothesis testing in biosimilar development. Statistics in Biopharmaceutical Research, 10(1), 39-49.
+Mielke, J., Jones, B., Jilma, B., & König, F. (2018). Sample size for multiple hypothesis testing in biosimilar development. \emph{Statistics in Biopharmaceutical Research, 10}(1), 39-49.
 
-Berger, R. L., & Hsu, J. C. (1996). Bioequivalence trials, intersection-union tests and equivalence confidence sets. Statistical Science, 283-302.
+Berger, R. L., & Hsu, J. C. (1996). Bioequivalence trials, intersection-union tests, and equivalence confidence sets. \emph{Statistical Science}, 283-302.
 }
 \author{
 Johanna Muñoz \email{johanna.munoz@fromdatatowisdom.com}

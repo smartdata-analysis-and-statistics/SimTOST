@@ -61,6 +61,5 @@ test results for each endpoint, followed by mean estimates for the reference and
 treatment groups, and standard deviations for the reference and treatment groups.
 }
 \description{
-Simulates a 2x2 crossover design and calculates the p-value for the
-difference of means (DOM) using a two-sequence, two-period (2x2) study design.
+Simulates a two-sequence, two-period (2x2) crossover design and evaluate equivalence for the difference of means (DOM).
 }

@@ -43,7 +43,7 @@ devtools::install_github("smartdata-analysis-and-statistics/SimTOST")
 The main features of this package is `sampleSize` function which can be
 used to calculate sample size for individual and multiple endpoints.
 Various worked examples are available as
-[vignettes](https://smartdata-analysis-and-statistics.github.io/SimTOST),
+[vignettes](https://smartdata-analysis-and-statistics.github.io/SimTOST/),
 with an introduction provided at
 [Introduction](https://smartdata-analysis-and-statistics.github.io/SimTOST/articles/intropkg.html).
 

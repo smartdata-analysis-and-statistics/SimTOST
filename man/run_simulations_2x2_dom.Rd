@@ -59,9 +59,9 @@ run_simulations_2x2_dom(
 \value{
 A numeric matrix where each column stores simulation results:
 The first row (\code{totaly}) represents the overall equivalence decision (1 = success, 0 = failure).
-Subsequent rows contain equivalence decisions per endpoint (\verb{E1, E2, ...}),
-mean estimates for the treatment group (\verb{mu_E1_T, mu_E2_T, ...}), mean estimates for the reference group (\verb{mu_E1_R, mu_E2_R, ...}),
-standard deviations for treatment (\verb{sd_E1_T, sd_E2_T, ...}), and standard deviations for reference (\verb{sd_E1_R, sd_E2_R, ...}).
+Subsequent rows contain equivalence decisions per endpoint,
+mean estimates for the treatment group, mean estimates for the reference group,
+standard deviations for treatment, and standard deviations for reference.
 }
 \description{
 This function simulates a 2x2 crossover trial across multiple iterations.
@@ -69,7 +69,7 @@ It evaluates equivalence across multiple endpoints using the
 Difference of Means (DOM) test.
 }
 \details{
-This function evaluates equivalence using either the Difference of Means (DOM) test.
+This function evaluates equivalence using the Difference of Means (DOM) test.
 Equivalence is determined based on predefined lower (\code{lequi_tol}) and upper (\code{uequi_tol}) equivalence thresholds,
 and hypothesis testing is conducted at the specified significance level (\code{alpha}).
 If \code{adseq} is \code{TRUE}, primary endpoints must establish equivalence before secondary endpoints are evaluated.

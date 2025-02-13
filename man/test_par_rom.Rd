@@ -57,8 +57,7 @@ test_par_rom(
 
 \item{TARR}{double treatment allocation rate for the reference arm}
 
-\item{vareq}{Boolean. If \code{TRUE}, assumes equal variance between arms and applies
-Schuirmann’s two one-sided tests (TOST) for equivalence using a pooled variance.}
+\item{vareq}{Boolean. If \code{TRUE}, assumes equal variance between arms and applies Schuirmann's two one-sided tests (TOST) for equivalence using a pooled variance.}
 }
 \value{
 A numeric matrix containing the simulated hypothesis test results.
@@ -81,5 +80,5 @@ equivalence decision is made based on the predefined number of required signific
 endpoints (\code{k}). If sequential testing (\code{adseq}) is enabled, primary endpoints
 must establish equivalence before secondary endpoints are evaluated.
 When \code{vareq = TRUE}, the test assumes equal variances between groups and
-applies Schuirmann’s two one-sided tests (TOST).
+applies Schuirmann's two one-sided tests (TOST).
 }

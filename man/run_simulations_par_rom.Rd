@@ -42,7 +42,7 @@ run_simulations_par_rom(
 
 \item{uequi_tol}{arma::rowvec. Upper equivalence thresholds for each endpoint.}
 
-\item{alpha}{arma::rowvec. Significance level (α) for each endpoint.}
+\item{alpha}{arma::rowvec. Significance level for each endpoint.}
 
 \item{dropout}{arma::vec. Dropout rates for each arm (T, R).}
 
@@ -65,7 +65,7 @@ run_simulations_par_rom(
 \value{
 The function returns an arma::mat storing simulation results row-wise for consistency
 with R's output format. The first row (\code{totaly}) contains the overall equivalence decision
-(1 for success, 0 for failure). The subsequent rows include equivalence deicisons for each endpoint,
+(1 for success, 0 for failure). The subsequent rows include equivalence decisions for each endpoint,
 mean estimates for both treatment and reference groups, and corresponding standard deviations.
 }
 \description{
