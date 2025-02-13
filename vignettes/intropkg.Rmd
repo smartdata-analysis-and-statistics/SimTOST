@@ -163,7 +163,7 @@ To implement hierarchical testing in `simTOST`, the user specifies `adjust = "se
 2. **Proceed to secondary endpoints (if applicable)**  
    - If all primary endpoints meet the equivalence criteria, testing proceeds to the secondary endpoints.
    - Equivalence must be demonstrated for at least `k` secondary endpoints.
-   - The significance level for secondary endpoints is adjusted using `k-adjustment`.
+   - The significance level for secondary endpoints is adjusted using k-adjustment.
 3. **Final Decision**  
    - The test is considered successful if *all* (co-)primary endpoints meet the equivalence criteria and at least `k` secondary endpoints demonstrate equivalence.
 

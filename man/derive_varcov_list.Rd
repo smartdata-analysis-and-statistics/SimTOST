@@ -7,7 +7,7 @@
 derive_varcov_list(
   mu_list,
   sigma_list,
-  ynames_list,
+  ynames_list = NULL,
   varcov_list = NULL,
   cor_mat = NULL,
   rho = 0

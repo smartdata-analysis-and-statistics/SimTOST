@@ -34,7 +34,7 @@ sampleSize(
   dropout = NA,
   nsim = 5000,
   seed = 1234,
-  ncores = NA,
+  ncores = 1,
   optimization_method = "fast",
   lower = 2,
   upper = 500,
@@ -68,7 +68,8 @@ sampleSize(
 
 \item{ynames_list}{Optional list of vectors with Endpoint names on each arm. When not all endpoint names are provided for each arm, arbitrary names (assigned by vector order) are used.}
 
-\item{type_y}{vector with the type of endpoints: primary endpoint(1), otherwise (2).}
+\item{type_y}{Vector indicating the type of each endpoint:
+1 for co-primary endpoints, 2 for secondary endpoints.}
 
 \item{list_comparator}{list of comparators, i.e each comparator is a vector of size 1 X 2 where are specified the name of treatments}
 
@@ -104,7 +105,9 @@ sampleSize(
 
 \item{seed}{main seed}
 
-\item{ncores}{Integer. Number of processing cores to use for parallel computation. Defaults to one less than the total number of detected cores.}
+\item{ncores}{Integer. Number of processing cores to use for parallel computation.
+Defaults to 1. Set to NA for automatic detection of available cores (\code{ncores - 1} used)
+or specify a fixed number of cores. Note that multicore processing is currently not implemented.}
 
 \item{optimization_method}{Character. Method for determining the required sample size: "fast" (using modified root-finding algorithms) or "step-by-step". Defaults to "fast".}
 

@@ -241,11 +241,11 @@ When $k>1$, Bonferroni and Sidak correction methods become increasingly conserva
 ## Hierarchical Testing of Endpoints {#hierarchical-testing}
 Hierarchical testing is a structured approach that allows for a more nuanced evaluation of endpoints. Unlike a simple setup where at least $k$ endpoints must pass, hierarchical testing enforces that some endpoints are more critical and must always pass before proceeding to secondary endpoints. This ensures that primary endpoints receive higher priority, while still allowing flexibility in the evaluation of secondary endpoints.
 
-In this example, the trial follows a hierarchical testing strategy where Cmax is designated as the primary endpoint. If equivalence is established for Cmax, testing proceeds to the secondary endpoints AUCinf and AUClast. The trial is considered successful if all primary endpoints demonstrate equivalence and at least $k=1$ secondary endpoints pass the equivalence criteria.
+In this example, the trial follows a hierarchical testing strategy, with Cmax as the primary endpoint. Equivalence testing begins with Cmax; if established, the analysis proceeds to the secondary endpoints AUCinf and AUClast. The trial is considered successful if equivalence holds for Cmax and at least one ($k \geq 1$) of the secondary endpoints.
 
 To implement this advanced hierarchical testing approach in SimTOST, we:
 
-1. Use sequential adjustment by setting `adjust = "seq"` to enforce the hierarchical structure.
+1. Use hierarchical testing by setting `adjust = "seq"`.
 2. Define the endpoint hierarchy using the `type_y` argument:
    - Primary endpoint: `Cmax` (coded as 1) is the most critical endpoint and must always pass.
    - Secondary endpoints: `AUCinf` and `AUClast` (coded as 2) are less critical and only evaluated if `Cmax` passes.
