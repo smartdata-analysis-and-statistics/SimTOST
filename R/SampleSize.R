@@ -54,9 +54,21 @@
 #' }
 #'
 #' @references
-#' Mielke, J., Jones, B., Jilma, B., & König, F. (2018). Sample size for multiple hypothesis testing in biosimilar development. \emph{Statistics in Biopharmaceutical Research, 10}(1), 39-49.
+#' Schuirmann, D. J. (1987). A comparison of the Two One-Sided Tests procedure and the
+#' Power approach for assessing the equivalence of average bioavailability.
+#' \emph{Journal of Pharmacokinetics and Biopharmaceutics, 15}(6), 657-680.
+#' <doi:10.1007/BF01068419>
 #'
-#' Berger, R. L., & Hsu, J. C. (1996). Bioequivalence trials, intersection-union tests, and equivalence confidence sets. \emph{Statistical Science}, 283-302.
+#' Mielke, J., Jones, B., Jilma, B., & König, F. (2018). Sample size for multiple hypothesis
+#' testing in biosimilar development. \emph{Statistics in Biopharmaceutical Research, 10}(1), 39-49.
+#' <doi:10.1080/19466315.2017.1371071>
+#'
+#' Berger, R. L., & Hsu, J. C. (1996). Bioequivalence trials, intersection-union tests, and
+#' equivalence confidence sets. \emph{Statistical Science}, 283-302.
+#'
+#' Sozu, T., Sugimoto, T., Hamasaki, T., & Evans, S. R. (2015). "Sample Size Determination in
+#' Clinical Trials with Multiple Endpoints." \emph{SpringerBriefs in Statistics}.
+#' <doi:10.1007/978-3-319-22005-5>
 #'
 #' @author Johanna Muñoz \email{johanna.munoz@fromdatatowisdom.com}
 #'

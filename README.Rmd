@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/smartdata-analysis-and-statistics/SimTOST/actions/workflows/R-CMD-check.yml/badge.svg)](https://github.com/smartdata-analysis-and-statistics/SimTOST/actions/workflows/R-CMD-check.yml)
 [![CRAN status](https://www.r-pkg.org/badges/version/SimTOST)](https://CRAN.R-project.org/package=SimTOST)
-[![Codecov test coverage](https://codecov.io/gh/smartdata-analysis-and-statistics/SimTOST/branch/main/graph/badge.svg)](https://app.codecov.io/gh/smartdata-analysis-and-statistics/SimTOST?branch=main)
+[![metacran downloads](https://cranlogs.r-pkg.org/badges/last-month/SimTOST)](https://cran.r-project.org/package=SimTOST)
 <!-- badges: end -->
 
 `SimTOST` is an R package specifically designed for bioequivalence studies, providing simulation-based sample size estimation for the Two One-Sided Tests (TOST) procedure. It offers flexible options to handle complex study designs, including trials with multiple correlated primary endpoints, multiple hypotheses, and treatment arms. By incorporating correlations between endpoints, `SimTOST` ensures accurate and robust planning of bioequivalence trials, making it a powerful tool for studies with intricate requirements.

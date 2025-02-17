@@ -1,6 +1,6 @@
 Package: SimTOST
 Title: Sample Size Estimation for Bio-Equivalence Trials Through Simulation
-Version: 1.0.0
+Version: 1.0.1
 Authors@R: c(
     person(given = "Thomas", 
            family = "Debray", 
@@ -29,7 +29,17 @@ Authors@R: c(
            role = c("ctb")),
     person("Biogen Inc", role = c("cph", "fnd"))
     )
-Description: Conducts sample size estimation for bio-equivalence trials using the Two One-Sided Tests procedure. A simulation-based approach enables flexible hypothesis testing, supports multiple treatments, and accommodates correlated endpoints.
+Description: 
+    Sample size estimation for bio-equivalence trials is supported through a simulation-based approach 
+    that extends the Two One-Sided Tests (TOST) procedure. The methodology provides flexibility in 
+    hypothesis testing, accommodates multiple treatment comparisons, and accounts for correlated endpoints. 
+    Users can model complex trial scenarios, including parallel and crossover designs, intra-subject variability, 
+    and different equivalence margins. Monte Carlo simulations enable accurate estimation of power and type I error 
+    rates, ensuring well-calibrated study designs. The statistical framework builds on established methods for 
+    equivalence testing and multiple hypothesis testing in bio-equivalence studies, as described in Schuirmann (1987) 
+    <doi:10.1007/BF01068419>, Mielke et al. (2018) <doi:10.1080/19466315.2017.1371071>, Shieh (2022) 
+    <doi:10.1371/journal.pone.0269128>, and Sozu et al. (2015) <doi:10.1007/978-3-319-22005-5>. 
+    Comprehensive documentation and vignettes guide users through implementation and interpretation of results.
 License: Apache License (== 2.0)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

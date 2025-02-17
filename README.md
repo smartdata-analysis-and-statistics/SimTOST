@@ -8,8 +8,8 @@
 [![R-CMD-check](https://github.com/smartdata-analysis-and-statistics/SimTOST/actions/workflows/R-CMD-check.yml/badge.svg)](https://github.com/smartdata-analysis-and-statistics/SimTOST/actions/workflows/R-CMD-check.yml)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/SimTOST)](https://CRAN.R-project.org/package=SimTOST)
-[![Codecov test
-coverage](https://codecov.io/gh/smartdata-analysis-and-statistics/SimTOST/branch/main/graph/badge.svg)](https://app.codecov.io/gh/smartdata-analysis-and-statistics/SimTOST?branch=main)
+[![metacran
+downloads](https://cranlogs.r-pkg.org/badges/last-month/SimTOST)](https://cran.r-project.org/package=SimTOST)
 <!-- badges: end -->
 
 `SimTOST` is an R package specifically designed for bioequivalence
