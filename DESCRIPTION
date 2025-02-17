@@ -40,7 +40,7 @@ Description:
     <doi:10.1007/BF01068419>, Mielke et al. (2018) <doi:10.1080/19466315.2017.1371071>, Shieh (2022) 
     <doi:10.1371/journal.pone.0269128>, and Sozu et al. (2015) <doi:10.1007/978-3-319-22005-5>. 
     Comprehensive documentation and vignettes guide users through implementation and interpretation of results.
-License: Apache License (== 2.0)
+License: Apache License (>= 2)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2

@@ -8,3 +8,4 @@ README.Rmd
 ^Meta$
 ^vignettes/manuscript\.Rnw$
 ^CRAN-SUBMISSION$
+^LICENSE\.md$
