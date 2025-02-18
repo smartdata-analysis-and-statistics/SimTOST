@@ -1,6 +1,6 @@
 Package: SimTOST
 Title: Sample Size Estimation for Bio-Equivalence Trials Through Simulation
-Version: 1.0.1
+Version: 1.0.2
 Authors@R: c(
     person(given = "Thomas", 
            family = "Debray", 
