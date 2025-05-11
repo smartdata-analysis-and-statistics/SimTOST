@@ -1,5 +1,5 @@
 pandoc: 3.1.11
-pkgdown: 2.1.1
+pkgdown: 2.1.2
 pkgdown_sha: ~
 articles:
   intropkg: intropkg.html
@@ -9,4 +9,4 @@ articles:
   sampleSize_parallel_3A1E: sampleSize_parallel_3A1E.html
   sampleSize_parallel_3A3E: sampleSize_parallel_3A3E.html
   sampleSize_parallel: sampleSize_parallel.html
-last_built: 2025-02-19T20:40Z
+last_built: 2025-05-11T13:36Z
