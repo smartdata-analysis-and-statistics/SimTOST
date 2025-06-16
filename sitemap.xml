@@ -14,6 +14,7 @@
 <url><loc>/news/index.html</loc></url>
 <url><loc>/reference/SimTOST.html</loc></url>
 <url><loc>/reference/check_equivalence.html</loc></url>
+<url><loc>/reference/confint.simss.html</loc></url>
 <url><loc>/reference/derive_allocation_rate.html</loc></url>
 <url><loc>/reference/derive_arm_names.html</loc></url>
 <url><loc>/reference/derive_endpoint_names.html</loc></url>
@@ -37,6 +38,7 @@
 <url><loc>/reference/sampleSize_Mielke.html</loc></url>
 <url><loc>/reference/sign_Mielke.html</loc></url>
 <url><loc>/reference/simParallelEndpoints.html</loc></url>
+<url><loc>/reference/summary.simss.html</loc></url>
 <url><loc>/reference/test_2x2_dom.html</loc></url>
 <url><loc>/reference/test_2x2_rom.html</loc></url>
 <url><loc>/reference/test_par_dom.html</loc></url>
