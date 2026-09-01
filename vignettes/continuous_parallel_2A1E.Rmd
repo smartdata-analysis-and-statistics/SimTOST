@@ -74,7 +74,7 @@ library(SimTOST)
   list_uequi.tol = list("T_vs_R" = lequi_upper),  # Upper equivalence limit
   dtype = "parallel",            # Study design
   ctype = "DOM",                 # Comparison type
-  lognorm = FALSE,               # Assumes normal distribution
+  distribution = "norm",               # Assumes normal distribution
   optimization_method = "step-by-step", # Optimization method
   ncores = 1,                    # Single-core processing
   nsim = 1000,                   # Number of simulations
@@ -91,25 +91,17 @@ We can visualize the power curve for a range of sample sizes using the following
 plot(N_ss)
 ```
 
-To account for an anticipated dropout rate of 20% in each group, we need to adjust the sample size. The following code demonstrates how to incorporate this adjustment using a custom optimization routine. This routine is designed to find the smallest integer sample size that meets or exceeds the target power. It employs a stepwise search strategy, starting with large step sizes that are progressively refined as the solution is approached.
+To account for an anticipated dropout rate of 20% in each group, we update the
+existing calculation. The update retains the endpoint assumptions and changes
+the dropout and optimization settings only; the faster routine still searches
+for the smallest integer sample size that meets or exceeds the target power.
 
 ```{r}
 # Adjusted sample size calculation with 20% dropout rate
-(N_ss_dropout <- sampleSize(
-  power = 0.90,                  # Target power
-  alpha = 0.025,                 # Type-I error rate
-  mu_list = list("R" = mu_r, "T" = mu_t), # Means for reference and treatment groups
-  sigma_list = list("R" = sigma, "T" = sigma), # Standard deviations
-  list_comparator = list("T_vs_R" = c("R", "T")), # Comparator setup
-  list_lequi.tol = list("T_vs_R" = lequi_lower),  # Lower equivalence limit
-  list_uequi.tol = list("T_vs_R" = lequi_upper),  # Upper equivalence limit
-  dropout = c("R" = 0.20, "T" = 0.20), # Expected dropout rates
-  dtype = "parallel",            # Study design
-  ctype = "DOM",                 # Comparison type
-  lognorm = FALSE,               # Assumes normal distribution
-  optimization_method = "fast",  # Fast optimization method
-  nsim = 1000,                   # Number of simulations
-  seed = 1234                    # Random seed for reproducibility
+(N_ss_dropout <- update(
+  N_ss,
+  dropout = c("R" = 0.20, "T" = 0.20),
+  optimization_method = "fast"
 ))
 ```
 

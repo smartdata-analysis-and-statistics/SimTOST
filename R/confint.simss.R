@@ -10,15 +10,26 @@
 #'     \item{Upper}{Upper bound of the confidence interval.}
 #'   }
 #' @export
+#' @method confint simss
 #' @examples
-#' # Assume `res` is a result from `sampleSize()`
-#' # confint(res)
+#' \dontrun{
+#' # confint(res), where res is returned by sampleSize()
+#' }
 #'
-confint.simss <- function(object, ...) {
+confint.simss <- function(object, level = 0.95, ...) {
+  if (inherits(object, "countss")) {
+    return(confint.countss(object, level = level, ...))
+  }
+
   # Check if object is of class simss
   if (!inherits(object, "simss")) {
     stop("Object must be of class 'simss'")
   }
+  if (!is.numeric(level) || length(level) != 1L || level <= 0 || level >= 1)
+    stop("'level' must be a single number between 0 and 1.")
+  if (!isTRUE(all.equal(level, 0.95)))
+    stop("Only the stored 95% interval is available for this result.")
+
   # Look for CI directly (e.g., object$power.CI or object$power_ci)
   if (!is.null(object[["response"]][["power"]])) {
     ci <- c(object[["response"]][["power"]],object[["response"]][["power_LCI"]],object[["response"]][["power_UCI"]])
@@ -29,8 +40,8 @@ confint.simss <- function(object, ...) {
   # Format as a named vector
   ci_out <- setNames(ci, c("Achieved Power", "Lower", "Upper"))
 
-  cat(sprintf("Confidence Interval for Achieved Power (%.0f%%):\n", object[["param.d"]][["alpha"]] * 100))
-  cat(sprintf(" %0.4f [%0.4f, %0.4f]\n", ci_out[1], ci_out[2], ci_out[3] ))
+  cat("Confidence Interval for Achieved Power (95%):\n")
+  cat(sprintf(" %0.4f [%0.4f, %0.4f]\n", ci_out[1], ci_out[2], ci_out[3]))
 
   invisible(ci_out)
 }

@@ -5,13 +5,17 @@
 \title{Sample Size Calculation for Bioequivalence and Multi-Endpoint Studies}
 \usage{
 sampleSize(
-  mu_list,
+  distribution = c("norm", "lnorm", "pois", "nbinom"),
+  mu_list = NULL,
   varcov_list = NA,
   sigma_list = NA,
   cor_mat = NA,
   sigmaB = NA,
-  Eper,
-  Eco,
+  rate_list = NULL,
+  exposure = 1,
+  dispersion = 0.1,
+  Eper = c(0, 0),
+  Eco = c(0, 0),
   rho = 0,
   TAR = rep(1, length(mu_list)),
   arm_names = NA,
@@ -28,7 +32,6 @@ sampleSize(
   dtype = "parallel",
   ctype = "ROM",
   vareq = TRUE,
-  lognorm = TRUE,
   k = NA,
   adjust = "no",
   dropout = NA,
@@ -42,23 +45,48 @@ sampleSize(
   step.up = TRUE,
   pos.side = FALSE,
   maxiter = 1000,
-  verbose = FALSE
+  verbose = FALSE,
+  keep_sim_data = FALSE,
+  .warn_redundant_bon = TRUE
 )
 }
 \arguments{
+\item{distribution}{Outcome distribution. Choose the R distribution names
+\code{"norm"}, \code{"lnorm"}, \code{"pois"}, or \code{"nbinom"}. Matching is case-insensitive.
+The longer labels such as \code{"normal"}, \code{"lognormal"}, and \code{"poisson"} are
+accepted for compatibility; results store the R-style labels above.}
+
 \item{mu_list}{Named list of arithmetic means per treatment arm. Each element is a vector representing expected outcomes for all endpoints in that arm.}
 
 \item{varcov_list}{List of variance-covariance matrices, where each element corresponds to a comparator. Each matrix has dimensions: number of endpoints × number of endpoints.}
 
 \item{sigma_list}{List of standard deviation vectors, where each element corresponds to a comparator and contains one standard deviation per endpoint.}
 
-\item{cor_mat}{Matrix specifying the correlation structure between endpoints, used along with \code{sigma_list} to calculate \code{varcov_list} if not provided.}
+\item{cor_mat}{Matrix specifying the correlation structure between
+endpoints. For continuous outcomes it is used with \code{sigma_list} to
+calculate \code{varcov_list}; for count outcomes it is used by the joint count
+engine.}
 
-\item{sigmaB}{Numeric. Between-subject variance for a 2×2 crossover design.}
+\item{sigmaB}{Numeric. Between-subject standard deviation parameter for the
+continuous 2×2 design; for count outcomes it is the log-rate standard
+deviation in the 2×2 kernel.}
 
-\item{Eper}{Optional numeric vector of length 2 specifying the period effect in a \code{dtype = "2x2"} design, applied as \code{c(Period 0, Period 1)}. Defaults to \code{c(0, 0)}. Ignored for \code{dtype = "parallel"}.}
+\item{rate_list}{Named list of equal-length endpoint-rate vectors, one per
+count-outcome arm.}
 
-\item{Eco}{Optional numeric vector of length 2 specifying the carry-over effect per arm in a \code{dtype = "2x2"} design, applied as \code{c(Reference, Treatment)}. Defaults to \code{c(0, 0)}. Ignored for \code{dtype = "parallel"}.}
+\item{exposure}{Exposure per subject for count outcomes. Supply a scalar
+or endpoint vector shared by arms, or a named list of arm-specific values.}
+
+\item{dispersion}{Positive negative-binomial dispersion parameter. Supply
+a scalar or endpoint vector shared by arms, or a named list of arm-specific
+values.}
+
+\item{Eper}{Optional numeric vector of length 2 specifying period effects.
+For count outcomes these are log-rate effects applied to periods 1 and 2.}
+
+\item{Eco}{Optional numeric vector of length 2 specifying carry-over effects
+in the order reference carry-over and treatment carry-over. For count
+outcomes these are log-rate effects in period 2.}
 
 \item{rho}{Numeric. Correlation parameter applied uniformly across all endpoint pairs. Used with \code{sigma_list} to compute \code{varcov_list} when \code{cor_mat} or \code{varcov_list} are not provided.}
 
@@ -70,9 +98,15 @@ sampleSize(
 
 \item{type_y}{Integer vector indicating endpoint types: \code{1} for co-primary endpoints, \code{2} for secondary endpoints.}
 
-\item{list_comparator}{List of comparators. Each element is a vector of length 2 specifying the treatment names being compared.}
+\item{list_comparator}{List of comparators. Each element must be a vector
+of length 2 in the form \code{c(test, reference)}. The first arm is treated as
+the treatment arm and the second arm as the reference arm throughout the
+simulation and estimand calculations.}
 
-\item{list_y_comparator}{List of endpoint sets per comparator. Each element is a vector containing endpoint names to compare. If not provided, all endpoints common to both comparator arms are used.}
+\item{list_y_comparator}{List of endpoint sets per comparator. Each element is a vector containing endpoint names to compare. If not provided, all endpoints common to both comparator arms are used.
+For count outcomes, the selected endpoints define the count multiplicity
+and effective \code{k}; joint count analyses require the same endpoint set for
+every comparison.}
 
 \item{power}{Numeric. Target power (default = 0.8).}
 
@@ -88,15 +122,18 @@ sampleSize(
 
 \item{dtype}{Character. Trial design: \code{"parallel"} (default) for parallel-group or \code{"2x2"} for crossover (only for 2-arm studies).}
 
-\item{ctype}{Character. Hypothesis test type: \code{"DOM"} (Difference of Means) or \code{"ROM"} (Ratio of Means).}
+\item{ctype}{Character. Continuous-outcome test type: \code{"DOM"} (Difference of Means) or \code{"ROM"} (Ratio of Means). For Poisson and negative-binomial outcomes, \code{"RR"} (event-rate ratio) is used; an unavailable value triggers a warning and the applicable default is used.}
 
 \item{vareq}{Logical. Assumes equal variances across arms if \code{TRUE} (default = \code{FALSE}).}
 
-\item{lognorm}{Logical. Whether data follows a log-normal distribution (\code{TRUE} or \code{FALSE}).}
-
 \item{k}{Integer vector. Minimum number of successful endpoints required for global bioequivalence per comparator. Defaults to all endpoints per comparator.}
 
-\item{adjust}{Character. Alpha adjustment method: \code{"k"} (K-fold), \code{"bon"} (Bonferroni), \code{"sid"} (Sidak), \code{"no"} (default, no adjustment), or \code{"seq"} (sequential).}
+\item{adjust}{Character. Alpha adjustment method: \code{"k"} (K-fold),
+\code{"bon"} (Bonferroni across all selected endpoints), \code{"sid"}
+(Sidak), \code{"t"} (Mielke's strong \\(k\\)-out-of-\\(m\\) adjustment using
+\code{alpha / (m - k + 1)}; legacy \code{"pc"} aliases are accepted),
+\code{"no"} (none), or
+\code{"seq"} (sequential).}
 
 \item{dropout}{Numeric vector specifying dropout proportion per arm.}
 
@@ -104,13 +141,16 @@ sampleSize(
 
 \item{seed}{Integer. Seed for reproducibility.}
 
-\item{ncores}{Integer. Number of processing cores for parallel computation. Defaults to \code{1}. Set to \code{NA} for automatic detection (\code{ncores - 1}).}
+\item{ncores}{Integer. Number of processing cores for parallel computation. Defaults to \code{1}. Set to \code{NA} for automatic detection (\code{ncores - 1}). For count outcomes, Monte Carlo trials are split into independent seeded chunks and evaluated by the count C++ kernel on each worker.}
 
 \item{optimization_method}{Character. Sample size optimization method: \code{"fast"} (default, root-finding algorithm) or \code{"step-by-step"}.}
 
 \item{lower}{Integer. Minimum sample size for search range (default = 2).}
 
-\item{upper}{Integer. Maximum sample size for search range (default = 500).}
+\item{upper}{Integer. Maximum sample size for the search range (default =
+500). For count outcomes, this is the maximum number of subjects per arm;
+the plotted and returned total sample size is this value multiplied by the
+number of trial arms.}
 
 \item{step.power}{Numeric. Initial step size for sample size search, defined as \code{2^step.power}. Used when \code{optimization_method = "fast"}.}
 
@@ -121,22 +161,70 @@ sampleSize(
 \item{maxiter}{Integer. Maximum iterations allowed for sample size estimation (default = 1000). Used when \code{optimization_method = "fast"}.}
 
 \item{verbose}{Logical. If \code{TRUE}, prints progress and messages during execution (default = \code{FALSE}).}
+
+\item{keep_sim_data}{Logical. If \code{TRUE}, retain model-scale observations
+for every simulated trial in \code{sim_data} for distribution diagnostics.
+Defaults to \code{FALSE} because retained data can be large.}
 }
 \value{
 A list containing:
 \describe{
 \item{\code{response}}{Array summarizing simulation results, including estimated sample sizes, achieved power, and confidence intervals.}
-\item{\code{table.iter}}{Data frame showing estimated sample sizes and calculated power at each iteration.}
-\item{\code{table.test}}{Data frame containing test results for all simulated trials.}
+\item{\code{table.iter}}{Data frame showing estimated sample sizes and calculated power at each iteration. For count outcomes, one row is retained for every evaluated candidate.}
+\item{\code{table.test}}{Data frame containing test results for all simulated trials. For count outcomes, this contains complete-trial, comparator, and endpoint decision indicators for each simulated trial and candidate; the count kernel returns aggregate decision counts rather than raw endpoint-level test statistics.}
 \item{\code{param.u}}{Original input parameters.}
 \item{\code{param}}{Final adjusted parameters used in sample size calculation.}
 \item{\code{param.d}}{Trial design parameters used in the simulation.}
+\item{\code{sim_data}}{Optional long-format simulated observations,
+returned when \code{keep_sim_data = TRUE}.}
 }
 }
 \description{
 Computes the required sample size to achieve a target power in studies with multiple endpoints and treatment arms.
 The function employs modified root-finding algorithms to estimate sample size while accounting for correlation structures, variance assumptions,
 and equivalence bounds across endpoints. It is particularly useful for bioequivalence trials and multi-arm studies with complex endpoint structures.
+}
+\details{
+The common planning arguments are \code{power}, \code{alpha},
+\code{list_comparator}, \code{list_lequi.tol}, \code{list_uequi.tol},
+\code{k}, \code{adjust}, \code{dtype}, \code{dropout}, \code{nsim},
+\code{seed}, \code{lower}, and \code{upper}. Use the following
+distribution-specific arguments in addition to those common arguments:
+\describe{
+\item{Normal and Log Normal}{Supply \code{mu_list}, \code{sigma_list}
+or \code{varcov_list}; use \code{cor_mat} or \code{rho} for endpoint
+dependence. The \code{ctype} argument selects DOM or ROM testing.}
+\item{Poisson and Negative Binomial}{Supply \code{rate_list},
+\code{list_comparator}, and comparator-specific \code{list_lequi.tol}
+and \code{list_uequi.tol}. Use \code{exposure} and, for negative-binomial
+outcomes, \code{dispersion}; both may be scalar, endpoint-specific, or
+named arm-specific lists. Continuous-outcome arguments are ignored.}
+}
+For count outcomes, \code{optimization_method = "fast"} brackets the first
+sample size whose simulated power reaches the target and refines the
+bracket by integer bisection. The \code{"step-by-step"} option remains available
+when a complete candidate-by-candidate power table is preferred. The fast
+method assumes the usual approximately monotone power curve and uses the
+same seed at each candidate to reduce simulation noise.
+The effective endpoint count is comparator-specific: when
+\code{list_y_comparator} is omitted, only endpoints present in both arms are
+tested; when it is supplied, only the listed endpoints are tested. \code{k} is
+validated against that comparator-specific count and oversized values are
+capped with a warning. Formal endpoint-wise adjustment is unnecessary when
+all selected endpoints are required (\code{k = m}), although requested
+Bonferroni or Sidak adjustment remains available with a warning. For
+\code{k < m}, \code{adjust = "no"} is explicitly reported as an uncalibrated choice.
+For a \code{k}-of-\code{m} decision, \code{adjust = "t"} applies Mielke's strong
+\\(k\\)-out-of-\\(m\\) calibration \code{alpha / (m - k + 1)}. The legacy
+\code{adjust = "pc"} label is accepted as an alias.
+For continuous and count outcomes, \code{type_y} is used with
+\code{adjust = "seq"}; named endpoint vectors are aligned to the selected
+comparator endpoints. Count analyses use the same primary-gate and
+secondary-family decision rule as the continuous kernels.
+The unified function returns primary class \code{simss} for all outcome
+distributions. Count results retain \code{countss} as a secondary
+compatibility class. Use \code{summary()} and \code{plot()} to inspect the
+result.
 }
 \examples{
 mu_list <- list(SB2 = c(AUCinf = 38703, AUClast = 36862, Cmax = 127.0),
@@ -170,7 +258,16 @@ sampleSize(power = 0.9, alpha = 0.05, mu_list = mu_list,
            list_lequi.tol = list("EMA" = lequi_lower, "FDA" = lequi_lower),
            list_uequi.tol = list("EMA" = lequi_upper, "FDA" = lequi_upper),
            adjust = "no", dtype = "parallel", ctype = "ROM", vareq = FALSE,
-           lognorm = TRUE, ncores = 1, nsim = 50, seed = 1234)
+           distribution = "lnorm", ncores = 1, nsim = 50, seed = 1234)
+
+# The same entry point for a two-arm Poisson count-rate calculation:
+sampleSize(power = 0.80, distribution = "Poisson",
+           rate_list = list(TEST = 0.21, REF = 0.20),
+           list_comparator = list(TEST_vs_REF = c("TEST", "REF")),
+           list_lequi.tol = list(TEST_vs_REF = 0.80),
+           list_uequi.tol = list(TEST_vs_REF = 1.25),
+           exposure = 10, lower = 20, upper = 500,
+           nsim = 100, seed = 1234)
 }
 \references{
 Schuirmann, D. J. (1987). A comparison of the Two One-Sided Tests procedure and the
@@ -188,7 +285,4 @@ equivalence confidence sets. \emph{Statistical Science}, 283-302.
 Sozu, T., Sugimoto, T., Hamasaki, T., & Evans, S. R. (2015). "Sample Size Determination in
 Clinical Trials with Multiple Endpoints." \emph{SpringerBriefs in Statistics}.
 \url{doi:10.1007/978-3-319-22005-5}
-}
-\author{
-Johanna Muñoz \email{johanna.munoz@fromdatatowisdom.com}
 }

@@ -20,21 +20,21 @@ doc.cache <- T #for cran; change to F
 In the `SimTOST` R package, which is specifically designed for sample size estimation for bioequivalence studies, hypothesis testing is based on the Two One-Sided Tests (TOST) procedure. [@sozu_sample_2015]  In TOST, the equivalence test is framed as a comparison between the the null hypothesis of ‘new product is worse by a clinically relevant quantity’ and the alternative hypothesis of ‘difference between products is too small to be clinically relevant’. This vignette focuses on a parallel design, with 3 arms/treatments and 3 primary endpoints.
 
 # Introduction
-Similar to the example presented in [Bioequivalence Tests for Parallel Trial Designs: 2 Arms, 3 Endpoints](sampleSize_parallel_2A3E.html), where equivalence across multiple endpoints was assessed, this vignette extends the framework to trials involving two reference products. This scenario arises when regulators from different regions require comparisons with their locally sourced reference biosimilars.
+Similar to the example presented in [Bioequivalence Tests for Parallel Trial Designs: 2 Arms, 3 Endpoints](continuous_parallel_2A3E.html), where equivalence across multiple endpoints was assessed, this vignette extends the framework to trials involving two reference products. This scenario arises when regulators from different regions require comparisons with their locally sourced reference biosimilars.
 
 In many studies, the aim is to evaluate equivalence across multiple primary variables. For example, the European Medicines Agency (EMA) recommends demonstrating equivalence for both the Area Under the Curve (AUC) and the maximum concentration (Cmax) when endpoints. In this scenario, we additionally evaluate equivalence across three treatment arms, including a test biosimilar and two reference products, each sourced from a different regulatory region.
 
-This vignette demonstrates advanced techniques for calculating sample size in such trials, in which multiple endpoints and multiple reference products are considered. As an illustrative example, we use data from the phase 1 trial [NCT01922336](https://clinicaltrials.gov/study/NCT01922336#study-overview), which assessed pharmacokinetic (PK) endpoints following a single dose of SB2, its EU-sourced reference product (EU-INF), and its US-sourced reference product (US-INF) [@shin_randomized_2015].
+This vignette demonstrates advanced techniques for calculating sample size in such trials, in which multiple endpoints and multiple reference products are considered. As an illustrative example, we use data from the phase 1 trial [NCT01922336](https://clinicaltrials.gov/study/NCT01922336#study-overview), which assessed pharmacokinetic (PK) endpoints following a single dose of SB2, its EU reference product (EU_REF), and its US reference product (US_REF) [@shin_randomized_2015].
 
 ```{r inputdata, echo=FALSE}
 
 data <- data.frame("PK measure" = c("AUCinf ($\\mu$g*h/mL)","AUClast ($\\mu$g*h/mL)","Cmax ($\\mu$g/mL)"),
                    "SB2" = c("38,703 $\\pm$ 11,114", "36,862 $\\pm$ 9133", "127.0 $\\pm$ 16.9"), 
-                   "EU-INF" = c("39,360  $\\pm$ 12,332", "37,022 $\\pm$ 9398", "126.2 $\\pm$ 17.9"),
-                   "US-INF" = c("39,270 $\\pm$ 10,064", "37,368 $\\pm$ 8332", "129.2 $\\pm$ 18.8"))
+                   "EU_REF" = c("39,360  $\\pm$ 12,332", "37,022 $\\pm$ 9398", "126.2 $\\pm$ 17.9"),
+                   "US_REF" = c("39,270 $\\pm$ 10,064", "37,368 $\\pm$ 8332", "129.2 $\\pm$ 18.8"))
 
 kableExtra::kable_styling(kableExtra::kable(data, 
-                                            col.names = c("PK measure", "SB2", "EU-INF", "US-INF"),
+                                            col.names = c("PK measure", "SB2", "EU_REF", "US_REF"),
                                             caption = "Primary PK measures between test and reference product. Data represent arithmetic mean +- standard deviation."),
                           bootstrap_options = "striped")
 
@@ -42,7 +42,7 @@ kableExtra::kable_styling(kableExtra::kable(data,
 
 
 # Input Data
-As in [this vignette](sampleSize_parallel_2A3E.html), the following inputs are required:
+As in [this vignette](continuous_parallel_2A3E.html), the following inputs are required:
 
 * Means for each endpoint and treatment arm (`mu_list`),
 * Standard deviations for each endpoint and arm (`sigma_list`),
@@ -52,8 +52,8 @@ As in [this vignette](sampleSize_parallel_2A3E.html), the following inputs are r
 
 In this example, we simultaneously compare the trial drug (SB2) to each reference biosimilar:
 
-* SB2 vs. EU-INF
-* SB2 vs. US-INF
+* SB2 vs. EU_REF
+* SB2 vs. US_REF
 
 We define the required list objects:
 
@@ -61,15 +61,15 @@ We define the required list objects:
 # Mean values for each endpoint and arm
 mu_list <- list(
   SB2 = c(AUCinf = 38703, AUClast = 36862, Cmax = 127.0),
-  EUINF = c(AUCinf = 39360, AUClast = 37022, Cmax = 126.2),
-  USINF = c(AUCinf = 39270, AUClast = 37368, Cmax = 129.2)
+  EU_REF = c(AUCinf = 39360, AUClast = 37022, Cmax = 126.2),
+  US_REF = c(AUCinf = 39270, AUClast = 37368, Cmax = 129.2)
 )
 
 # Standard deviation values for each endpoint and arm
 sigma_list <- list(
   SB2 = c(AUCinf = 11114, AUClast = 9133, Cmax = 16.9),
-  EUINF = c(AUCinf = 12332, AUClast = 9398, Cmax = 17.9),
-  USINF = c(AUCinf = 10064, AUClast = 8332, Cmax = 18.8)
+  EU_REF = c(AUCinf = 12332, AUClast = 9398, Cmax = 17.9),
+  US_REF = c(AUCinf = 10064, AUClast = 8332, Cmax = 18.8)
 )
 ```
 
@@ -83,16 +83,16 @@ In this analysis, we adopt the **Ratio of Means (ROM)** approach to evaluate bio
 ## Different Hypotheses across endpoints
 In this example, we aim to demonstrate:
 
-* Bioequivalence of SB2 vs. EU-INF for AUCinf and Cmax, and
-* Bioequivalence of SB2 vs. US-INF for AUClast and Cmax.
+* Bioequivalence of SB2 vs. EU_REF for AUCinf and Cmax, and
+* Bioequivalence of SB2 vs. US_REF for AUClast and Cmax.
 
 The comparisons are specified as follows:
 
 ```{r}
 # Arms to be compared
 list_comparator <- list(
-  EMA = c("SB2", "EUINF"),
-  FDA = c("SB2", "USINF")
+  EMA = c("SB2", "EU_REF"),
+  FDA = c("SB2", "US_REF")
 )
 
 # Endpoints to be compared
@@ -136,7 +136,7 @@ library(SimTOST)
                     dtype = "parallel", # Trial design type
                     ctype = "ROM",      # Test type: Ratio of Means
                     vareq = TRUE,       # Assume equal variances
-                    lognorm = TRUE,     # Log-normal distribution assumption
+                    distribution = "lnorm",     # Log-normal distribution assumption
                     nsim = 1000,        # Number of stochastic simulations
                     seed = 1234))       # Random seed for reproducibility
 ```
@@ -145,15 +145,15 @@ A total sample size of `r N_ss$response$n_total` patients (or `r N_ss$response$n
 
 # Simultaneous Testing of Independent Primary Endpoints
 
-## Equivalence for At Least 2 of the 3 Endpoints with Bonferroni Adjustment
-In this example, we aim to establish equivalence for at least two out of three primary endpoints while accounting for multiplicity using the Bonferroni adjustment. The following assumptions are made:
+## Equivalence for At Least 2 of the 3 Endpoints with Mielke's t-Adjustment
+In this example, we aim to establish equivalence for at least two out of three primary endpoints. For this k-out-of-m rule, `adjust = "t"` uses Mielke et al.'s strong calibration \(\alpha/(m-k+1)\), so the endpoint-wise level is 0.025 when \(m=3\), \(k=2\), and \(\alpha=0.05\) [@mielke_sample_2018]. The general partial-conjunction framework is described by Benjamini and Heller (2008) [@benjamini2008]. The following assumptions are made:
 
 * Equality of Variances: variances are assumed to be equal across groups (`vareq = TRUE`).
 * Testing Parameter: the Ratio of Means (ROM) is used as the testing parameter (`ctype = "ROM"`).
 * Design: a parallel trial design is assumed (`dtype = "parallel"`).
-* Distribution: endpoint data follows a log-normal distribution (`lognorm = TRUE`).
+* Distribution: endpoint data follows a log-normal distribution (`distribution = "lnorm"`).
 * Correlation: endpoints are assumed to be independent, with no correlation between them (default `rho = 0`).
-* Multiplicity Adjustment: the Bonferroni correction is applied to control for Type I error (`adjust = "bon"`).
+* Multiplicity Adjustment: Mielke's strong k-out-of-m correction is applied (`adjust = "t"`).
 * Equivalence Criterion: equivalence is required for at least two of the three endpoints (`k = 2`).
 
 The comparisons and equivalence boundaries are defined as follows:
@@ -178,25 +178,16 @@ list_uequi.tol <- list(
 )
 ```
 
-Finally, we calculate the required sample size:
+Finally, we update the preceding all-endpoints calculation. `update()` keeps
+the treatment arms, distribution, margins, and simulation settings and changes
+only the endpoint rule and multiplicity adjustment:
 
 ```{r}
-(N_mp <- sampleSize(power = 0.9,       # Target power
-                    alpha = 0.05,      # Type I error rate
-                    mu_list = mu_list, # Means for each endpoint and arm
-                    sigma_list = sigma_list, # Standard deviations
-                    list_comparator = list_comparator, # Comparator arms
-                    list_y_comparator = list_y_comparator, # Endpoints to compare
-                    list_lequi.tol = list_lequi.tol, # Lower equivalence boundaries
-                    list_uequi.tol = list_uequi.tol, # Upper equivalence boundaries
-                    k = 2,              # Number of endpoints required to demonstrate equivalence
-                    adjust = "bon",     # Bonferroni adjustment for multiple comparisons
-                    dtype = "parallel", # Trial design type (parallel group)
-                    ctype = "ROM",      # Test type: Ratio of Means
-                    vareq = TRUE,       # Assume equal variances across arms
-                    lognorm = TRUE,     # Log-normal distribution assumption
-                    nsim = 1000,        # Number of stochastic simulations
-                    seed = 1234))       # Random seed for reproducibility
+(N_mp <- update(N_ss,
+                list_y_comparator = list_y_comparator,
+                list_lequi.tol = list_lequi.tol,
+                list_uequi.tol = list_uequi.tol,
+                k = 2, adjust = "t", seed = 1234))
 ```
 
 ## Unequal Allocation Rates Across Arms
@@ -205,49 +196,20 @@ In this example, we build upon the previous scenario but introduce unequal alloc
 This can be achieved by specifying the treatment allocation rate parameter (`TAR`). Rates are provided as a vector, for example: `TAR = c(2, 1, 1)`. This ensures that for every two patients assigned to the new treatment arm, one patient is assigned to each reference arm.
 
 ```{r}
-(N_mp2 <- sampleSize(power = 0.9,       # Target power
-                     alpha = 0.05,      # Type I error rate
-                     mu_list = mu_list, # Means for each endpoint and arm
-                     sigma_list = sigma_list, # Standard deviations
-                     list_comparator = list_comparator, # Comparator arms
-                     list_y_comparator = list_y_comparator, # Endpoints to compare
-                     list_lequi.tol = list_lequi.tol, # Lower equivalence boundaries
-                     list_uequi.tol = list_uequi.tol, # Upper equivalence boundaries
-                     k = 2,              # Number of endpoints required to demonstrate equivalence
-                     adjust = "bon",     # Bonferroni adjustment for multiple comparisons
-                     TAR = c("SB2" = 2, "EUINF" = 1, "USINF" = 1), # Treatment allocation rates
-                     dtype = "parallel", # Trial design type (parallel group)
-                     ctype = "ROM",      # Test type: Ratio of Means
-                     vareq = TRUE,       # Assume equal variances across arms
-                     lognorm = TRUE,     # Log-normal distribution assumption
-                     nsim = 1000,        # Number of stochastic simulations
-                     seed = 1234))       # Random seed for reproducibility
+(N_mp2 <- update(N_mp,
+                 TAR = c("SB2" = 2, "EU_REF" = 1, "US_REF" = 1),
+                 seed = 1234))
 ```
 
-Results indicate that `r N_mp2$response$n_SB2` patients are required for the active treatment arm (SB2), and `r N_mp2$response$n_EUINF` patients are required for each reference arm. The total sample size required is `r N_mp2$response$n_total`, which is larger compared to the trial with an equal allocation ratio, for which the total sample size was `r N_mp$response$n_total`.
+Results indicate that `r N_mp2$response$n_SB2` patients are required for the active treatment arm (SB2), and `r N_mp2$response$n_EU_REF` patients are required for each reference arm. The total sample size required is `r N_mp2$response$n_total`, which is larger compared to the trial with an equal allocation ratio, for which the total sample size was `r N_mp$response$n_total`.
 
 ## Accounting for Participant Dropout
 In the examples above, the sample size calculations assumed that all enrolled patients complete the trial. However, in practice, a certain percentage of participants drop out, which can impact the required sample size. To account for this, we consider a 20% dropout rate across all treatment arms.
 
 ```{r}
-(N_mp3 <- sampleSize(power = 0.9,       # Target power
-                     alpha = 0.05,      # Type I error rate
-                     mu_list = mu_list, # Means for each endpoint and arm
-                     sigma_list = sigma_list, # Standard deviations
-                     list_comparator = list_comparator, # Comparator arms
-                     list_y_comparator = list_y_comparator, # Endpoints to compare
-                     list_lequi.tol = list_lequi.tol, # Lower equivalence boundaries
-                     list_uequi.tol = list_uequi.tol, # Upper equivalence boundaries
-                     k = 2,              # Number of endpoints required to demonstrate equivalence
-                     adjust = "bon",     # Bonferroni adjustment for multiple comparisons
-                     TAR = c("SB2" = 2, "EUINF" = 1, "USINF" = 1), # Treatment allocation rates
-                     dropout = c("SB2" = 0.20, "EUINF" = 0.20, "USINF" = 0.20), # Expected dropout rates
-                     dtype = "parallel", # Trial design type (parallel group)
-                     ctype = "ROM",      # Test type: Ratio of Means
-                     vareq = TRUE,       # Assume equal variances across arms
-                     lognorm = TRUE,     # Log-normal distribution assumption
-                     nsim = 1000,        # Number of stochastic simulations
-                     seed = 1234))       # Random seed for reproducibility
+(N_mp3 <- update(N_mp2,
+                 dropout = c("SB2" = 0.20, "EU_REF" = 0.20,
+                              "US_REF" = 0.20), seed = 1234))
 ```
 
 Considering a 20% dropout rate, the total sample size required is `r N_mp3$response$n_total`.

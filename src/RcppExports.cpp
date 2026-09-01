@@ -11,6 +11,88 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
+// count_power_cpp
+Rcpp::NumericVector count_power_cpp(const int n_per_arm, const double rate_test, const double rate_reference, const double exposure_test, const double exposure_reference, const double margin_lower, const double margin_upper, const int model, const double dispersion_test, const double dispersion_reference, const double alpha, const int nsim, const int design, const double sigmaB, const arma::vec& Eper, const arma::vec& Eco, const arma::vec& dropout);
+RcppExport SEXP _SimTOST_count_power_cpp(SEXP n_per_armSEXP, SEXP rate_testSEXP, SEXP rate_referenceSEXP, SEXP exposure_testSEXP, SEXP exposure_referenceSEXP, SEXP margin_lowerSEXP, SEXP margin_upperSEXP, SEXP modelSEXP, SEXP dispersion_testSEXP, SEXP dispersion_referenceSEXP, SEXP alphaSEXP, SEXP nsimSEXP, SEXP designSEXP, SEXP sigmaBSEXP, SEXP EperSEXP, SEXP EcoSEXP, SEXP dropoutSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const int >::type n_per_arm(n_per_armSEXP);
+    Rcpp::traits::input_parameter< const double >::type rate_test(rate_testSEXP);
+    Rcpp::traits::input_parameter< const double >::type rate_reference(rate_referenceSEXP);
+    Rcpp::traits::input_parameter< const double >::type exposure_test(exposure_testSEXP);
+    Rcpp::traits::input_parameter< const double >::type exposure_reference(exposure_referenceSEXP);
+    Rcpp::traits::input_parameter< const double >::type margin_lower(margin_lowerSEXP);
+    Rcpp::traits::input_parameter< const double >::type margin_upper(margin_upperSEXP);
+    Rcpp::traits::input_parameter< const int >::type model(modelSEXP);
+    Rcpp::traits::input_parameter< const double >::type dispersion_test(dispersion_testSEXP);
+    Rcpp::traits::input_parameter< const double >::type dispersion_reference(dispersion_referenceSEXP);
+    Rcpp::traits::input_parameter< const double >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< const int >::type nsim(nsimSEXP);
+    Rcpp::traits::input_parameter< const int >::type design(designSEXP);
+    Rcpp::traits::input_parameter< const double >::type sigmaB(sigmaBSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type Eper(EperSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type Eco(EcoSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type dropout(dropoutSEXP);
+    rcpp_result_gen = Rcpp::wrap(count_power_cpp(n_per_arm, rate_test, rate_reference, exposure_test, exposure_reference, margin_lower, margin_upper, model, dispersion_test, dispersion_reference, alpha, nsim, design, sigmaB, Eper, Eco, dropout));
+    return rcpp_result_gen;
+END_RCPP
+}
+// count_power_multi_cpp
+Rcpp::NumericVector count_power_multi_cpp(const int n_per_arm, const Rcpp::NumericVector& rate_test, const Rcpp::NumericVector& rate_reference, const Rcpp::NumericVector& exposure_test, const Rcpp::NumericVector& exposure_reference, const Rcpp::NumericVector& margin_lower, const Rcpp::NumericVector& margin_upper, const int model, const Rcpp::NumericVector& dispersion_test, const Rcpp::NumericVector& dispersion_reference, const Rcpp::NumericVector& alpha, const int nsim, const int design, const arma::mat& endpoint_corr, const arma::ivec& typey, const bool adseq, const int k, const double sigmaB, const arma::vec& Eper, const arma::vec& Eco, const arma::vec& dropout);
+RcppExport SEXP _SimTOST_count_power_multi_cpp(SEXP n_per_armSEXP, SEXP rate_testSEXP, SEXP rate_referenceSEXP, SEXP exposure_testSEXP, SEXP exposure_referenceSEXP, SEXP margin_lowerSEXP, SEXP margin_upperSEXP, SEXP modelSEXP, SEXP dispersion_testSEXP, SEXP dispersion_referenceSEXP, SEXP alphaSEXP, SEXP nsimSEXP, SEXP designSEXP, SEXP endpoint_corrSEXP, SEXP typeySEXP, SEXP adseqSEXP, SEXP kSEXP, SEXP sigmaBSEXP, SEXP EperSEXP, SEXP EcoSEXP, SEXP dropoutSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const int >::type n_per_arm(n_per_armSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type rate_test(rate_testSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type rate_reference(rate_referenceSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type exposure_test(exposure_testSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type exposure_reference(exposure_referenceSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type margin_lower(margin_lowerSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type margin_upper(margin_upperSEXP);
+    Rcpp::traits::input_parameter< const int >::type model(modelSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type dispersion_test(dispersion_testSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type dispersion_reference(dispersion_referenceSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< const int >::type nsim(nsimSEXP);
+    Rcpp::traits::input_parameter< const int >::type design(designSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type endpoint_corr(endpoint_corrSEXP);
+    Rcpp::traits::input_parameter< const arma::ivec& >::type typey(typeySEXP);
+    Rcpp::traits::input_parameter< const bool >::type adseq(adseqSEXP);
+    Rcpp::traits::input_parameter< const int >::type k(kSEXP);
+    Rcpp::traits::input_parameter< const double >::type sigmaB(sigmaBSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type Eper(EperSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type Eco(EcoSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type dropout(dropoutSEXP);
+    rcpp_result_gen = Rcpp::wrap(count_power_multi_cpp(n_per_arm, rate_test, rate_reference, exposure_test, exposure_reference, margin_lower, margin_upper, model, dispersion_test, dispersion_reference, alpha, nsim, design, endpoint_corr, typey, adseq, k, sigmaB, Eper, Eco, dropout));
+    return rcpp_result_gen;
+END_RCPP
+}
+// count_power_joint_cpp
+Rcpp::NumericVector count_power_joint_cpp(const int n_per_arm, const Rcpp::NumericMatrix& rates, const Rcpp::NumericMatrix& exposure, const Rcpp::NumericMatrix& margin_lower, const Rcpp::NumericMatrix& margin_upper, const int model, const Rcpp::NumericMatrix& dispersion, const Rcpp::NumericVector& alpha, const Rcpp::NumericMatrix& endpoint_corr, const Rcpp::IntegerMatrix& comparisons, const arma::ivec& typey, const bool adseq, const int k, const int nsim);
+RcppExport SEXP _SimTOST_count_power_joint_cpp(SEXP n_per_armSEXP, SEXP ratesSEXP, SEXP exposureSEXP, SEXP margin_lowerSEXP, SEXP margin_upperSEXP, SEXP modelSEXP, SEXP dispersionSEXP, SEXP alphaSEXP, SEXP endpoint_corrSEXP, SEXP comparisonsSEXP, SEXP typeySEXP, SEXP adseqSEXP, SEXP kSEXP, SEXP nsimSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const int >::type n_per_arm(n_per_armSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type rates(ratesSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type exposure(exposureSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type margin_lower(margin_lowerSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type margin_upper(margin_upperSEXP);
+    Rcpp::traits::input_parameter< const int >::type model(modelSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type dispersion(dispersionSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type endpoint_corr(endpoint_corrSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerMatrix& >::type comparisons(comparisonsSEXP);
+    Rcpp::traits::input_parameter< const arma::ivec& >::type typey(typeySEXP);
+    Rcpp::traits::input_parameter< const bool >::type adseq(adseqSEXP);
+    Rcpp::traits::input_parameter< const int >::type k(kSEXP);
+    Rcpp::traits::input_parameter< const int >::type nsim(nsimSEXP);
+    rcpp_result_gen = Rcpp::wrap(count_power_joint_cpp(n_per_arm, rates, exposure, margin_lower, margin_upper, model, dispersion, alpha, endpoint_corr, comparisons, typey, adseq, k, nsim));
+    return rcpp_result_gen;
+END_RCPP
+}
 // ptv
 arma::mat ptv(arma::mat x, const double df, const bool lower);
 RcppExport SEXP _SimTOST_ptv(SEXP xSEXP, SEXP dfSEXP, SEXP lowerSEXP) {
@@ -267,6 +349,9 @@ END_RCPP
 RcppExport SEXP _rcpp_module_boot_test();
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_SimTOST_count_power_cpp", (DL_FUNC) &_SimTOST_count_power_cpp, 17},
+    {"_SimTOST_count_power_multi_cpp", (DL_FUNC) &_SimTOST_count_power_multi_cpp, 21},
+    {"_SimTOST_count_power_joint_cpp", (DL_FUNC) &_SimTOST_count_power_joint_cpp, 14},
     {"_SimTOST_ptv", (DL_FUNC) &_SimTOST_ptv, 3},
     {"_SimTOST_ptvdf", (DL_FUNC) &_SimTOST_ptvdf, 3},
     {"_SimTOST_check_equivalence", (DL_FUNC) &_SimTOST_check_equivalence, 4},

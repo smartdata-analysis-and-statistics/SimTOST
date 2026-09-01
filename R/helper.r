@@ -25,6 +25,10 @@
 #' @export
 print.simss <- function(x, ...) {
 
+  if (inherits(x, "countss")) {
+    return(print.countss(x, ...))
+  }
+
   alpha <- x$param.d[["alpha"]]
   tpower <- x$param.d[["power"]]
   power <- round(x$response[["power"]], digits = 3)
@@ -64,6 +68,9 @@ print.simss <- function(x, ...) {
     } else if (x$param.d$adjust == "k") {
       multiplicity_correction <- "k-adjustment"
       alphau <- x$param.d$k[i]*x$param.d$alpha/nendp
+    } else if (x$param.d$adjust == "t") {
+      multiplicity_correction <- "t-adjustment (strong k-of-m control)"
+      alphau <- x$param.d$alpha/(nendp - x$param.d$k[i] + 1)
     } else if (x$param.d$adjust == "seq") {
       multiplicity_correction <- "Sequential"
       alphau <- x$param.d$alpha*x$param$weight_seq

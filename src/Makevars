@@ -1,1 +1,4 @@
-PKG_LIBS = $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS)
+# SimTOST contains C++/Armadillo code only. Do not append FLIBS here:
+# on macOS, R 4.6 may expose a stale gfortran path that prevents linking
+# even though the package does not compile any Fortran sources.
+PKG_LIBS = $(LAPACK_LIBS) $(BLAS_LIBS)

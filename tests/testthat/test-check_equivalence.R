@@ -55,3 +55,16 @@ test_that("Hierarchical Testing Of k Secondary Endpoints", {
   expect_equal(result[1, 1], 0, info = "Equivalence should not hold (one of the primary endpoints does not pass).")
 
 })
+
+test_that("Sequential co-primary hierarchy remains possible", {
+  expect_equal(
+    check_equivalence(typey = c(1, 1), adseq = TRUE,
+                      tbioq = matrix(c(1, 1), nrow = 1), k = 1)[1, 1],
+    1
+  )
+  expect_equal(
+    check_equivalence(typey = c(1, 1), adseq = TRUE,
+                      tbioq = matrix(c(1, 0), nrow = 1), k = 1)[1, 1],
+    0
+  )
+})

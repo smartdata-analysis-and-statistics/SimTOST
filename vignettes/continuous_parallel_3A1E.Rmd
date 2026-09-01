@@ -117,8 +117,12 @@ Alternative Hypothesis (Equivalence):
 $$H_1: E_L<\frac{\mu_{SB2}}{\mu_{RemEU}} < E_U~~ and~~E_L<\frac{\mu_{SB2}}{\mu_{RemUSA}} < E_U$$
 **Key Considerations**
 
-* The function [sampleSize()](../reference/sampleSize.html) adjusts the alpha level for multiple comparisons within a single comparator (e.g., comparisons involving only RemEU or RemUSA).
-* The function does not yet account for alpha adjustments between comparators when simultaneously comparing SB2 with both reference products (RemEU and RemUSA). Thus, the null hypothesis is rejected if any ROM falls outside the equivalence boundaries. Future package updates will address this limitation and include proper alpha adjustments for comparisons between comparators.
+* The `list_y_comparator` argument determines the endpoint set, so the
+  multiplicity calculation is based on the endpoints actually included in
+  each comparison.
+* Comparisons are evaluated jointly when both reference products are included.
+  Use `type1Error()` to check the resulting trial-level error rate when the
+  design contains several comparison families.
 
 ## Implementation Details
 
@@ -135,19 +139,16 @@ list_uequi.tol <- list("EMA" = 1/0.8, "FDA" = 1/0.8) # Upper equivalence boundar
 
 ## Computing Sample Size
 
-We then pass these values into the [sampleSize()](../reference/sampleSize.html) function to calculate the required sample size for multiple comparisons.
+We then update the one-comparator result with the second comparison. This
+avoids repeating the common treatment-arm, distribution, and simulation
+arguments while recalculating the joint design.
 
 ```{r}
-(AUCinf_2comp <- sampleSize(
-  power = 0.9,                  # Target power
-  alpha = 0.05,                 # Confidence level
-  arm_names = data$arm,         # Names of trial arms
-  list_comparator = list_comparator,  # Comparator configuration
-  mu_list = mu_list,            # Mean values
-  sigma_list = sigma_list,      # Standard deviation values
-  list_lequi.tol = list_lequi.tol,   # Lower equivalence boundary
-  list_uequi.tol = list_uequi.tol,   # Upper equivalence boundary
-  nsim = 1000                   # Number of stochastic simulations
+(AUCinf_2comp <- update(
+  AUCinf_1comp,
+  list_comparator = list_comparator,
+  list_lequi.tol = list_lequi.tol,
+  list_uequi.tol = list_uequi.tol
 ))
 ```
 

@@ -1,0 +1,345 @@
+---
+title: "Count-Outcome Equivalence: Parallel Design with 3 Arms and 3 Endpoints"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Count-Outcome Equivalence: Parallel Design with 3 Arms and 3 Endpoints}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, collapse = TRUE, comment = "#>",
+                      warning = FALSE, message = FALSE)
+library(SimTOST)
+```
+
+## Overview
+
+This example illustrates how to plan a parallel count-outcome equivalence
+study with three treatment arms and three count endpoints. The arms are a test
+product (`TEST`) and two reference products (`EU_REF` and `US_REF`). We use
+three clinically interpretable, illustrative endpoint names: `Exacerbations`,
+`Hospitalizations`, and `RescueEvents` (rescue-medication events). These labels
+represent event counts collected over the same follow-up period. The general
+distributional assumptions used by all
+SimTOST outcomes are described in the companion vignette
+[`methodological_assumptions.Rmd`](methodological_assumptions.Rmd).
+
+The count module supports scalar or vector-valued endpoint inputs. A joint
+simulation can require equivalence for `k` of the `m` endpoints and can apply
+Bonferroni, Mielke's strong k-out-of-m (`adjust = "t"`), or Šidák adjustment
+to the endpoint-wise one-sided significance level. For a `k`-of-`m` decision,
+the t-adjustment uses `alpha / (m - k + 1)` [@mielke_sample_2018]. The joint
+count kernel can also simulate correlated endpoints through
+the `cor_mat` argument.
+
+## Study assumptions
+
+The assumed event rates are:
+
+```{r rates}
+rate_list <- list(
+  TEST = c(Exacerbations = 0.19,
+           Hospitalizations = 0.13,
+           RescueEvents = 0.08),
+  EU_REF = c(Exacerbations = 0.20,
+             Hospitalizations = 0.13,
+             RescueEvents = 0.08),
+  US_REF = c(Exacerbations = 0.21,
+             Hospitalizations = 0.12,
+             RescueEvents = 0.08)
+)
+
+comparisons <- list(
+  EU_comparison = c("TEST", "EU_REF"),
+  US_comparison = c("TEST", "US_REF")
+)
+
+lower_margin <- 0.80
+upper_margin <- 1.25
+# Five units of follow-up provide a realistic event-count scale for this
+# illustrative example and allow the target power to be reached efficiently.
+exposure <- 5
+```
+
+The rate-ratio equivalence interval is 0.80 to 1.25. We use a Poisson model
+for the primary example and a one-sided significance level of 0.05 for each
+TOST component.
+
+## Power for a fixed sample size
+
+Before estimating sample size, power can be examined for each endpoint and
+comparison. Here we use 100 participants per treatment arm and a small number
+of simulations to keep the vignette fast.
+
+```{r fixed-power}
+fixed_power <- do.call(rbind, lapply(names(comparisons), function(comp) {
+  arms <- comparisons[[comp]]
+  do.call(rbind, lapply(names(rate_list[[arms[1]]]), function(endpoint) {
+    result <- simPower(
+      n = 100,
+      distribution = "pois",
+      rate_list = setNames(list(
+        setNames(rate_list[[arms[1]]][[endpoint]], endpoint),
+        setNames(rate_list[[arms[2]]][[endpoint]], endpoint)
+      ), arms),
+      list_comparator = setNames(list(arms), comp),
+      list_lequi.tol = setNames(list(lower_margin), comp),
+      list_uequi.tol = setNames(list(upper_margin), comp),
+      exposure = exposure,
+      dtype = "parallel",
+      nsim = 1000,
+      seed = 1234
+    )
+    data.frame(comparison = comp, endpoint = endpoint,
+               power = result$power,
+               power_LCI = result$power_LCI,
+               power_UCI = result$power_UCI)
+  }))
+}))
+
+fixed_power
+```
+
+## Sample-size estimation for all comparisons and endpoints
+
+We now estimate the smallest sample size per arm that reaches 80% power for
+each individual comparison and endpoint.
+
+```{r sample-size}
+sample_size_results <- do.call(rbind, lapply(names(comparisons), function(comp) {
+  arms <- comparisons[[comp]]
+  do.call(rbind, lapply(names(rate_list[[arms[1]]]), function(endpoint) {
+    result <- sampleSize(
+      power = 0.80,
+      distribution = "pois",
+      rate_list = setNames(list(
+        setNames(rate_list[[arms[1]]][[endpoint]], endpoint),
+        setNames(rate_list[[arms[2]]][[endpoint]], endpoint)
+      ), arms),
+      list_comparator = setNames(list(arms), comp),
+      list_lequi.tol = setNames(list(lower_margin), comp),
+      list_uequi.tol = setNames(list(upper_margin), comp),
+      exposure = exposure,
+      dtype = "parallel",
+      nsim = 1000,
+      seed = 1234,
+      lower = 10,
+      upper = 2000
+    )
+    data.frame(comparison = comp, endpoint = endpoint,
+               n_per_arm = result$n_per_arm,
+               n_total_for_pair = result$n_total,
+               achieved_power = result$power)
+  }))
+}))
+
+sample_size_results
+
+stopifnot(all(sample_size_results$achieved_power >= 0.80))
+```
+
+For a simple conservative planning rule, select the maximum required sample
+size per arm across all six comparison-endpoint combinations:
+
+```{r conservative-size}
+required_per_arm <- max(sample_size_results$n_per_arm)
+required_total <- 3 * required_per_arm
+
+c(required_per_arm = required_per_arm, required_total = required_total)
+```
+
+The total is multiplied by three because the study has three treatment arms.
+This rule ensures that each individual comparison and endpoint has at least
+the target simulated power under its own assumptions. It is not a substitute
+for a multiplicity-adjusted joint power calculation.
+
+## Joint sample-size estimation with `k = 3`
+
+The joint sample-size function receives all three arms, both comparison
+families, and all three endpoints at once. Here, `k = 3` requires all three
+endpoints to demonstrate equivalence for every comparison, while the
+Bonferroni option adjusts across all six comparison-endpoint tests. The
+returned sample size is therefore based on one joint simulated success
+criterion rather than the maximum of separate searches.
+
+```{r joint-sample-size}
+endpoint_corr <- matrix(c(
+  1.0, 0.40, 0.25,
+  0.40, 1.0, 0.35,
+  0.25, 0.35, 1.0
+), nrow = 3, byrow = TRUE)
+
+joint_result <- sampleSize(
+  power = 0.80,
+  distribution = "pois",
+  rate_list = rate_list,
+  list_comparator = comparisons,
+  list_lequi.tol = list(
+    EU_comparison = rep(lower_margin, 3),
+    US_comparison = rep(lower_margin, 3)
+  ),
+  list_uequi.tol = list(
+    EU_comparison = rep(upper_margin, 3),
+    US_comparison = rep(upper_margin, 3)
+  ),
+  exposure = rep(exposure, 3),
+  cor_mat = endpoint_corr,
+  dtype = "parallel",
+  nsim = 500,
+  seed = 1234,
+  lower = 10,
+  upper = 3000,
+  k = 3,
+  adjust = "bonferroni"
+)
+
+joint_sample_size <- data.frame(
+  n_per_arm = joint_result$n_per_arm,
+  n_total = joint_result$n_total,
+  achieved_power = joint_result$power,
+  k = joint_result$k,
+  adjustment = joint_result$adjust
+)
+
+joint_sample_size
+stopifnot(all(joint_sample_size$achieved_power >= 0.80))
+```
+
+For a three-arm allocation, the reported total is three times the selected
+number per arm. Both comparison families share the simulated test-arm counts,
+and the endpoint correlation is generated through a Gaussian-copula count
+model. This is therefore a joint count simulation rather than a maximum of
+separate comparison-specific searches.
+
+## Why joint planning is important
+
+The separate calculation above targets 80% power for each comparison-endpoint
+combination. That does not mean that the complete trial has 80% probability of
+passing all six requirements. For example, if two requirements each have 80%
+power and are independent, their joint success probability is only
+$0.80 \times 0.80 = 0.64$.
+
+The following comparison evaluates the separate result under the actual joint
+criterion. The joint calculations use Bonferroni adjustment across the six
+comparison-endpoint tests and require all three endpoints for both comparison
+families (`k = 3`). The independent-endpoint scenario uses an identity
+correlation matrix; the correlated scenario uses the matrix specified above.
+
+```{r joint-advantage}
+joint_power_at_separate <- simPower(
+  n = required_per_arm,
+  distribution = "pois",
+  rate_list = rate_list,
+  list_comparator = comparisons,
+  list_lequi.tol = list(
+    EU_comparison = rep(lower_margin, 3),
+    US_comparison = rep(lower_margin, 3)
+  ),
+  list_uequi.tol = list(
+    EU_comparison = rep(upper_margin, 3),
+    US_comparison = rep(upper_margin, 3)
+  ),
+  exposure = rep(exposure, 3),
+  cor_mat = endpoint_corr,
+  dtype = "parallel",
+  nsim = 1000,
+  seed = 1234,
+  k = 3,
+  adjust = "bonferroni"
+)
+
+joint_independent_result <- sampleSize(
+  power = 0.80,
+  distribution = "pois",
+  rate_list = rate_list,
+  list_comparator = comparisons,
+  list_lequi.tol = list(
+    EU_comparison = rep(lower_margin, 3),
+    US_comparison = rep(lower_margin, 3)
+  ),
+  list_uequi.tol = list(
+    EU_comparison = rep(upper_margin, 3),
+    US_comparison = rep(upper_margin, 3)
+  ),
+  exposure = rep(exposure, 3),
+  cor_mat = diag(3),
+  dtype = "parallel",
+  nsim = 500,
+  seed = 1234,
+  lower = 10,
+  upper = 3000,
+  k = 3,
+  adjust = "bonferroni"
+)
+
+joint_comparison <- data.frame(
+  approach = c(
+    "Separate searches; joint power evaluated afterward",
+    "Joint search; independent endpoints",
+    "Joint search; correlated endpoints"
+  ),
+  n_per_arm = c(
+    required_per_arm,
+    joint_independent_result$n_per_arm,
+    joint_result$n_per_arm
+  ),
+  joint_power = c(
+    joint_power_at_separate$power,
+    joint_independent_result$power,
+    joint_result$power
+  )
+)
+
+joint_comparison
+```
+
+The separate-search sample size is smaller because it guarantees only the
+individual 80% targets. In this example, its joint power is approximately 5%
+after the six-test Bonferroni adjustment, whereas the joint searches achieve
+the requested 80% trial-level power. This is the main advantage of joint
+planning: it answers the question that matters for the confirmatory trial,
+namely the probability that all required comparisons and endpoints succeed in
+the same simulated study. Positive endpoint correlation can reduce the joint
+sample size because endpoint successes tend to occur together, but it does not
+remove the need for a joint calculation.
+
+## Negative-binomial sensitivity analysis
+
+If prior evidence suggests overdispersion, repeat the calculations with the
+negative-binomial model. The `dispersion` parameter controls the amount of
+overdispersion; larger values imply greater variability.
+
+```{r negative-binomial-sensitivity}
+nb_sensitivity <- simPower(
+  n = required_per_arm,
+  distribution = "nbinom",
+  rate_list = list(
+    TEST = rate_list$TEST[["Exacerbations"]],
+    EU_REF = rate_list$EU_REF[["Exacerbations"]]
+  ),
+  list_comparator = list(TEST_vs_EU = c("TEST", "EU_REF")),
+  list_lequi.tol = list(TEST_vs_EU = lower_margin),
+  list_uequi.tol = list(TEST_vs_EU = upper_margin),
+  exposure = exposure,
+  dtype = "parallel",
+  dispersion = 0.10,
+  nsim = 300,
+  seed = 1234
+)
+
+nb_sensitivity
+```
+
+## Interpretation and limitations
+
+This vignette demonstrates both a conservative and a joint endpoint workflow
+for a three-arm, three-endpoint count study using the current API. In the
+separate-search workflow, endpoint and comparison calculations are performed
+independently, whereas the joint workflow evaluates the required success event
+in the same simulated trial. The distributional and dependence assumptions
+are described in the companion
+[`methodological_assumptions.Rmd`](methodological_assumptions.Rmd) vignette.
+
+For a confirmatory three-arm/three-endpoint trial, the statistical analysis
+plan should specify the familywise error strategy and joint success criterion.

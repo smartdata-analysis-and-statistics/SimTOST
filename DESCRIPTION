@@ -10,7 +10,7 @@ Authors@R: c(
     person(given = "Johanna", 
            family = "Munoz", 
            email = "johanna.munoz@fromdatatowisdom.com", 
-           role = c("aut")),
+           role = c("ctb")),
     person(given = "Dewi",
            family = "Amaliah",
            email = "dewi.amaliah@fromdatatowisdom.com",
@@ -29,6 +29,8 @@ Authors@R: c(
            role = c("ctb")),
     person("Biogen Inc", role = c("cph", "fnd"))
     )
+Author: Thomas Debray [aut, cre]
+Maintainer: Thomas Debray <tdebray@fromdatatowisdom.com>
 Description: 
     Sample size estimation for bio-equivalence trials is supported through a simulation-based approach 
     that extends the Two One-Sided Tests (TOST) procedure. The methodology provides flexibility in 
@@ -43,7 +45,6 @@ Description:
 License: Apache License (>= 2)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
 Imports: 
     MASS,
     Rcpp (>= 1.0.13),
@@ -51,15 +52,15 @@ Imports:
     matrixcalc,
     parallel
 Suggests: 
-    PowerTOST,
     ggplot2,
     kableExtra,
     knitr,
     rmarkdown,
+    scales,
     testthat (>= 3.0.0),
-    tibble,
-    tinytest
+    tibble
 VignetteBuilder: knitr
 Config/testthat/edition: 3
 LinkingTo: Rcpp, RcppArmadillo
 URL: https://smartdata-analysis-and-statistics.github.io/SimTOST/
+Config/roxygen2/version: 8.1.0

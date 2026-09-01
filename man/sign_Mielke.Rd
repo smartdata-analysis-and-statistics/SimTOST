@@ -46,10 +46,15 @@ Options are \code{"22co"} for a 2x2 crossover design or \code{"parallel"} for a 
 
 \item{adjust}{Character specifying the method for multiplicity adjustment.
 Options include \code{"no"} for no adjustment, \code{"bon"} for Bonferroni correction,
-and \code{"k"} for k-adjustment.}
+\code{"k"} for Mielke's weak k-adjustment, and \code{"t"} for the strong
+k-out-of-m adjustment. Legacy \code{"pc"} and
+\code{"partial-conjunction"} labels are accepted as aliases for \code{"t"}.}
 }
 \value{
-A numeric vector representing a realization of the simulated test statistic for the given setting.
+An object of class \code{simss_mielke}. It contains the legacy fields \code{SS} and
+\code{power.a}, together with \code{n_per_sequence}, \code{n_total}, \code{power}, and the
+target and input parameters. Use \code{summary()} for a data-frame summary,
+\code{print()} for a concise report, or \code{as.numeric()} to extract \code{SS}.
 }
 \description{
 Simulates test statistics for multiple hypothesis testing in biosimilar development,
@@ -63,10 +68,13 @@ is defined as meeting equivalence criteria for at least a subset of tests.
 Simulated test statistics are based on multivariate normal distribution assumptions,
 and the function supports k-out-of-m success criteria for regulatory approval.
 
-Type I error control is achieved through multiplicity adjustments as proposed by
-Lehmann and Romano (2005) to ensure rigorous error rate management. This approach
-is particularly relevant for biosimilar studies, where sample size estimation must
-account for multiple comparisons across endpoints, doses, or populations.
+The adjustment options follow the multiple-endpoint framework of Mielke et al.
+(2018). In particular, \code{adjust = "k"} uses the weak k-adjustment
+k * alpha / m, whereas \code{adjust = "t"} uses the strong k-out-of-m
+adjustment \code{alpha / (m - k + 1)} for partial null configurations.
+This distinction is particularly relevant for biosimilar studies, where
+sample size estimation must account for multiple comparisons across
+endpoints, doses, or populations.
 }
 \references{
 Kong, L., Kohberger, R. C., & Koch, G. G. (2004). Type I Error and Power in

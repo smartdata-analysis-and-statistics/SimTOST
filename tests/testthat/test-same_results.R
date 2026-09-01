@@ -42,7 +42,7 @@ testthat::test_that("Return expected result", {
   # Pass the user parameters into a list of parameters and calculate the sample size
   res_cal <- sampleSize(mu_list = mu_list, sigma_list = sigma_list,
                         power = 0.9, dtype = "parallel", ctype = "ROM",
-                        vareq = T, lognorm = TRUE, k = 3,
+                        distribution = "Log Normal", vareq = T, k = 3,
                         list_comparator = list_comparator,
                         list_y_comparator = list_y_comparator,
                         list_lequi.tol = list_lequi.tol, list_uequi.tol = list_uequi.tol,

@@ -1,6 +1,6 @@
 ---
 title: "Introduction"
-output: 
+output:
   rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Introduction}
@@ -27,18 +27,18 @@ The null and alternative hypotheses for the equivalence test are presented below
 One common approach for assessing bio-equivalence involves comparing pharmacokinetic (PK) measures between test and reference products. This is done using the following interval (null) hypothesis:
 
 Null Hypothesis ($H_0$): At least one endpoint does not meet the equivalence criteria:
- 
+
 $$H_0: m_T^{(j)} - m_R^{(j)} \le \delta_L ~~ \text{or}~~ m_T^{(j)} - m_R^{(j)} \ge \delta_U \quad \text{for at least one}\;j$$
 
 Alternative Hypothesis ($H_1$): All endpoints meet the equivalence criteria:
 
 $$H_1: \delta_L<m_{T}^{(j)}-m_{R}^{(j)} <\delta_U \quad\text{for all}\;j$$
 
-Here, $m_T$ and $m_R$ represent the mean endpoints for the test product (the proposed biosimilar) and the reference product, respectively. The equivalence limits, $\delta_L$ and $\delta_u$, are typically chosen to be symmetric, such that  $\delta = - \delta_L = \delta_U$. 
+Here, $m_T$ and $m_R$ represent the mean endpoints for the test product (the proposed biosimilar) and the reference product, respectively. The equivalence limits, $\delta_L$ and $\delta_u$, are typically chosen to be symmetric, such that  $\delta = - \delta_L = \delta_U$.
 
-The null hypothesis ($H_0$) is rejected if, and only if, all null hypotheses associated with the $K$ primary endpoints are rejected at a significance level of $\alpha$. This ensures that equivalence is established across all endpoints simultaneously. 
+The null hypothesis ($H_0$) is rejected if, and only if, all null hypotheses associated with the $K$ primary endpoints are rejected at a significance level of $\alpha$. This ensures that equivalence is established across all endpoints simultaneously.
 
-The DOM test can be implemented in [sampleSize()](../reference/sampleSize.html) by setting `ctype = "DOM"` and `lognorm = FALSE`. 
+The DOM test can be implemented in [sampleSize()](../reference/sampleSize.html) by setting `ctype = "DOM"` and `distribution = "norm"`.
 
 For pharmacokinetic (PK) outcomes, such as the area under the curve (AUC) and maximum concentration (Cmax), log-transformation is commonly applied to achieve normality. To perform this transformation, the logarithm of the geometric mean should be provided to `mu_list`, while the logarithmic variance can be derived from the coefficient of variation (CV) using the formula:
 
@@ -53,19 +53,19 @@ Equivalence limits must also be specified on the log scale to align with the tra
 The equivalence hypotheses can also be expressed as a Ratio of Means (ROM):
 
 Null Hypothesis ($H_0$): At least one endpoint does not meet the equivalence criteria:
- 
+
 $$H_0: \frac{\mu_T^{(j)}}{\mu_R^{(j)}} \le E_L ~~ \text{or}~~ \frac{\mu_T^{(j)}}{\mu_R^{(j)}} \ge E_U \quad \text{for at least one}\;j$$
 
 Alternative Hypothesis ($H_1$): All endpoints meet the equivalence criteria:
 
 $$H_1: E_L< \frac{\mu_{T}^{(j)}}{\mu_{R}^{(j)}} < E_U \quad\text{for all}\;j$$
 
-Here, $\mu_T$ and $\mu_R$ represent the arithmetic mean endpoints for the test product (the proposed biosimilar) and the reference product, respectively. 
+Here, $\mu_T$ and $\mu_R$ represent the arithmetic mean endpoints for the test product (the proposed biosimilar) and the reference product, respectively.
 
-The ROM test can be implemented in [sampleSize()](../reference/sampleSize.html) by setting `ctype = "ROM"` and `lognorm = TRUE`. Note that the `mu_list` argument should contain the arithmetic means of the endpoints, while `sigma_list` should contain their corresponding variances. 
+The ROM test can be implemented in [sampleSize()](../reference/sampleSize.html) by setting `ctype = "ROM"` and `distribution = "lnorm"`. Note that the `mu_list` argument should contain the arithmetic means of the endpoints, while `sigma_list` should contain their corresponding variances.
 
 The ROM test is converted to a Difference of Means (DOM) tests by log-transforming the data and equivalence limits. The variance on the log scale is calculated using the normalized variance formula:
- 
+
 $$
 \text{Logarithmic Variance} = \log\left(1 + \frac{\text{Arithmetic Variance}}{\text{Arithmetic Mean}^2}\right)
 $$
@@ -74,25 +74,25 @@ The logarithmic mean is then calculated as:
 
 $$\text{Logarithmic Mean} = \log(\text{Arithmetic Mean}) - \frac{1}{2}(\text{Logarithmic Variance})$$
 
-## Regulatory Requirements 
+## Regulatory Requirements
 When evaluating bioequivalence, certain statistical and methodological requirements must be adhered to, as outlined in the European Medicines Agency's bioequivalence guidelines [@CHMP2010]. These requirements ensure that the test and reference products meet predefined criteria for equivalence in terms of PK parameters. The key considerations are summarized below:
 
-* Hypothesis testing should be based on the ratio of the population geometric means 
-* The 90% confidence interval for the ratio of the test and reference products should be contained within the acceptance interval of 80.00 to 125.00%. 
-* A margin of clinical equivalence ($\Delta$) is chosen by defining the largest difference that is clinically acceptable, so that a difference larger than this would matter in practice. 
+* Hypothesis testing should be based on the ratio of the population geometric means
+* The 90% confidence interval for the ratio of the test and reference products should be contained within the acceptance interval of 80.00 to 125.00%.
+* A margin of clinical equivalence ($\Delta$) is chosen by defining the largest difference that is clinically acceptable, so that a difference larger than this would matter in practice.
 * The data should be transformed prior to analysis using a logarithmic transformation and subsequently be analyzed using ANOVA
 
 When conducting a DOM test, The FDA recommends that the equivalence acceptance criterion (EAC) be defined as $\delta = EAC = 1.5 \sigma_R$, where $\sigma_R$ represents the variability of the log-transformed endpoint for the reference product.
 
 # Testing of multiple endpoints
-Assessment of equivalence is often required for more than one primary variable. [@sozu_sample_2015] For example, EMA recommends showing equivalence both for AUC and Cmax 
+Assessment of equivalence is often required for more than one primary variable. [@sozu_sample_2015] For example, EMA recommends showing equivalence both for AUC and Cmax
 
-A decision must be made as to whether it is desirable to 
+A decision must be made as to whether it is desirable to
 
 * Demonstrate equivalence for all primary endpoints
   * This is the most common setting and is often referred to as having *multiple co-primary endpoints*.
   * Equivalence must be demonstrated for **all** endpoints to conclude overall equivalence.
-* Demonstrate equivalence for at least one of the primary endpoints 
+* Demonstrate equivalence for at least one of the primary endpoints
   * Known as having *multiple primary endpoints*.
   * Equivalence is required for **at least one** endpoint to meet the study's objectives.
 
@@ -104,7 +104,7 @@ When a trial defines multiple co-primary endpoints, equivalence must be demonstr
 This has several important implications:
 
 * **Reduced Power in Rare Diseases**. Previous studies have shown that the sample size required to maintain a given power level increases as the number of endpoints increases. [@mielke_sample_2018] This effect is particularly pronounced when the test statistics are uncorrelated or when a large number of tests are performed. In common conditions, this loss of power can often be compensated by increasing the sample size. In rare diseases, however, patient recruitment is often limited, making it more challenging to achieve equivalence across all endpoints and increasing the risk of an inconclusive result.
-* **Alternative Statistical Approaches**. To address power loss from requiring equivalence across multiple endpoints, alternative methods have been proposed. For example, one option is to power the study so that equivalence can be demonstrated for at least $k$ tests, rather than requiring all endpoints to meet the equivalence criterion. Another approach is hierarchical testing, where endpoints are tested sequentially based on predefined rules, allowing for partial conclusions when equivalence is demonstrated in a subset of endpoints. See [Testing multiple primary endpoints](#multiple-primary) for more details. 
+* **Alternative Statistical Approaches**. To address power loss from requiring equivalence across multiple endpoints, alternative methods have been proposed. For example, one option is to power the study so that equivalence can be demonstrated for at least $k$ tests, rather than requiring all endpoints to meet the equivalence criterion. Another approach is hierarchical testing, where endpoints are tested sequentially based on predefined rules, allowing for partial conclusions when equivalence is demonstrated in a subset of endpoints. See [Testing multiple primary endpoints](#multiple-primary) for more details.
 * **Regulatory Considerations**. Regulatory agencies often require a pre-specified statistical strategy to handle multiple endpoints in equivalence trials. Without proper planning, the risk of failing to establish equivalence in all endpoints may lead to inconclusive results, even if the treatments are meaningfully similar.
 
 
@@ -116,7 +116,7 @@ When a trial aims to establish equivalence for at least $k$ primary endpoints, a
 For example, if a study includes $m = 3$ independent primary endpoints and uses a significance level of $\alpha = 5%$ for each test, the overall probability of falsely concluding equivalence for at least one endpoint is:
 
 $$ 1 – (1-\alpha)^m  = 1 - (1-0.05)^3 = 0.1426. $$
-This means that the overall probability of making any false positive error, also known as the **family-wise error rate (FWER)**, increases to approximately 14%. 
+This means that the overall probability of making any false positive error, also known as the **family-wise error rate (FWER)**, increases to approximately 14%.
 
 To address this issue, adjustments to the significance level are necessary for multiple endpoint comparisons for which various methods have been proposed. In SimTOST, the following approaches are included:
 
@@ -129,6 +129,21 @@ $$\alpha_{bon}= \alpha/m$$
 where $m$ is the total number of tests. Although simple, this method is highly conservative, particularly when tests are correlated, as it assumes all tests are independent. This conservativeness remains pronounced even for $k=1$, where only one of the $m$ hypotheses needs to be rejected. [@mielke_sample_2018]
 
 In the [sampleSize()](../reference/sampleSize.html) function, the Bonferroni correction can be applied by setting `adjust = "bon"`.
+
+### Mielke's t-adjustment for k-of-m decisions
+When the decision rule requires at least `k` of `m` endpoints, the null
+hypothesis is a partial-conjunction hypothesis. The Bonferroni calibration for
+this rule uses the `m-k+1` boundary endpoints:
+
+$$\alpha_{t}= \frac{\alpha}{m-k+1}$$
+
+Mielke et al. (2018) [@mielke_sample_2018] describe this as the strong
+k-out-of-m adjustment for the partial-conjunction decision. It is available
+in `sampleSize()`, `simPower()`, and the count-outcome functions with
+`adjust = "t"`; the legacy `"pc"` label remains an alias. The effective `m`
+is determined separately for each comparator from the endpoints actually
+selected or inferred. The `adjust = "k"` option, in contrast, uses
+`k * alpha / m` and provides weak complete-null control.
 
 ### Sidak correction
 
@@ -151,21 +166,21 @@ Hierarchical testing is an approach to multiple endpoint testing where endpoints
 
 To implement hierarchical testing in `simTOST`, the user specifies `adjust = "seq"` in the [sampleSize()](../reference/sampleSize.html) function and defines primary and secondary endpoints using the `type_y` vector argument. The significance level ($\alpha$) is adjusted separately for each group of endpoints, ensuring strong control of the Family-Wise Error Rate (FWER) while maintaining interpretability.
 
-1. **Evaluate (co-)primary endpoints**  
+1. **Evaluate (co-)primary endpoints**
    - Testing begins with the pre-specified (co-)primary endpoints at the nominal significance level.
    - Equivalence must be demonstrated for *all* (co-)primary endpoints.
    - If any primary endpoint fails to meet the equivalence criteria, testing stops, and secondary endpoints are not evaluated.
-2. **Proceed to secondary endpoints (if applicable)**  
+2. **Proceed to secondary endpoints (if applicable)**
    - If all primary endpoints meet the equivalence criteria, testing proceeds to the secondary endpoints.
    - Equivalence must be demonstrated for at least `k` secondary endpoints.
    - The significance level for secondary endpoints is adjusted using k-adjustment.
-3. **Final Decision**  
+3. **Final Decision**
    - The test is considered successful if *all* (co-)primary endpoints meet the equivalence criteria and at least `k` secondary endpoints demonstrate equivalence.
 
-An example of hierarchical testing can be found in [this vignette](sampleSize_parallel_2A3E.html#hierarchical-testing).
+An example of hierarchical testing can be found in [this vignette](continuous_parallel_2A3E.html#hierarchical-testing).
 
 # Testing of multiple treatments
-In certain cases, it may be necessary to compare multiple treatments simultaneously. This can be achieved by specifying multiple comparators in the `mu_list` and `sigma_list` parameters. The [sampleSize()](../reference/sampleSize.html) function can accommodate multiple treatments, allowing for the evaluation of equivalence across different products or formulations.   
+In certain cases, it may be necessary to compare multiple treatments simultaneously. This can be achieved by specifying multiple comparators in the `mu_list` and `sigma_list` parameters. The [sampleSize()](../reference/sampleSize.html) function can accommodate multiple treatments, allowing for the evaluation of equivalence across different products or formulations.
 
 Although trials with multiple arms are common, there is no clear consensus in the literature as to whether statistical corrections should be applied for testing multiple primary hypotheses in such analyses. In SimTOST, no adjustments are made for trials involving more than two treatment arms.
 

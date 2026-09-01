@@ -1,6 +1,7 @@
 #include <iostream>
 #include <RcppArmadillo.h>
 #include <algorithm>
+#include <cmath>
 #include <Rcpp.h>
 
 // [[Rcpp::depends(RcppArmadillo)]]
@@ -8,6 +9,578 @@
 
 using namespace Rcpp;
 using namespace arma;
+
+// Draw rows from N(mu, Sigma) using an explicit Cholesky factor. This avoids
+// relying on arma::mvnrnd's internal dimension handling in repeated calls from
+// the simulation loops.
+arma::mat draw_mvnorm_rows(const arma::vec& mu, const arma::mat& Sigma,
+                           const int n) {
+  if (mu.n_elem == 0 || Sigma.n_rows != mu.n_elem ||
+      Sigma.n_cols != mu.n_elem) {
+    Rcpp::stop("Mean vector and covariance matrix dimensions do not agree.");
+  }
+  if (!Sigma.is_finite() || !Sigma.is_symmetric(1e-10)) {
+    Rcpp::stop("Covariance matrix must be finite and symmetric.");
+  }
+  arma::mat chol_sigma;
+  bool ok = arma::chol(chol_sigma, Sigma);
+  if (!ok) {
+    Rcpp::stop("Covariance matrix must be positive definite.");
+  }
+  arma::mat out = arma::randn(n, mu.n_elem) * chol_sigma;
+  out.each_row() += mu.t();
+  return out;
+}
+
+double draw_count_value(const int model, const double dispersion,
+                        const double mu) {
+  if (model == 0) return R::rpois(mu);
+  if (model == 1) return ::Rf_rnbinom_mu(1.0 / dispersion, mu);
+  Rcpp::stop("'model' must be 0 (Poisson) or 1 (negative-binomial).");
+  return NA_REAL;
+}
+
+// Paired log-link analysis for a balanced 2x2 crossover.  The subject-level
+// treatment contrast is formed from the two observed period counts.  Averaging
+// the contrasts from the two sequences removes the period effect; the
+// carry-over correction uses Eco = (reference carry-over, treatment
+// carry-over).  Because the contrast is within subject, the log-normal
+// subject effect generated with sigmaB cancels from the estimand and its
+// residual sampling variation is retained through the empirical contrast
+// variance.
+bool crossover_count_equivalent(const int n_per_arm,
+                                const double rate_test,
+                                const double rate_reference,
+                                const double exposure_test,
+                                const double exposure_reference,
+                                const double margin_lower,
+                                const double margin_upper,
+                                const int model,
+                                const double dispersion_test,
+                                const double dispersion_reference,
+                                const double alpha,
+                                const double sigmaB,
+                                const arma::vec& Eper,
+                                const arma::vec& Eco,
+                                const arma::vec& dropout) {
+  double sum[2] = {0.0, 0.0};
+  double sumsq[2] = {0.0, 0.0};
+  int n_complete[2] = {0, 0};
+
+  for (int sequence = 0; sequence < 2; ++sequence) {
+    const int n_subjects = R::rbinom(n_per_arm, 1.0 - dropout[sequence]);
+    n_complete[sequence] = n_subjects;
+    for (int subject = 0; subject < n_subjects; ++subject) {
+      const double subject_effect = R::rnorm(0.0, sigmaB);
+      double y_test = 0.0;
+      double y_reference = 0.0;
+
+      for (int period = 0; period < 2; ++period) {
+        const bool receives_test = (sequence == 0 && period == 0) ||
+                                    (sequence == 1 && period == 1);
+        // Eco is ordered as reference carry-over, treatment carry-over.
+        // In sequence T-R, the period-2 reference observation carries T;
+        // in sequence R-T, the period-2 treatment observation carries R.
+        const double carry = period == 0 ? 0.0 :
+          (sequence == 0 ? Eco[1] : Eco[0]);
+        const double log_rate =
+          (receives_test ? std::log(rate_test) : std::log(rate_reference)) +
+          Eper[period] + carry + subject_effect;
+        const double exposure = receives_test ? exposure_test : exposure_reference;
+        const double dispersion = receives_test ? dispersion_test : dispersion_reference;
+        const double count = draw_count_value(
+          model, dispersion, exposure * std::exp(log_rate));
+        if (receives_test) y_test = count;
+        else y_reference = count;
+      }
+
+      const double subject_contrast =
+        std::log((y_test + 0.5) / exposure_test) -
+        std::log((y_reference + 0.5) / exposure_reference);
+      sum[sequence] += subject_contrast;
+      sumsq[sequence] += subject_contrast * subject_contrast;
+    }
+  }
+
+  if (n_complete[0] < 2 || n_complete[1] < 2) return false;
+  const double mean0 = sum[0] / n_complete[0];
+  const double mean1 = sum[1] / n_complete[1];
+  const double var0 = std::max(0.0,
+    (sumsq[0] - n_complete[0] * mean0 * mean0) /
+      (n_complete[0] - 1.0));
+  const double var1 = std::max(0.0,
+    (sumsq[1] - n_complete[1] * mean1 * mean1) /
+      (n_complete[1] - 1.0));
+
+  // Period effects cancel in the average of the two sequence contrasts.
+  // The following term removes the expected carry-over bias.
+  const double estimate = 0.5 * (mean0 + mean1) +
+    0.5 * (Eco[1] - Eco[0]);
+  const double variance = 0.25 *
+    (var0 / n_complete[0] + var1 / n_complete[1]);
+  const double se = std::sqrt(std::max(variance, 1e-12));
+  const double z = R::qnorm5(1.0 - alpha, 0.0, 1.0, 1, 0);
+
+  return (estimate - std::log(margin_lower)) / se > z &&
+    (std::log(margin_upper) - estimate) / se > z;
+}
+
+// Apply the same hierarchy used by the continuous simulation kernels. Without
+// sequential testing, at least k endpoints must pass. With sequential testing,
+// all primary endpoints form a gate and the secondary family must contain at
+// least k passing endpoints. If no secondary endpoints exist, the primary
+// family is treated as a co-primary intersection.
+bool count_endpoint_decision(const arma::ivec& typey,
+                             const bool adseq,
+                             const std::vector<int>& endpoint_passed,
+                             const int k) {
+  int endpoint_successes = 0;
+  for (const int passed : endpoint_passed) endpoint_successes += passed;
+  if (!adseq || typey.n_elem == 0 || arma::any(typey < 0))
+    return endpoint_successes >= k;
+
+  int n_primary = 0;
+  int n_secondary = 0;
+  int primary_successes = 0;
+  int secondary_successes = 0;
+  for (unsigned int j = 0; j < endpoint_passed.size(); ++j) {
+    if (typey[j] == 1) {
+      ++n_primary;
+      primary_successes += endpoint_passed[j];
+    } else if (typey[j] == 2) {
+      ++n_secondary;
+      secondary_successes += endpoint_passed[j];
+    }
+  }
+  if (n_primary == 0) return secondary_successes >= k;
+  if (n_secondary == 0) return primary_successes == n_primary;
+  return primary_successes == n_primary && secondary_successes >= k;
+}
+
+// [[Rcpp::export]]
+Rcpp::NumericVector count_power_cpp(const int n_per_arm,
+                                    const double rate_test,
+                                    const double rate_reference,
+                                    const double exposure_test,
+                                    const double exposure_reference,
+                                    const double margin_lower,
+                                    const double margin_upper,
+                                    const int model,
+                                    const double dispersion_test,
+                                    const double dispersion_reference,
+                                    const double alpha,
+                                    const int nsim,
+                                    const int design,
+                                    const double sigmaB,
+                                    const arma::vec& Eper,
+                                    const arma::vec& Eco,
+                                    const arma::vec& dropout) {
+  if (n_per_arm < 2 || rate_test <= 0 || rate_reference <= 0 ||
+      exposure_test <= 0 || exposure_reference <= 0 ||
+      margin_lower <= 0 || margin_lower >= margin_upper ||
+      alpha <= 0 || alpha >= 1 || nsim < 1 ||
+      (model == 1 && (dispersion_test <= 0 || dispersion_reference <= 0)) || sigmaB < 0 ||
+      Eper.n_elem != 2 || Eco.n_elem != 2 || dropout.n_elem != 2 ||
+      any(dropout < 0) || any(dropout >= 1) ||
+      (design != 0 && design != 1)) {
+    Rcpp::stop("Invalid count simulation parameters.");
+  }
+
+  RNGScope scope;
+  const int subjects_per_treatment = design == 1 ? 2 * n_per_arm : n_per_arm;
+  const double total_exposure_test = subjects_per_treatment * exposure_test;
+  const double total_exposure_reference = subjects_per_treatment * exposure_reference;
+  const double z = R::qnorm5(1.0 - alpha, 0.0, 1.0, 1, 0);
+  const double lower = std::log(margin_lower);
+  const double upper = std::log(margin_upper);
+  int successes = 0;
+  int endpoint_successes = 0;
+
+  for (int i = 0; i < nsim; ++i) {
+    double y_test;
+    double y_reference;
+    if (design == 0) {
+      y_test = draw_count_value(model, dispersion_test,
+                                total_exposure_test * rate_test);
+      y_reference = draw_count_value(model, dispersion_reference,
+                                     total_exposure_reference * rate_reference);
+    } else {
+      const bool passed = crossover_count_equivalent(
+        n_per_arm, rate_test, rate_reference, exposure_test,
+        exposure_reference, margin_lower, margin_upper, model,
+        dispersion_test, dispersion_reference, alpha, sigmaB, Eper, Eco,
+        dropout);
+      if (passed) ++successes;
+      if (passed) ++endpoint_successes;
+      continue;
+    }
+
+    const double test_cc = y_test + 0.5;
+    const double reference_cc = y_reference + 0.5;
+    const double log_rr = std::log((test_cc / total_exposure_test) /
+                                   (reference_cc / total_exposure_reference));
+    const double se = std::sqrt(1.0 / test_cc + 1.0 / reference_cc);
+    if ((log_rr - lower) / se > z &&
+        (upper - log_rr) / se > z) {
+      ++successes;
+      ++endpoint_successes;
+    }
+  }
+
+  Rcpp::NumericVector out(4);
+  out[0] = static_cast<double>(successes) / nsim;
+  out[1] = successes;
+  out[2] = endpoint_successes;
+  out[3] = successes;
+  out.names() = Rcpp::CharacterVector::create(
+    "power", "successes", "endpoint_success_1", "comparison_success_1");
+  return out;
+}
+
+// [[Rcpp::export]]
+Rcpp::NumericVector count_power_multi_cpp(
+    const int n_per_arm,
+    const Rcpp::NumericVector& rate_test,
+    const Rcpp::NumericVector& rate_reference,
+    const Rcpp::NumericVector& exposure_test,
+    const Rcpp::NumericVector& exposure_reference,
+    const Rcpp::NumericVector& margin_lower,
+    const Rcpp::NumericVector& margin_upper,
+    const int model,
+    const Rcpp::NumericVector& dispersion_test,
+    const Rcpp::NumericVector& dispersion_reference,
+    const Rcpp::NumericVector& alpha,
+    const int nsim,
+    const int design,
+    const arma::mat& endpoint_corr,
+    const arma::ivec& typey,
+    const bool adseq,
+    const int k,
+    const double sigmaB,
+    const arma::vec& Eper,
+    const arma::vec& Eco,
+    const arma::vec& dropout) {
+  const int m = rate_test.size();
+  if (m < 2 || rate_reference.size() != m || exposure_test.size() != m ||
+      exposure_reference.size() != m || dispersion_test.size() != m ||
+      dispersion_reference.size() != m ||
+      margin_lower.size() != m || margin_upper.size() != m ||
+      alpha.size() != m || endpoint_corr.n_rows != m ||
+      endpoint_corr.n_cols != m || typey.n_elem != static_cast<unsigned int>(m) ||
+      k < 1 || k > m) {
+      Rcpp::stop("Multi-endpoint count inputs have incompatible dimensions.");
+  }
+  if (adseq && (arma::any(typey < 1) || arma::any(typey > 2)))
+    Rcpp::stop("'typey' must contain only 1 (primary) or 2 (secondary) when sequential testing is enabled.");
+  if ((design != 0 && design != 1) || sigmaB < 0 || Eper.n_elem != 2 ||
+      Eco.n_elem != 2 || dropout.n_elem != 2 || any(dropout < 0) ||
+      any(dropout >= 1)) {
+    Rcpp::stop("'design' must be 0 (parallel) or 1 (2x2).");
+  }
+  for (int j = 0; j < m; ++j) {
+    if (!R_finite(exposure_test[j]) || !R_finite(exposure_reference[j]) ||
+        exposure_test[j] <= 0 || exposure_reference[j] <= 0 ||
+        (model == 1 && (!R_finite(dispersion_test[j]) ||
+                        !R_finite(dispersion_reference[j]) ||
+                        dispersion_test[j] <= 0 ||
+                        dispersion_reference[j] <= 0))) {
+      Rcpp::stop("Exposure and dispersion must be valid for every endpoint.");
+    }
+  }
+  if (!endpoint_corr.is_finite() || !endpoint_corr.is_symmetric(1e-10) ||
+      arma::any(arma::abs(endpoint_corr.diag() - 1.0) > 1e-10))
+    Rcpp::stop("'endpoint_corr' must be a finite correlation matrix.");
+  arma::mat chol_corr;
+  if (!arma::chol(chol_corr, endpoint_corr))
+    Rcpp::stop("'endpoint_corr' must be positive definite.");
+  RNGScope scope;
+  const int subjects_per_treatment = design == 1 ? 2 * n_per_arm : n_per_arm;
+  int successes = 0;
+  std::vector<int> endpoint_successes(m, 0);
+  int comparison_successes = 0;
+  for (int i = 0; i < nsim; ++i) {
+    std::vector<int> endpoint_passed(m, 0);
+    if (design == 0) {
+      std::vector<double> y_test(m), y_reference(m);
+      arma::vec latent_test = chol_corr.t() * arma::randn<arma::vec>(m);
+      arma::vec latent_reference = chol_corr.t() * arma::randn<arma::vec>(m);
+      for (int j = 0; j < m; ++j) {
+        const double p_test = std::min(1.0 - 1e-12,
+                                       std::max(1e-12,
+                                         R::pnorm5(latent_test[j], 0.0, 1.0, 1, 0)));
+        const double p_reference = std::min(1.0 - 1e-12,
+                                            std::max(1e-12,
+                                              R::pnorm5(latent_reference[j], 0.0, 1.0, 1, 0)));
+        const double total_exposure_test =
+          subjects_per_treatment * exposure_test[j];
+        const double total_exposure_reference =
+          subjects_per_treatment * exposure_reference[j];
+        y_test[j] = model == 0 ? R::qpois(p_test, total_exposure_test * rate_test[j], 1, 0) :
+          R::qnbinom(p_test, 1.0 / dispersion_test[j],
+                     (1.0 / dispersion_test[j]) /
+                       ((1.0 / dispersion_test[j]) +
+                        total_exposure_test * rate_test[j]), 1, 0);
+        y_reference[j] = model == 0 ?
+          R::qpois(p_reference, total_exposure_reference * rate_reference[j], 1, 0) :
+          R::qnbinom(p_reference, 1.0 / dispersion_reference[j],
+                     (1.0 / dispersion_reference[j]) /
+                       ((1.0 / dispersion_reference[j]) +
+                        total_exposure_reference * rate_reference[j]), 1, 0);
+      }
+      for (int j = 0; j < m; ++j) {
+        const double test_cc = y_test[j] + 0.5;
+        const double reference_cc = y_reference[j] + 0.5;
+        const double log_rr = std::log((test_cc / (subjects_per_treatment * exposure_test[j])) /
+                                       (reference_cc / (subjects_per_treatment * exposure_reference[j])));
+        const double se = std::sqrt(1.0 / test_cc + 1.0 / reference_cc);
+        const double z = R::qnorm5(1.0 - alpha[j], 0.0, 1.0, 1, 0);
+        if ((log_rr - std::log(margin_lower[j])) / se > z &&
+            (std::log(margin_upper[j]) - log_rr) / se > z) {
+          endpoint_passed[j] = 1;
+          ++endpoint_successes[j];
+        }
+      }
+    } else {
+      std::vector<double> sum0(m, 0.0), sum1(m, 0.0);
+      std::vector<double> sumsq0(m, 0.0), sumsq1(m, 0.0);
+      int n_complete[2] = {0, 0};
+      for (int sequence = 0; sequence < 2; ++sequence) {
+        n_complete[sequence] = R::rbinom(n_per_arm, 1.0 - dropout[sequence]);
+        for (int subject = 0; subject < n_complete[sequence]; ++subject) {
+          arma::vec subject_effect = sigmaB *
+            (chol_corr.t() * arma::randn<arma::vec>(m));
+          std::vector<double> y_test(m, 0.0), y_reference(m, 0.0);
+          for (int period = 0; period < 2; ++period) {
+            const bool receives_test = (sequence == 0 && period == 0) ||
+                                        (sequence == 1 && period == 1);
+            const double carry = period == 0 ? 0.0 :
+              (sequence == 0 ? Eco[1] : Eco[0]);
+            arma::vec latent = chol_corr.t() * arma::randn<arma::vec>(m);
+            for (int j = 0; j < m; ++j) {
+              const double p = std::min(1.0 - 1e-12,
+                                        std::max(1e-12,
+                                          R::pnorm5(latent[j], 0.0, 1.0, 1, 0)));
+              const double rate = receives_test ? rate_test[j] : rate_reference[j];
+              const double exposure = receives_test ? exposure_test[j] : exposure_reference[j];
+              const double dispersion = receives_test ? dispersion_test[j] : dispersion_reference[j];
+              const double mu = exposure * std::exp(std::log(rate) +
+                Eper[period] + carry + subject_effect[j]);
+              const double count = model == 0 ? R::qpois(p, mu, 1, 0) :
+                R::qnbinom(p, 1.0 / dispersion,
+                           (1.0 / dispersion) / ((1.0 / dispersion) + mu), 1, 0);
+              if (receives_test) y_test[j] = count;
+              else y_reference[j] = count;
+            }
+          }
+          for (int j = 0; j < m; ++j) {
+            const double contrast = std::log((y_test[j] + 0.5) / exposure_test[j]) -
+              std::log((y_reference[j] + 0.5) / exposure_reference[j]);
+            if (sequence == 0) {
+              sum0[j] += contrast;
+              sumsq0[j] += contrast * contrast;
+            } else {
+              sum1[j] += contrast;
+              sumsq1[j] += contrast * contrast;
+            }
+          }
+        }
+      }
+      for (int j = 0; j < m; ++j) {
+        if (n_complete[0] < 2 || n_complete[1] < 2) continue;
+        const double mean0 = sum0[j] / n_complete[0];
+        const double mean1 = sum1[j] / n_complete[1];
+        const double var0 = std::max(0.0,
+          (sumsq0[j] - n_complete[0] * mean0 * mean0) /
+            (n_complete[0] - 1.0));
+        const double var1 = std::max(0.0,
+          (sumsq1[j] - n_complete[1] * mean1 * mean1) /
+            (n_complete[1] - 1.0));
+        const double estimate = 0.5 * (mean0 + mean1) +
+          0.5 * (Eco[1] - Eco[0]);
+        const double se = std::sqrt(std::max(0.25 *
+          (var0 / n_complete[0] + var1 / n_complete[1]), 1e-12));
+        const double z = R::qnorm5(1.0 - alpha[j], 0.0, 1.0, 1, 0);
+        if ((estimate - std::log(margin_lower[j])) / se > z &&
+            (std::log(margin_upper[j]) - estimate) / se > z) {
+          endpoint_passed[j] = 1;
+          ++endpoint_successes[j];
+        }
+      }
+    }
+    if (count_endpoint_decision(typey, adseq, endpoint_passed, k)) {
+      ++successes;
+      ++comparison_successes;
+    }
+  }
+  Rcpp::NumericVector out(3 + m);
+  out[0] = static_cast<double>(successes) / nsim;
+  out[1] = successes;
+  for (int j = 0; j < m; ++j) out[2 + j] = endpoint_successes[j];
+  out[2 + m] = comparison_successes;
+  Rcpp::CharacterVector names(3 + m);
+  names[0] = "power";
+  names[1] = "successes";
+  for (int j = 0; j < m; ++j)
+    names[2 + j] = "endpoint_success_" + std::to_string(j + 1);
+  names[2 + m] = "comparison_success_1";
+  out.names() = names;
+  return out;
+}
+
+// [[Rcpp::export]]
+Rcpp::NumericVector count_power_joint_cpp(
+    const int n_per_arm,
+    const Rcpp::NumericMatrix& rates,
+    const Rcpp::NumericMatrix& exposure,
+    const Rcpp::NumericMatrix& margin_lower,
+    const Rcpp::NumericMatrix& margin_upper,
+    const int model,
+    const Rcpp::NumericMatrix& dispersion,
+    const Rcpp::NumericVector& alpha,
+    const Rcpp::NumericMatrix& endpoint_corr,
+    const Rcpp::IntegerMatrix& comparisons,
+    const arma::ivec& typey,
+    const bool adseq,
+    const int k,
+    const int nsim) {
+  const int n_arms = rates.nrow();
+  const int m = rates.ncol();
+  const int n_comparisons = comparisons.nrow();
+  if (n_per_arm < 2 || n_arms < 2 || m < 1 || n_comparisons < 1 ||
+      rates.nrow() != exposure.nrow() || rates.ncol() != exposure.ncol() ||
+      rates.nrow() != dispersion.nrow() || rates.ncol() != dispersion.ncol() ||
+      margin_lower.nrow() != n_comparisons ||
+      margin_upper.nrow() != n_comparisons ||
+      margin_lower.ncol() != m || margin_upper.ncol() != m ||
+      endpoint_corr.nrow() != m || endpoint_corr.ncol() != m ||
+      comparisons.ncol() != 2 || typey.n_elem != static_cast<unsigned int>(m) ||
+      k < 1 || k > m || nsim < 1 ||
+      model < 0 || model > 1) {
+    Rcpp::stop("Invalid joint count simulation dimensions or parameters.");
+  }
+  if (adseq && (arma::any(typey < 1) || arma::any(typey > 2)))
+    Rcpp::stop("'typey' must contain only 1 (primary) or 2 (secondary) when sequential testing is enabled.");
+  for (int i = 0; i < n_comparisons; ++i) {
+    if (comparisons(i, 0) < 0 || comparisons(i, 0) >= n_arms ||
+        comparisons(i, 1) < 0 || comparisons(i, 1) >= n_arms ||
+        comparisons(i, 0) == comparisons(i, 1)) {
+      Rcpp::stop("Comparison indices must refer to two distinct arms.");
+    }
+  }
+  arma::mat corr = Rcpp::as<arma::mat>(endpoint_corr);
+  if (!corr.is_finite() || !corr.is_symmetric(1e-10)) {
+    Rcpp::stop("'endpoint_corr' must be finite and symmetric.");
+  }
+  arma::mat chol_corr;
+  if (!arma::chol(chol_corr, corr)) {
+    Rcpp::stop("'endpoint_corr' must be positive definite.");
+  }
+  for (int j = 0; j < m; ++j) {
+    if (alpha[j] <= 0 || alpha[j] >= 1) {
+      Rcpp::stop("Alpha must be valid for every endpoint.");
+    }
+    for (int comparison = 0; comparison < n_comparisons; ++comparison) {
+      if (margin_lower(comparison, j) <= 0 ||
+          margin_lower(comparison, j) >= margin_upper(comparison, j)) {
+        Rcpp::stop("Margins must be valid for every comparison and endpoint.");
+      }
+    }
+  }
+  for (int i = 0; i < n_arms; ++i) {
+    for (int j = 0; j < m; ++j) {
+      if (rates(i, j) <= 0 || !std::isfinite(rates(i, j))) {
+        Rcpp::stop("All arm-specific rates must be positive and finite.");
+      }
+      if (exposure(i, j) <= 0 || !std::isfinite(exposure(i, j)) ||
+          (model == 1 && (dispersion(i, j) <= 0 ||
+                          !std::isfinite(dispersion(i, j))))) {
+        Rcpp::stop("All arm-specific exposure and dispersion values must be valid.");
+      }
+    }
+  }
+
+  RNGScope scope;
+  int successes = 0;
+  std::vector<int> endpoint_successes(n_comparisons * m, 0);
+  std::vector<int> comparison_successes(n_comparisons, 0);
+  arma::vec latent(m);
+  arma::vec uniforms(m);
+  std::vector< std::vector<double> > counts(
+      n_arms, std::vector<double>(m, 0.0));
+
+  for (int simulation = 0; simulation < nsim; ++simulation) {
+    for (int arm = 0; arm < n_arms; ++arm) {
+      latent = arma::randn<arma::vec>(m);
+      latent = chol_corr.t() * latent;
+      for (int endpoint = 0; endpoint < m; ++endpoint) {
+        const double p = std::min(1.0 - 1e-12,
+                                  std::max(1e-12,
+                                           R::pnorm5(latent[endpoint], 0.0,
+                                                     1.0, 1, 0)));
+        const double mu = n_per_arm * exposure(arm, endpoint) * rates(arm, endpoint);
+        if (model == 0) {
+          counts[arm][endpoint] = R::qpois(p, mu, 1, 0);
+        } else {
+          const double size = 1.0 / dispersion(arm, endpoint);
+          const double probability = size / (size + mu);
+          counts[arm][endpoint] = R::qnbinom(p, size, probability, 1, 0);
+        }
+      }
+    }
+
+    bool all_comparisons_pass = true;
+    for (int comparison = 0; comparison < n_comparisons; ++comparison) {
+      const int test_arm = comparisons(comparison, 0);
+      const int reference_arm = comparisons(comparison, 1);
+      std::vector<int> endpoint_passed(m, 0);
+      for (int endpoint = 0; endpoint < m; ++endpoint) {
+        const double test_cc = counts[test_arm][endpoint] + 0.5;
+        const double reference_cc = counts[reference_arm][endpoint] + 0.5;
+        const double test_exposure = n_per_arm * exposure(test_arm, endpoint);
+        const double reference_exposure = n_per_arm * exposure(reference_arm, endpoint);
+        const double log_rr = std::log((test_cc / test_exposure) /
+                                       (reference_cc / reference_exposure));
+        const double se = std::sqrt(1.0 / test_cc + 1.0 / reference_cc);
+        const double z = R::qnorm5(1.0 - alpha[endpoint], 0.0, 1.0, 1, 0);
+        if ((log_rr - std::log(margin_lower(comparison, endpoint))) / se > z &&
+            (std::log(margin_upper(comparison, endpoint)) - log_rr) / se > z) {
+          endpoint_passed[endpoint] = 1;
+          ++endpoint_successes[comparison * m + endpoint];
+        }
+      }
+      if (count_endpoint_decision(typey, adseq, endpoint_passed, k)) {
+        ++comparison_successes[comparison];
+      } else {
+        all_comparisons_pass = false;
+      }
+    }
+    if (all_comparisons_pass) ++successes;
+  }
+
+  const int n_values = 2 + n_comparisons * m + n_comparisons;
+  Rcpp::NumericVector out(n_values);
+  out[0] = static_cast<double>(successes) / nsim;
+  out[1] = successes;
+  Rcpp::CharacterVector names(n_values);
+  names[0] = "power";
+  names[1] = "successes";
+  int index = 2;
+  for (int comparison = 0; comparison < n_comparisons; ++comparison) {
+    for (int endpoint = 0; endpoint < m; ++endpoint) {
+      out[index] = endpoint_successes[comparison * m + endpoint];
+      names[index] = "comparison_endpoint_success_" +
+        std::to_string(comparison + 1) + "_" + std::to_string(endpoint + 1);
+      ++index;
+    }
+  }
+  for (int comparison = 0; comparison < n_comparisons; ++comparison) {
+    out[index] = comparison_successes[comparison];
+    names[index] = "comparison_success_" + std::to_string(comparison + 1);
+    ++index;
+  }
+  out.names() = names;
+  return out;
+}
 
 //' @title Compute p-values for a t-distribution with Fixed Degrees of Freedom
 //'
@@ -105,9 +678,15 @@ arma::mat check_equivalence(const arma::ivec& typey,
     primary_test_passed = (num_primary_successes == num_primary_endpoints);
   }
 
-  // Ensure at least k secondary endpoints pass
-  int num_secondary_successes = arma::accu(tbioq.cols(arma::find(typey == 2)));
-  bool secondary_test_passed = (num_secondary_successes >= k);
+  // Ensure at least k secondary endpoints pass. If the hierarchy contains no
+  // secondary endpoints, all primary endpoints are co-primary and their
+  // intersection is the final decision.
+  int num_secondary_endpoints = accu(typey == 2);
+  int num_secondary_successes = num_secondary_endpoints > 0 ?
+    arma::accu(tbioq.cols(arma::find(typey == 2))) : 0;
+  bool secondary_test_passed = num_secondary_endpoints == 0 ?
+    (num_primary_successes == num_primary_endpoints) :
+    (num_secondary_successes >= k);
 
   // Final decision
   totaly(0, 0) = (secondary_test_passed && primary_test_passed) ? 1 : 0;
@@ -459,6 +1038,19 @@ arma::mat test_par_dom(const int n,
                        const double TARR,
                        const bool vareq){
 
+   const arma::uword m = muT.n_elem;
+   if (muR.n_elem != m || SigmaT.n_rows != m || SigmaT.n_cols != m ||
+       SigmaR.n_rows != m || SigmaR.n_cols != m ||
+       lequi_tol.n_elem != m || uequi_tol.n_elem != m ||
+       alpha.n_elem != m) {
+     Rcpp::stop("test_par_dom received inconsistent dimensions: muT=%d, muR=%d, SigmaT=%dx%d, SigmaR=%dx%d, lower=%d, upper=%d, alpha=%d.",
+                static_cast<int>(muT.n_elem), static_cast<int>(muR.n_elem),
+                static_cast<int>(SigmaT.n_rows), static_cast<int>(SigmaT.n_cols),
+                static_cast<int>(SigmaR.n_rows), static_cast<int>(SigmaR.n_cols),
+                static_cast<int>(lequi_tol.n_elem), static_cast<int>(uequi_tol.n_elem),
+                static_cast<int>(alpha.n_elem));
+   }
+
   // Transform drop out
    int n0i = ceil(n*TART);
    int n1i = ceil(n*TARR);
@@ -476,10 +1068,10 @@ arma::mat test_par_dom(const int n,
 
    // Generate data based on the provided covariance matrix and means
    set_seed(arm_seedT);
-   mat yT = arma::mvnrnd(muT,SigmaT,n0).t();
+   mat yT = draw_mvnorm_rows(muT, SigmaT, n0);
 
    set_seed(arm_seedR);
-   mat yR = arma::mvnrnd(muR,SigmaR,n1).t();
+   mat yR = draw_mvnorm_rows(muR, SigmaR, n1);
 
    mat mu0 = mean(yT,0);
    mat mu1 = mean(yR,0);
@@ -609,10 +1201,10 @@ arma::mat test_par_rom(const int n,
 
    // Generate data based on the provided covariance matrix and means
    set_seed(arm_seedT);
-   mat yT = arma::mvnrnd(muT,SigmaT,n0).t();
+   mat yT = draw_mvnorm_rows(muT, SigmaT, n0);
 
    set_seed(arm_seedR);
-   mat yR = arma::mvnrnd(muR,SigmaR,n1).t();
+   mat yR = draw_mvnorm_rows(muR, SigmaR, n1);
 
    mat mu0 = mean(yT,0);
    mat mu1 = mean(yR,0);

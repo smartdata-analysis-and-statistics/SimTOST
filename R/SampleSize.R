@@ -4,20 +4,45 @@
 #' The function employs modified root-finding algorithms to estimate sample size while accounting for correlation structures, variance assumptions,
 #' and equivalence bounds across endpoints. It is particularly useful for bioequivalence trials and multi-arm studies with complex endpoint structures.
 #'
+#' @param distribution Outcome distribution. Choose the R distribution names
+#' `"norm"`, `"lnorm"`, `"pois"`, or `"nbinom"`. Matching is case-insensitive.
+#' The longer labels such as `"normal"`, `"lognormal"`, and `"poisson"` are
+#' accepted for compatibility; results store the R-style labels above.
 #' @param mu_list Named list of arithmetic means per treatment arm. Each element is a vector representing expected outcomes for all endpoints in that arm.
 #' @param varcov_list List of variance-covariance matrices, where each element corresponds to a comparator. Each matrix has dimensions: number of endpoints × number of endpoints.
 #' @param sigma_list List of standard deviation vectors, where each element corresponds to a comparator and contains one standard deviation per endpoint.
-#' @param cor_mat Matrix specifying the correlation structure between endpoints, used along with \code{sigma_list} to calculate \code{varcov_list} if not provided.
-#' @param sigmaB Numeric. Between-subject variance for a 2×2 crossover design.
-#' @param Eper Optional numeric vector of length 2 specifying the period effect in a \code{dtype = "2x2"} design, applied as \code{c(Period 0, Period 1)}. Defaults to \code{c(0, 0)}. Ignored for \code{dtype = "parallel"}.
-#' @param Eco Optional numeric vector of length 2 specifying the carry-over effect per arm in a \code{dtype = "2x2"} design, applied as \code{c(Reference, Treatment)}. Defaults to \code{c(0, 0)}. Ignored for \code{dtype = "parallel"}.
+#' @param cor_mat Matrix specifying the correlation structure between
+#' endpoints. For continuous outcomes it is used with `sigma_list` to
+#' calculate `varcov_list`; for count outcomes it is used by the joint count
+#' engine.
+#' @param sigmaB Numeric. Between-subject standard deviation parameter for the
+#' continuous 2×2 design; for count outcomes it is the log-rate standard
+#' deviation in the 2×2 kernel.
+#' @param rate_list Named list of equal-length endpoint-rate vectors, one per
+#' count-outcome arm.
+#' @param exposure Exposure per subject for count outcomes. Supply a scalar
+#' or endpoint vector shared by arms, or a named list of arm-specific values.
+#' @param dispersion Positive negative-binomial dispersion parameter. Supply
+#' a scalar or endpoint vector shared by arms, or a named list of arm-specific
+#' values.
+#' @param Eper Optional numeric vector of length 2 specifying period effects.
+#' For count outcomes these are log-rate effects applied to periods 1 and 2.
+#' @param Eco Optional numeric vector of length 2 specifying carry-over effects
+#' in the order reference carry-over and treatment carry-over. For count
+#' outcomes these are log-rate effects in period 2.
 #' @param rho Numeric. Correlation parameter applied uniformly across all endpoint pairs. Used with \code{sigma_list} to compute \code{varcov_list} when \code{cor_mat} or \code{varcov_list} are not provided.
 #' @param TAR Numeric vector specifying treatment allocation rates per arm. The order must match \code{arm_names}. Defaults to equal allocation across arms if not provided.
 #' @param arm_names Optional character vector of treatment names. If not supplied, names are derived from \code{mu_list}.
 #' @param ynames_list Optional list of vectors specifying endpoint names per arm. If names are missing, arbitrary names are assigned based on order.
 #' @param type_y Integer vector indicating endpoint types: \code{1} for co-primary endpoints, \code{2} for secondary endpoints.
-#' @param list_comparator List of comparators. Each element is a vector of length 2 specifying the treatment names being compared.
+#' @param list_comparator List of comparators. Each element must be a vector
+#'   of length 2 in the form `c(test, reference)`. The first arm is treated as
+#'   the treatment arm and the second arm as the reference arm throughout the
+#'   simulation and estimand calculations.
 #' @param list_y_comparator List of endpoint sets per comparator. Each element is a vector containing endpoint names to compare. If not provided, all endpoints common to both comparator arms are used.
+#'   For count outcomes, the selected endpoints define the count multiplicity
+#'   and effective `k`; joint count analyses require the same endpoint set for
+#'   every comparison.
 #' @param power Numeric. Target power (default = 0.8).
 #' @param alpha Numeric. Significance level (default = 0.05).
 #' @param lequi.tol Numeric. Lower equivalence bounds (e.g., -0.5) applied uniformly across all endpoints and comparators.
@@ -26,31 +51,85 @@
 #' @param list_uequi.tol List of numeric vectors specifying upper equivalence bounds per comparator.
 #' @param vareq Logical. Assumes equal variances across arms if \code{TRUE} (default = \code{FALSE}).
 #' @param dtype Character. Trial design: \code{"parallel"} (default) for parallel-group or \code{"2x2"} for crossover (only for 2-arm studies).
-#' @param lognorm Logical. Whether data follows a log-normal distribution (\code{TRUE} or \code{FALSE}).
 #' @param k Integer vector. Minimum number of successful endpoints required for global bioequivalence per comparator. Defaults to all endpoints per comparator.
-#' @param adjust Character. Alpha adjustment method: \code{"k"} (K-fold), \code{"bon"} (Bonferroni), \code{"sid"} (Sidak), \code{"no"} (default, no adjustment), or \code{"seq"} (sequential).
-#' @param ctype Character. Hypothesis test type: \code{"DOM"} (Difference of Means) or \code{"ROM"} (Ratio of Means).
+#' @param adjust Character. Alpha adjustment method: \code{"k"} (K-fold),
+#' \code{"bon"} (Bonferroni across all selected endpoints), \code{"sid"}
+#' (Sidak), \code{"t"} (Mielke's strong \\(k\\)-out-of-\\(m\\) adjustment using
+#' \code{alpha / (m - k + 1)}; legacy \code{"pc"} aliases are accepted),
+#' \code{"no"} (none), or
+#' \code{"seq"} (sequential).
+#' @param ctype Character. Continuous-outcome test type: \code{"DOM"} (Difference of Means) or \code{"ROM"} (Ratio of Means). For Poisson and negative-binomial outcomes, \code{"RR"} (event-rate ratio) is used; an unavailable value triggers a warning and the applicable default is used.
 #' @param dropout Numeric vector specifying dropout proportion per arm.
 #' @param nsim Integer. Number of simulated studies (default = 5000).
+#' @param keep_sim_data Logical. If `TRUE`, retain model-scale observations
+#'   for every simulated trial in `sim_data` for distribution diagnostics.
+#'   Defaults to `FALSE` because retained data can be large.
 #' @param seed Integer. Seed for reproducibility.
-#' @param ncores Integer. Number of processing cores for parallel computation. Defaults to \code{1}. Set to \code{NA} for automatic detection (\code{ncores - 1}).
+#' @param ncores Integer. Number of processing cores for parallel computation. Defaults to \code{1}. Set to \code{NA} for automatic detection (\code{ncores - 1}). For count outcomes, Monte Carlo trials are split into independent seeded chunks and evaluated by the count C++ kernel on each worker.
 #' @param optimization_method Character. Sample size optimization method: \code{"fast"} (default, root-finding algorithm) or \code{"step-by-step"}.
 #' @param lower Integer. Minimum sample size for search range (default = 2).
-#' @param upper Integer. Maximum sample size for search range (default = 500).
+#' @param upper Integer. Maximum sample size for the search range (default =
+#'   500). For count outcomes, this is the maximum number of subjects per arm;
+#'   the plotted and returned total sample size is this value multiplied by the
+#'   number of trial arms.
 #' @param step.power Numeric. Initial step size for sample size search, defined as \code{2^step.power}. Used when \code{optimization_method = "fast"}.
 #' @param step.up Logical. If \code{TRUE} (default), search increments upward from \code{lower}; if \code{FALSE}, decrements downward from \code{upper}. Used when \code{optimization_method = "fast"}.
 #' @param pos.side Logical. If \code{TRUE}, finds the smallest integer \code{i} closest to the root such that \code{f(i) > 0}. Used when \code{optimization_method = "fast"}.
 #' @param maxiter Integer. Maximum iterations allowed for sample size estimation (default = 1000). Used when \code{optimization_method = "fast"}.
 #' @param verbose Logical. If \code{TRUE}, prints progress and messages during execution (default = \code{FALSE}).
 #'
+#' @details
+#' The common planning arguments are \code{power}, \code{alpha},
+#' \code{list_comparator}, \code{list_lequi.tol}, \code{list_uequi.tol},
+#' \code{k}, \code{adjust}, \code{dtype}, \code{dropout}, \code{nsim},
+#' \code{seed}, \code{lower}, and \code{upper}. Use the following
+#' distribution-specific arguments in addition to those common arguments:
+#' \describe{
+#'   \item{Normal and Log Normal}{Supply \code{mu_list}, \code{sigma_list}
+#'   or \code{varcov_list}; use \code{cor_mat} or \code{rho} for endpoint
+#'   dependence. The \code{ctype} argument selects DOM or ROM testing.}
+#'   \item{Poisson and Negative Binomial}{Supply \code{rate_list},
+#'   \code{list_comparator}, and comparator-specific \code{list_lequi.tol}
+#'   and \code{list_uequi.tol}. Use \code{exposure} and, for negative-binomial
+#'   outcomes, \code{dispersion}; both may be scalar, endpoint-specific, or
+#'   named arm-specific lists. Continuous-outcome arguments are ignored.}
+#' }
+#' For count outcomes, `optimization_method = "fast"` brackets the first
+#' sample size whose simulated power reaches the target and refines the
+#' bracket by integer bisection. The `"step-by-step"` option remains available
+#' when a complete candidate-by-candidate power table is preferred. The fast
+#' method assumes the usual approximately monotone power curve and uses the
+#' same seed at each candidate to reduce simulation noise.
+#' The effective endpoint count is comparator-specific: when
+#' `list_y_comparator` is omitted, only endpoints present in both arms are
+#' tested; when it is supplied, only the listed endpoints are tested. `k` is
+#' validated against that comparator-specific count and oversized values are
+#' capped with a warning. Formal endpoint-wise adjustment is unnecessary when
+#' all selected endpoints are required (`k = m`), although requested
+#' Bonferroni or Sidak adjustment remains available with a warning. For
+#' `k < m`, `adjust = "no"` is explicitly reported as an uncalibrated choice.
+#' For a `k`-of-`m` decision, `adjust = "t"` applies Mielke's strong
+#' \\(k\\)-out-of-\\(m\\) calibration `alpha / (m - k + 1)`. The legacy
+#' `adjust = "pc"` label is accepted as an alias.
+#' For continuous and count outcomes, `type_y` is used with
+#' `adjust = "seq"`; named endpoint vectors are aligned to the selected
+#' comparator endpoints. Count analyses use the same primary-gate and
+#' secondary-family decision rule as the continuous kernels.
+#' The unified function returns primary class \code{simss} for all outcome
+#' distributions. Count results retain \code{countss} as a secondary
+#' compatibility class. Use \code{summary()} and \code{plot()} to inspect the
+#' result.
+#'
 #' @return A list containing:
 #' \describe{
 #'   \item{\code{response}}{Array summarizing simulation results, including estimated sample sizes, achieved power, and confidence intervals.}
-#'   \item{\code{table.iter}}{Data frame showing estimated sample sizes and calculated power at each iteration.}
-#'   \item{\code{table.test}}{Data frame containing test results for all simulated trials.}
+#'   \item{\code{table.iter}}{Data frame showing estimated sample sizes and calculated power at each iteration. For count outcomes, one row is retained for every evaluated candidate.}
+#'   \item{\code{table.test}}{Data frame containing test results for all simulated trials. For count outcomes, this contains complete-trial, comparator, and endpoint decision indicators for each simulated trial and candidate; the count kernel returns aggregate decision counts rather than raw endpoint-level test statistics.}
 #'   \item{\code{param.u}}{Original input parameters.}
 #'   \item{\code{param}}{Final adjusted parameters used in sample size calculation.}
 #'   \item{\code{param.d}}{Trial design parameters used in the simulation.}
+#'   \item{\code{sim_data}}{Optional long-format simulated observations,
+#'   returned when \code{keep_sim_data = TRUE}.}
 #' }
 #'
 #' @references
@@ -69,8 +148,6 @@
 #' Sozu, T., Sugimoto, T., Hamasaki, T., & Evans, S. R. (2015). "Sample Size Determination in
 #' Clinical Trials with Multiple Endpoints." \emph{SpringerBriefs in Statistics}.
 #' <doi:10.1007/978-3-319-22005-5>
-#'
-#' @author Johanna Muñoz \email{johanna.munoz@fromdatatowisdom.com}
 #'
 #' @export
 #'
@@ -106,9 +183,20 @@
 #'            list_lequi.tol = list("EMA" = lequi_lower, "FDA" = lequi_lower),
 #'            list_uequi.tol = list("EMA" = lequi_upper, "FDA" = lequi_upper),
 #'            adjust = "no", dtype = "parallel", ctype = "ROM", vareq = FALSE,
-#'            lognorm = TRUE, ncores = 1, nsim = 50, seed = 1234)
-sampleSize <- function(mu_list, varcov_list = NA, sigma_list = NA, cor_mat = NA,
-                       sigmaB = NA, Eper, Eco, rho = 0,
+#'            distribution = "lnorm", ncores = 1, nsim = 50, seed = 1234)
+#'
+#' # The same entry point for a two-arm Poisson count-rate calculation:
+#' sampleSize(power = 0.80, distribution = "Poisson",
+#'            rate_list = list(TEST = 0.21, REF = 0.20),
+#'            list_comparator = list(TEST_vs_REF = c("TEST", "REF")),
+#'            list_lequi.tol = list(TEST_vs_REF = 0.80),
+#'            list_uequi.tol = list(TEST_vs_REF = 1.25),
+#'            exposure = 10, lower = 20, upper = 500,
+#'            nsim = 100, seed = 1234)
+sampleSize <- function(distribution = c("norm", "lnorm", "pois", "nbinom"),
+                       mu_list = NULL, varcov_list = NA, sigma_list = NA, cor_mat = NA,
+                       sigmaB = NA, rate_list = NULL, exposure = 1,
+                       dispersion = 0.1, Eper = c(0, 0), Eco = c(0, 0), rho = 0,
                        TAR = rep(1, length(mu_list)), arm_names = NA,
                        ynames_list = NA,
                     type_y=NA,
@@ -123,7 +211,6 @@ sampleSize <- function(mu_list, varcov_list = NA, sigma_list = NA, cor_mat = NA,
                     dtype="parallel",
                     ctype = "ROM",
                     vareq = TRUE,
-                    lognorm = TRUE,
                     k=NA,
                     adjust="no",
                     dropout = NA,
@@ -136,8 +223,238 @@ sampleSize <- function(mu_list, varcov_list = NA, sigma_list = NA, cor_mat = NA,
                     step.power=6,
                     step.up=TRUE,
                     pos.side=FALSE,
-                    maxiter = 1000, verbose = FALSE
+                    maxiter = 1000, verbose = FALSE, keep_sim_data = FALSE,
+                    .warn_redundant_bon = TRUE
 ){
+
+  keep_sim_data <- .check_keep_sim_data(keep_sim_data)
+  .validate_common_controls(power, alpha, nsim, ncores, dropout, rho)
+
+  if (missing(distribution) || is.null(distribution)) {
+    # Preserve the historical sampleSize() default while making distribution
+    # the only public outcome-family selector.
+    distribution <- "lnorm"
+  } else {
+    distribution <- .normalize_distribution(distribution)
+  }
+  if (distribution %in% c("pois", "nbinom")) {
+    outcome <- "count"
+    model <- if (distribution == "pois") "poisson" else "negative-binomial"
+  } else {
+    outcome <- "continuous"
+  }
+  adjust <- .normalize_adjustment(adjust, allow_sequential = TRUE)
+  type_y_supplied <- !(is.null(type_y) ||
+                       (length(type_y) == 1L && is.na(type_y)))
+  if (type_y_supplied && is.numeric(type_y) &&
+      all(!is.na(type_y) & type_y < 0))
+    type_y_supplied <- FALSE
+
+  if (outcome == "count") {
+    if (missing(ctype)) {
+      ctype <- "RR"
+    } else if (length(ctype) != 1L || !is.character(ctype) ||
+               is.na(ctype) || !identical(toupper(ctype), "RR")) {
+      warning("For count outcomes, ctype = 'RR' is used. The supplied ctype is not available for count outcomes.")
+      ctype <- "RR"
+    } else {
+      ctype <- "RR"
+    }
+  } else {
+        if (length(ctype) != 1L || !is.character(ctype) ||
+            is.na(ctype) || !toupper(ctype) %in% c("DOM", "ROM")) {
+      warning("For continuous outcomes, ctype must be 'DOM' or 'ROM'. Default ctype = 'ROM' is used.")
+      ctype <- "ROM"
+    } else {
+      ctype <- toupper(ctype)
+    }
+  }
+
+  # The count extension uses the same top-level planning arguments as the
+  # continuous interface (power, alpha, k, adjust, nsim, seed, lower, upper).
+  # Scalar/vector inputs use sampleSize_count(); named multi-arm inputs use
+  # sampleSize_count_joint(). Keeping this dispatch here preserves all
+  # existing sampleSize() calls while providing one public entry point.
+  if (outcome == "count") {
+    count_ncores <- if (length(ncores) == 1L && is.na(ncores)) {
+      max(1L, parallel::detectCores() - 1L)
+    } else ncores
+    count_design <- match.arg(dtype, c("parallel", "2x2"))
+    count_endpoint_corr <- if (length(cor_mat) == 1L && is.na(cor_mat)) {
+      NULL
+    } else {
+      cor_mat
+    }
+    count_sigmaB <- if (missing(sigmaB)) 0 else sigmaB
+    count_Eper <- if (missing(Eper)) c(0, 0) else Eper
+    count_Eco <- if (missing(Eco)) c(0, 0) else Eco
+    count_dropout <- if (all(is.na(dropout))) c(0, 0) else dropout
+    count_k <- if (length(k) == 1L && is.na(k)) NULL else k
+    count_adjust <- .normalize_count_adjustment(adjust)
+
+    if (is.null(rate_list) || !is.list(rate_list))
+      stop("For count outcomes, supply a named 'rate_list' with one rate vector per arm.")
+    if (is.null(names(rate_list)) || any(!nzchar(names(rate_list))))
+      stop("'rate_list' must be named so arm-specific parameters can be matched.")
+    check_arm_parameter <- function(x, name) {
+      if (is.list(x) && (is.null(names(x)) ||
+                         !setequal(names(x), names(rate_list))))
+        stop(sprintf("Names of arm-specific '%s' must match 'rate_list'.", name))
+    }
+    check_arm_parameter(exposure, "exposure")
+    check_arm_parameter(dispersion, "dispersion")
+    if (length(list_comparator) == 1L && is.na(list_comparator))
+      stop("For count outcomes, supply 'list_comparator'.")
+    if (!is.list(list_lequi.tol) || !is.list(list_uequi.tol))
+      stop("For count outcomes, supply comparator-specific 'list_lequi.tol' and 'list_uequi.tol'.")
+    comparisons <- list_comparator
+    comparison_names <- names(comparisons)
+    if (is.null(comparison_names)) {
+      comparison_names <- paste0("comparison_", seq_along(comparisons))
+      names(comparisons) <- comparison_names
+    }
+    if (is.null(names(list_lequi.tol)) || is.null(names(list_uequi.tol)) ||
+        !setequal(names(list_lequi.tol), comparison_names) ||
+        !setequal(names(list_uequi.tol), comparison_names))
+      stop("Names of 'list_lequi.tol' and 'list_uequi.tol' must match 'list_comparator'.")
+
+    requested_count_endpoints <- list_y_comparator
+    count_all_endpoints <- names(rate_list[[1L]])
+    if (is.null(count_all_endpoints))
+      count_all_endpoints <- paste0("endpoint_", seq_along(rate_list[[1L]]))
+    count_subset <- .prepare_count_endpoint_subset(
+      rates = rate_list, comparators = comparisons,
+      list_y_comparator = list_y_comparator, exposure = exposure,
+      dispersion = dispersion, cor_mat = count_endpoint_corr,
+      list_lequi.tol = list_lequi.tol, list_uequi.tol = list_uequi.tol
+    )
+    rate_list <- count_subset$rates
+    exposure <- count_subset$exposure
+    dispersion <- count_subset$dispersion
+    count_endpoint_corr <- count_subset$cor_mat
+    list_lequi.tol <- count_subset$list_lequi.tol
+    list_uequi.tol <- count_subset$list_uequi.tol
+    count_m <- length(count_subset$endpoints)
+    count_type_info <- .prepare_type_y(
+      type_y = type_y, all_endpoints = count_all_endpoints,
+      selected_endpoints = count_subset$endpoints,
+      adjust = if (adjust == "seq") "seq" else "no"
+    )
+    count_type_y <- if (count_type_info$active)
+      count_type_info$type_y[count_subset$endpoints] else NULL
+    count_k <- .normalize_count_k(count_k, count_m, allow_vector = TRUE)
+    if (!is.null(count_k) && length(count_k) > 1L) {
+      if (length(count_k) != length(comparisons) ||
+          length(unique(count_k)) != 1L)
+        stop("Count joint outcomes require one common 'k' across comparisons.")
+      count_k <- count_k[[1L]]
+    }
+
+    # A single two-arm comparison uses the count kernel that also supports
+    # the 2x2 design. Multiple arms/comparisons use the joint count kernel.
+    if (length(comparisons) == 1L && length(rate_list) == 2L) {
+      arms <- comparisons[[1L]]
+      result <- sampleSize_count(
+        power = power, rate_test = rate_list[[arms[1L]]],
+        rate_reference = rate_list[[arms[2L]]], exposure = exposure,
+        margin_lower = list_lequi.tol[[comparison_names[1L]]],
+        margin_upper = list_uequi.tol[[comparison_names[1L]]],
+        model = model, dispersion = dispersion, alpha = alpha, nsim = nsim,
+        seed = seed, lower = lower, upper = upper, design = count_design,
+        k = count_k, endpoint_corr = count_endpoint_corr,
+        type_y = count_type_y, adjust = count_adjust, sigmaB = count_sigmaB,
+        Eper = count_Eper, Eco = count_Eco, dropout = count_dropout,
+        optimization_method = optimization_method, step.power = step.power,
+        step.up = step.up, pos.side = pos.side, maxiter = maxiter,
+        ncores = count_ncores,
+        .warn_redundant_bon = .warn_redundant_bon
+      )
+      if (is.data.frame(result$table.test) &&
+          length(comparison_names) == 1L) {
+        names(result$table.test) <- gsub(
+          "Comp:comparison_1",
+          paste0("Comp:", comparison_names[[1L]]),
+          names(result$table.test), fixed = TRUE
+        )
+      }
+      if (keep_sim_data) {
+        result$sim_data <- .retained_count_data(
+          rate_list = rate_list, exposure = exposure, dispersion = dispersion,
+          distribution = distribution, design = count_design,
+          n = result$n_per_arm, nsim = nsim, seed = seed,
+          endpoint_corr = count_endpoint_corr
+        )
+      }
+      result$endpoint_corr <- count_endpoint_corr
+      class(result) <- c("simss", class(result))
+      result <- .decorate_count_sample_size(
+        result = result, distribution = distribution, rate_list = rate_list,
+        exposure = exposure, dispersion = dispersion,
+        comparisons = comparisons,
+        selected_endpoints = setNames(
+          rep(list(count_subset$endpoints), length(comparisons)),
+          comparison_names
+        ),
+        requested_endpoints = requested_count_endpoints,
+        lower_list = list_lequi.tol, upper_list = list_uequi.tol,
+        type_y = count_type_y, endpoint_corr = count_endpoint_corr,
+        design = count_design, power = power, alpha = alpha, k = result$k,
+        adjust = count_adjust, dropout = count_dropout,
+        sigmaB = count_sigmaB, Eper = count_Eper, Eco = count_Eco,
+        nsim = nsim, seed = seed, ncores = count_ncores,
+        optimization_method = optimization_method, lower = lower, upper = upper,
+        step.power = step.power, step.up = step.up, pos.side = pos.side,
+        maxiter = maxiter, verbose = verbose, keep_sim_data = keep_sim_data
+      )
+      return(result)
+    }
+
+    result <- sampleSize_count_joint(
+      power = power, rates = rate_list, comparisons = comparisons,
+      exposure = exposure, margin_lower = NULL, margin_upper = NULL,
+      model = model, dispersion = dispersion,
+      alpha = alpha, endpoint_corr = count_endpoint_corr, k = count_k,
+      type_y = count_type_y, adjust = count_adjust,
+      nsim = nsim, seed = seed, lower = lower, upper = upper,
+      design = count_design,
+      list_margin_lower = if (is.list(list_lequi.tol)) list_lequi.tol else NULL,
+      list_margin_upper = if (is.list(list_uequi.tol)) list_uequi.tol else NULL,
+      optimization_method = optimization_method, step.power = step.power,
+      step.up = step.up, pos.side = pos.side, maxiter = maxiter,
+      ncores = count_ncores,
+      .warn_redundant_bon = .warn_redundant_bon
+    )
+    if (keep_sim_data && !is.null(result$n_per_arm)) {
+      result$sim_data <- .retained_count_data(
+        rate_list = rate_list, exposure = exposure, dispersion = dispersion,
+        distribution = distribution, design = count_design,
+        n = result$n_per_arm, nsim = nsim, seed = seed,
+        endpoint_corr = count_endpoint_corr
+      )
+    }
+    result$endpoint_corr <- count_endpoint_corr
+    class(result) <- c("simss", class(result))
+    result <- .decorate_count_sample_size(
+      result = result, distribution = distribution, rate_list = rate_list,
+      exposure = exposure, dispersion = dispersion,
+      comparisons = comparisons,
+      selected_endpoints = setNames(
+        rep(list(count_subset$endpoints), length(comparisons)),
+        comparison_names
+      ),
+      requested_endpoints = requested_count_endpoints,
+      lower_list = list_lequi.tol, upper_list = list_uequi.tol,
+      type_y = count_type_y, endpoint_corr = count_endpoint_corr,
+      design = count_design, power = power, alpha = alpha, k = result$k,
+      adjust = count_adjust, dropout = count_dropout,
+      sigmaB = count_sigmaB, Eper = count_Eper, Eco = count_Eco,
+      nsim = nsim, seed = seed, ncores = count_ncores,
+      optimization_method = optimization_method, lower = lower, upper = upper,
+      step.power = step.power, step.up = step.up, pos.side = pos.side,
+      maxiter = maxiter, verbose = verbose, keep_sim_data = keep_sim_data
+    )
+    return(result)
+  }
 
   # Derive the Number of Arms
   n <- length(mu_list)
@@ -242,26 +559,16 @@ sampleSize <- function(mu_list, varcov_list = NA, sigma_list = NA, cor_mat = NA,
   # test positive defined varcov
   validate_positive_definite(varcov_list)
 
-  # Define weights according to type of endpoint,i.e. primary, secondary
-
-  if (adjust != "seq" | any(is.na(type_y)) | length(type_y) != length(uynames)) {
-    type_y <- -1
-    weight_seq <- rep(1, length(uynames))
-  } else {
-    names(type_y) <- uynames
-
-    # Count number of secondary endpoints (elements equal to 2 in type_y)
-    num_secondary_endpoints <- sum(type_y == 2)
-
-    # Initialize weight vector with 1s
-    weight_seq <- rep(1, length(type_y))
-
-    # Assign 1 / num_secondary_endpoints to secondary endpoints
-    if (num_secondary_endpoints > 0) {
-      weight_seq[type_y == 2] <- min(k) / num_secondary_endpoints
-    }
-    names(weight_seq) <- uynames
-  }
+  # Resolve hierarchy after the comparator-specific endpoint families are
+  # known. This makes named type_y robust when comparisons select different
+  # endpoints from the arm-level input.
+  selected_endpoints <- unique(unlist(list_y_comparator, use.names = FALSE))
+  type_info <- .prepare_type_y(
+    type_y = type_y, all_endpoints = uynames,
+    selected_endpoints = selected_endpoints, adjust = adjust
+  )
+  type_y <- type_info$type_y
+  weight_seq <- stats::setNames(rep(1, length(uynames)), uynames)
 
   #if (len_mu[[1]] == 1){
   #  mu_list <- lapply(mu_list,FUN = function(x){array(unlist(x))})
@@ -282,32 +589,24 @@ sampleSize <- function(mu_list, varcov_list = NA, sigma_list = NA, cor_mat = NA,
     stop("All arm names specified in 'list_comparator' must be present in 'arm_names'.")
   }
 
-  # Get the endpoints to be compared on each comparator
-  if (any(is.na(list_y_comparator)) | length(list_comparator) != length(list_y_comparator)) {
-    list_y_comparator <- list()
-  }
+  # Resolve the endpoints actually tested for each comparator. This is the
+  # source of m_i for multiplicity adjustment and k defaults.
+  arm_endpoints <- lapply(mu_list, colnames)
+  requested_list_y_comparator <- list_y_comparator
+  list_y_comparator <- .resolve_comparator_endpoints(
+    comparators = list_comparator, arm_endpoints = arm_endpoints,
+    requested = list_y_comparator
+  )
+  .warn_inferred_endpoint_reduction(
+    comparators = list_comparator, arm_endpoints = arm_endpoints,
+    endpoint_sets = list_y_comparator, requested = requested_list_y_comparator,
+    context = "list_y_comparator"
+  )
 
-  for (i in 1:length(list_comparator)) {
-    treat1 <- list_comparator[[i]][[1]]
-    treat2 <- list_comparator[[i]][[2]]
-    y_comp <- intersect(colnames(mu_list[[treat1]]),colnames(mu_list[[treat2]]))
-
-    if (i > length(list_y_comparator)) { # No element assigned
-      # warning("As no list_y_comparator was provided, it will be compared all endpoints in commun on the compared arms")
-      list_y_comparator[[i]] <- y_comp
-    }
-
-    if(any(!list_y_comparator[[i]]%in%y_comp)){
-      warning(paste0("It will be compared only the endpoints included both arms of the comparator",paste(list_comparator[[i]],collapse="")))
-      y_compi <- list_y_comparator[[i]]
-      if(length(y_compi[y_compi%in%y_comp])==0){
-        list_y_comparator[[i]] <- NULL
-        list_comparator[[i]] <- NULL}
-      else{
-        list_y_comparator[[i]] <- y_compi[y_compi%in%y_comp]
-      }
-    }
-  }
+  validate_sample_size_inputs(mu_list = mu_list, sigma_list = sigma_list,
+                              varcov_list = varcov_list, arm_names = arm_names,
+                              list_comparator = list_comparator,
+                              list_y_comparator = list_y_comparator)
 
 
   if(any(unlist(len_mu) != unlist(len_cvar))){
@@ -381,8 +680,30 @@ sampleSize <- function(mu_list, varcov_list = NA, sigma_list = NA, cor_mat = NA,
 
   for (i in 1:length(list_comparator)){
     muend <-  mu_list[[list_comparator[[i]][[2]]]]
-    if (is.null(names(list_lequi.tol[[i]]))|is.null(names(list_uequi.tol[[i]]))){
-      names(list_lequi.tol[[i]])<- names(list_uequi.tol[[i]])<-colnames(muend)
+    selected_endpoints_i <- list_y_comparator[[i]]
+    available_endpoints_i <- colnames(muend)
+    align_bounds <- function(value) {
+      if (is.null(value)) return(value)
+      if (!is.null(names(value)) && all(selected_endpoints_i %in% names(value)))
+        return(value[selected_endpoints_i])
+      if (is.null(names(value)) && length(value) == length(available_endpoints_i) &&
+          length(value) != length(selected_endpoints_i))
+        return(value[match(selected_endpoints_i, available_endpoints_i)])
+      value
+    }
+    list_lequi.tol[[i]] <- align_bounds(list_lequi.tol[[i]])
+    list_uequi.tol[[i]] <- align_bounds(list_uequi.tol[[i]])
+    if (is.null(names(list_lequi.tol[[i]])) ||
+        is.null(names(list_uequi.tol[[i]]))){
+      names(list_lequi.tol[[i]]) <- names(list_uequi.tol[[i]]) <- selected_endpoints_i
+    }
+    if (length(list_lequi.tol[[i]]) != length(list_y_comparator[[i]]) ||
+        length(list_uequi.tol[[i]]) != length(list_y_comparator[[i]])) {
+      stop(sprintf(
+        "Equivalence bounds for comparator %s must have one lower and upper value for each of its %d endpoints.",
+        paste(list_comparator[[i]], collapse = " vs "),
+        length(list_y_comparator[[i]])
+      ))
     }
   }
 
@@ -437,24 +758,60 @@ sampleSize <- function(mu_list, varcov_list = NA, sigma_list = NA, cor_mat = NA,
 
 
 
-  # k is na
-  kmax <- sapply(list_y_comparator,length)
-
-  if(any(is.na(k))){
-    #warning("No k vector provided,it will be set to the total number of endpoints on each comparator")
+  # k is defined per comparator, after list_y_comparator has been resolved.
+  kmax <- lengths(list_y_comparator)
+  k_scalar_input <- !is.list(k) && length(k) == 1L && !is.na(k)
+  if (is.list(k)) k <- unlist(k, use.names = FALSE)
+  missing_k <- is.null(k) || !length(k) || all(is.na(k))
+  if (missing_k) {
     k <- kmax
+  } else {
+    if (!is.numeric(k) || anyNA(k))
+      stop("'k' must be a positive integer, one value per comparator or one value for all comparators.")
+    if (length(k) == 1L) k <- rep(k, length(kmax))
+    if (length(k) != length(kmax))
+      stop("'k' must have one value per comparator or be a single value.")
+    if (any(!is.finite(k)) || any(k != as.integer(k)) || any(k < 1L))
+      stop("'k' must contain positive integers.")
   }
-
-  if(length(k)!=length(kmax)){
-    #warning("No k vector provided,it will be set to the total number of endpoints on each comparator")
-    k <- rep(k[[1]],length(kmax))
+  oversized <- which(k > kmax)
+  if (length(oversized)) {
+    warning("'k' is larger than the number of selected endpoints for comparator(s) ",
+            paste(oversized, collapse = ", "), "; setting it to the maximum possible value.",
+            call. = FALSE)
+    k[oversized] <- kmax[oversized]
   }
-
-  if (any(k>kmax)){
-    warning("The specified k on a comparator is larger than the number of endpoints,
-              k is assigned to the total number of endpoints in the comparator")
-    k <- pmin(k,kmax)
+  if (k_scalar_input && length(unique(kmax)) > 1L) {
+    warning("The selected endpoint counts differ by comparator; the supplied scalar 'k' is interpreted separately for each comparator and capped at that comparator's m.",
+            call. = FALSE)
   }
+  if (adjust == "seq" && type_info$active) {
+    selected_types <- type_y[selected_endpoints]
+    secondary <- selected_types == 2L
+    if (any(secondary))
+      weight_seq[selected_endpoints[secondary]] <- min(k) / sum(secondary)
+  }
+  independent <- all(vapply(seq_along(list_comparator), function(i) {
+    arms <- list_comparator[[i]]
+    endpoints <- list_y_comparator[[i]]
+    is_diagonal <- function(x) {
+      x <- as.matrix(x)
+      if (nrow(x) <= 1L) return(TRUE)
+      off_diagonal <- x
+      diag(off_diagonal) <- 0
+      max(abs(off_diagonal)) <= sqrt(.Machine$double.eps)
+    }
+    is_diagonal(varcov_list[[arms[[1L]]]][endpoints, endpoints, drop = FALSE]) &&
+      is_diagonal(varcov_list[[arms[[2L]]]][endpoints, endpoints, drop = FALSE])
+  }, logical(1)))
+  if (isTRUE(.warn_redundant_bon))
+    .warn_adjustment_configuration(
+      k = k, m = kmax, adjust = adjust,
+      type_y = if (type_info$active) type_y[selected_endpoints] else NULL,
+      type_y_supplied = type_info$supplied,
+      n_comparators = length(list_comparator), independent = independent,
+      context = "selected endpoints"
+    )
 
 
   # Save endpoints related information on a parameter list
@@ -468,16 +825,8 @@ sampleSize <- function(mu_list, varcov_list = NA, sigma_list = NA, cor_mat = NA,
                 list_uequi.tol = list_uequi.tol,
                 Eper = Eper, Eco = Eco)
 
-  if (lognorm == TRUE & ctype == "DOM"){
-    stop("Testing is not supported for DOM when variables follow a log-normal distribution.")
-  }
-
-  if( lognorm == FALSE & ctype == "ROM" & dtype =="2x2"){
-    #stop("Test not available here")
-  }
-
-  if(!(all(unlist(list_comparator)%in%arm_names)|all(arm_names%in%unlist(list_comparator)))){
-    stop("Names included in the list_comparator should be coherent with the names in the arm_names vector")
+  if (distribution == "lnorm" && ctype == "DOM"){
+    stop("DOM is not supported for lognormal outcomes: the current implementation defines lognormal testing as a ratio-of-means test on the log scale. Use distribution = 'normal' with ctype = 'DOM', or distribution = 'lognormal' with ctype = 'ROM'.")
   }
 
   param.d <- list(nsim=nsim,
@@ -485,11 +834,15 @@ sampleSize <- function(mu_list, varcov_list = NA, sigma_list = NA, cor_mat = NA,
                   alpha=alpha,
                   dtype=dtype,
                   ctype=ctype,
-                  lognorm=lognorm,
+                  distribution=distribution,
                   vareq=vareq,
                   k=k,
                   adjust=adjust,
-                  dropout=dropout,list_lequi.tol=list_lequi.tol, list_uequi.tol=list_uequi.tol)
+                  dropout=dropout,list_lequi.tol=list_lequi.tol, list_uequi.tol=list_uequi.tol,
+                  seed=seed, ncores=ncores,
+                  optimization_method=optimization_method, lower=lower, upper=upper,
+                  step.power=step.power, step.up=step.up, pos.side=pos.side,
+                  maxiter=maxiter, verbose=verbose)
 
   if(is.na(ncores)) {
     ncores <- parallel::detectCores() - 1
@@ -568,6 +921,21 @@ sampleSize <- function(mu_list, varcov_list = NA, sigma_list = NA, cor_mat = NA,
                    table.test = table.test,
                    param = param,
                    param.d = param.d)
+  }
+
+  if (keep_sim_data) {
+    selected_response <- out$response
+    selected_n <- if (!is.null(selected_response) &&
+                       !is.logical(selected_response) &&
+                       !is.na(selected_response$n_iter[[1L]])) {
+      as.integer(selected_response$n_iter[[1L]])
+    } else {
+      as.integer(lower)
+    }
+    out$sim_data <- .retained_continuous_data(
+      param = param, param.d = param.d, n = selected_n,
+      nsim = nsim, seed = seed
+    )
   }
 
   class(out) <- "simss"

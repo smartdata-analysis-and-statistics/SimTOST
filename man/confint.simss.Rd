@@ -4,7 +4,7 @@
 \alias{confint.simss}
 \title{Confidence Interval for Achieved Power from simss object}
 \usage{
-\method{confint}{simss}(object, ...)
+\method{confint}{simss}(object, level = 0.95, ...)
 }
 \arguments{
 \item{object}{An object of class \code{"simss"} returned by a sampleSize function}
@@ -23,7 +23,8 @@ A named numeric vector with two elements:
 Confidence Interval for Achieved Power from simss object
 }
 \examples{
-# Assume `res` is a result from `sampleSize()`
-# confint(res)
+\dontrun{
+# confint(res), where res is returned by sampleSize()
+}
 
 }

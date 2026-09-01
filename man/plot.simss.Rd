@@ -4,10 +4,19 @@
 \alias{plot.simss}
 \title{Plot Power vs Sample Size for Simulation Results}
 \usage{
-\method{plot}{simss}(x, ...)
+\method{plot}{simss}(x, target_power = 0.8, display = "all", ...)
 }
 \arguments{
 \item{x}{An object of class \code{simss} containing simulation results.}
+
+\item{target_power}{Target power shown as a horizontal reference line. The
+default is 0.80, unless the object stores a planning target, in which
+case that target is used when this argument is omitted. An explicit value
+always overrides the stored target.}
+
+\item{display}{Character vector of comparator panels to display. Use
+\code{"all"} (the default) to display every comparator, or provide comparator
+names such as \code{"R_vs_T"} to display selected panels.}
 
 \item{\ldots}{Additional arguments to be passed to the \code{plot.simss} function for customization.}
 }
@@ -15,13 +24,15 @@
 A \code{ggplot} object illustrating:
 \itemize{
 \item Power (y-axis) vs. Total Sample Size (x-axis) for individual endpoints and comparators.
-\item Error bars representing the 95\% confidence interval of the power estimates.
+\item Clearly visible vertical lines representing the 95\% confidence interval
+of the power estimates.
 \item A dashed horizontal line indicating the target power for comparison.
+\item A larger outlined point at the selected sample size.
 \item Faceted panels for each comparator, making it easy to compare results across different groups.
 }
 }
 \description{
-Generates a detailed plot showing the relationship between power and total sample size for each comparator and the overall combined comparators.
+Generates a detailed plot showing the relationship between power and total sample size for each comparator and the overall combined comparators. The combined-comparator panel is omitted when only one comparator is present.
 The plot also includes confidence intervals for power estimates and highlights the target power with a dashed line for easy visual comparison.
 }
 \details{

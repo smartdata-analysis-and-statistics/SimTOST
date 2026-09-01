@@ -47,7 +47,9 @@ Options are \code{"22co"} for a 2x2 crossover design or \code{"parallel"} for a 
 
 \item{adjust}{Character specifying the method for multiplicity adjustment.
 Options include \code{"no"} for no adjustment, \code{"bon"} for Bonferroni correction,
-and \code{"k"} for k-adjustment.}
+\code{"k"} for Mielke's weak k-adjustment, and \code{"t"} for the strong
+k-out-of-m adjustment. Legacy \code{"pc"} and
+\code{"partial-conjunction"} labels are accepted as aliases for \code{"t"}.}
 
 \item{nsim}{Integer specifying the number of simulations to perform. Default is \code{10,000}.}
 }

@@ -41,14 +41,16 @@ sampleSize_Mielke(
 
 \item{alpha}{Numeric. Significance level for the hypothesis test.}
 
-\item{adjust}{Character. Method for multiplicity adjustment; options are "no" (no adjustment), "bon" (Bonferroni adjustment), and "k" (k-adjustment).}
+\item{adjust}{Character. Method for multiplicity adjustment: "no" (none),
+"bon" (Bonferroni), "k" (Mielke's weak k-adjustment), or "t"
+(Mielke's strong k-out-of-m adjustment; legacy "pc" aliases are accepted).}
 
 \item{seed}{Integer. Random seed for reproducibility.}
 
 \item{nsim}{Integer. Number of simulations to run for power estimation (default: 10,000).}
 }
 \value{
-A named vector containing:
+An object of class \code{simss_mielke}, containing:
 \describe{
 \item{"power.a"}{Achieved power with the estimated sample size.}
 \item{"SS"}{Required sample size per sequence to achieve the target power.}

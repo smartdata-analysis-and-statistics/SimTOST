@@ -57,7 +57,17 @@ simParallelEndpoints <- function(n,
 #' @return power calculated from a global list of comparators
 #' @keywords internal
 #'
+.normalize_internal_distribution <- function(param.d) {
+  if (is.null(param.d$distribution) || length(param.d$distribution) == 0L ||
+      is.na(param.d$distribution[[1L]])) {
+    param.d$distribution <- if (isTRUE(param.d$lognorm)) "lnorm" else "norm"
+  }
+  param.d
+}
+
 power_cal <- function(n,nsim,param,param.d,seed,ncores){
+
+  param.d <- .normalize_internal_distribution(param.d)
 
   if (param.d$dtype == "parallel") {
     TAR_used <- unlist(param$TAR_list)[unique(unlist(param$list_comparator))]
@@ -145,6 +155,367 @@ power_cal <- function(n,nsim,param,param.d,seed,ncores){
               output.test = output.test))
 }
 
+# Normalize the user-facing multiplicity-adjustment labels.
+.normalize_adjustment <- function(adjust, allow_sequential = TRUE) {
+  if (!is.character(adjust) || length(adjust) != 1L || is.na(adjust) ||
+      !nzchar(trimws(adjust)))
+    stop("'adjust' must be a single character value.")
+  value <- tolower(trimws(adjust))
+  aliases <- c(
+    no = "no", none = "no",
+    bon = "bon", bonferroni = "bon",
+    sid = "sid", sidak = "sid",
+    k = "k",
+    t = "t", pc = "t", partial = "t", partial_conjunction = "t",
+    "partial-conjunction" = "t", "t-adjustment" = "t",
+    seq = "seq", sequential = "seq"
+  )
+  if (!value %in% names(aliases))
+    stop("'adjust' must be one of 'no', 'bon', 'sid', 'k', 't', or 'seq'.")
+  result <- unname(aliases[[value]])
+  if (!allow_sequential && result %in% c("k", "seq"))
+    stop("This outcome type supports only 'no', 'bon', 'sid', and 't' adjustment.")
+  result
+}
+
+# Derive the endpoint-wise significance level for one comparator. The endpoint
+# count is deliberately supplied by the caller: it is the number of endpoints
+# actually tested for that comparator, not the number stored in arm parameters.
+.endpoint_alpha <- function(alpha, m, k, adjust) {
+  if (length(m) != 1L || !is.finite(m) || m < 1L || m != as.integer(m))
+    stop("'m' must be a positive integer.")
+  if (length(k) != 1L || !is.finite(k) || k < 1L || k > m ||
+      k != as.integer(k))
+    stop("'k' must be an integer between 1 and 'm'.")
+  if (length(alpha) != 1L || !is.finite(alpha) || alpha <= 0 || alpha >= 1)
+    stop("'alpha' must be a number strictly between 0 and 1.")
+  switch(adjust,
+    no = rep(alpha, m),
+    bon = rep(alpha / m, m),
+    sid = rep(1 - (1 - alpha)^(1 / m), m),
+    k = rep(k * alpha / m, m),
+    t = rep(alpha / (m - k + 1), m),
+    seq = rep(alpha, m),
+    stop("Unknown multiplicity adjustment: ", adjust)
+  )
+}
+
+# Validate and align the hierarchy vector after comparator endpoints have been
+# resolved. Named vectors may cover only endpoints actually used in a
+# comparison family; endpoints outside that family are assigned type 1 but are
+# never tested by the sequential branch.
+.prepare_type_y <- function(type_y, all_endpoints, selected_endpoints,
+                            adjust) {
+  supplied <- !(is.null(type_y) ||
+                (length(type_y) == 1L && is.na(type_y)))
+  # -1 is the package's internal sentinel for "no hierarchy" in objects
+  # created by older versions; it should not trigger an ignored-input warning.
+  if (supplied && !identical(adjust, "seq") && is.numeric(type_y) &&
+      all(!is.na(type_y) & type_y < 0))
+    supplied <- FALSE
+  all_endpoints <- as.character(all_endpoints)
+  selected_endpoints <- unique(as.character(selected_endpoints))
+  default <- stats::setNames(rep(-1L, length(all_endpoints)), all_endpoints)
+
+  if (!identical(adjust, "seq")) {
+    if (supplied) {
+      warning("'type_y' is used only with adjust = 'seq'; the supplied hierarchy is ignored.",
+              call. = FALSE)
+    }
+    return(list(type_y = default, supplied = supplied, active = FALSE))
+  }
+
+  if (!supplied) {
+    warning("adjust = 'seq' requires 'type_y'; no hierarchical alpha adjustment will be applied.",
+            call. = FALSE)
+    return(list(type_y = default, supplied = FALSE, active = FALSE))
+  }
+  if (!is.numeric(type_y) || any(!is.finite(type_y)) ||
+      any(type_y != as.integer(type_y)) || any(!type_y %in% c(1, 2)))
+    stop("When adjust = 'seq', 'type_y' must contain only integer values 1 (primary) or 2 (secondary).")
+  if (!is.null(names(type_y))) {
+    if (anyNA(names(type_y)) || any(!nzchar(names(type_y))) ||
+        anyDuplicated(names(type_y)))
+      stop("Names of 'type_y' must be non-empty and unique.")
+    unknown <- setdiff(names(type_y), all_endpoints)
+    if (length(unknown))
+      stop("'type_y' contains unknown endpoint(s): ", paste(unknown, collapse = ", "))
+    missing <- setdiff(selected_endpoints, names(type_y))
+    if (length(missing))
+      stop("'type_y' must classify every endpoint selected in 'list_y_comparator'; missing: ",
+           paste(missing, collapse = ", "))
+    aligned <- rep(1L, length(all_endpoints))
+    names(aligned) <- all_endpoints
+    aligned[names(type_y)] <- as.integer(type_y)
+  } else {
+    if (length(type_y) != length(all_endpoints))
+      stop("Unnamed 'type_y' must have one value for every available endpoint; use names to classify a selected subset.")
+    aligned <- stats::setNames(as.integer(type_y), all_endpoints)
+  }
+  list(type_y = aligned, supplied = TRUE, active = TRUE)
+}
+
+# Return the hierarchy values in the order used by one comparator.
+.type_y_for_endpoints <- function(type_y, endpoints, adjust) {
+  if (!identical(adjust, "seq") || is.null(type_y) || !length(type_y) ||
+      anyNA(type_y) || any(type_y < 0))
+    return(rep(-1L, length(endpoints)))
+  if (is.null(names(type_y))) return(as.integer(type_y[seq_along(endpoints)]))
+  values <- type_y[as.character(endpoints)]
+  if (anyNA(values))
+    stop("'type_y' does not classify every selected endpoint.")
+  as.integer(values)
+}
+
+# Sequential testing uses the primary family at alpha and allocates the
+# secondary-family alpha across its endpoints. The calculation is per
+# comparator because list_y_comparator may define different endpoint families.
+.sequential_endpoint_alpha <- function(alpha, type_y, k) {
+  if (length(type_y) < 1L || any(!type_y %in% c(1L, 2L)))
+    stop("Sequential testing requires endpoint types 1 or 2.")
+  if (length(alpha) == 1L) alpha <- rep(alpha, length(type_y))
+  if (length(alpha) != length(type_y) || any(!is.finite(alpha)) ||
+      any(alpha <= 0) || any(alpha >= 1))
+    stop("'alpha' must be a scalar or contain one value between 0 and 1 for each endpoint.")
+  out <- as.numeric(alpha)
+  secondary <- type_y == 2L
+  if (any(secondary))
+    out[secondary] <- alpha[secondary] * min(k, length(type_y)) / sum(secondary)
+  out
+}
+
+# Count kernels use the same user-facing adjustment aliases as the continuous
+# interface, but retain their historical long labels in returned objects.
+.normalize_count_adjustment <- function(adjust) {
+  normalized <- .normalize_adjustment(adjust)
+  if (normalized == "k")
+    stop("Count outcomes support 'no', 'bon', 'sid', 't', and 'seq' adjustment; the k-adjustment is not implemented for count outcomes.")
+  switch(normalized,
+         no = "none", bon = "bonferroni", sid = "sidak", t = "t",
+         seq = "sequential")
+}
+
+.count_endpoint_alpha <- function(alpha, m, k, adjust, type_y = NULL,
+                                  type_y_active = FALSE) {
+  if (length(alpha) == 1L) alpha <- rep(alpha, m)
+  if (length(alpha) != m || any(!is.finite(alpha)) ||
+      any(alpha <= 0) || any(alpha >= 1))
+    stop("'alpha' must be a scalar or contain one value between 0 and 1 for each endpoint.")
+  if (identical(adjust, "sequential") && isTRUE(type_y_active))
+    return(.sequential_endpoint_alpha(alpha, type_y, k))
+  switch(adjust,
+         none = alpha,
+         bonferroni = alpha / m,
+         sidak = 1 - (1 - alpha)^(1 / m),
+         t = alpha / (m - k + 1),
+         sequential = alpha,
+         stop("Unknown count multiplicity adjustment: ", adjust))
+}
+
+# Warn about adjustment choices that are redundant or do not by themselves
+# provide the intended error-rate protection.
+.warn_adjustment_configuration <- function(k, m, adjust,
+                                           type_y = NULL,
+                                           type_y_supplied = FALSE,
+                                           n_comparators = 1L,
+                                           independent = NULL,
+                                           context = "selected endpoints") {
+  adjust <- .normalize_adjustment(adjust)
+  messages <- character()
+  all_required <- k == m
+  if (any(all_required) && adjust != "no") {
+    if (adjust == "k") {
+      messages <- c(messages,
+        paste0("The k-adjustment has no effect when 'k' equals the number of ",
+               context, " (k = m); each endpoint remains at alpha."))
+    } else if (adjust == "t") {
+      messages <- c(messages,
+        paste0("The t-adjustment has no effect when ",
+               "'k' equals the number of ", context,
+               " (k = m); each endpoint remains at alpha."))
+    } else {
+      reason <- if (isTRUE(independent))
+        "All selected endpoints are independent. However, " else ""
+      messages <- c(messages,
+               paste0(reason, "formal endpoint-wise Type I-error adjustment is not necessary ",
+               "when all selected endpoints are required (k = m). The requested ",
+               "adjustment will nevertheless be applied. This conclusion does not ",
+               "depend on endpoint independence."))
+    }
+  }
+  if (adjust == "no" && any(k < m)) {
+    messages <- c(messages,
+      paste0("adjust = 'no' does not provide multiplicity control for a k-of-m ",
+             "decision when k < m; interpret the resulting Type I error as ",
+             "uncalibrated unless this is intentional."))
+  }
+  if (adjust == "seq" && type_y_supplied && !is.null(type_y) &&
+      all(type_y == 1L)) {
+    messages <- c(messages,
+      "All selected endpoints are classified as primary; sequential adjustment has no secondary family to gate or reallocate.")
+  }
+  if (adjust == "seq" && type_y_supplied && !is.null(type_y) &&
+      all(type_y == 2L)) {
+    messages <- c(messages,
+      "All selected endpoints are classified as secondary; sequential adjustment has no primary gate, so review the prespecified hierarchy and alpha allocation.")
+  }
+  if (n_comparators > 1L && adjust != "no") {
+    messages <- c(messages,
+      "The adjustment is applied within each comparator's selected endpoint family, not across comparators; the global decision requires all comparator decisions to pass.")
+  }
+  if (length(messages))
+    warning(paste(unique(messages), collapse = " "), call. = FALSE)
+  invisible(NULL)
+}
+
+# Backward-compatible wrapper used by the count helpers.
+.warn_redundant_bonferroni <- function(k, m, adjust, context = "selected endpoints") {
+  if (is.null(adjust)) adjust <- "no"
+  .warn_adjustment_configuration(k = k, m = m,
+                                 adjust = .normalize_adjustment(adjust),
+                                 context = context)
+}
+
+# Warn when omitted endpoint selections make the tested family smaller than
+# the endpoint set stored for one or more arms. This is intentional behavior:
+# m is the number of endpoints actually available in both arms (or explicitly
+# selected), not the largest number supplied anywhere in the input.
+.warn_inferred_endpoint_reduction <- function(comparators, arm_endpoints,
+                                              endpoint_sets,
+                                              requested = NULL,
+                                              context = "list_y_comparator") {
+  omitted <- is.null(requested) ||
+    (length(requested) == 1L && all(is.na(requested)))
+  if (!omitted) return(invisible(NULL))
+  reduced <- vapply(seq_along(comparators), function(i) {
+    arms <- comparators[[i]]
+    any(length(endpoint_sets[[i]]) <
+          c(length(arm_endpoints[[arms[[1L]]]]),
+            length(arm_endpoints[[arms[[2L]]]])))
+  }, logical(1))
+  if (any(reduced)) {
+    m_text <- paste(lengths(endpoint_sets), collapse = ", ")
+    warning("'", context, "' was omitted, so only endpoints common to both ",
+            "arms are tested; the effective endpoint count m is ", m_text,
+            " by comparator.", call. = FALSE)
+  }
+  invisible(NULL)
+}
+
+# Resolve the endpoint set for every comparator. A supplied list is retained
+# per comparator; otherwise all endpoints common to its two arms are used.
+.resolve_comparator_endpoints <- function(comparators, arm_endpoints,
+                                          requested = NULL) {
+  if (!is.list(comparators) || !length(comparators))
+    stop("'comparators' must be a non-empty list.")
+  comparison_names <- names(comparators)
+  if (is.null(comparison_names))
+    comparison_names <- paste0("comparison_", seq_along(comparators))
+  missing_requested <- is.null(requested) ||
+    (length(requested) == 1L && all(is.na(requested)))
+  if (missing_requested) {
+    requested <- lapply(comparators, function(arms)
+      intersect(arm_endpoints[[arms[[1L]]]], arm_endpoints[[arms[[2L]]]]))
+  } else {
+    if (!is.list(requested) || length(requested) != length(comparators))
+      stop("'list_y_comparator' must contain one endpoint vector per comparator.")
+    if (!is.null(names(requested))) {
+      if (!setequal(names(requested), comparison_names))
+        stop("Names of 'list_y_comparator' must match 'list_comparator'.")
+      requested <- requested[comparison_names]
+    }
+    requested <- lapply(seq_along(comparators), function(i) {
+      value <- requested[[i]]
+      if (!is.character(value) || !length(value) || anyNA(value) ||
+          anyDuplicated(value))
+        stop("Each element of 'list_y_comparator' must be a non-empty, unique character vector.")
+      common <- intersect(arm_endpoints[[comparators[[i]][[1L]]]],
+                          arm_endpoints[[comparators[[i]][[2L]]]])
+      unknown <- setdiff(value, common)
+      if (length(unknown)) {
+        stop("Endpoint(s) not available in both arms of comparator ",
+             comparison_names[[i]], ": ", paste(unknown, collapse = ", "))
+      }
+      value
+    })
+  }
+  names(requested) <- comparison_names
+  if (any(lengths(requested) < 1L))
+    stop("Every comparator must have at least one common endpoint.")
+  requested
+}
+
+.prepare_count_endpoint_subset <- function(rates, comparators,
+                                           list_y_comparator = NULL,
+                                           exposure = NULL, dispersion = NULL,
+                                           cor_mat = NULL,
+                                           list_lequi.tol = NULL,
+                                           list_uequi.tol = NULL) {
+  arm_endpoints <- lapply(rates, function(value) {
+    value_names <- names(value)
+    if (!is.null(value_names)) value_names else
+      paste0("endpoint_", seq_along(value))
+  })
+  requested_list_y_comparator <- list_y_comparator
+  endpoint_sets <- .resolve_comparator_endpoints(
+    comparators = comparators, arm_endpoints = arm_endpoints,
+    requested = list_y_comparator
+  )
+  .warn_inferred_endpoint_reduction(
+    comparators = comparators, arm_endpoints = arm_endpoints,
+    endpoint_sets = endpoint_sets, requested = requested_list_y_comparator,
+    context = "list_y_comparator"
+  )
+  if (length(endpoint_sets) > 1L && any(vapply(
+      endpoint_sets[-1L], function(x) !identical(x, endpoint_sets[[1L]]),
+      logical(1)))) {
+    stop("For joint count outcomes, all comparators must use the same endpoints in 'list_y_comparator'.")
+  }
+  endpoints <- endpoint_sets[[1L]]
+  all_endpoints <- arm_endpoints[[1L]]
+  indices <- match(endpoints, all_endpoints)
+  subset_value <- function(value) {
+    if (is.null(value)) return(value)
+    if (is.list(value)) return(lapply(value, subset_value))
+    if (length(value) == length(all_endpoints) && length(value) > 1L)
+      return(if (!is.null(names(value))) value[endpoints] else value[indices])
+    value
+  }
+  list(
+    endpoints = endpoints,
+    rates = lapply(rates, function(value) {
+      if (!is.null(names(value))) value[endpoints] else value[indices]
+    }),
+    exposure = subset_value(exposure), dispersion = subset_value(dispersion),
+    cor_mat = if (is.matrix(cor_mat) && all(dim(cor_mat) == length(all_endpoints)))
+      cor_mat[indices, indices, drop = FALSE] else cor_mat,
+    list_lequi.tol = subset_value(list_lequi.tol),
+    list_uequi.tol = subset_value(list_uequi.tol)
+  )
+}
+
+# Validate and cap the number of count endpoints required for equivalence.
+# Returning NULL preserves the public default, which lets the downstream
+# kernel set k to the number of endpoints after its own input validation.
+.normalize_count_k <- function(k, m, allow_vector = FALSE) {
+  if (length(m) != 1L || !is.numeric(m) || !is.finite(m) ||
+      m < 1L || m != as.integer(m))
+    stop("'m' must be a positive integer.")
+  if (is.null(k) || (length(k) == 1L && is.na(k)))
+    return(NULL)
+  if (!is.numeric(k) || !length(k) || anyNA(k) || any(!is.finite(k)) ||
+      any(k != as.integer(k)) || any(k < 1L) ||
+      (!allow_vector && length(k) != 1L))
+    stop("'k' must contain positive integers.")
+  oversized <- which(k > m)
+  if (length(oversized)) {
+    warning("'k' is larger than the number of selected count endpoints; ",
+            "setting it to the maximum possible value.", call. = FALSE)
+    k[oversized] <- m
+  }
+  k
+}
+
 #' @title test_studies
 #' @description  Internal function to estimate the bioequivalence test for nsim simulated studies given a sample size n
 #' @param nsim number of simulated studies
@@ -160,6 +531,7 @@ power_cal <- function(n,nsim,param,param.d,seed,ncores){
 #' @keywords internal
 
 test_studies <- function(nsim, n, comp, param, param.d, arm_seed, ncores){
+  param.d <- .normalize_internal_distribution(param.d)
   if (is.na(ncores)) {
     ncores <- parallel::detectCores() - 1
   }
@@ -179,12 +551,12 @@ test_studies <- function(nsim, n, comp, param, param.d, arm_seed, ncores){
   k <- param.d$k[[comp]]
 
   # alpha vector
-  if (adjust == "no") {alpha <- rep(alphau,m)}
-  if (adjust == "bon") {alpha <- rep(alphau/(m),m)}
-  if (adjust == "sid") {alpha <- rep(1-(1-alphau)^{1/m},m)}
-  if (adjust == "k") { alpha <- rep(k*alphau/(m),m)}
-  if (adjust == "seq"){ alpha <- alphau*param$weight_seq[endp]}
-
+  type_y_comp <- .type_y_for_endpoints(param$type_y, endp, adjust)
+  alpha <- if (adjust == "seq" && all(type_y_comp %in% c(1L, 2L))) {
+    .sequential_endpoint_alpha(alphau, type_y_comp, k)
+  } else {
+    .endpoint_alpha(alphau, m, k, adjust)
+  }
 
   if (param.d$dtype == "parallel") {
     # Derive mu
@@ -195,21 +567,36 @@ test_studies <- function(nsim, n, comp, param, param.d, arm_seed, ncores){
     SigmaT <- param$varcov[[treat1]][endp,endp]
     SigmaR <- param$varcov[[treat2]][endp,endp]
 
-    if (param.d$ctype == "DOM" & param.d$lognorm == FALSE) {
+    # Fail before entering compiled code if any endpoint-wise input has been
+    # subset inconsistently. This prevents opaque Armadillo errors.
+    input_lengths <- c(length(muT), length(muR), length(endp),
+                       length(lequi.tol), length(uequi.tol), length(alpha))
+    covariance_dims <- c(nrow(SigmaT), ncol(SigmaT), nrow(SigmaR), ncol(SigmaR))
+    if (any(input_lengths != length(endp)) ||
+        any(covariance_dims != length(endp))) {
+      stop(sprintf(
+        "Inconsistent endpoint dimensions for %s vs %s: endpoints=%d, muT=%d, muR=%d, lower=%d, upper=%d, alpha=%d, covariance=%s.",
+        treat1, treat2, length(endp), length(muT), length(muR),
+        length(lequi.tol), length(uequi.tol), length(alpha),
+        paste(covariance_dims, collapse = "x")
+      ))
+    }
+
+    if (param.d$ctype == "DOM" & param.d$distribution == "norm") {
       result <- run_simulations_par_dom(nsim = nsim, n = n, muT = muT, muR = muR,
                                         SigmaT = as.matrix(SigmaT),
                                         SigmaR = as.matrix(SigmaR),
                                         lequi_tol = lequi.tol, uequi_tol = uequi.tol,
                                         alpha = alpha,
                                         dropout = as.numeric(c(dropout[treat1], dropout[treat2])),
-                                        typey = param$type_y,
+                                        typey = type_y_comp,
                                         adseq = param.d$adjust == "seq", k = k,
                                         arm_seed_T = arm_seed[,treat1],
                                         arm_seed_R = arm_seed[,treat2],
                                         TART = param$TAR_list[[treat1]],
                                         TARR = param$TAR_list[[treat2]],
                                         vareq = param.d$vareq)
-    } else if (param.d$ctype == "ROM" & param.d$lognorm == TRUE) {
+    } else if (param.d$ctype == "ROM" & param.d$distribution == "lnorm") {
       # Convert data to lognorm scale so we can perform a DOM test instead
       SigmaT <-  as.matrix(log(SigmaT/(muT %*% t(muT)) + 1))
       SigmaR <-  as.matrix(log(SigmaR/(muR %*% t(muR)) + 1))
@@ -223,21 +610,21 @@ test_studies <- function(nsim, n, comp, param, param.d, arm_seed, ncores){
                                         uequi_tol = log(uequi.tol),
                                          alpha = alpha,
                                          dropout = as.numeric(c(dropout[treat1], dropout[treat2])),
-                                         typey = param$type_y,
+                                         typey = type_y_comp,
                                          adseq = param.d$adjust == "seq", k = k,
                                          arm_seed_T = arm_seed[,treat1],
                                          arm_seed_R = arm_seed[,treat2],
                                          TART = param$TAR_list[[treat1]],
                                          TARR = param$TAR_list[[treat2]],
                                          vareq = param.d$vareq)
-    } else if (param.d$ctype == "ROM" & param.d$lognorm == FALSE) {
+    } else if (param.d$ctype == "ROM" & param.d$distribution == "norm") {
       result <- run_simulations_par_rom(nsim = nsim, n = n, muT = muT, muR = muR,
                                         SigmaT = as.matrix(SigmaT),
                                         SigmaR = as.matrix(SigmaR),
                                         lequi_tol = lequi.tol, uequi_tol = uequi.tol,
                                         alpha = alpha,
                                         dropout = as.numeric(c(dropout[treat1], dropout[treat2])),
-                                        typey = param$type_y,
+                                        typey = type_y_comp,
                                         adseq = param.d$adjust == "seq", k = k,
                                         arm_seed_T = arm_seed[,treat1],
                                         arm_seed_R = arm_seed[,treat2],
@@ -246,7 +633,7 @@ test_studies <- function(nsim, n, comp, param, param.d, arm_seed, ncores){
                                         vareq = param.d$vareq)
     } else {
       stop(paste("Error: Unsupported test type:", param.d$ctype,
-                 "with lognorm =", param.d$lognorm))
+                 "with distribution =", param.d$distribution))
     }
   } else if (param.d$dtype == "2x2") {
     # Derive mu
@@ -259,7 +646,7 @@ test_studies <- function(nsim, n, comp, param, param.d, arm_seed, ncores){
     sigmaB <- param$sigmaB # Between subjects variance
     sigmaB <- ifelse(is.na(sigmaB), if (length(SigmaW)==1) 2* sqrt(SigmaW) else 2 * sqrt(max(diag(SigmaW))), sigmaB) # Assumes to be at least the double of the max within variance
 
-    if (param.d$ctype == "DOM" & param.d$lognorm == FALSE) {
+    if (param.d$ctype == "DOM" & param.d$distribution == "norm") {
       result <- run_simulations_2x2_dom(nsim = nsim,
                                         n = n, muT = muT, muR = muR,
                                         SigmaW = as.matrix(SigmaW),
@@ -267,10 +654,10 @@ test_studies <- function(nsim, n, comp, param, param.d, arm_seed, ncores){
                                         alpha = alpha, sigmaB = sigmaB,
                                         dropout = dropout,
                                         Eper = param$Eper, Eco = param$Eco,
-                                        typey = param$type_y,
+                                        typey = type_y_comp,
                                         adseq = param.d$adjust == "seq", k = k,
                                         arm_seed = arm_seed[,comp])
-    } else if (param.d$ctype == "ROM" & param.d$lognorm == TRUE){
+    } else if (param.d$ctype == "ROM" & param.d$distribution == "lnorm"){
       # Convert data to lognorm scale
       SigmaW <-  as.matrix(log(SigmaW/(muR%*%t(muR))+1))
       sigmaB <-  sigmaB #log(sigmaB/(muR%*%t(muR))+1)
@@ -285,10 +672,10 @@ test_studies <- function(nsim, n, comp, param, param.d, arm_seed, ncores){
                                         alpha = alpha, sigmaB = sigmaB,
                                         dropout = dropout,
                                         Eper = param$Eper, Eco = param$Eco,
-                                        typey = param$type_y,
+                                        typey = type_y_comp,
                                         adseq = param.d$adjust == "seq", k = k,
                                         arm_seed = arm_seed[,comp])
-    } else if (param.d$ctype == "ROM" & param.d$lognorm == FALSE) {
+    } else if (param.d$ctype == "ROM" & param.d$distribution == "norm") {
       result <- run_simulations_2x2_rom(nsim = nsim,
                                         n = n, muT = muT, muR = muR,
                                         SigmaW = as.matrix(SigmaW),
@@ -297,12 +684,12 @@ test_studies <- function(nsim, n, comp, param, param.d, arm_seed, ncores){
                                         alpha = alpha, sigmaB = sigmaB,
                                         dropout = dropout,
                                         Eper = param$Eper, Eco = param$Eco,
-                                        typey = param$type_y,
+                                        typey = type_y_comp,
                                         adseq = param.d$adjust == "seq", k = k,
                                         arm_seed = arm_seed[,comp])
     } else {
     stop(paste("Error: Unsupported test type:", param.d$ctype,
-               "with lognorm =", param.d$lognorm))
+               "with distribution =", param.d$distribution))
     }
   } else {
     stop(paste("Error: Unsupported design:", param.d$dtype))
@@ -447,28 +834,6 @@ uniroot.integer.mod <-function (f, power, lower = lower, upper = upper, step.pow
 
 }
 
-#' @title mcsapply
-#' @description An mc-version of the sapply function. https://stackoverflow.com/questions/31050556/parallel-version-of-sapply
-#'
-#' @param X  vector of iterations
-#' @param FUN function
-#' @param ...  additional parameters to pass
-#' @param simplify  simplify array
-#' @param USE.NAMES  use names in array
-#'
-#' @return vector output
-#'
-#'@keywords internal
-mcsapply <- function (X, FUN, ..., simplify = TRUE, USE.NAMES = TRUE) {
-  FUN <- base::match.fun(FUN)
-  answer <- parallel::mclapply(X = X, FUN = FUN, ...)
-  if (USE.NAMES && base::is.character(X) && base::is.null(names(answer)))
-    base::names(answer) <- X
-  if (!base::isFALSE(simplify) && base::length(answer))
-    base::simplify2array(answer, higher = (simplify == "array"))
-  else answer
-}
-
 #' Helper function for conditional messages
 #'
 #' This function displays a message if the `verbose` parameter is set to `TRUE`.
@@ -482,4 +847,3 @@ mcsapply <- function (X, FUN, ..., simplify = TRUE, USE.NAMES = TRUE) {
 info_msg <- function(message, verbose) {
   if (verbose) message(message)
 }
-

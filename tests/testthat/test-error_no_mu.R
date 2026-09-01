@@ -18,10 +18,24 @@ test_that("error no mu_list provided", {
                                       power = 0.9,
                                       dtype = "parallel",
                                       ctype = "ROM",
+                                      distribution = "Log Normal",
                                       vareq = T,
-                                      lognorm = T,
                                       k=1,
                                       list_comparator =list(c("T","R1"),c("T","R2")),
                                       arm_names=c("T","R_1","R2"),
                                       ncores=1),"mu_list must be provided")
+})
+
+test_that("simulation controls reject invalid values", {
+  args <- list(
+    n = 10, distribution = "norm",
+    mu_list = list(T = c(y1 = 1), R = c(y1 = 1)),
+    sigma_list = list(T = c(y1 = .2), R = c(y1 = .2)),
+    list_comparator = list(T_vs_R = c("T", "R")),
+    list_lequi.tol = list(T_vs_R = c(y1 = -.5)),
+    list_uequi.tol = list(T_vs_R = c(y1 = .5)), nsim = 2
+  )
+  expect_error(do.call(simPower, c(args, alpha = 0)), "alpha")
+  expect_error(do.call(simPower, c(args, dropout = 1)), "dropout")
+  expect_error(do.call(simPower, c(args, rho = 1.1)), "rho")
 })

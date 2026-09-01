@@ -1,0 +1,407 @@
+---
+title: "Methodological Assumptions in SimTOST"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Methodological Assumptions in SimTOST}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, collapse = TRUE,
+                      comment = "#>", warning = FALSE, message = FALSE)
+library(SimTOST)
+```
+
+## Purpose and scope
+
+SimTOST estimates sample size by repeatedly simulating complete studies and
+applying the planned equivalence procedure to each simulated study. The same
+framework is available through `sampleSize()` for planning and `simPower()`
+for evaluating power at a fixed sample size. The `distribution` argument
+selects the outcome model:
+
+```{r distributions}
+c("norm", "lnorm", "pois", "nbinom")
+```
+
+This vignette describes the assumptions that should be considered when using
+these models. It is methodological guidance, not a substitute for a
+prespecified statistical analysis plan.
+
+## Assumptions shared by the simulation framework
+
+The following assumptions apply to all outcome distributions unless explicitly
+changed by the design inputs:
+
+* treatment arms, endpoint definitions, exposure periods, and equivalence
+  margins are specified before the simulation;
+* the supplied means, rates, variances, correlations, and dispersion values
+  represent the intended study population;
+* observations are generated according to the selected marginal outcome model;
+* dropout is represented through the supplied arm- or sequence-specific
+  dropout proportions and is non-informative with respect to the outcome;
+* the selected design (`dtype = "parallel"` or `dtype = "2x2"`) matches the
+  planned trial;
+* the number of simulations is sufficiently large for the desired Monte Carlo
+  precision; and
+* the equivalence margins, endpoint rule (`k`), and multiplicity adjustment
+  are the actual decision rules that will be used in the trial.
+
+For a fixed number of simulations, the reported power is a Monte Carlo
+estimate. Its confidence interval describes simulation uncertainty; it does
+not describe uncertainty in the assumed rates, means, variances, or
+correlations.
+
+## Continuous outcomes
+
+### Normal outcomes
+
+For `distribution = "norm"`, the simulated endpoint vector is multivariate
+normal within each treatment arm. The supplied `mu_list` contains arm- and
+endpoint-specific means. Variability is supplied through `varcov_list`, or is
+constructed from `sigma_list` and `cor_mat` (or the common correlation `rho`).
+
+The Normal model assumes:
+
+* continuous outcomes on the analysis scale;
+* approximately symmetric marginal distributions;
+* a common covariance structure within each arm for the simulated study;
+* a valid, positive-definite covariance matrix; and
+* no unmodelled skewness or heavy tails that would materially alter the TOST
+  statistic.
+
+The DOM test uses additive equivalence margins. The ROM test is appropriate
+when the scientific question concerns a ratio of means and the outcome scale
+supports that interpretation.
+
+### Log Normal outcomes
+
+For `distribution = "lnorm"`, the simulated outcomes are positive and
+right-skewed. The ratio-of-means procedure is applied on the scale specified by
+the package implementation and the supplied means and standard deviations
+must be interpreted consistently with that implementation.
+
+The Log Normal model assumes:
+
+* strictly positive outcomes;
+* approximately normal log-outcomes;
+* endpoint dependence represented through the supplied covariance or
+  correlation inputs; and
+* a ratio-based equivalence question rather than an additive one.
+
+The Log Normal model should not be used for outcomes with structural zeros or
+negative values without an explicit transformation and a corresponding
+reconsideration of the estimand.
+
+`distribution = "lnorm"` with `ctype = "DOM"` is rejected because the
+current implementation converts arithmetic means and covariances to the log
+scale and applies a DOM test there. That has a ratio interpretation on the
+original scale, not an additive difference interpretation. Use
+`distribution = "lnorm", ctype = "ROM"` for an arithmetic mean ratio,
+or use the normal distribution for an additive mean difference.
+
+### Equivalence hypotheses and estimands
+
+All tests use TOST. For lower and upper bounds L and U:
+
+[
+H_0: theta <= L or theta >= U, \\
+H_1: L < theta < U.
+]
+
+For normal continuous outcomes, theta is the mean difference for DOM and the
+mean ratio for ROM. For log-normal outcomes, the supported ROM analysis
+estimates the arithmetic mean ratio and tests it on the log scale. These
+estimands apply in both parallel and 2x2 designs.
+
+For Poisson and negative-binomial outcomes, the estimand is the event-rate
+ratio theta = lambda_T / lambda_R, where lambda_T and lambda_R are treatment
+and reference rates per unit exposure. The same TOST hypotheses apply on the
+log-rate-ratio scale. Negative-binomial dispersion changes the variance, not
+the estimand. In a 2x2 crossover, the rate ratio is estimated from paired
+log-rate contrasts averaged over the two sequences.
+
+## Count outcomes
+
+For count outcomes, `rate_list` supplies the event rate per unit exposure.
+For arm $a$ and endpoint $j$, the expected aggregate count is
+
+\[
+  \mathrm{E}(Y_{aj}) = n_a e_{aj}\lambda_{aj},
+\]
+
+where $n_a$ is the number of participants, $e_{aj}$ is exposure, and
+$\lambda_{aj}$ is the event rate. Exposure can be scalar, endpoint-specific,
+or arm-specific. Count equivalence is assessed through a rate ratio and
+log-rate-ratio TOST.
+
+### Poisson outcomes
+
+For `distribution = "pois"`, each marginal count follows a Poisson model:
+
+\[
+  Y_{aj} \sim \operatorname{Poisson}(n_a e_{aj}\lambda_{aj}).
+\]
+
+The Poisson assumption implies that the variance equals the mean. This is
+appropriate only when additional heterogeneity, clustering, and exposure
+variation are negligible or have already been incorporated into the model.
+Overdispersion caused by unobserved subject heterogeneity or recurrent-event
+dependence can make a Poisson analysis anticonservative.
+
+### Negative Binomial outcomes
+
+For `distribution = "nbinom"`, the marginal count follows a
+negative-binomial model with mean $\mu_{aj}=n_a e_{aj}\lambda_{aj}$ and
+dispersion parameter $\phi_{aj}$ such that the implementation uses the size
+parameter $1/\phi_{aj}$. The dispersion parameter is positive and controls the
+amount of variation beyond the Poisson variance.
+
+The Negative Binomial model assumes that the selected mean-dispersion
+relationship adequately represents overdispersion in the planned study. The
+dispersion should preferably be based on historical data, pilot data, or a
+clinically justified sensitivity range.
+
+## Dependence between endpoints
+
+### Continuous outcomes
+
+For continuous outcomes, endpoint dependence is represented directly through
+the covariance matrices in `varcov_list`, or through `sigma_list` together
+with `cor_mat` or `rho`. The covariance matrices must be compatible with the
+endpoint means and standard deviations and must be positive definite.
+
+### Count outcomes and the Gaussian copula
+
+For joint count simulations, `cor_mat` is interpreted as the correlation
+matrix of latent Gaussian variables. For each arm, SimTOST:
+
+1. draws a multivariate standard-normal latent vector with correlation
+   `cor_mat`;
+2. transforms each latent value to a uniform value using the standard normal
+   CDF; and
+3. transforms each uniform value through the Poisson or negative-binomial
+   inverse CDF for the specified arm and endpoint.
+
+This is a Gaussian-copula construction. It preserves the selected marginal
+count distributions while inducing dependence between endpoints. The entries
+of `cor_mat` are not Pearson correlations of the observed counts. Observed
+count correlations also depend on rates, exposure, and dispersion, and
+discreteness means that the raw-count correlation need not equal the supplied
+latent correlation.
+
+#### What `cor_mat` means in practice
+
+For endpoints \(j=1,\ldots,m\), the user-supplied matrix
+\(\boldsymbol{R}=\texttt{cor\_mat}\) is the correlation matrix of a latent
+standard-normal vector
+
+\[
+\boldsymbol{Z}_a \sim N_m(\boldsymbol{0},\boldsymbol{R})
+\]
+
+for arm \(a\). Each component is transformed as
+
+\[
+U_{aj}=\Phi(Z_{aj}), \qquad
+Y_{aj}=F^{-1}_{aj}(U_{aj}),
+\]
+
+where \(F_{aj}\) is the specified Poisson or negative-binomial marginal
+distribution. Thus, `cor_mat[1, 2] = 0.8` means that endpoints 1 and 2 have
+latent Gaussian correlation 0.8 before they are transformed into counts. It
+does not mean that their observed event counts will have Pearson correlation
+0.8.
+
+The matrix has the following interpretation:
+
+* diagonal elements must be 1;
+* off-diagonal elements describe dependence between endpoints within the same
+  arm or participant-level simulation unit;
+* the matrix does not describe dependence between test and reference arms;
+* it does not describe dependence between treatment comparisons; and
+* it does not replace the subject-level pairing used by the 2x2 crossover
+  analysis.
+
+An identity matrix, `diag(m)`, gives independent latent endpoint simulations.
+Positive correlations generally increase the probability that endpoint tests
+pass or fail together, which can materially change the probability of meeting
+the `k`-endpoint rule. The matrix should therefore be based on historical or
+pilot information, or varied in sensitivity analyses. It must be symmetric,
+positive definite, and have unit diagonal.
+
+The latent vectors are generated independently between arms. In a three-arm
+study, however, the same simulated test-arm outcomes are used in the
+test-versus-reference comparisons. Thus, joint power reflects both endpoint
+dependence and the shared test arm. An identity matrix, `diag(m)`, represents
+latent endpoint independence. In a 2x2 crossover, the same copula is applied
+to endpoint-specific subject effects and to the period-specific count
+innovations within a participant. This preserves the intended endpoint
+dependence while retaining the within-participant pairing.
+
+## Equivalence testing and multiplicity
+
+The equivalence decision is based on two one-sided tests. For a rate or mean
+ratio, the null and alternative are expressed using the supplied lower and
+upper equivalence limits. A study-level success criterion can require all
+endpoints or only `k` endpoints to pass for each comparison.
+
+When multiple comparisons and endpoints are simulated jointly, `adjust`
+controls the endpoint- and comparison-level significance allocation. Separate
+sample-size searches for individual comparisons do not generally provide the
+desired probability that all requirements succeed in the same trial. Joint
+planning is therefore recommended when the confirmatory conclusion requires a
+joint success event.
+
+## Design-specific assumptions
+
+For a parallel design, observations are generated independently between
+participants and treatment arms, apart from endpoint dependence specified by
+the model. Allocation and dropout determine the number of analyzable
+participants in each arm.
+
+### Normal and Log-Normal outcomes in a 2x2 crossover
+
+For continuous outcomes, `dtype = "2x2"` represents a balanced two-sequence,
+two-period crossover. The two treatment sequences are reference--test (RT)
+and test--reference (TR), and `n` is interpreted as the number of subjects per
+sequence before dropout. On the analysis scale, the data-generating model can
+be written for subject i, period p, and endpoint j as
+
+\[
+  Y_{ipj} = \mu_{a(i,p),j} + E_p + C_{a(i,p),s(i)} + b_i +
+  \varepsilon_{ipj},
+\]
+
+where a(i,p) is the treatment received, E_p is the period effect,
+C(a,s) is the carry-over effect determined by the preceding treatment,
+b_i is a subject-level effect, and the vector of
+within-subject errors has covariance matrix `SigmaW`. The same subject effect
+is used for both periods, which induces within-subject dependence and is
+important for the crossover comparison. `sigmaB` is the between-subject
+standard-deviation parameter on the scale used by the simulation kernel;
+`SigmaW` describes residual within-subject endpoint variability and
+correlation.
+
+For `distribution = "norm"` with `ctype = "DOM"`, the simulated outcomes
+are generated directly on the supplied continuous analysis scale. The
+equivalence test compares the treatment--reference difference with additive
+equivalence limits. The crossover kernel estimates treatment and reference
+means by averaging the corresponding sequence-period means and uses the
+within-subject variation in the TOST standard error.
+
+For `distribution = "lnorm"`, the supplied arithmetic means and standard
+deviations are converted to the corresponding log-scale means and covariance
+matrix before simulation. The equivalence limits are also transformed by the
+log function, and the DOM kernel is then applied on the log scale. Consequently,
+the resulting decision has a ratio interpretation on the original scale. A
+Log-Normal outcome must be strictly positive; structural zeros or negative
+values require a different model or a prespecified transformation.
+
+The continuous 2x2 implementation assumes that:
+
+* both sequences contain subjects observed in both periods after the supplied
+  sequence-level dropout adjustment;
+* treatment, period, and carry-over effects are additive on the analysis
+  scale, with no treatment-by-period interaction unless represented through
+  the supplied inputs;
+* the within-subject covariance matrix is valid and positive definite;
+* the subject effect is adequately represented by a normal random effect and
+  is independent of the residual errors; and
+* dropout is non-informative and reduces the available subjects by sequence;
+  period-specific missing observations are not modelled by this continuous
+  kernel.
+
+`Eper = c(E_1, E_2)` specifies the two period effects. `Eco` is ordered as
+`c(reference_carryover, treatment_carryover)`: in the RT sequence, treatment
+in period 2 receives the reference carry-over effect, whereas in the TR
+sequence, reference in period 2 receives the treatment carry-over effect.
+Under balanced sequences and no differential carry-over, the treatment effect
+is identified after averaging the two sequence-specific estimates and the
+period effect cancels. Non-zero carry-over values change the simulated means
+and therefore change the estimand being evaluated; they should be prespecified
+and subjected to sensitivity analysis.
+
+Endpoint dependence for these continuous crossover simulations is supplied
+directly through `SigmaW` (or through `sigma_list` and `cor_mat` when the
+covariance matrix is constructed). This differs from the count implementation,
+where `cor_mat` is used as a latent Gaussian-copula correlation.
+
+### Poisson and Negative Binomial outcomes in a 2x2 crossover
+
+For a 2x2 crossover design, the count extension uses a paired log-link rate
+analysis. Each complete participant contributes one count under the test
+treatment and one count under the reference treatment. The count-generating
+model is, conditionally on the subject effect,
+
+\[
+Y_{isp} \sim \begin{cases}
+\operatorname{Poisson}(e_{isp}\lambda_{isp}), &\text{Poisson},\\
+\operatorname{NegBin}(e_{isp}\lambda_{isp},\phi_{isp}),
+  &\text{Negative Binomial},
+\end{cases}
+\]
+
+with
+
+\[
+\log(\lambda_{isp}) = \log(\lambda_{i}) + E_{p} + C_{isp} + b_{is},
+\qquad b_{is}\sim N(0,\sigma_B^2).
+\]
+
+Here, `exposure` is the offset \(e_{isp}\), `Eper = c(E_1,E_2)` contains
+period effects, `Eco = c(C_R,C_T)` contains reference- and treatment-
+carry-over effects, and `sigmaB` is the standard deviation of the subject
+random intercept on the log-rate scale. The negative-binomial dispersion is
+used in the subject-period count generation through the package's
+size-parameter convention \(\operatorname{size}=1/\phi\).
+
+The analysis forms a log-rate contrast within each complete participant,
+averages the contrasts within each sequence, and then averages the two
+sequence estimates. This removes the period effect under a balanced 2x2
+design. The analysis applies the corresponding carry-over correction using
+`Eco`; therefore, nonzero carry-over values change both the generated counts
+and the estimand adjustment. Exposure enters the contrast as an offset rather
+than being treated as an additional treatment effect. The standard error is
+estimated from the empirical variance of the subject-level contrasts, so the
+Poisson or negative-binomial sampling variation and the effect of the
+specified dispersion are retained.
+
+The within-subject contrast removes the subject random intercept from the
+treatment effect. Consequently, `sigmaB` affects the simulated paired counts
+but should not be interpreted as an additional treatment-effect variance in
+the paired contrast. This is a conditional, paired rate-ratio analysis; it is
+not a marginal population-average model and it does not estimate an
+independent carry-over coefficient. If substantial carry-over is expected,
+the design and estimand should be reconsidered because correction relies on
+the supplied `Eco` values.
+
+Sequence-specific dropout is applied before the paired analysis. Participants
+missing either period are excluded from the within-subject contrast. The
+method therefore assumes non-informative dropout and requires enough complete
+participants in both sequences. A crossover design should not be used merely
+as a computational substitute for a parallel design.
+
+For multiple endpoints in either design, the endpoint-specific analyses are
+combined using `k`, while the Gaussian copula determines the joint simulated
+success event. Thus, `cor_mat` is used by both the joint parallel engine and
+the multi-endpoint 2x2 engine. The supplied matrix remains a latent Gaussian
+correlation, not necessarily the Pearson correlation of the observed counts.
+
+## Practical sensitivity analyses
+
+Because power depends on assumptions that are rarely known exactly, planning
+should examine sensitivity to:
+
+* event rates or continuous-outcome means;
+* exposure and dropout;
+* standard deviations or covariance matrices;
+* negative-binomial dispersion;
+* endpoint correlations or the latent count copula correlation;
+* the number of required endpoints `k`; and
+* the multiplicity adjustment.
+
+The selected scenario should be justified in the statistical analysis plan,
+and the final reported sample size should account for Monte Carlo uncertainty
+and any operational inflation required by the study.

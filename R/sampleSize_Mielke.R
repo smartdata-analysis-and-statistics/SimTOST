@@ -12,10 +12,13 @@
 #' Simulated test statistics are based on multivariate normal distribution assumptions,
 #' and the function supports k-out-of-m success criteria for regulatory approval.
 #'
-#' Type I error control is achieved through multiplicity adjustments as proposed by
-#' Lehmann and Romano (2005) to ensure rigorous error rate management. This approach
-#' is particularly relevant for biosimilar studies, where sample size estimation must
-#' account for multiple comparisons across endpoints, doses, or populations.
+#' The adjustment options follow the multiple-endpoint framework of Mielke et al.
+#' (2018). In particular, \code{adjust = "k"} uses the weak k-adjustment
+#' k * alpha / m, whereas \code{adjust = "t"} uses the strong k-out-of-m
+#' adjustment \code{alpha / (m - k + 1)} for partial null configurations.
+#' This distinction is particularly relevant for biosimilar studies, where
+#' sample size estimation must account for multiple comparisons across
+#' endpoints, doses, or populations.
 #'
 #' @param N Integer specifying the number of subjects per sequence.
 #' @param m Integer specifying the number of endpoints.
@@ -36,7 +39,9 @@
 #' @param alpha Numeric specifying the significance level.
 #' @param adjust Character specifying the method for multiplicity adjustment.
 #' Options include \code{"no"} for no adjustment, \code{"bon"} for Bonferroni correction,
-#' and \code{"k"} for k-adjustment.
+#' \code{"k"} for Mielke's weak k-adjustment, and \code{"t"} for the strong
+#' k-out-of-m adjustment. Legacy \code{"pc"} and
+#' \code{"partial-conjunction"} labels are accepted as aliases for \code{"t"}.
 #'
 #' @references
 #' Kong, L., Kohberger, R. C., & Koch, G. G. (2004). Type I Error and Power in
@@ -50,12 +55,16 @@
 #' Hypothesis Testing in Biosimilar Development. \emph{Statistics in Biopharmaceutical Research, 10}(1), 39–49.
 #'
 #' @return
-#' A numeric vector representing a realization of the simulated test statistic for the given setting.
+#' An object of class `simss_mielke`. It contains the legacy fields `SS` and
+#' `power.a`, together with `n_per_sequence`, `n_total`, `power`, and the
+#' target and input parameters. Use `summary()` for a data-frame summary,
+#' `print()` for a concise report, or `as.numeric()` to extract `SS`.
 #'
 #'
 #' @keywords internal
 sign_Mielke <- function(N, m, k, R, sigma, true.diff, equi.tol = log(1.25),
                         design, alpha = 0.05, adjust = "no") {
+  adjust <- .normalize_adjustment(adjust, allow_sequential = FALSE)
   if (length(true.diff) == 1) {
     true.diff <- true.diff * rep(1, m)
   }
@@ -74,16 +83,18 @@ sign_Mielke <- function(N, m, k, R, sigma, true.diff, equi.tol = log(1.25),
     alpha <- k*alpha/m
   } else if (adjust == "bon") {
     alpha <- alpha/m
+  } else if (adjust == "t") {
+    alpha <- alpha/(m - k + 1)
   } else if (adjust == "no") {
     alpha <- alpha
   } # calculate the test statistics (as stated in the paper)
   if (design == "parallel") {
-    Z1 <- t(T.matrix) %*% test.raw + sqrt(N/2)/sigma * (equi.tol - true.diff)
-    Z2 <- -t(T.matrix) %*% test.raw + sqrt(N/2)/sigma * (equi.tol + true.diff)
+    Z1 <- crossprod(T.matrix, test.raw) + sqrt(N/2)/sigma * (equi.tol - true.diff)
+    Z2 <- -crossprod(T.matrix, test.raw) + sqrt(N/2)/sigma * (equi.tol + true.diff)
   }
   if (design == "22co") {
-    Z1 <- t(T.matrix) %*% test.raw + sqrt(2*N)/sigma * (equi.tol - true.diff)
-    Z2 <- -t(T.matrix) %*% test.raw + sqrt(2*N)/sigma * (equi.tol + true.diff)
+    Z1 <- crossprod(T.matrix, test.raw) + sqrt(2*N)/sigma * (equi.tol - true.diff)
+    Z2 <- -crossprod(T.matrix, test.raw) + sqrt(2*N)/sigma * (equi.tol + true.diff)
   }
   min.Z <- apply(cbind(Z1,Z2),1,min)
   #decide for each endpoints
@@ -121,7 +132,9 @@ sign_Mielke <- function(N, m, k, R, sigma, true.diff, equi.tol = log(1.25),
 #' @param alpha Numeric specifying the significance level. Default is \code{0.05}.
 #' @param adjust Character specifying the method for multiplicity adjustment.
 #' Options include \code{"no"} for no adjustment, \code{"bon"} for Bonferroni correction,
-#' and \code{"k"} for k-adjustment.
+#' \code{"k"} for Mielke's weak k-adjustment, and \code{"t"} for the strong
+#' k-out-of-m adjustment. Legacy \code{"pc"} and
+#' \code{"partial-conjunction"} labels are accepted as aliases for \code{"t"}.
 #' @param nsim Integer specifying the number of simulations to perform. Default is \code{10,000}.
 #'
 #' @return
@@ -201,13 +214,15 @@ power_dom <- function(seed, mu_test, mu_control, sigma_test, sigma_control,
 #' @param equi.tol Numeric. Equivalence margin; the equivalence interval is defined as (-equi.tol, +equi.tol).
 #' @param design Character. Study design, either "22co" for a 2x2 crossover design or "parallel" for a parallel groups design.
 #' @param alpha Numeric. Significance level for the hypothesis test.
-#' @param adjust Character. Method for multiplicity adjustment; options are "no" (no adjustment), "bon" (Bonferroni adjustment), and "k" (k-adjustment).
+#' @param adjust Character. Method for multiplicity adjustment: "no" (none),
+#' "bon" (Bonferroni), "k" (Mielke's weak k-adjustment), or "t"
+#' (Mielke's strong k-out-of-m adjustment; legacy "pc" aliases are accepted).
 #' @param seed Integer. Random seed for reproducibility.
 #' @param nsim Integer. Number of simulations to run for power estimation (default: 10,000).
 #'
 #' @details This function uses the method proposed by Mielke et al. (2018) to estimate the sample size required to achieve the desired power level in studies with multiple correlated endpoints. The function iteratively increases sample size until the target power is reached or the maximum allowable sample size (Nmax) is exceeded. The approach accounts for endpoint correlation and supports adjustments for multiple testing using various correction methods.
 #'
-#' @return A named vector containing:
+#' @return An object of class `simss_mielke`, containing:
 #' \describe{
 #'   \item{"power.a"}{Achieved power with the estimated sample size.}
 #'   \item{"SS"}{Required sample size per sequence to achieve the target power.}
@@ -244,5 +259,14 @@ sampleSize_Mielke <- function(power, Nmax, m, k, rho, sigma, true.diff,
       break
     }
   }
-  return(c(power.a = power.esti, SS = Ni))
+  out <- list(power.a = unname(power.esti), power = unname(power.esti),
+              SS = unname(Ni), n_per_sequence = unname(Ni),
+              n_total = unname(2L * Ni),
+              target_power = power, parameters = list(
+                m = m, k = k, rho = rho, sigma = sigma,
+                true.diff = true.diff, equi.tol = equi.tol,
+                design = design, alpha = alpha, adjust = adjust,
+                nsim = nsim))
+  class(out) <- "simss_mielke"
+  out
 }

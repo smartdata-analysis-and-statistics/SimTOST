@@ -27,7 +27,7 @@ As an illustrative example, we consider published data from the phase-1 trial [N
 ```{r, echo=FALSE}
 data <- data.frame("PK measure" = c("AUCinf ($\\mu$g*h/mL)","AUClast ($\\mu$g*h/mL)","Cmax ($\\mu$g/mL)"),
                    "SB2" = c("38,703 $\\pm$ 11,114", "36,862 $\\pm$ 9133", "127.0 $\\pm$ 16.9"), 
-                   "EU-INF" = c("39,360  $\\pm$ 12,332", "37,022 $\\pm$ 9398", "126.2 $\\pm$ 17.9"))
+                   "EU_REF" = c("39,360  $\\pm$ 12,332", "37,022 $\\pm$ 9398", "126.2 $\\pm$ 17.9"))
 
 kableExtra::kable_styling(kableExtra::kable(data, 
                                             col.names = c("PK measure", "SB2", "Remicade (EU)"),
@@ -62,31 +62,18 @@ library(SimTOST)
   nsim = 1000                                 # Number of stochastic simulations
 ))
 
-# Sample size calculation for AUClast
-(sim_AUClast <- sampleSize(
-  power = 0.9,                                # Target power
-  alpha = 0.05,                               # Significance level
-  arm_names = c("SB2", "EU_Remicade"),        # Names of trial arms
-  list_comparator = list("EMA" = c("SB2", "EU_Remicade")),  # Comparator configuration
-  mu_list = list("SB2" = 36862, "EU_Remicade" = 37022),     # Mean values
-  sigma_list = list("SB2" = 9133, "EU_Remicade" = 9398),    # Standard deviation values
-  list_lequi.tol = list("EMA" = 0.80),        # Lower equivalence margin
-  list_uequi.tol = list("EMA" = 1.25),        # Upper equivalence margin
-  nsim = 1000                                 # Number of stochastic simulations
+# The comparison, margins, and simulation settings are unchanged. Update the
+# result with the endpoint-specific means and standard deviations only.
+(sim_AUClast <- update(
+  sim_AUCinf,
+  mu_list = list("SB2" = 36862, "EU_Remicade" = 37022),
+  sigma_list = list("SB2" = 9133, "EU_Remicade" = 9398)
 ))
 
-
-# Sample size calculation for Cmax
-(sim_Cmax <- sampleSize(
-  power = 0.9,                                # Target power
-  alpha = 0.05,                               # Significance level
-  arm_names = c("SB2", "EU_Remicade"),        # Names of trial arms
-  list_comparator = list("EMA" = c("SB2", "EU_Remicade")),  # Comparator configuration
-  mu_list = list("SB2" = 127.0, "EU_Remicade" = 126.2),     # Mean values
-  sigma_list = list("SB2" = 16.9, "EU_Remicade" = 17.9),    # Standard deviation values
-  list_lequi.tol = list("EMA" = 0.80),        # Lower equivalence margin
-  list_uequi.tol = list("EMA" = 1.25),        # Upper equivalence margin
-  nsim = 1000                                 # Number of stochastic simulations
+(sim_Cmax <- update(
+  sim_AUClast,
+  mu_list = list("SB2" = 127.0, "EU_Remicade" = 126.2),
+  sigma_list = list("SB2" = 16.9, "EU_Remicade" = 17.9)
 ))
 ```
 
@@ -130,7 +117,7 @@ Sample size calculation can then be implemented as follows:
                     dtype = "parallel",
                     ctype = "ROM",
                     vareq = TRUE,
-                    lognorm = TRUE,
+                    distribution = "lnorm",
                     nsim = 1000,
                     seed = 1234))
 ```
@@ -161,7 +148,7 @@ If correlations differ between endpoints, they can be specified individually usi
                            dtype = "parallel",
                            ctype = "ROM",
                            vareq = TRUE,
-                           lognorm = TRUE,
+                           distribution = "lnorm",
                            nsim = 1000,
                            seed = 1234))
 ```
@@ -185,7 +172,7 @@ Imagine that we are interested in demonstrating equivalence for at least $k$ pri
   dtype = "parallel",        # Trial design type
   ctype = "ROM",             # Test type (Ratio of Means)
   vareq = TRUE,              # Assume equal variances
-  lognorm = TRUE,            # Log-normal distribution assumption
+  distribution = "lnorm",            # Log-normal distribution assumption
   k = c("EMA" = 1),          # Demonstrate equivalence for at least 1 endpoint
   adjust = "bon",            # Bonferroni adjustment method
   nsim = 1000,               # Number of stochastic simulations
@@ -207,7 +194,7 @@ As mentioned in [the Introduction](../articles/intropkg.html), Bonferroni adjust
   dtype = "parallel",        # Trial design type
   ctype = "ROM",             # Test type (Ratio of Means)
   vareq = TRUE,              # Assume equal variances
-  lognorm = TRUE,            # Log-normal distribution assumption
+  distribution = "lnorm",            # Log-normal distribution assumption
   k = c("EMA" = 1),          # Demonstrate equivalence for at least 1 endpoint
   adjust = "sid",            # Sidak adjustment method
   nsim = 1000,               # Number of stochastic simulations
@@ -230,7 +217,7 @@ When $k>1$, Bonferroni and Sidak correction methods become increasingly conserva
   dtype = "parallel",        # Trial design type
   ctype = "ROM",             # Test type (Ratio of Means)
   vareq = TRUE,              # Assume equal variances
-  lognorm = TRUE,            # Log-normal distribution assumption
+  distribution = "lnorm",            # Log-normal distribution assumption
   k = c("EMA" = 2),          # Demonstrate equivalence for at least 2 endpoints
   adjust = "k",              # Adjustment method
   nsim = 1000,               # Number of stochastic simulations
@@ -266,7 +253,7 @@ The following code demonstrates how to apply hierarchical testing in SimTOST
   dtype           = "parallel",                       # Trial design type
   ctype           = "ROM",                            # Test type (Ratio of Means)
   vareq           = TRUE,                             # Assume equal variances
-  lognorm         = TRUE,                             # Log-normal distribution assumption
+  distribution = "lnorm",                             # Log-normal distribution assumption
   adjust          = "seq",                            # Sequential adjustment method
   type_y          = c("AUCinf" = 2, "AUClast" = 2, "Cmax" = 1), # Endpoint types
   k               = c("EMA" = 1),                     # Demonstrate equivalence for all 3 endpoints
