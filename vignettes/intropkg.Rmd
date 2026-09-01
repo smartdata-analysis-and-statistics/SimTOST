@@ -120,6 +120,9 @@ This means that the overall probability of making any false positive error, also
 
 To address this issue, adjustments to the significance level are necessary for multiple endpoint comparisons for which various methods have been proposed. In SimTOST, the following approaches are included:
 
+The `t` adjustment described below is the strong k-out-of-m procedure for
+partial-conjunction decisions and is distinct from the weak `k` adjustment.
+
 
 ### Bonferroni correction
 The most common and easiest procedure for multiplicity adjustment to control the FWER is the Bonferroni method. Each hypothesis is tested at level
