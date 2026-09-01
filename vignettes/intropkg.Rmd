@@ -130,20 +130,39 @@ where $m$ is the total number of tests. Although simple, this method is highly c
 
 In the [sampleSize()](../reference/sampleSize.html) function, the Bonferroni correction can be applied by setting `adjust = "bon"`.
 
-### Mielke's t-adjustment for k-of-m decisions
-When the decision rule requires at least `k` of `m` endpoints, the null
-hypothesis is a partial-conjunction hypothesis. The Bonferroni calibration for
-this rule uses the `m-k+1` boundary endpoints:
+### T adjustment: Mielke's strong k-out-of-m correction
+
+When the decision rule requires equivalence for at least `k` of `m` endpoints,
+the null hypothesis is a partial-conjunction hypothesis. In this setting,
+`adjust = "t"` applies Mielke et al.'s strong k-out-of-m calibration. The
+significance level for each relevant boundary endpoint is:
 
 $$\alpha_{t}= \frac{\alpha}{m-k+1}$$
 
-Mielke et al. (2018) [@mielke_sample_2018] describe this as the strong
-k-out-of-m adjustment for the partial-conjunction decision. It is available
-in `sampleSize()`, `simPower()`, and the count-outcome functions with
-`adjust = "t"`; the legacy `"pc"` label remains an alias. The effective `m`
-is determined separately for each comparator from the endpoints actually
-selected or inferred. The `adjust = "k"` option, in contrast, uses
-`k * alpha / m` and provides weak complete-null control.
+where `m` is the number of selected endpoints and `k` is the minimum number
+that must demonstrate equivalence. For example, with `m = 3`, `k = 2`, and
+`alpha = 0.05`, the endpoint-wise level is `0.025`. This calibration controls
+the Type I error rate for the partial-conjunction decision, including cases in
+which only some endpoints satisfy the null hypothesis [@mielke_sample_2018].
+
+The adjustment is available in `sampleSize()`, `simPower()`, and the
+count-outcome functions:
+
+```{r t-adjustment-example, eval = FALSE}
+sampleSize(
+  ..., k = 2, adjust = "t"
+)
+
+simPower(
+  ..., k = 2, adjust = "t"
+)
+```
+
+The effective `m` is determined separately for each comparator from the
+endpoints actually selected or inferred. The legacy `adjust = "pc"` and
+`adjust = "partial-conjunction"` labels are accepted as aliases for `"t"`.
+In contrast, `adjust = "k"` uses `k * alpha / m` and provides weak
+complete-null control.
 
 ### Sidak correction
 
