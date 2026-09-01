@@ -49,25 +49,37 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
+      <a href="../articles/continuous_crossover.html">Bioequivalence Tests for 2x2 Cross-Over Trial Designs with Log-Normal Data</a>
+    </li>
+    <li>
+      <a href="../articles/continuous_parallel_2A1E.html">Bioequivalence Tests for Parallel Trial Designs: 2 Arms, 1 Endpoint</a>
+    </li>
+    <li>
+      <a href="../articles/continuous_parallel_2A3E.html">Bioequivalence Tests for Parallel Trial Designs: 2 Arms, 3 Endpoints</a>
+    </li>
+    <li>
+      <a href="../articles/continuous_parallel_3A1E.html">Bioequivalence Tests for Parallel Trial Designs: 3 Arms, 1 Endpoint</a>
+    </li>
+    <li>
+      <a href="../articles/continuous_parallel_3A3E.html">Bioequivalence Tests for Parallel Trial Designs: 3 Arms, 3 Endpoints</a>
+    </li>
+    <li>
+      <a href="../articles/continuous_parallel.html">Bioequivalence Tests for Parallel Trial Designs with Log-Normal Data</a>
+    </li>
+    <li>
+      <a href="../articles/count_parallel_3A3E.html">Count-Outcome Equivalence: Parallel Design with 3 Arms and 3 Endpoints</a>
+    </li>
+    <li>
+      <a href="../articles/count.html">Count Outcomes</a>
+    </li>
+    <li>
       <a href="../articles/intropkg.html">Introduction</a>
     </li>
     <li>
-      <a href="../articles/sampleSize_crossover.html">Bioequivalence Tests for 2x2 Cross-Over Trial Designs with Log-Normal Data</a>
+      <a href="../articles/methodological_assumptions.html">Methodological Assumptions in SimTOST</a>
     </li>
     <li>
-      <a href="../articles/sampleSize_parallel_2A1E.html">Bioequivalence Tests for Parallel Trial Designs: 2 Arms, 1 Endpoint</a>
-    </li>
-    <li>
-      <a href="../articles/sampleSize_parallel_2A3E.html">Bioequivalence Tests for Parallel Trial Designs: 2 Arms, 3 Endpoints</a>
-    </li>
-    <li>
-      <a href="../articles/sampleSize_parallel_3A1E.html">Bioequivalence Tests for Parallel Trial Designs: 3 Arms, 1 Endpoint</a>
-    </li>
-    <li>
-      <a href="../articles/sampleSize_parallel_3A3E.html">Bioequivalence Tests for Parallel Trial Designs: 3 Arms, 3 Endpoints</a>
-    </li>
-    <li>
-      <a href="../articles/sampleSize_parallel.html">Bioequivalence Tests for Parallel Trial Designs with Log-Normal Data</a>
+      <a href="../articles/workflow.html">A Step-by-Step Simulation Validation Workflow</a>
     </li>
   </ul>
 </li>
@@ -120,11 +132,11 @@ is done using the following interval (null) hypothesis:</p>
 <p>Null Hypothesis
 (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>H</mi><mn>0</mn></msub><annotation encoding="application/x-tex">H_0</annotation></semantics></math>):
 At least one endpoint does not meet the equivalence criteria:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>H</mi><mn>0</mn></msub><mo>:</mo><msubsup><mi>m</mi><mi>T</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>j</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><mo>−</mo><msubsup><mi>m</mi><mi>R</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>j</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><mo>≤</mo><msub><mi>δ</mi><mi>L</mi></msub><mspace width="0.222em"></mspace><mspace width="0.222em"></mspace><mtext mathvariant="normal">or</mtext><mspace width="0.222em"></mspace><mspace width="0.222em"></mspace><msubsup><mi>m</mi><mi>T</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>j</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><mo>−</mo><msubsup><mi>m</mi><mi>R</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>j</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><mo>≥</mo><msub><mi>δ</mi><mi>U</mi></msub><mspace width="1.0em"></mspace><mtext mathvariant="normal">for at least one</mtext><mspace width="0.278em"></mspace><mi>j</mi></mrow><annotation encoding="application/x-tex">H_0: m_T^{(j)} - m_R^{(j)} \le \delta_L ~~ \text{or}~~ m_T^{(j)} - m_R^{(j)} \ge \delta_U \quad \text{for at least one}\;j</annotation></semantics></math></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>H</mi><mn>0</mn></msub><mo>:</mo><msubsup><mi>m</mi><mi>T</mi><mrow><mo stretchy="false" form="prefix">(</mo><mi>j</mi><mo stretchy="false" form="postfix">)</mo></mrow></msubsup><mo>−</mo><msubsup><mi>m</mi><mi>R</mi><mrow><mo stretchy="false" form="prefix">(</mo><mi>j</mi><mo stretchy="false" form="postfix">)</mo></mrow></msubsup><mo>≤</mo><msub><mi>δ</mi><mi>L</mi></msub><mspace width="0.222em"></mspace><mspace width="0.222em"></mspace><mtext mathvariant="normal">or</mtext><mspace width="0.222em"></mspace><mspace width="0.222em"></mspace><msubsup><mi>m</mi><mi>T</mi><mrow><mo stretchy="false" form="prefix">(</mo><mi>j</mi><mo stretchy="false" form="postfix">)</mo></mrow></msubsup><mo>−</mo><msubsup><mi>m</mi><mi>R</mi><mrow><mo stretchy="false" form="prefix">(</mo><mi>j</mi><mo stretchy="false" form="postfix">)</mo></mrow></msubsup><mo>≥</mo><msub><mi>δ</mi><mi>U</mi></msub><mspace width="1.0em"></mspace><mtext mathvariant="normal">for at least one</mtext><mspace width="0.278em"></mspace><mi>j</mi></mrow><annotation encoding="application/x-tex">H_0: m_T^{(j)} - m_R^{(j)} \le \delta_L ~~ \text{or}~~ m_T^{(j)} - m_R^{(j)} \ge \delta_U \quad \text{for at least one}\;j</annotation></semantics></math></p>
 <p>Alternative Hypothesis
 (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>H</mi><mn>1</mn></msub><annotation encoding="application/x-tex">H_1</annotation></semantics></math>):
 All endpoints meet the equivalence criteria:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>H</mi><mn>1</mn></msub><mo>:</mo><msub><mi>δ</mi><mi>L</mi></msub><mo>&lt;</mo><msubsup><mi>m</mi><mi>T</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>j</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><mo>−</mo><msubsup><mi>m</mi><mi>R</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>j</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><mo>&lt;</mo><msub><mi>δ</mi><mi>U</mi></msub><mspace width="1.0em"></mspace><mtext mathvariant="normal">for all</mtext><mspace width="0.278em"></mspace><mi>j</mi></mrow><annotation encoding="application/x-tex">H_1: \delta_L&lt;m_{T}^{(j)}-m_{R}^{(j)} &lt;\delta_U \quad\text{for all}\;j</annotation></semantics></math></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>H</mi><mn>1</mn></msub><mo>:</mo><msub><mi>δ</mi><mi>L</mi></msub><mo>&lt;</mo><msubsup><mi>m</mi><mi>T</mi><mrow><mo stretchy="false" form="prefix">(</mo><mi>j</mi><mo stretchy="false" form="postfix">)</mo></mrow></msubsup><mo>−</mo><msubsup><mi>m</mi><mi>R</mi><mrow><mo stretchy="false" form="prefix">(</mo><mi>j</mi><mo stretchy="false" form="postfix">)</mo></mrow></msubsup><mo>&lt;</mo><msub><mi>δ</mi><mi>U</mi></msub><mspace width="1.0em"></mspace><mtext mathvariant="normal">for all</mtext><mspace width="0.278em"></mspace><mi>j</mi></mrow><annotation encoding="application/x-tex">H_1: \delta_L&lt;m_{T}^{(j)}-m_{R}^{(j)} &lt;\delta_U \quad\text{for all}\;j</annotation></semantics></math></p>
 <p>Here,
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>m</mi><mi>T</mi></msub><annotation encoding="application/x-tex">m_T</annotation></semantics></math>
 and
@@ -136,7 +148,7 @@ limits,
 and
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>δ</mi><mi>u</mi></msub><annotation encoding="application/x-tex">\delta_u</annotation></semantics></math>,
 are typically chosen to be symmetric, such that
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>δ</mi><mo>=</mo><mo>−</mo><msub><mi>δ</mi><mi>L</mi></msub><mo>=</mo><msub><mi>δ</mi><mi>U</mi></msub></mrow><annotation encoding="application/x-tex">\delta = - \delta_L = \delta_U</annotation></semantics></math>.</p>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>δ</mi><mo>=</mo><mi>−</mi><msub><mi>δ</mi><mi>L</mi></msub><mo>=</mo><msub><mi>δ</mi><mi>U</mi></msub></mrow><annotation encoding="application/x-tex">\delta = - \delta_L = \delta_U</annotation></semantics></math>.</p>
 <p>The null hypothesis
 (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>H</mi><mn>0</mn></msub><annotation encoding="application/x-tex">H_0</annotation></semantics></math>)
 is rejected if, and only if, all null hypotheses associated with the
@@ -146,14 +158,14 @@ primary endpoints are rejected at a significance level of
 This ensures that equivalence is established across all endpoints
 simultaneously.</p>
 <p>The DOM test can be implemented in <a href="../reference/sampleSize.html">sampleSize()</a> by setting
-<code>ctype = "DOM"</code> and <code>lognorm = FALSE</code>.</p>
+<code>ctype = "DOM"</code> and <code>distribution = "norm"</code>.</p>
 <p>For pharmacokinetic (PK) outcomes, such as the area under the curve
 (AUC) and maximum concentration (Cmax), log-transformation is commonly
 applied to achieve normality. To perform this transformation, the
 logarithm of the geometric mean should be provided to
 <code>mu_list</code>, while the logarithmic variance can be derived from
 the coefficient of variation (CV) using the formula:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">Logarithmic Variance</mtext><mo>=</mo><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>+</mo><msup><mtext mathvariant="normal">CV</mtext><mn>2</mn></msup><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">Logarithmic Variance</mtext><mo>=</mo><mrow><mi mathvariant="normal">log</mi><mo>⁡</mo></mrow><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>+</mo><msup><mtext mathvariant="normal">CV</mtext><mn>2</mn></msup><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
 \text{Logarithmic Variance} = \log\left(1 + {\text{CV}^2}\right)
 </annotation></semantics></math></p>
 <p>Equivalence limits must also be specified on the log scale to align
@@ -167,11 +179,11 @@ with the transformed data.</p>
 <p>Null Hypothesis
 (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>H</mi><mn>0</mn></msub><annotation encoding="application/x-tex">H_0</annotation></semantics></math>):
 At least one endpoint does not meet the equivalence criteria:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>H</mi><mn>0</mn></msub><mo>:</mo><mfrac><msubsup><mi>μ</mi><mi>T</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>j</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><msubsup><mi>μ</mi><mi>R</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>j</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup></mfrac><mo>≤</mo><msub><mi>E</mi><mi>L</mi></msub><mspace width="0.222em"></mspace><mspace width="0.222em"></mspace><mtext mathvariant="normal">or</mtext><mspace width="0.222em"></mspace><mspace width="0.222em"></mspace><mfrac><msubsup><mi>μ</mi><mi>T</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>j</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><msubsup><mi>μ</mi><mi>R</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>j</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup></mfrac><mo>≥</mo><msub><mi>E</mi><mi>U</mi></msub><mspace width="1.0em"></mspace><mtext mathvariant="normal">for at least one</mtext><mspace width="0.278em"></mspace><mi>j</mi></mrow><annotation encoding="application/x-tex">H_0: \frac{\mu_T^{(j)}}{\mu_R^{(j)}} \le E_L ~~ \text{or}~~ \frac{\mu_T^{(j)}}{\mu_R^{(j)}} \ge E_U \quad \text{for at least one}\;j</annotation></semantics></math></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>H</mi><mn>0</mn></msub><mo>:</mo><mfrac><msubsup><mi>μ</mi><mi>T</mi><mrow><mo stretchy="false" form="prefix">(</mo><mi>j</mi><mo stretchy="false" form="postfix">)</mo></mrow></msubsup><msubsup><mi>μ</mi><mi>R</mi><mrow><mo stretchy="false" form="prefix">(</mo><mi>j</mi><mo stretchy="false" form="postfix">)</mo></mrow></msubsup></mfrac><mo>≤</mo><msub><mi>E</mi><mi>L</mi></msub><mspace width="0.222em"></mspace><mspace width="0.222em"></mspace><mtext mathvariant="normal">or</mtext><mspace width="0.222em"></mspace><mspace width="0.222em"></mspace><mfrac><msubsup><mi>μ</mi><mi>T</mi><mrow><mo stretchy="false" form="prefix">(</mo><mi>j</mi><mo stretchy="false" form="postfix">)</mo></mrow></msubsup><msubsup><mi>μ</mi><mi>R</mi><mrow><mo stretchy="false" form="prefix">(</mo><mi>j</mi><mo stretchy="false" form="postfix">)</mo></mrow></msubsup></mfrac><mo>≥</mo><msub><mi>E</mi><mi>U</mi></msub><mspace width="1.0em"></mspace><mtext mathvariant="normal">for at least one</mtext><mspace width="0.278em"></mspace><mi>j</mi></mrow><annotation encoding="application/x-tex">H_0: \frac{\mu_T^{(j)}}{\mu_R^{(j)}} \le E_L ~~ \text{or}~~ \frac{\mu_T^{(j)}}{\mu_R^{(j)}} \ge E_U \quad \text{for at least one}\;j</annotation></semantics></math></p>
 <p>Alternative Hypothesis
 (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>H</mi><mn>1</mn></msub><annotation encoding="application/x-tex">H_1</annotation></semantics></math>):
 All endpoints meet the equivalence criteria:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>H</mi><mn>1</mn></msub><mo>:</mo><msub><mi>E</mi><mi>L</mi></msub><mo>&lt;</mo><mfrac><msubsup><mi>μ</mi><mi>T</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>j</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><msubsup><mi>μ</mi><mi>R</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>j</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup></mfrac><mo>&lt;</mo><msub><mi>E</mi><mi>U</mi></msub><mspace width="1.0em"></mspace><mtext mathvariant="normal">for all</mtext><mspace width="0.278em"></mspace><mi>j</mi></mrow><annotation encoding="application/x-tex">H_1: E_L&lt; \frac{\mu_{T}^{(j)}}{\mu_{R}^{(j)}} &lt; E_U \quad\text{for all}\;j</annotation></semantics></math></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>H</mi><mn>1</mn></msub><mo>:</mo><msub><mi>E</mi><mi>L</mi></msub><mo>&lt;</mo><mfrac><msubsup><mi>μ</mi><mi>T</mi><mrow><mo stretchy="false" form="prefix">(</mo><mi>j</mi><mo stretchy="false" form="postfix">)</mo></mrow></msubsup><msubsup><mi>μ</mi><mi>R</mi><mrow><mo stretchy="false" form="prefix">(</mo><mi>j</mi><mo stretchy="false" form="postfix">)</mo></mrow></msubsup></mfrac><mo>&lt;</mo><msub><mi>E</mi><mi>U</mi></msub><mspace width="1.0em"></mspace><mtext mathvariant="normal">for all</mtext><mspace width="0.278em"></mspace><mi>j</mi></mrow><annotation encoding="application/x-tex">H_1: E_L&lt; \frac{\mu_{T}^{(j)}}{\mu_{R}^{(j)}} &lt; E_U \quad\text{for all}\;j</annotation></semantics></math></p>
 <p>Here,
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>μ</mi><mi>T</mi></msub><annotation encoding="application/x-tex">\mu_T</annotation></semantics></math>
 and
@@ -179,18 +191,18 @@ and
 represent the arithmetic mean endpoints for the test product (the
 proposed biosimilar) and the reference product, respectively.</p>
 <p>The ROM test can be implemented in <a href="../reference/sampleSize.html">sampleSize()</a> by setting
-<code>ctype = "ROM"</code> and <code>lognorm = TRUE</code>. Note that
-the <code>mu_list</code> argument should contain the arithmetic means of
-the endpoints, while <code>sigma_list</code> should contain their
-corresponding variances.</p>
+<code>ctype = "ROM"</code> and <code>distribution = "lnorm"</code>. Note
+that the <code>mu_list</code> argument should contain the arithmetic
+means of the endpoints, while <code>sigma_list</code> should contain
+their corresponding variances.</p>
 <p>The ROM test is converted to a Difference of Means (DOM) tests by
 log-transforming the data and equivalence limits. The variance on the
 log scale is calculated using the normalized variance formula:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">Logarithmic Variance</mtext><mo>=</mo><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>+</mo><mfrac><mtext mathvariant="normal">Arithmetic Variance</mtext><msup><mtext mathvariant="normal">Arithmetic Mean</mtext><mn>2</mn></msup></mfrac><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">Logarithmic Variance</mtext><mo>=</mo><mrow><mi mathvariant="normal">log</mi><mo>⁡</mo></mrow><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>+</mo><mfrac><mtext mathvariant="normal">Arithmetic Variance</mtext><msup><mtext mathvariant="normal">Arithmetic Mean</mtext><mn>2</mn></msup></mfrac><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
 \text{Logarithmic Variance} = \log\left(1 + \frac{\text{Arithmetic Variance}}{\text{Arithmetic Mean}^2}\right)
 </annotation></semantics></math></p>
 <p>The logarithmic mean is then calculated as:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">Logarithmic Mean</mtext><mo>=</mo><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><mtext mathvariant="normal">Arithmetic Mean</mtext><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mrow><mo stretchy="true" form="prefix">(</mo><mtext mathvariant="normal">Logarithmic Variance</mtext><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\text{Logarithmic Mean} = \log(\text{Arithmetic Mean}) - \frac{1}{2}(\text{Logarithmic Variance})</annotation></semantics></math></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">Logarithmic Mean</mtext><mo>=</mo><mrow><mi mathvariant="normal">log</mi><mo>⁡</mo></mrow><mo stretchy="false" form="prefix">(</mo><mtext mathvariant="normal">Arithmetic Mean</mtext><mo stretchy="false" form="postfix">)</mo><mo>−</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mo stretchy="false" form="prefix">(</mo><mtext mathvariant="normal">Logarithmic Variance</mtext><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">\text{Logarithmic Mean} = \log(\text{Arithmetic Mean}) - \frac{1}{2}(\text{Logarithmic Variance})</annotation></semantics></math></p>
 </div>
 <div class="section level3">
 <h3 id="regulatory-requirements">Regulatory Requirements<a class="anchor" aria-label="anchor" href="#regulatory-requirements"></a>
@@ -209,7 +221,7 @@ geometric means</li>
 products should be contained within the acceptance interval of 80.00 to
 125.00%.</li>
 <li>A margin of clinical equivalence
-(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Δ</mi><annotation encoding="application/x-tex">\Delta</annotation></semantics></math>)
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi mathvariant="normal">Δ</mi><annotation encoding="application/x-tex">\Delta</annotation></semantics></math>)
 is chosen by defining the largest difference that is clinically
 acceptable, so that a difference larger than this would matter in
 practice.</li>
@@ -318,7 +330,7 @@ independent primary endpoints and uses a significance level of
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>α</mi><mo>=</mo><mn>5</mn></mrow><annotation encoding="application/x-tex">\alpha = 5%</annotation></semantics></math>
 for each test, the overall probability of falsely concluding equivalence
 for at least one endpoint is:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mi>–</mi><msup><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><mi>α</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>m</mi></msup><mo>=</mo><mn>1</mn><mo>−</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><mn>0.05</mn><mo stretchy="true" form="postfix">)</mo></mrow><mn>3</mn></msup><mo>=</mo><mn>0.1426</mn><mi>.</mi></mrow><annotation encoding="application/x-tex"> 1 – (1-\alpha)^m  = 1 - (1-0.05)^3 = 0.1426. </annotation></semantics></math>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mi>–</mi><mo stretchy="false" form="prefix">(</mo><mn>1</mn><mo>−</mo><mi>α</mi><msup><mo stretchy="false" form="postfix">)</mo><mi>m</mi></msup><mo>=</mo><mn>1</mn><mo>−</mo><mo stretchy="false" form="prefix">(</mo><mn>1</mn><mo>−</mo><mn>0.05</mn><msup><mo stretchy="false" form="postfix">)</mo><mn>3</mn></msup><mo>=</mo><mn>0.1426</mn><mi>.</mi></mrow><annotation encoding="application/x-tex"> 1 – (1-\alpha)^m  = 1 - (1-0.05)^3 = 0.1426. </annotation></semantics></math>
 This means that the overall probability of making any false positive
 error, also known as the <strong>family-wise error rate (FWER)</strong>,
 increases to approximately 14%.</p>
@@ -326,6 +338,9 @@ increases to approximately 14%.</p>
 necessary for multiple endpoint comparisons for which various methods
 have been proposed. In SimTOST, the following approaches are
 included:</p>
+<p>The <code>t</code> adjustment described below is the strong
+k-out-of-m procedure for partial-conjunction decisions and is distinct
+from the weak <code>k</code> adjustment.</p>
 <div class="section level4">
 <h4 id="bonferroni-correction">Bonferroni correction<a class="anchor" aria-label="anchor" href="#bonferroni-correction"></a>
 </h4>
@@ -347,6 +362,41 @@ function, the Bonferroni correction can be applied by setting
 <code>adjust = "bon"</code>.</p>
 </div>
 <div class="section level4">
+<h4 id="t-adjustment-mielkes-strong-k-out-of-m-correction">T adjustment: Mielke’s strong k-out-of-m correction<a class="anchor" aria-label="anchor" href="#t-adjustment-mielkes-strong-k-out-of-m-correction"></a>
+</h4>
+<p>When the decision rule requires equivalence for at least
+<code>k</code> of <code>m</code> endpoints, the null hypothesis is a
+partial-conjunction hypothesis. In this setting,
+<code>adjust = "t"</code> applies Mielke et al.’s strong k-out-of-m
+calibration. The significance level for each relevant boundary endpoint
+is:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>α</mi><mi>t</mi></msub><mo>=</mo><mfrac><mi>α</mi><mrow><mi>m</mi><mo>−</mo><mi>k</mi><mo>+</mo><mn>1</mn></mrow></mfrac></mrow><annotation encoding="application/x-tex">\alpha_{t}= \frac{\alpha}{m-k+1}</annotation></semantics></math></p>
+<p>where <code>m</code> is the number of selected endpoints and
+<code>k</code> is the minimum number that must demonstrate equivalence.
+For example, with <code>m = 3</code>, <code>k = 2</code>, and
+<code>alpha = 0.05</code>, the endpoint-wise level is
+<code>0.025</code>. This calibration controls the Type I error rate for
+the partial-conjunction decision, including cases in which only some
+endpoints satisfy the null hypothesis <span class="citation">(<a href="#ref-mielke_sample_2018">Mielke et al. 2018</a>)</span>.</p>
+<p>The adjustment is available in <code><a href="../reference/sampleSize.html">sampleSize()</a></code>,
+<code><a href="../reference/simPower.html">simPower()</a></code>, and the count-outcome functions:</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/sampleSize.html">sampleSize</a></span><span class="op">(</span></span>
+<span>  <span class="va">...</span>, k <span class="op">=</span> <span class="fl">2</span>, adjust <span class="op">=</span> <span class="st">"t"</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/simPower.html">simPower</a></span><span class="op">(</span></span>
+<span>  <span class="va">...</span>, k <span class="op">=</span> <span class="fl">2</span>, adjust <span class="op">=</span> <span class="st">"t"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>The effective <code>m</code> is determined separately for each
+comparator from the endpoints actually selected or inferred. The legacy
+<code>adjust = "pc"</code> and
+<code>adjust = "partial-conjunction"</code> labels are accepted as
+aliases for <code>"t"</code>. In contrast, <code>adjust = "k"</code>
+uses <code>k * alpha / m</code> and provides weak complete-null
+control.</p>
+</div>
+<div class="section level4">
 <h4 id="sidak-correction">Sidak correction<a class="anchor" aria-label="anchor" href="#sidak-correction"></a>
 </h4>
 <p>The Sidak correction is an alternative method for controlling the
@@ -355,7 +405,7 @@ independent. However, the Sidak correction accounts for the joint
 probability of all tests being non-significant, making it mathematically
 less conservative than the Bonferroni method. The adjusted significance
 level is calculated as:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>α</mi><mrow><mi>s</mi><mi>i</mi><mi>d</mi></mrow></msub><mo>=</mo><mn>1</mn><mo>−</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><mi>α</mi><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mn>1</mn><mi>/</mi><mi>m</mi></mrow></msup></mrow><annotation encoding="application/x-tex">\alpha_{sid}= 1-(1-\alpha)^ {1/m}</annotation></semantics></math></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>α</mi><mrow><mi>s</mi><mi>i</mi><mi>d</mi></mrow></msub><mo>=</mo><mn>1</mn><mo>−</mo><mo stretchy="false" form="prefix">(</mo><mn>1</mn><mo>−</mo><mi>α</mi><msup><mo stretchy="false" form="postfix">)</mo><mrow><mn>1</mn><mi>/</mi><mi>m</mi></mrow></msup></mrow><annotation encoding="application/x-tex">\alpha_{sid}= 1-(1-\alpha)^ {1/m}</annotation></semantics></math></p>
 <p>The Sidak correction can be implemented by specifying
 <code>adjust = "sid"</code> in the <a href="../reference/sampleSize.html">sampleSize()</a> function.</p>
 </div>
@@ -432,7 +482,7 @@ secondary endpoints demonstrate equivalence.</li>
 </ul>
 </li>
 </ol>
-<p>An example of hierarchical testing can be found in <a href="sampleSize_parallel_2A3E.html#hierarchical-testing">this
+<p>An example of hierarchical testing can be found in <a href="continuous_parallel_2A3E.html#hierarchical-testing">this
 vignette</a>.</p>
 </div>
 </div>
@@ -454,7 +504,7 @@ treatment arms.</p>
 <div class="section level2">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-chowdhry_finding_2024" class="csl-entry">
 Chowdhry, Amit K., John Park, John Kang, Gukan Sakthivel, and Stephanie
 Pugh. 2024. <span>“Finding <span>Multiple Signals</span> in the
@@ -464,14 +514,14 @@ Oncology*Biology*Physics</em> 119 (3): 750–55. <a href="https://doi.org/10.101
 </div>
 <div id="ref-CHMP2010" class="csl-entry">
 Committee for Medicinal Products for Human Use (CHMP). 2010.
-<span>“Guideline on the Investigation of Bioequivalence.”</span>
-CPMP/EWP/QWP/1401/98. London, UK: European Medicines Agency. <a href="https://www.ema.europa.eu/en/documents/scientific-guideline/guideline-investigation-bioequivalence-rev1_en.pdf" class="external-link">https://www.ema.europa.eu/en/documents/scientific-guideline/guideline-investigation-bioequivalence-rev1_en.pdf</a>.
+<em>Guideline on the Investigation of Bioequivalence</em>.
+CPMP/EWP/QWP/1401/98. European Medicines Agency. <a href="https://www.ema.europa.eu/en/documents/scientific-guideline/guideline-investigation-bioequivalence-rev1_en.pdf" class="external-link">https://www.ema.europa.eu/en/documents/scientific-guideline/guideline-investigation-bioequivalence-rev1_en.pdf</a>.
 </div>
 <div id="ref-cpmp_points_2002" class="csl-entry">
-Committee for Propietary Medicinal Products (CPMP). 2002. <span>“Points
-to Consider on Multiplicity Issues in Clinical Trials.”</span>
-Scientific Guideline CPMP/EWP/908/99. London, UK: The European Agency
-for the Evaluation of Medicinal Products.
+Committee for Propietary Medicinal Products (CPMP). 2002. <em>Points to
+Consider on Multiplicity Issues in Clinical Trials</em>. Scientific
+Guideline CPMP/EWP/908/99. The European Agency for the Evaluation of
+Medicinal Products.
 </div>
 <div id="ref-mielke_sample_2018" class="csl-entry">
 Mielke, Johanna, Byron Jones, Bernd Jilma, and Franz König. 2018.
@@ -482,13 +532,14 @@ Testing</span> in <span>Biosimilar Development</span>.”</span>
 <div id="ref-sozu_continuous_2015" class="csl-entry">
 Sozu, Takashi, Tomoyuki Sugimoto, Toshimitsu Hamasaki, and Scott R.
 Evans. 2015a. <span>“Continuous Primary Endpoints.”</span> In <em>Sample
-Size Determination in Clinical Trials with Multiple Endpoints</em>,
-59–68. Cham: Springer International Publishing. <a href="https://doi.org/10.1007/978-3-319-22005-5_5" class="external-link">https://doi.org/10.1007/978-3-319-22005-5_5</a>.
+Size Determination in Clinical Trials with Multiple Endpoints</em>.
+Springer International Publishing. <a href="https://doi.org/10.1007/978-3-319-22005-5_5" class="external-link">https://doi.org/10.1007/978-3-319-22005-5_5</a>.
 </div>
 <div id="ref-sozu_sample_2015" class="csl-entry">
-———. 2015b. <em>Sample <span>Size Determination</span> in <span>Clinical
-Trials</span> with <span>Multiple Endpoints</span></em>.
-<span>SpringerBriefs</span> in <span>Statistics</span>. Cham: Springer
+Sozu, Takashi, Tomoyuki Sugimoto, Toshimitsu Hamasaki, and Scott R.
+Evans. 2015b. <em>Sample <span>Size Determination</span> in
+<span>Clinical Trials</span> with <span>Multiple Endpoints</span></em>.
+<span>SpringerBriefs</span> in <span>Statistics</span>. Springer
 International Publishing. <a href="https://doi.org/10.1007/978-3-319-22005-5" class="external-link">https://doi.org/10.1007/978-3-319-22005-5</a>.
 </div>
 </div>
@@ -505,12 +556,12 @@ International Publishing. <a href="https://doi.org/10.1007/978-3-319-22005-5" cl
 
       <footer><div class="copyright">
   <p></p>
-<p>Developed by Thomas Debray, Johanna Munoz, Biogen Inc.</p>
+<p>Developed by Thomas Debray, Biogen Inc.</p>
 </div>
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
       </footer>

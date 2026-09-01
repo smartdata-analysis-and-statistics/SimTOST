@@ -35,25 +35,37 @@ considering correlation structures and applying multiplicity adjustments."><meta
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
+      <a href="../articles/continuous_crossover.html">Bioequivalence Tests for 2x2 Cross-Over Trial Designs with Log-Normal Data</a>
+    </li>
+    <li>
+      <a href="../articles/continuous_parallel_2A1E.html">Bioequivalence Tests for Parallel Trial Designs: 2 Arms, 1 Endpoint</a>
+    </li>
+    <li>
+      <a href="../articles/continuous_parallel_2A3E.html">Bioequivalence Tests for Parallel Trial Designs: 2 Arms, 3 Endpoints</a>
+    </li>
+    <li>
+      <a href="../articles/continuous_parallel_3A1E.html">Bioequivalence Tests for Parallel Trial Designs: 3 Arms, 1 Endpoint</a>
+    </li>
+    <li>
+      <a href="../articles/continuous_parallel_3A3E.html">Bioequivalence Tests for Parallel Trial Designs: 3 Arms, 3 Endpoints</a>
+    </li>
+    <li>
+      <a href="../articles/continuous_parallel.html">Bioequivalence Tests for Parallel Trial Designs with Log-Normal Data</a>
+    </li>
+    <li>
+      <a href="../articles/count_parallel_3A3E.html">Count-Outcome Equivalence: Parallel Design with 3 Arms and 3 Endpoints</a>
+    </li>
+    <li>
+      <a href="../articles/count.html">Count Outcomes</a>
+    </li>
+    <li>
       <a href="../articles/intropkg.html">Introduction</a>
     </li>
     <li>
-      <a href="../articles/sampleSize_crossover.html">Bioequivalence Tests for 2x2 Cross-Over Trial Designs with Log-Normal Data</a>
+      <a href="../articles/methodological_assumptions.html">Methodological Assumptions in SimTOST</a>
     </li>
     <li>
-      <a href="../articles/sampleSize_parallel_2A1E.html">Bioequivalence Tests for Parallel Trial Designs: 2 Arms, 1 Endpoint</a>
-    </li>
-    <li>
-      <a href="../articles/sampleSize_parallel_2A3E.html">Bioequivalence Tests for Parallel Trial Designs: 2 Arms, 3 Endpoints</a>
-    </li>
-    <li>
-      <a href="../articles/sampleSize_parallel_3A1E.html">Bioequivalence Tests for Parallel Trial Designs: 3 Arms, 1 Endpoint</a>
-    </li>
-    <li>
-      <a href="../articles/sampleSize_parallel_3A3E.html">Bioequivalence Tests for Parallel Trial Designs: 3 Arms, 3 Endpoints</a>
-    </li>
-    <li>
-      <a href="../articles/sampleSize_parallel.html">Bioequivalence Tests for Parallel Trial Designs with Log-Normal Data</a>
+      <a href="../articles/workflow.html">A Step-by-Step Simulation Validation Workflow</a>
     </li>
   </ul></li>
 <li>
@@ -146,12 +158,17 @@ Options are <code>"22co"</code> for a 2x2 crossover design or <code>"parallel"</
 <dt id="arg-adjust">adjust<a class="anchor" aria-label="anchor" href="#arg-adjust"></a></dt>
 <dd><p>Character specifying the method for multiplicity adjustment.
 Options include <code>"no"</code> for no adjustment, <code>"bon"</code> for Bonferroni correction,
-and <code>"k"</code> for k-adjustment.</p></dd>
+<code>"k"</code> for Mielke's weak k-adjustment, and <code>"t"</code> for the strong
+k-out-of-m adjustment. Legacy <code>"pc"</code> and
+<code>"partial-conjunction"</code> labels are accepted as aliases for <code>"t"</code>.</p></dd>
 
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A numeric vector representing a realization of the simulated test statistic for the given setting.</p>
+    <p>An object of class <code>simss_mielke</code>. It contains the legacy fields <code>SS</code> and
+<code>power.a</code>, together with <code>n_per_sequence</code>, <code>n_total</code>, <code>power</code>, and the
+target and input parameters. Use <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> for a data-frame summary,
+<code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code> for a concise report, or <code><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric()</a></code> to extract <code>SS</code>.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -159,10 +176,13 @@ and <code>"k"</code> for k-adjustment.</p></dd>
 is defined as meeting equivalence criteria for at least a subset of tests.
 Simulated test statistics are based on multivariate normal distribution assumptions,
 and the function supports k-out-of-m success criteria for regulatory approval.</p>
-<p>Type I error control is achieved through multiplicity adjustments as proposed by
-Lehmann and Romano (2005) to ensure rigorous error rate management. This approach
-is particularly relevant for biosimilar studies, where sample size estimation must
-account for multiple comparisons across endpoints, doses, or populations.</p>
+<p>The adjustment options follow the multiple-endpoint framework of Mielke et al.
+(2018). In particular, <code>adjust = "k"</code> uses the weak k-adjustment
+k * alpha / m, whereas <code>adjust = "t"</code> uses the strong k-out-of-m
+adjustment <code>alpha / (m - k + 1)</code> for partial null configurations.
+This distinction is particularly relevant for biosimilar studies, where
+sample size estimation must account for multiple comparisons across
+endpoints, doses, or populations.</p>
     </div>
     <div id="references">
     <h2>References</h2>
@@ -183,11 +203,11 @@ Hypothesis Testing in Biosimilar Development. <em>Statistics in Biopharmaceutica
 
 
       <footer><div class="copyright">
-  <p></p><p>Developed by Thomas Debray, Johanna Munoz, Biogen Inc.</p>
+  <p></p><p>Developed by Thomas Debray, Biogen Inc.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
       </footer></div>

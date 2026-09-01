@@ -32,25 +32,37 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
+      <a href="../articles/continuous_crossover.html">Bioequivalence Tests for 2x2 Cross-Over Trial Designs with Log-Normal Data</a>
+    </li>
+    <li>
+      <a href="../articles/continuous_parallel_2A1E.html">Bioequivalence Tests for Parallel Trial Designs: 2 Arms, 1 Endpoint</a>
+    </li>
+    <li>
+      <a href="../articles/continuous_parallel_2A3E.html">Bioequivalence Tests for Parallel Trial Designs: 2 Arms, 3 Endpoints</a>
+    </li>
+    <li>
+      <a href="../articles/continuous_parallel_3A1E.html">Bioequivalence Tests for Parallel Trial Designs: 3 Arms, 1 Endpoint</a>
+    </li>
+    <li>
+      <a href="../articles/continuous_parallel_3A3E.html">Bioequivalence Tests for Parallel Trial Designs: 3 Arms, 3 Endpoints</a>
+    </li>
+    <li>
+      <a href="../articles/continuous_parallel.html">Bioequivalence Tests for Parallel Trial Designs with Log-Normal Data</a>
+    </li>
+    <li>
+      <a href="../articles/count_parallel_3A3E.html">Count-Outcome Equivalence: Parallel Design with 3 Arms and 3 Endpoints</a>
+    </li>
+    <li>
+      <a href="../articles/count.html">Count Outcomes</a>
+    </li>
+    <li>
       <a href="../articles/intropkg.html">Introduction</a>
     </li>
     <li>
-      <a href="../articles/sampleSize_crossover.html">Bioequivalence Tests for 2x2 Cross-Over Trial Designs with Log-Normal Data</a>
+      <a href="../articles/methodological_assumptions.html">Methodological Assumptions in SimTOST</a>
     </li>
     <li>
-      <a href="../articles/sampleSize_parallel_2A1E.html">Bioequivalence Tests for Parallel Trial Designs: 2 Arms, 1 Endpoint</a>
-    </li>
-    <li>
-      <a href="../articles/sampleSize_parallel_2A3E.html">Bioequivalence Tests for Parallel Trial Designs: 2 Arms, 3 Endpoints</a>
-    </li>
-    <li>
-      <a href="../articles/sampleSize_parallel_3A1E.html">Bioequivalence Tests for Parallel Trial Designs: 3 Arms, 1 Endpoint</a>
-    </li>
-    <li>
-      <a href="../articles/sampleSize_parallel_3A3E.html">Bioequivalence Tests for Parallel Trial Designs: 3 Arms, 3 Endpoints</a>
-    </li>
-    <li>
-      <a href="../articles/sampleSize_parallel.html">Bioequivalence Tests for Parallel Trial Designs with Log-Normal Data</a>
+      <a href="../articles/workflow.html">A Step-by-Step Simulation Validation Workflow</a>
     </li>
   </ul></li>
 <li>
@@ -137,7 +149,9 @@
 
 
 <dt id="arg-adjust">adjust<a class="anchor" aria-label="anchor" href="#arg-adjust"></a></dt>
-<dd><p>Character. Method for multiplicity adjustment; options are "no" (no adjustment), "bon" (Bonferroni adjustment), and "k" (k-adjustment).</p></dd>
+<dd><p>Character. Method for multiplicity adjustment: "no" (none),
+"bon" (Bonferroni), "k" (Mielke's weak k-adjustment), or "t"
+(Mielke's strong k-out-of-m adjustment; legacy "pc" aliases are accepted).</p></dd>
 
 
 <dt id="arg-seed">seed<a class="anchor" aria-label="anchor" href="#arg-seed"></a></dt>
@@ -150,7 +164,7 @@
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A named vector containing:</p><dl><dt>"power.a"</dt>
+    <p>An object of class <code>simss_mielke</code>, containing:</p><dl><dt>"power.a"</dt>
 <dd><p>Achieved power with the estimated sample size.</p></dd>
 
 <dt>"SS"</dt>
@@ -174,8 +188,9 @@
 <span class="r-in"><span>                  sigma <span class="op">=</span> <span class="fl">0.3</span>, true.diff <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fl">1.05</span><span class="op">)</span>, equi.tol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fl">1.25</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                  design <span class="op">=</span> <span class="st">"parallel"</span>, alpha <span class="op">=</span> <span class="fl">0.05</span>, adjust <span class="op">=</span> <span class="st">"no"</span>,</span></span>
 <span class="r-in"><span>                  seed <span class="op">=</span> <span class="fl">1234</span>, nsim <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> power.a      SS </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    0.82   65.00 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Mielke sample-size calculation</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Required sample size: 65 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Achieved power: 0.82 </span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
@@ -187,11 +202,11 @@
 
 
       <footer><div class="copyright">
-  <p></p><p>Developed by Thomas Debray, Johanna Munoz, Biogen Inc.</p>
+  <p></p><p>Developed by Thomas Debray, Biogen Inc.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
       </footer></div>

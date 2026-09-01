@@ -51,25 +51,37 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
+      <a href="articles/continuous_crossover.html">Bioequivalence Tests for 2x2 Cross-Over Trial Designs with Log-Normal Data</a>
+    </li>
+    <li>
+      <a href="articles/continuous_parallel_2A1E.html">Bioequivalence Tests for Parallel Trial Designs: 2 Arms, 1 Endpoint</a>
+    </li>
+    <li>
+      <a href="articles/continuous_parallel_2A3E.html">Bioequivalence Tests for Parallel Trial Designs: 2 Arms, 3 Endpoints</a>
+    </li>
+    <li>
+      <a href="articles/continuous_parallel_3A1E.html">Bioequivalence Tests for Parallel Trial Designs: 3 Arms, 1 Endpoint</a>
+    </li>
+    <li>
+      <a href="articles/continuous_parallel_3A3E.html">Bioequivalence Tests for Parallel Trial Designs: 3 Arms, 3 Endpoints</a>
+    </li>
+    <li>
+      <a href="articles/continuous_parallel.html">Bioequivalence Tests for Parallel Trial Designs with Log-Normal Data</a>
+    </li>
+    <li>
+      <a href="articles/count_parallel_3A3E.html">Count-Outcome Equivalence: Parallel Design with 3 Arms and 3 Endpoints</a>
+    </li>
+    <li>
+      <a href="articles/count.html">Count Outcomes</a>
+    </li>
+    <li>
       <a href="articles/intropkg.html">Introduction</a>
     </li>
     <li>
-      <a href="articles/sampleSize_crossover.html">Bioequivalence Tests for 2x2 Cross-Over Trial Designs with Log-Normal Data</a>
+      <a href="articles/methodological_assumptions.html">Methodological Assumptions in SimTOST</a>
     </li>
     <li>
-      <a href="articles/sampleSize_parallel_2A1E.html">Bioequivalence Tests for Parallel Trial Designs: 2 Arms, 1 Endpoint</a>
-    </li>
-    <li>
-      <a href="articles/sampleSize_parallel_2A3E.html">Bioequivalence Tests for Parallel Trial Designs: 2 Arms, 3 Endpoints</a>
-    </li>
-    <li>
-      <a href="articles/sampleSize_parallel_3A1E.html">Bioequivalence Tests for Parallel Trial Designs: 3 Arms, 1 Endpoint</a>
-    </li>
-    <li>
-      <a href="articles/sampleSize_parallel_3A3E.html">Bioequivalence Tests for Parallel Trial Designs: 3 Arms, 3 Endpoints</a>
-    </li>
-    <li>
-      <a href="articles/sampleSize_parallel.html">Bioequivalence Tests for Parallel Trial Designs with Log-Normal Data</a>
+      <a href="articles/workflow.html">A Step-by-Step Simulation Validation Workflow</a>
     </li>
   </ul>
 </li>
@@ -94,7 +106,7 @@
 </h1></div>
 <!-- badges: start -->
 
-<p><code>SimTOST</code> is an R package specifically designed for bioequivalence studies, providing simulation-based sample size estimation for the Two One-Sided Tests (TOST) procedure. It offers flexible options to handle complex study designs, including trials with multiple correlated primary endpoints, multiple hypotheses, and treatment arms. By incorporating correlations between endpoints, <code>SimTOST</code> ensures accurate and robust planning of bioequivalence trials, making it a powerful tool for studies with intricate requirements.</p>
+<p><code>SimTOST</code> is an R package specifically designed for bioequivalence studies, providing simulation-based sample size estimation for the Two One-Sided Tests (TOST) procedure. It offers flexible options to handle complex study designs, including trials with multiple correlated primary endpoints, multiple hypotheses, and treatment arms. Multiplicity adjustments include Bonferroni (<code>adjust = "bon"</code>), Sidak (<code>adjust = "sid"</code>), the weak k-adjustment (<code>adjust = "k"</code>), Mielke’s strong k-out-of-m adjustment (<code>adjust = "t"</code>), and sequential hierarchical testing (<code>adjust = "seq"</code>). By incorporating correlations between endpoints, <code>SimTOST</code> ensures accurate and robust planning of bioequivalence trials, making it a powerful tool for studies with intricate requirements.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -109,7 +121,7 @@
 <div class="section level2">
 <h2 id="vignettes">Vignettes<a class="anchor" aria-label="anchor" href="#vignettes"></a>
 </h2>
-<p>The main features of this package is <code>sampleSize</code> function which can be used to calculate sample size for individual and multiple endpoints. Various worked examples are available as <a href="https://smartdata-analysis-and-statistics.github.io/SimTOST/" class="external-link">vignettes</a>, with an introduction provided at <a href="https://smartdata-analysis-and-statistics.github.io/SimTOST/articles/intropkg.html" class="external-link">Introduction</a>.</p>
+<p>The main features of this package is <code>sampleSize</code> function which can be used to calculate sample size for individual and multiple endpoints. Various worked examples are available as <a href="https://smartdata-analysis-and-statistics.github.io/SimTOST/" class="external-link">vignettes</a>, with an introduction provided at <a href="https://smartdata-analysis-and-statistics.github.io/SimTOST/articles/intropkg.html" class="external-link">Introduction</a>. The Introduction vignette describes the available multiplicity adjustments, including Mielke’s strong k-out-of-m adjustment (<code>adjust = "t"</code>).</p>
 <table class="table">
 <colgroup>
 <col width="25%">
@@ -117,48 +129,78 @@
 <col width="25%">
 <col width="25%">
 </colgroup>
-<thead><tr class="header">
+<thead><tr>
 <th><strong>Vignette</strong></th>
 <th><strong>Design</strong></th>
 <th><strong>Number of Arms</strong></th>
 <th><strong>Number of Endpoints</strong></th>
 </tr></thead>
 <tbody>
-<tr class="odd">
-<td><a href="https://smartdata-analysis-and-statistics.github.io/SimTOST/articles/sampleSize_parallel.html" class="external-link">Bioequivalence Tests for Parallel Trial Designs with Log-Normal Data</a></td>
+<tr>
+<td><a href="https://smartdata-analysis-and-statistics.github.io/SimTOST/articles/continuous_parallel.html" class="external-link">Bioequivalence Tests for Parallel Trial Designs with Log-Normal Data</a></td>
 <td>Parallel</td>
 <td>2</td>
 <td>Multiple (e.g., 2 or 3)</td>
 </tr>
-<tr class="even">
-<td><a href="https://smartdata-analysis-and-statistics.github.io/SimTOST/articles/sampleSize_crossover.html" class="external-link">Bioequivalence Tests for 2x2 Cross-Over Trial Designs with Log-Normal Data</a></td>
+<tr>
+<td><a href="https://smartdata-analysis-and-statistics.github.io/SimTOST/articles/continuous_crossover.html" class="external-link">Bioequivalence Tests for 2x2 Cross-Over Trial Designs with Log-Normal Data</a></td>
 <td>Cross-over</td>
 <td>2</td>
 <td>2</td>
 </tr>
-<tr class="odd">
-<td><a href="https://smartdata-analysis-and-statistics.github.io/SimTOST/articles/sampleSize_parallel_2A1E.html" class="external-link">Bioequivalence Tests for Parallel Trial Designs: 2 Arms, 1 Endpoint</a></td>
+<tr>
+<td><a href="https://smartdata-analysis-and-statistics.github.io/SimTOST/articles/continuous_parallel_2A1E.html" class="external-link">Bioequivalence Tests for Parallel Trial Designs: 2 Arms, 1 Endpoint</a></td>
 <td>Parallel</td>
 <td>2</td>
 <td>1</td>
 </tr>
-<tr class="even">
-<td><a href="https://smartdata-analysis-and-statistics.github.io/SimTOST/articles/sampleSize_parallel_3A1E.html" class="external-link">Bioequivalence Tests for Parallel Trial Designs: 3 Arms, 1 Endpoint</a></td>
+<tr>
+<td><a href="https://smartdata-analysis-and-statistics.github.io/SimTOST/articles/continuous_parallel_3A1E.html" class="external-link">Bioequivalence Tests for Parallel Trial Designs: 3 Arms, 1 Endpoint</a></td>
 <td>Parallel</td>
 <td>3</td>
 <td>1</td>
 </tr>
-<tr class="odd">
-<td><a href="https://smartdata-analysis-and-statistics.github.io/SimTOST/articles/sampleSize_parallel_2A3E.html" class="external-link">Bioequivalence Tests for Parallel Trial Designs: 2 Arms, 3 Endpoints</a></td>
+<tr>
+<td><a href="https://smartdata-analysis-and-statistics.github.io/SimTOST/articles/continuous_parallel_2A3E.html" class="external-link">Bioequivalence Tests for Parallel Trial Designs: 2 Arms, 3 Endpoints</a></td>
 <td>Parallel</td>
 <td>2</td>
 <td>3</td>
 </tr>
-<tr class="even">
-<td><a href="https://smartdata-analysis-and-statistics.github.io/SimTOST/articles/sampleSize_parallel_3A3E.html" class="external-link">Bioequivalence Tests for Parallel Trial Designs: 3 Arms, 3 Endpoints</a></td>
+<tr>
+<td><a href="https://smartdata-analysis-and-statistics.github.io/SimTOST/articles/continuous_parallel_3A3E.html" class="external-link">Bioequivalence Tests for Parallel Trial Designs: 3 Arms, 3 Endpoints</a></td>
 <td>Parallel</td>
 <td>3</td>
 <td>3</td>
+</tr>
+<tr>
+<td><a href="https://smartdata-analysis-and-statistics.github.io/SimTOST/articles/count.html" class="external-link">Count Outcomes</a></td>
+<td>Parallel and 2x2 crossover</td>
+<td>2</td>
+<td>1 or more</td>
+</tr>
+<tr>
+<td><a href="https://smartdata-analysis-and-statistics.github.io/SimTOST/articles/count_parallel_3A3E.html" class="external-link">Count-Outcome Equivalence: Parallel Design with 3 Arms and 3 Endpoints</a></td>
+<td>Parallel</td>
+<td>3</td>
+<td>3</td>
+</tr>
+<tr>
+<td><a href="https://smartdata-analysis-and-statistics.github.io/SimTOST/articles/intropkg.html" class="external-link">Introduction</a></td>
+<td>All supported designs</td>
+<td>Varies</td>
+<td>Varies</td>
+</tr>
+<tr>
+<td><a href="https://smartdata-analysis-and-statistics.github.io/SimTOST/articles/methodological_assumptions.html" class="external-link">Methodological Assumptions in SimTOST</a></td>
+<td>All supported designs</td>
+<td>Varies</td>
+<td>Varies</td>
+</tr>
+<tr>
+<td><a href="https://smartdata-analysis-and-statistics.github.io/SimTOST/articles/workflow.html" class="external-link">A Step-by-Step Simulation Validation Workflow</a></td>
+<td>All supported designs</td>
+<td>Varies</td>
+<td>Varies</td>
 </tr>
 </tbody>
 </table>
@@ -194,7 +236,6 @@
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
 <li>Thomas Debray <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0002-1790-2719" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
-<li>Johanna Munoz <br><small class="roles"> Author </small>   </li>
 <li>Biogen Inc <br><small class="roles"> Copyright holder, funder </small>   </li>
 <li><a href="authors.html">More about authors...</a></li>
 </ul>
@@ -215,12 +256,12 @@
 
       <footer><div class="copyright">
   <p></p>
-<p>Developed by Thomas Debray, Johanna Munoz, Biogen Inc.</p>
+<p>Developed by Thomas Debray, Biogen Inc.</p>
 </div>
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
       </footer>

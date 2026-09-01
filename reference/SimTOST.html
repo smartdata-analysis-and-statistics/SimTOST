@@ -32,25 +32,37 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
+      <a href="../articles/continuous_crossover.html">Bioequivalence Tests for 2x2 Cross-Over Trial Designs with Log-Normal Data</a>
+    </li>
+    <li>
+      <a href="../articles/continuous_parallel_2A1E.html">Bioequivalence Tests for Parallel Trial Designs: 2 Arms, 1 Endpoint</a>
+    </li>
+    <li>
+      <a href="../articles/continuous_parallel_2A3E.html">Bioequivalence Tests for Parallel Trial Designs: 2 Arms, 3 Endpoints</a>
+    </li>
+    <li>
+      <a href="../articles/continuous_parallel_3A1E.html">Bioequivalence Tests for Parallel Trial Designs: 3 Arms, 1 Endpoint</a>
+    </li>
+    <li>
+      <a href="../articles/continuous_parallel_3A3E.html">Bioequivalence Tests for Parallel Trial Designs: 3 Arms, 3 Endpoints</a>
+    </li>
+    <li>
+      <a href="../articles/continuous_parallel.html">Bioequivalence Tests for Parallel Trial Designs with Log-Normal Data</a>
+    </li>
+    <li>
+      <a href="../articles/count_parallel_3A3E.html">Count-Outcome Equivalence: Parallel Design with 3 Arms and 3 Endpoints</a>
+    </li>
+    <li>
+      <a href="../articles/count.html">Count Outcomes</a>
+    </li>
+    <li>
       <a href="../articles/intropkg.html">Introduction</a>
     </li>
     <li>
-      <a href="../articles/sampleSize_crossover.html">Bioequivalence Tests for 2x2 Cross-Over Trial Designs with Log-Normal Data</a>
+      <a href="../articles/methodological_assumptions.html">Methodological Assumptions in SimTOST</a>
     </li>
     <li>
-      <a href="../articles/sampleSize_parallel_2A1E.html">Bioequivalence Tests for Parallel Trial Designs: 2 Arms, 1 Endpoint</a>
-    </li>
-    <li>
-      <a href="../articles/sampleSize_parallel_2A3E.html">Bioequivalence Tests for Parallel Trial Designs: 2 Arms, 3 Endpoints</a>
-    </li>
-    <li>
-      <a href="../articles/sampleSize_parallel_3A1E.html">Bioequivalence Tests for Parallel Trial Designs: 3 Arms, 1 Endpoint</a>
-    </li>
-    <li>
-      <a href="../articles/sampleSize_parallel_3A3E.html">Bioequivalence Tests for Parallel Trial Designs: 3 Arms, 3 Endpoints</a>
-    </li>
-    <li>
-      <a href="../articles/sampleSize_parallel.html">Bioequivalence Tests for Parallel Trial Designs with Log-Normal Data</a>
+      <a href="../articles/workflow.html">A Step-by-Step Simulation Validation Workflow</a>
     </li>
   </ul></li>
 <li>
@@ -80,23 +92,64 @@
     <p>The SimTOST package provides tools for simulating sample sizes, calculating power,
 and assessing type-I error for various statistical scenarios.</p>
     </div>
+    <div id="planning">
+    <h2>Planning</h2>
+
+
+<p>Each function name links to its full help page.</p><ul><li><p><code><a href="sampleSize.html">sampleSize</a></code>: simulation-based sample-size planning
+for continuous and count outcomes, including multiple endpoints and
+comparator families.</p></li>
+<li><p><code><a href="simPower.html">simPower</a></code>: simulated power for a fixed sample size,
+with support for continuous and count-outcome analyses.</p></li>
+<li><p><code><a href="sampleSize_Mielke.html">sampleSize_Mielke</a></code>: Mielke et al.'s sample-size
+calculation for multiple, correlated hypotheses and k-out-of-m rules.</p></li>
+</ul></div>
+    <div id="continuous-outcomes">
+    <h2>Continuous outcomes</h2>
+
+
+<ul><li><p><code><a href="simParallelEndpoints.html">simParallelEndpoints</a></code>: generates correlated normal
+or log-normal endpoint data for a parallel-group design.</p></li>
+<li><p><code><a href="get_par.html">get_par</a></code>: prepares and validates endpoint,
+covariance, allocation, and hierarchy parameters for planning.</p></li>
+<li><p><code><a href="run_simulations.html">run_simulations</a></code>: dispatches a continuous
+simulation to the selected design and test combination.</p></li>
+</ul></div>
+    <div id="simulation-result-methods">
+    <h2>Simulation-result methods</h2>
+
+
+<ul><li><p><code>print.simss</code> (print): prints a concise design, power,
+confidence-interval, and sample-size report.</p></li>
+<li><p><code>summary.simss</code> (summary): returns and prints a
+structured summary of the simulation result.</p></li>
+<li><p><code>confint.simss</code> (confint): extracts the stored Monte
+Carlo confidence interval for achieved power.</p></li>
+<li><p><code>plot.simss</code> (plot): plots simulated power against
+sample size with confidence intervals and the target-power line.</p></li>
+<li><p><code><a href="update.simss.html">update.simss</a></code> and <code><a href="update.simpower.html">update.simpower</a></code>
+(update): reruns a result while replacing only explicitly supplied
+planning or simulation parameters.</p></li>
+</ul></div>
     <div id="references">
     <h2>References</h2>
     <p>Mielke, J., Jones, B., Jilma, B. &amp; König, F. Sample Size for Multiple Hypothesis Testing in Biosimilar Development. <em>Statistics in Biopharmaceutical Research</em> 10, 39–49 (2018).</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
-    <div class="dont-index"><p><a href="sampleSize.html">sampleSize</a></p></div>
+    <div class="dont-index"><p>Useful links:</p><ul><li><p><a href="https://smartdata-analysis-and-statistics.github.io/SimTOST/" class="external-link">https://smartdata-analysis-and-statistics.github.io/SimTOST/</a></p></li>
+</ul></div>
     </div>
     <div id="author">
     <h2>Author</h2>
-    <p><strong>Maintainer</strong>: Thomas Debray <a href="mailto:tdebray@fromdatatowisdom.com">tdebray@fromdatatowisdom.com</a> (<a href="https://orcid.org/0000-0002-1790-2719" class="external-link">ORCID</a>)</p>
-<p>Authors:</p><ul><li><p>Johanna Munoz <a href="mailto:johanna.munoz@fromdatatowisdom.com">johanna.munoz@fromdatatowisdom.com</a></p></li>
-</ul><p>Other contributors:</p><ul><li><p>Dewi Amaliah <a href="mailto:dewi.amaliah@fromdatatowisdom.com">dewi.amaliah@fromdatatowisdom.com</a> [contributor]</p></li>
-<li><p>Wei Wei <a href="mailto:wei.wei@biogen.com">wei.wei@biogen.com</a> [contributor]</p></li>
-<li><p>Marian Mitroiu <a href="mailto:marian.mitroiu@biogen.com">marian.mitroiu@biogen.com</a> [contributor]</p></li>
-<li><p>Scott McDonald <a href="mailto:scott.mcdonald@fromdatatowisdom.com">scott.mcdonald@fromdatatowisdom.com</a> [contributor]</p></li>
-<li><p>Biogen Inc [copyright holder, funder]</p></li>
+    <p>Thomas Debray <a href="mailto:tdebray@fromdatatowisdom.com">tdebray@fromdatatowisdom.com</a> (author and maintainer)</p>
+<p>Other contributors:</p><ul><li><p>Tim Friede <a href="mailto:tim.friede@med.uni-goettingen.de">tim.friede@med.uni-goettingen.de</a> <code>[contributor]</code></p></li>
+<li><p>Johanna Munoz <a href="mailto:johanna.munoz@fromdatatowisdom.com">johanna.munoz@fromdatatowisdom.com</a> <code>[contributor]</code></p></li>
+<li><p>Dewi Amaliah <a href="mailto:dewi.amaliah@fromdatatowisdom.com">dewi.amaliah@fromdatatowisdom.com</a> <code>[contributor]</code></p></li>
+<li><p>Wei Wei <a href="mailto:wei.wei@biogen.com">wei.wei@biogen.com</a> <code>[contributor]</code></p></li>
+<li><p>Marian Mitroiu <a href="mailto:marian.mitroiu@biogen.com">marian.mitroiu@biogen.com</a> <code>[contributor]</code></p></li>
+<li><p>Scott McDonald <a href="mailto:scott.mcdonald@fromdatatowisdom.com">scott.mcdonald@fromdatatowisdom.com</a> <code>[contributor]</code></p></li>
+<li><p>Biogen Inc <code>[copyright holder, funder]</code></p></li>
 </ul></div>
 
   </div>
@@ -107,11 +160,11 @@ and assessing type-I error for various statistical scenarios.</p>
 
 
       <footer><div class="copyright">
-  <p></p><p>Developed by Thomas Debray, Johanna Munoz, Biogen Inc.</p>
+  <p></p><p>Developed by Thomas Debray, Biogen Inc.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
       </footer></div>
