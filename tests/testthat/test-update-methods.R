@@ -72,6 +72,44 @@ test_that("update rejects a supplied standard-deviation list with invalid dimens
   )
 })
 
+test_that("update infers endpoint selections when comparators are replaced", {
+  fit <- sampleSize(
+    power = .5, distribution = "normal", ctype = "DOM",
+    arm_names = c("T", "R1", "R2"),
+    mu_list = list(T = c(y1 = 1), R1 = c(y1 = 1), R2 = c(y1 = 1)),
+    sigma_list = list(T = c(y1 = .2), R1 = c(y1 = .2), R2 = c(y1 = .2)),
+    list_comparator = list(T_vs_R1 = c("T", "R1")),
+    list_y_comparator = list(T_vs_R1 = "y1"),
+    list_lequi.tol = list(T_vs_R1 = -.2),
+    list_uequi.tol = list(T_vs_R1 = .2),
+    lower = 2, upper = 2, optimization_method = "step-by-step",
+    nsim = 5, ncores = 1, seed = 39
+  )
+
+  updated <- update(
+    fit,
+    list_comparator = list(
+      T_vs_R1 = c("T", "R1"),
+      T_vs_R2 = c("T", "R2")
+    ),
+    list_lequi.tol = list(T_vs_R1 = -.2, T_vs_R2 = -.2),
+    list_uequi.tol = list(T_vs_R1 = .2, T_vs_R2 = .2)
+  )
+
+  expect_length(updated$param$list_y_comparator, 2)
+  expect_identical(
+    unname(vapply(updated$param$list_y_comparator, `[[`, character(1), 1L)),
+    c("y1", "y1")
+  )
+
+  call <- update(
+    fit,
+    list_comparator = list(T_vs_R1 = c("T", "R1"), T_vs_R2 = c("T", "R2")),
+    evaluate = FALSE
+  )
+  expect_true(length(call$list_y_comparator) == 1L && is.na(call$list_y_comparator))
+})
+
 test_that("update simpower preserves the fixed sample size and settings", {
   fit <- simPower(
     n = 10, distribution = "normal", ctype = "DOM",

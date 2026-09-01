@@ -11,6 +11,14 @@
     args$varcov_list <- NULL
   }
 
+  # Endpoint selections are comparator-specific. When the comparator list is
+  # replaced, an omitted list_y_comparator must be allowed to use the new
+  # comparator list rather than retaining a selection for the old list.
+  if ("list_comparator" %in% names(dots) &&
+      !"list_y_comparator" %in% names(dots)) {
+    args$list_y_comparator <- NA
+  }
+
   args
 }
 
