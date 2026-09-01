@@ -15,3 +15,20 @@ test_that("differences across lenght of mu, varcov and tar", {
   expect_type(derive_varcov_list(mu_list = mu_list, sigma_list = sigma_list), "list")
   expect_error(derive_varcov_list(mu_list = mu_list[[-1]], sigma_list = sigma_list))
 })
+
+test_that("correlated covariance matrices remain symmetric for PK-scale values", {
+  mu_list <- list(
+    SB2 = c(AUCinf = 38703, AUClast = 36862, Cmax = 127),
+    EUREF = c(AUCinf = 39360, AUClast = 37022, Cmax = 126.2)
+  )
+  sigma_list <- list(
+    SB2 = c(AUCinf = 11114, AUClast = 9133, Cmax = 16.9),
+    EUREF = c(AUCinf = 12332, AUClast = 9398, Cmax = 17.9)
+  )
+
+  varcov_list <- derive_varcov_list(mu_list, sigma_list, rho = .6)
+
+  expect_true(all(vapply(varcov_list, isSymmetric, logical(1))))
+  expect_silent(validate_positive_definite(varcov_list))
+  expect_equal(varcov_list[[1]][1, 3], varcov_list[[1]][3, 1])
+})

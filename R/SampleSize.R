@@ -562,7 +562,11 @@ sampleSize <- function(distribution = c("norm", "lnorm", "pois", "nbinom"),
   # Resolve hierarchy after the comparator-specific endpoint families are
   # known. This makes named type_y robust when comparisons select different
   # endpoints from the arm-level input.
-  selected_endpoints <- unique(unlist(list_y_comparator, use.names = FALSE))
+  selected_endpoints <- if (is.list(list_y_comparator)) {
+    unique(unlist(list_y_comparator, use.names = FALSE))
+  } else {
+    character()
+  }
   type_info <- .prepare_type_y(
     type_y = type_y, all_endpoints = uynames,
     selected_endpoints = selected_endpoints, adjust = adjust
@@ -1137,6 +1141,11 @@ derive_varcov_list <- function(mu_list, sigma_list, ynames_list = NULL, varcov_l
         # Construct the variance-covariance matrix
         varcov <- diag(sigma_list[[i]]) %*% R %*% diag(sigma_list[[i]])
       }
+
+      # Matrix multiplication can introduce tiny, machine-precision
+      # differences between mirrored off-diagonal entries. Restore the
+      # mathematical symmetry before the positive-semidefinite check.
+      varcov <- (varcov + t(varcov)) / 2
 
       # Add the matrix to the list
       varcov_list[[i]] <- varcov

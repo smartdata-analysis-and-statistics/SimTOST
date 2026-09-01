@@ -266,3 +266,23 @@ test_that("sequential adjustment follows named endpoint selections", {
   expect_equal(unname(fit$param.d$k), c(1L, 1L))
   expect_identical(fit$param$list_y_comparator[[2]], c("y1", "y3"))
 })
+
+test_that("sequential adjustment infers endpoints when endpoint selection is omitted", {
+  fit <- sampleSize(
+    power = .1, distribution = "normal", ctype = "DOM",
+    mu_list = list(T = c(y1 = 1, y2 = 1, y3 = 1),
+                   R = c(y1 = 1, y2 = 1, y3 = 1)),
+    sigma_list = list(T = c(y1 = .2, y2 = .2, y3 = .2),
+                      R = c(y1 = .2, y2 = .2, y3 = .2)),
+    list_comparator = list(T_vs_R = c("T", "R")),
+    list_lequi.tol = list(T_vs_R = c(y1 = -.2, y2 = -.2, y3 = -.2)),
+    list_uequi.tol = list(T_vs_R = c(y1 = .2, y2 = .2, y3 = .2)),
+    rho = .6, type_y = c(y1 = 2, y2 = 2, y3 = 1),
+    k = c(T_vs_R = 1), adjust = "seq",
+    lower = 2, upper = 2, optimization_method = "step-by-step",
+    nsim = 3, ncores = 1, seed = 12
+  )
+
+  expect_identical(fit$param$list_y_comparator[[1]], c("y1", "y2", "y3"))
+  expect_identical(unname(fit$param$type_y), c(2L, 2L, 1L))
+})
