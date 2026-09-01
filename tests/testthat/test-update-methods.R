@@ -22,6 +22,56 @@ test_that("update simss preserves stored settings and overrides supplied ones", 
   expect_identical(as.numeric(call$nsim), 7)
 })
 
+test_that("update simss rebuilds covariance matrices from supplied standard deviations", {
+  fit <- sampleSize(
+    power = .5, distribution = "normal", ctype = "DOM",
+    mu_list = list(T = c(y1 = 10), R = c(y1 = 10)),
+    sigma_list = list(T = c(y1 = 1), R = c(y1 = 1)),
+    list_comparator = list(T_vs_R = c("T", "R")),
+    list_y_comparator = list(T_vs_R = "y1"),
+    list_lequi.tol = list(T_vs_R = -.2),
+    list_uequi.tol = list(T_vs_R = .2),
+    lower = 2, upper = 2, optimization_method = "step-by-step",
+    nsim = 5, ncores = 1, seed = 37
+  )
+
+  updated <- update(
+    fit,
+    mu_list = list(T = 10, R = 10),
+    sigma_list = list(T = 3, R = 4)
+  )
+
+  expect_equal(as.numeric(updated$param$varcov$T), 9)
+  expect_equal(as.numeric(updated$param$varcov$R), 16)
+
+  call <- update(
+    fit,
+    sigma_list = list(T = 3, R = 4),
+    evaluate = FALSE
+  )
+  expect_null(call$varcov_list)
+  expect_identical(as.numeric(call$sigma_list$T), 3)
+})
+
+test_that("update rejects a supplied standard-deviation list with invalid dimensions", {
+  fit <- sampleSize(
+    power = .5, distribution = "normal", ctype = "DOM",
+    mu_list = list(T = c(y1 = 10), R = c(y1 = 10)),
+    sigma_list = list(T = c(y1 = 1), R = c(y1 = 1)),
+    list_comparator = list(T_vs_R = c("T", "R")),
+    list_y_comparator = list(T_vs_R = "y1"),
+    list_lequi.tol = list(T_vs_R = -.2),
+    list_uequi.tol = list(T_vs_R = .2),
+    lower = 2, upper = 2, optimization_method = "step-by-step",
+    nsim = 5, ncores = 1, seed = 38
+  )
+
+  expect_error(
+    update(fit, sigma_list = list(T = c(y1 = 1, y2 = 2), R = c(y1 = 1))),
+    "same length"
+  )
+})
+
 test_that("update simpower preserves the fixed sample size and settings", {
   fit <- simPower(
     n = 10, distribution = "normal", ctype = "DOM",

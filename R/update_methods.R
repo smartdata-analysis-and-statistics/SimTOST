@@ -1,9 +1,25 @@
 # Re-run a SimTOST calculation while changing only explicitly supplied inputs.
-.update_simtost_object <- function(object, fun, base_args, dots, evaluate) {
-  if (!isTRUE(evaluate)) {
-    return(as.call(c(list(as.name(fun)), utils::modifyList(base_args, dots))))
+.merge_update_args <- function(base_args, dots) {
+  args <- utils::modifyList(base_args, dots)
+
+  # Continuous results retain the derived covariance matrices, because those
+  # are what the simulation uses internally. If a user supplies new standard
+  # deviations, the old matrices must not remain in the call: varcov_list
+  # takes precedence over sigma_list in sampleSize().
+  if ("sigma_list" %in% names(dots) &&
+      !"varcov_list" %in% names(dots)) {
+    args$varcov_list <- NULL
   }
-  do.call(fun, utils::modifyList(base_args, dots))
+
+  args
+}
+
+.update_simtost_object <- function(object, fun, base_args, dots, evaluate) {
+  args <- .merge_update_args(base_args, dots)
+  if (!isTRUE(evaluate)) {
+    return(as.call(c(list(as.name(fun)), args)))
+  }
+  do.call(fun, args)
 }
 
 .continuous_sample_args_from_object <- function(object) {
