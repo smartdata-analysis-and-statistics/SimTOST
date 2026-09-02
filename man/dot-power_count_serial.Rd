@@ -86,6 +86,8 @@ log-rate scale, ordered as reference carry-over and treatment carry-over.}
 
 \item{dropout}{Numeric vector of length 2 containing dropout proportions
 for the two crossover sequences.}
+
+\item{type_y_active}{Internal flag indicating whether \code{type_y} is active.}
 }
 \value{
 An object of class \code{countpower} containing estimated power and its

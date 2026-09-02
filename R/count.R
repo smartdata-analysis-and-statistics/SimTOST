@@ -37,6 +37,7 @@
 #' log-rate scale, ordered as reference carry-over and treatment carry-over.
 #' @param dropout Numeric vector of length 2 containing dropout proportions
 #' for the two crossover sequences.
+#' @param type_y_active Internal flag indicating whether `type_y` is active.
 #' @details For `design = "2x2"`, complete participants contribute one count
 #' under each treatment. The kernel analyzes within-participant log-rate
 #' contrasts, averages the two sequence-specific estimates to remove period
@@ -313,6 +314,16 @@ power_count <- function(n_per_arm, rate_test, rate_reference, exposure = 1,
 #' simulated power reaches the target for a rate-ratio equivalence test.
 #' @inheritParams power_count
 #' @param power Target power.
+#' @param rate_test Event rate in the test arm.
+#' @param rate_reference Event rate in the reference arm.
+#' @param exposure Exposure per subject; a scalar or one value per endpoint.
+#' @param margin_lower Lower rate-ratio equivalence margin.
+#' @param margin_upper Upper rate-ratio equivalence margin.
+#' @param model Count model: `"poisson"` or `"negative-binomial"`.
+#' @param dispersion Positive negative-binomial dispersion parameter.
+#' @param alpha One-sided significance level.
+#' @param nsim Number of simulated trials.
+#' @param seed Optional random seed.
 #' @param design Trial design: `"parallel"` or `"2x2"`. In a crossover
 #' design, the returned sample size is per sequence.
 #' @param lower Minimum subjects per arm.
@@ -335,6 +346,12 @@ power_count <- function(n_per_arm, rate_test, rate_reference, exposure = 1,
 #' @param pos.side Retained for compatibility with `sampleSize()`; count
 #' searches return the smallest candidate reaching the target.
 #' @param maxiter Maximum number of power evaluations.
+#' @param sigmaB Between-subject standard deviation for the count 2x2 design.
+#' @param Eper Period effects for the count 2x2 design.
+#' @param Eco Carry-over effects for the count 2x2 design.
+#' @param dropout Dropout proportions for the count 2x2 design.
+#' @param .warn_redundant_bon Logical. If `TRUE`, warn about redundant or
+#'   uncalibrated multiplicity configurations.
 #' @return An object of class `countss` containing the selected sample size,
 #' achieved power, confidence interval, input parameters, and the search
 #' history in `table.iter` and `table.test`. For count outcomes, `table.iter`

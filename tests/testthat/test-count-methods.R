@@ -11,6 +11,9 @@ test_that("single-comparison count methods support Poisson and negative binomial
     expect_lte(result$power, 1)
     expect_equal(result$n_total, 50)
     expect_named(confint(result), c("Lower", "Upper"))
+    expect_named(confint(result, parm = NULL, level = 0.90),
+                 c("Lower", "Upper"))
+    expect_error(confint(result, level = 1), "level")
     expect_true(is.data.frame(summary(result)))
   }
 })
@@ -39,6 +42,9 @@ test_that("count sample-size methods return canonical count classes", {
   expect_true(all(count_plot$data[[3]]$linewidth >= 1))
   expect_true(is.data.frame(summary(result)))
   expect_named(confint(result), c("Lower", "Upper"))
+  expect_named(confint(result, parm = NULL, level = 0.90),
+               c("Lower", "Upper"))
+  expect_error(confint(result, level = 1), "level")
 })
 
 test_that("count sample-size history handles a lower-bound solution and invalid history controls", {
@@ -94,6 +100,8 @@ test_that("unified count sample-size results match the continuous result contrac
   expect_equal(result$param.d$k, 1L)
   expect_identical(result$param$list_y_comparator[["TEST_vs_REF"]], "y1")
   expect_identical(result$parameters$.function, "sampleSize")
+  expect_named(confint(result, parm = NULL), c("Lower", "Upper"))
+  expect_error(confint(result, level = 1), "level")
 
   printed <- capture.output(summary_result <- summary(result))
   expect_true(any(grepl("Sample Size Summary", printed, fixed = TRUE)))

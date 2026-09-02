@@ -28,19 +28,6 @@ all endpoints are displayed.}
 \item{...}{Optional plotting controls, including \code{type}, \code{show_reference},
 \code{n_trials}, \code{seed}, and \code{max_points}. Legacy selector names are accepted
 for backward compatibility.}
-
-\item{type}{Plot type: \code{"density"}, \code{"histogram"}, \code{"ecdf"}, or \code{"qq"}.}
-
-\item{show_reference}{Logical. If \code{TRUE}, overlay the user-specified
-outcome distribution or the true estimand value. Defaults to \code{TRUE}.}
-
-\item{n_trials}{Optional number of randomly selected simulated trials to
-display. This is useful for illustrating the empirical distribution
-without plotting every retained observation.}
-
-\item{seed}{Seed used when selecting \code{n_trials}.}
-
-\item{max_points}{Maximum number of observations plotted after filtering.}
 }
 \value{
 A \code{ggplot} object.

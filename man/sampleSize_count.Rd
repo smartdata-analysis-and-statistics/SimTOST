@@ -40,6 +40,26 @@ sampleSize_count(
 \arguments{
 \item{power}{Target power.}
 
+\item{rate_test}{Event rate in the test arm.}
+
+\item{rate_reference}{Event rate in the reference arm.}
+
+\item{exposure}{Exposure per subject; a scalar or one value per endpoint.}
+
+\item{margin_lower}{Lower rate-ratio equivalence margin.}
+
+\item{margin_upper}{Upper rate-ratio equivalence margin.}
+
+\item{model}{Count model: \code{"poisson"} or \code{"negative-binomial"}.}
+
+\item{dispersion}{Positive negative-binomial dispersion parameter.}
+
+\item{alpha}{One-sided significance level.}
+
+\item{nsim}{Number of simulated trials.}
+
+\item{seed}{Optional random seed.}
+
 \item{lower}{Minimum subjects per arm.}
 
 \item{upper}{Maximum subjects per arm.}
@@ -61,6 +81,14 @@ for primary/co-primary endpoints and \code{2} for secondary endpoints.}
 The \code{"t"} option uses Mielke's strong k-out-of-m calibration
 \code{alpha / (m - k + 1)}; legacy partial-conjunction labels are accepted.}
 
+\item{sigmaB}{Between-subject standard deviation for the count 2x2 design.}
+
+\item{Eper}{Period effects for the count 2x2 design.}
+
+\item{Eco}{Carry-over effects for the count 2x2 design.}
+
+\item{dropout}{Dropout proportions for the count 2x2 design.}
+
 \item{optimization_method}{Search method. \code{"fast"} brackets the power
 crossing and uses integer bisection; \code{"step-by-step"} evaluates every
 candidate sample size.}
@@ -77,6 +105,9 @@ searches return the smallest candidate reaching the target.}
 \item{ncores}{Number of worker processes used for count simulations.
 Set to 1 for serial execution. Parallel execution splits \code{nsim} into
 reproducible independent chunks and combines the resulting successes.}
+
+\item{.warn_redundant_bon}{Logical. If \code{TRUE}, warn about redundant or
+uncalibrated multiplicity configurations.}
 }
 \value{
 An object of class \code{countss} containing the selected sample size,

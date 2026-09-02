@@ -8,16 +8,6 @@
 }
 \arguments{
 \item{param.d}{design parameters}
-
-\item{n}{sample size}
-
-\item{nsim}{number of simulated studies}
-
-\item{param}{list of parameters (mean,sd,tar)}
-
-\item{seed}{main seed}
-
-\item{ncores}{number of cores}
 }
 \value{
 power calculated from a global list of comparators

@@ -4,7 +4,7 @@
 \alias{plot.countss}
 \title{Plot count-outcome sample-size results}
 \usage{
-\method{plot}{countss}(x, target_power = 0.8, display = "all", ...)
+\method{plot}{countss}(x, target_power = 0.8, display = "all", all = TRUE, ...)
 }
 \arguments{
 \item{x}{An object returned by \code{\link[=sampleSize]{sampleSize()}}. Count-specific dispatch is
@@ -18,6 +18,10 @@ always overrides the stored target.}
 \item{display}{Character vector of comparator panels to display. Use
 \code{"all"} (the default) to display every comparator and, for joint count
 analyses, the all-comparisons panel.}
+
+\item{all}{Logical. If \code{TRUE} (the default), display only the aggregate
+\verb{All comparators} result without a comparator facet. If \code{FALSE}, display
+the comparator panels selected by \code{display}.}
 
 \item{...}{Unused additional arguments.}
 }

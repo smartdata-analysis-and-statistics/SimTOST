@@ -647,7 +647,6 @@
 #' or endpoint correlations.
 #' @param x A result returned by `sampleSize()` or `simPower()` with
 #'   `keep_sim_data = TRUE`.
-#' @param type Plot type: `"density"`, `"histogram"`, `"ecdf"`, or `"qq"`.
 #' @param estimand Quantity to display: `"mu"` (or `"mean"`), `"sigma"`,
 #'   `"dispersion"`, `"rate"`, `"t_value"`,
 #'   `"DOM"`, `"ROM"`, `"RR"`, or `"correlation"`. `"mean"` and `"sigma"`
@@ -660,13 +659,6 @@
 #'   are shown.
 #' @param endpoints Optional character vector of endpoint names. If `NULL`,
 #'   all endpoints are displayed.
-#' @param show_reference Logical. If `TRUE`, overlay the user-specified
-#'   outcome distribution or the true estimand value. Defaults to `TRUE`.
-#' @param n_trials Optional number of randomly selected simulated trials to
-#'   display. This is useful for illustrating the empirical distribution
-#'   without plotting every retained observation.
-#' @param seed Seed used when selecting `n_trials`.
-#' @param max_points Maximum number of observations plotted after filtering.
 #' @param ... Optional plotting controls, including `type`, `show_reference`,
 #'   `n_trials`, `seed`, and `max_points`. Legacy selector names are accepted
 #'   for backward compatibility.

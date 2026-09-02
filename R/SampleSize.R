@@ -77,6 +77,9 @@
 #' @param pos.side Logical. If \code{TRUE}, finds the smallest integer \code{i} closest to the root such that \code{f(i) > 0}. Used when \code{optimization_method = "fast"}.
 #' @param maxiter Integer. Maximum iterations allowed for sample size estimation (default = 1000). Used when \code{optimization_method = "fast"}.
 #' @param verbose Logical. If \code{TRUE}, prints progress and messages during execution (default = \code{FALSE}).
+#' @param .warn_redundant_bon Logical. If `TRUE`, warn when a requested
+#'   multiplicity adjustment is redundant or uncalibrated for the selected
+#'   endpoint decision.
 #'
 #' @details
 #' The common planning arguments are \code{power}, \code{alpha},

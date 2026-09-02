@@ -38,12 +38,50 @@ sampleSize_count_joint(
 \arguments{
 \item{power}{Target joint power.}
 
+\item{rates}{Named list of equal-length endpoint-rate vectors, one per arm.}
+
+\item{comparisons}{Named list of treatment-reference arm pairs.}
+
+\item{exposure}{Exposure per subject, scalar or one value per endpoint, or
+a named list with one scalar/vector per arm.}
+
+\item{margin_lower}{Lower rate-ratio equivalence margin.}
+
+\item{margin_upper}{Upper rate-ratio equivalence margin.}
+
+\item{model}{Count model: \code{"poisson"} or \code{"negative-binomial"}.}
+
+\item{dispersion}{Positive negative-binomial dispersion parameter.}
+
+\item{alpha}{One-sided significance level.}
+
+\item{endpoint_corr}{Endpoint correlation matrix; the default is
+independence.}
+
+\item{k}{Number of endpoints that must pass within every comparison.}
+
 \item{type_y}{Numeric endpoint hierarchy used with \code{adjust = "seq"}: \code{1}
 for primary/co-primary endpoints and \code{2} for secondary endpoints.}
+
+\item{adjust}{Multiplicity adjustment within each comparison's endpoint
+family.}
+
+\item{nsim}{Number of simulated trials.}
+
+\item{seed}{Optional random seed.}
 
 \item{lower}{Minimum subjects per arm.}
 
 \item{upper}{Maximum subjects per arm.}
+
+\item{design}{Joint multi-arm design; currently only \code{"parallel"} is
+supported.}
+
+\item{list_margin_lower}{Optional named list of lower margins, one vector
+per comparison.}
+
+\item{list_margin_upper}{Optional named list of upper margins, one vector
+per comparison.}
 
 \item{optimization_method}{Search method: \code{"fast"} uses bracketing and
 integer bisection; \code{"step-by-step"} evaluates every candidate.}
@@ -60,6 +98,9 @@ searches always return the smallest candidate reaching the target.}
 \item{ncores}{Number of worker processes used for count simulations.
 Set to 1 for serial execution. Parallel execution splits \code{nsim} into
 reproducible independent chunks and combines the resulting successes.}
+
+\item{.warn_redundant_bon}{Logical. If \code{TRUE}, warn about redundant or
+uncalibrated multiplicity configurations.}
 }
 \value{
 An object of class \code{countss} containing the selected sample

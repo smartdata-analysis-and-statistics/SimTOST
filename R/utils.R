@@ -47,11 +47,6 @@ simParallelEndpoints <- function(n,
 #' @title Calculate the power across all comparators
 #' @description  Internal function to calculate the power across all comparators
 #'
-#' @param n sample size
-#' @param nsim number of simulated studies
-#' @param param list of parameters (mean,sd,tar)
-#' @param seed main seed
-#' @param ncores number of cores
 #' @param param.d design parameters
 #'
 #' @return power calculated from a global list of comparators

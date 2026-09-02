@@ -4,10 +4,14 @@
 \alias{confint.simss}
 \title{Confidence Interval for Achieved Power from simss object}
 \usage{
-\method{confint}{simss}(object, level = 0.95, ...)
+\method{confint}{simss}(object, parm = NULL, level = 0.95, ...)
 }
 \arguments{
 \item{object}{An object of class \code{"simss"} returned by a sampleSize function}
+
+\item{parm}{Unused; included for compatibility with \code{\link[stats:confint]{stats::confint()}}.}
+
+\item{level}{Confidence level for the Monte Carlo interval.}
 
 \item{...}{Additional arguments (currently unused).}
 }

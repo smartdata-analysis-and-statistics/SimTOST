@@ -4,7 +4,7 @@
 \alias{plot.simpower_curve}
 \title{Plot fixed-sample-size power results}
 \usage{
-\method{plot}{simpower_curve}(x, target_power = 0.8, display = "all", ...)
+\method{plot}{simpower_curve}(x, target_power = 0.8, display = "all", all = TRUE, ...)
 }
 \arguments{
 \item{x}{An object returned by \code{\link[=simPower]{simPower()}}.}
@@ -17,6 +17,10 @@ always overrides the stored target.}
 \item{display}{Character vector of comparator panels to display. Use
 \code{"all"} (the default) to display every comparator, or provide comparator
 names such as \code{"R_vs_T"} to display selected panels.}
+
+\item{all}{Logical. If \code{TRUE} (the default), display only the aggregate
+\verb{All comparators} result without a comparator facet. If \code{FALSE}, display
+the current comparator panels selected by \code{display}.}
 
 \item{...}{Unused additional arguments.}
 }

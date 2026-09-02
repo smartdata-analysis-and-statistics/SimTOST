@@ -81,6 +81,8 @@ per comparison. Each vector is scalar or has one value per endpoint.}
 
 \item{list_margin_upper}{Optional named list of upper margins, one vector
 per comparison. Each vector is scalar or has one value per endpoint.}
+
+\item{type_y_active}{Internal flag indicating whether \code{type_y} is active.}
 }
 \value{
 An object of class \code{countpower} containing joint power and a

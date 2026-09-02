@@ -1,6 +1,8 @@
 #' Confidence Interval for Achieved Power from simss object
 #'
 #' @param object An object of class `"simss"` returned by a sampleSize function
+#' @param parm Unused; included for compatibility with [stats::confint()].
+#' @param level Confidence level for the Monte Carlo interval.
 #' @param ... Additional arguments (currently unused).
 #'
 #' @return A named numeric vector with two elements:
@@ -16,7 +18,12 @@
 #' # confint(res), where res is returned by sampleSize()
 #' }
 #'
-confint.simss <- function(object, level = 0.95, ...) {
+confint.simss <- function(object, parm = NULL, level = 0.95, ...) {
+  if (!is.null(parm) && missing(level) && is.numeric(parm) &&
+      length(parm) == 1L && is.finite(parm) && parm > 0 && parm < 1) {
+    level <- parm
+    parm <- NULL
+  }
   if (inherits(object, "countss")) {
     return(confint.countss(object, level = level, ...))
   }

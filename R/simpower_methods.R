@@ -1,9 +1,6 @@
 #' Summarize fixed-sample-size power results
 #'
 #' @param object An object returned by [simPower()].
-#' @param all Logical. If `TRUE` (the default), display only the aggregate
-#'   `All comparators` result without a comparator facet. If `FALSE`, display
-#'   the current comparator panels selected by `display`.
 #' @param ... Unused additional arguments.
 #' @return A data frame containing the distribution, design, comparison,
 #' estimand, hypotheses, sample size, estimated power, and Monte Carlo
@@ -298,6 +295,17 @@ plot.simpower_curve <- function(x, target_power = 0.80, display = "all", all = T
   p
 }
 
+#' Plot fixed-sample-size power results
+#'
+#' @param x An object returned by [simPower()].
+#' @param target_power Target power shown as a horizontal reference line.
+#' @param display Character vector of comparator panels to display. This
+#'   argument is retained for compatibility with curve results.
+#' @param all Logical retained for compatibility with curve results. If
+#'   `TRUE`, the aggregate result is displayed when available.
+#' @param ... Unused additional arguments.
+#' @return A `ggplot` object showing estimated power and its Monte Carlo
+#'   confidence interval.
 #' @export
 #' @method plot simpower
 plot.simpower <- function(x, target_power = 0.80, display = "all", all = TRUE, ...) {
@@ -401,6 +409,9 @@ plot.countpower <- function(x, target_power = 0.80, ...) {
 #' @param display Character vector of comparator panels to display. Use
 #'   `"all"` (the default) to display every comparator and, for joint count
 #'   analyses, the all-comparisons panel.
+#' @param all Logical. If `TRUE` (the default), display only the aggregate
+#'   `All comparators` result without a comparator facet. If `FALSE`, display
+#'   the comparator panels selected by `display`.
 #' @param ... Unused additional arguments.
 #' @return A `ggplot` object showing the simulated power curve over the
 #' evaluated candidate sample sizes, with the selected sample size highlighted.

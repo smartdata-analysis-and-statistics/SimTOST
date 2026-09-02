@@ -311,9 +311,21 @@ summary.countss <- function(object, ...) {
   invisible(sample_size)
 }
 
+#' Extract the Monte Carlo confidence interval from count power results
+#'
+#' @param object An object returned by a count power calculation.
+#' @param parm Unused; included for compatibility with [stats::confint()].
+#' @param level Confidence level for the Monte Carlo interval.
+#' @param ... Unused additional arguments.
+#' @return A named vector containing the lower and upper interval limits.
 #' @export
 #' @method confint countpower
-confint.countpower <- function(object, level = 0.95, ...) {
+confint.countpower <- function(object, parm = NULL, level = 0.95, ...) {
+  if (!is.null(parm) && missing(level) && is.numeric(parm) &&
+      length(parm) == 1L && is.finite(parm) && parm > 0 && parm < 1) {
+    level <- parm
+    parm <- NULL
+  }
   if (!is.numeric(level) || length(level) != 1L || level <= 0 || level >= 1)
     stop("'level' must be a single number between 0 and 1.")
   interval <- if (!is.null(object$successes) && !is.null(object$nsim)) {
@@ -325,8 +337,9 @@ confint.countpower <- function(object, level = 0.95, ...) {
   stats::setNames(interval, c("Lower", "Upper"))
 }
 
+#' @rdname confint.countpower
 #' @export
 #' @method confint countss
-confint.countss <- function(object, level = 0.95, ...) {
-  confint.countpower(object, level = level, ...)
+confint.countss <- function(object, parm = NULL, level = 0.95, ...) {
+  confint.countpower(object, parm = parm, level = level, ...)
 }

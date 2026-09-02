@@ -165,6 +165,10 @@ number of trial arms.}
 \item{keep_sim_data}{Logical. If \code{TRUE}, retain model-scale observations
 for every simulated trial in \code{sim_data} for distribution diagnostics.
 Defaults to \code{FALSE} because retained data can be large.}
+
+\item{.warn_redundant_bon}{Logical. If \code{TRUE}, warn when a requested
+multiplicity adjustment is redundant or uncalibrated for the selected
+endpoint decision.}
 }
 \value{
 A list containing:

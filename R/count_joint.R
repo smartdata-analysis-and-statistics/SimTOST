@@ -189,6 +189,7 @@ prepare_joint_count_inputs <- function(rates, comparisons, exposure,
 #' @param design Joint multi-arm design; currently only `"parallel"` is
 #' supported because multiple reference arms do not define a single standard
 #' 2x2 crossover design.
+#' @param type_y_active Internal flag indicating whether `type_y` is active.
 #' @return An object of class `countpower` containing joint power and a
 #' binomial confidence interval.
 #' @examples
@@ -336,8 +337,24 @@ power_count_joint <- function(n_per_arm, rates, comparisons,
 #'
 #' @inheritParams power_count_joint
 #' @param power Target joint power.
+#' @param rates Named list of equal-length endpoint-rate vectors, one per arm.
+#' @param comparisons Named list of treatment-reference arm pairs.
+#' @param exposure Exposure per subject, scalar or one value per endpoint, or
+#'   a named list with one scalar/vector per arm.
+#' @param margin_lower Lower rate-ratio equivalence margin.
+#' @param margin_upper Upper rate-ratio equivalence margin.
+#' @param model Count model: `"poisson"` or `"negative-binomial"`.
+#' @param dispersion Positive negative-binomial dispersion parameter.
+#' @param alpha One-sided significance level.
+#' @param endpoint_corr Endpoint correlation matrix; the default is
+#'   independence.
 #' @param type_y Numeric endpoint hierarchy used with `adjust = "seq"`: `1`
 #' for primary/co-primary endpoints and `2` for secondary endpoints.
+#' @param k Number of endpoints that must pass within every comparison.
+#' @param adjust Multiplicity adjustment within each comparison's endpoint
+#'   family.
+#' @param nsim Number of simulated trials.
+#' @param seed Optional random seed.
 #' @param lower Minimum subjects per arm.
 #' @param upper Maximum subjects per arm.
 #' @param optimization_method Search method: `"fast"` uses bracketing and
@@ -347,6 +364,14 @@ power_count_joint <- function(n_per_arm, rates, comparisons,
 #' @param pos.side Retained for compatibility with `sampleSize()`; count
 #' searches always return the smallest candidate reaching the target.
 #' @param maxiter Maximum number of power evaluations.
+#' @param design Joint multi-arm design; currently only `"parallel"` is
+#'   supported.
+#' @param list_margin_lower Optional named list of lower margins, one vector
+#'   per comparison.
+#' @param list_margin_upper Optional named list of upper margins, one vector
+#'   per comparison.
+#' @param .warn_redundant_bon Logical. If `TRUE`, warn about redundant or
+#'   uncalibrated multiplicity configurations.
 #' @return An object of class `countss` containing the selected sample
 #' size, achieved joint power, confidence interval, input parameters, and the
 #' search history in `table.iter` and `table.test`. For count outcomes,

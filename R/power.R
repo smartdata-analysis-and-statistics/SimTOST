@@ -69,6 +69,8 @@
 #' passed to the compiled simulation backend; for count outcomes it splits
 #' Monte Carlo trials into independent seeded chunks whose C++ results are
 #' combined.
+#' @param .warn_redundant_bon Logical. If `TRUE`, warn when a requested
+#'   multiplicity adjustment is redundant or uncalibrated.
 #' @return An object containing estimated power and its 95% Monte Carlo
 #' confidence interval. The unified function returns primary class `simpower`
 #' for every distribution. If `keep_sim_data = TRUE`, the object also contains
@@ -76,14 +78,12 @@
 #' compatibility class `countpower`.
 #' @details
 #' For Normal and Log Normal outcomes, supply the continuous-outcome inputs
-#' (code{mu_list}, code{sigma_list} or code{varcov_list}, and optionally
-#' code{cor_mat} or code{rho}). For Poisson and Negative Binomial outcomes,
-#' supply code{rate_list}, code{list_comparator},
-#' code{list_lequi.tol}, and code{list_uequi.tol}. Count code{exposure} and
-#' code{dispersion} may be scalar, endpoint-specific, or named arm-specific
+#' (`mu_list`, `sigma_list` or `varcov_list`, and optionally `cor_mat` or
+#' `rho`). For Poisson and Negative Binomial outcomes, supply `rate_list`,
+#' `list_comparator`, `list_lequi.tol`, and `list_uequi.tol`. Count `exposure`
+#' and `dispersion` may be scalar, endpoint-specific, or named arm-specific
 #' lists. Arguments for the other outcome family are not used.
-#' The returned object supports code{summary()}, code{confint()}, and
-#' code{plot()}.
+#' The returned object supports `summary()`, `confint()`, and `plot()`.
 #' The effective endpoint count is determined separately for each comparator
 #' from `list_y_comparator` (or from the endpoints common to both arms when the
 #' argument is omitted). `k` is checked against that count. The function warns
@@ -98,12 +98,12 @@
 #' arm is the test and the second arm is the reference. Thus, `c("T", "R")`
 #' gives `T - R` for DOM, `T / R` for ROM, and the event-rate ratio
 #' `rate_T / rate_R` for RR. Reversing the two names reverses the estimand.
-#' For count outcomes, the estimand is the event-rate ratio
-#' \\(λ_T / λ_R\\). The equivalence hypotheses are
-#' \\(H_0: λ_T/λ_R \\le L \\text{ or } λ_T/λ_R \\ge U\\)
-#' versus \\(H_1: L < λ_T/λ_R < U\\), assessed by TOST. The same
-#' interval hypotheses apply to continuous mean differences (DOM) or mean
-#' ratios (ROM), with the log-normal ROM analysis performed on the log scale.
+#' For count outcomes, the estimand is the event-rate ratio `lambda_T / lambda_R`.
+#' The equivalence hypotheses are `H0: lambda_T / lambda_R <= L` or
+#' `lambda_T / lambda_R >= U` versus `H1: L < lambda_T / lambda_R < U`,
+#' assessed by TOST. The same interval hypotheses apply to continuous mean
+#' differences (DOM) or mean ratios (ROM), with the log-normal ROM analysis
+#' performed on the log scale.
 #' @export
 #' @examples
 #' simPower(n = 100, distribution = "Poisson",
@@ -362,6 +362,11 @@ simPower <- function(
   out
 }
 
+#' Print fixed-sample-size power results
+#'
+#' @param x An object returned by [simPower()].
+#' @param ... Unused additional arguments.
+#' @return The input object, invisibly.
 #' @export
 print.simpower <- function(x, ...) {
   if (inherits(x, "simpower_curve")) {
