@@ -1,6 +1,6 @@
 Package: SimTOST
 Title: Sample Size Estimation for Bio-Equivalence Trials Through Simulation
-Version: 1.0.2
+Version: 1.1.0
 Authors@R: c(
     person(given = "Thomas", 
            family = "Debray", 
@@ -29,8 +29,6 @@ Authors@R: c(
            role = c("ctb")),
     person("Biogen Inc", role = c("cph", "fnd"))
     )
-Author: Thomas Debray [aut, cre]
-Maintainer: Thomas Debray <tdebray@fromdatatowisdom.com>
 Description: 
     Sample size estimation for bio-equivalence trials is supported through a simulation-based approach 
     that extends the Two One-Sided Tests (TOST) procedure. The methodology provides flexibility in 

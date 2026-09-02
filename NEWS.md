@@ -1,3 +1,18 @@
+# SimTOST 1.1.0
+
+## New features
+- Added `adjust = "t"` for Mielke's strong k-out-of-m adjustment.
+- Added endpoint selection controls for diagnostic and sample-size plots.
+- Expanded the count-outcome workflow to include Poisson and negative-binomial
+  sensitivity analyses and additional documentation.
+
+## Bug fixes
+- Improved `update()` handling for comparator and endpoint information,
+  including updated means, standard deviations, and covariance inputs.
+- Corrected negative-binomial dispersion scaling for aggregate counts in
+  parallel designs.
+- Improved Monte Carlo stability and precision diagnostics.
+
 # SimTOST 1.0.2
 
 ## Bug Fixes
@@ -22,5 +37,4 @@
 # SimTOST 0.2.0
 
 # SimTOST 0.1.0
-
 

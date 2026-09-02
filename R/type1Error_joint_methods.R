@@ -50,7 +50,7 @@ plot.type1error_joint <- function(x, null_count = c("minimal", "all"), ...) {
   conf.level <- if (is.null(x$conf.level)) 0.95 else x$conf.level
   data <- x$table
   if (null_count == "minimal" && nrow(data)) {
-    minimum_by_comparator <- ave(
+    minimum_by_comparator <- stats::ave(
       data$NullCount, data$Comparator, FUN = min
     )
     data <- data[data$NullCount == minimum_by_comparator, , drop = FALSE]

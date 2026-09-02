@@ -40,7 +40,7 @@
       suggested_n_total <- as.numeric(x$response$n_total[[1L]])
     } else if (is.data.frame(x$table.iter) && nrow(x$table.iter) > 0L &&
                "n_total" %in% names(x$table.iter)) {
-      suggested_n_total <- as.numeric(tail(x$table.iter$n_total, 1L))
+      suggested_n_total <- as.numeric(utils::tail(x$table.iter$n_total, 1L))
     }
     table <- x$table.test
     if (is.finite(suggested_n_total) && "n_total" %in% names(table)) {
@@ -192,10 +192,10 @@ plot_stability <- function(x, target_power = 0.80, display = "all",
   }
   data <- .filter_diagnostic_endpoint(data, endpoint)
   data <- data[!is.na(data$value), , drop = FALSE]
-  data$trial <- ave(data$value, data$n_total, data$nsim,
+  data$trial <- stats::ave(data$value, data$n_total, data$nsim,
                     data$Comparator, data$Endpoint,
                     FUN = seq_along)
-  data$cumulative_power <- ave(data$value, data$n_total, data$nsim,
+  data$cumulative_power <- stats::ave(data$value, data$n_total, data$nsim,
                                data$Comparator, data$Endpoint,
                                FUN = function(z) cumsum(z) / seq_along(z))
   data$Endpoint <- factor(data$Endpoint,
@@ -258,10 +258,10 @@ plot_mc_error <- function(x, display = "all", overall = FALSE,
   }
   data <- .filter_diagnostic_endpoint(data, endpoint)
   data <- data[!is.na(data$value), , drop = FALSE]
-  data$trial <- ave(data$value, data$n_total, data$nsim,
+  data$trial <- stats::ave(data$value, data$n_total, data$nsim,
                     data$Comparator, data$Endpoint,
                     FUN = seq_along)
-  data$mc_error <- ave(data$value, data$n_total, data$nsim,
+  data$mc_error <- stats::ave(data$value, data$n_total, data$nsim,
                        data$Comparator, data$Endpoint, FUN = function(z) {
                          vapply(seq_along(z), function(k) {
                            interval <- stats::binom.test(
@@ -272,7 +272,7 @@ plot_mc_error <- function(x, display = "all", overall = FALSE,
                        })
   group_id <- interaction(data$n_total, data$nsim, data$Comparator,
                           data$Endpoint, drop = TRUE)
-  data$last_trial <- data$trial == ave(data$trial, group_id, FUN = max)
+  data$last_trial <- data$trial == stats::ave(data$trial, group_id, FUN = max)
   final_data <- data[data$last_trial, , drop = FALSE]
   final_data$label <- scales::label_percent(accuracy = 0.1)(final_data$mc_error)
   data$label <- NA_character_

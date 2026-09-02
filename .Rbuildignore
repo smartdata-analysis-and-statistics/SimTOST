@@ -9,3 +9,7 @@ README.Rmd
 ^vignettes/manuscript\.Rnw$
 ^CRAN-SUBMISSION$
 ^LICENSE\.md$
+^AGENTS\.md$
+^figure$
+^replication-output$
+^replication\.R$

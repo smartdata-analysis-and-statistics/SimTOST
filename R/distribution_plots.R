@@ -202,7 +202,7 @@
   groups <- split(data, grouping)
   rows <- list(); index <- 0L
   for (z in groups) {
-    wide <- reshape(z[, c("trial", "subject", "endpoint", "value")],
+    wide <- stats::reshape(z[, c("trial", "subject", "endpoint", "value")],
                     idvar = c("trial", "subject"), timevar = "endpoint",
                     direction = "wide")
     for (i in seq_len(length(endpoints) - 1L)) for (j in (i + 1L):length(endpoints)) {
