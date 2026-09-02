@@ -422,48 +422,52 @@ joint calculation.</p>
 <div class="section level2">
 <h2 id="negative-binomial-sensitivity-analysis">Negative-binomial sensitivity analysis<a class="anchor" aria-label="anchor" href="#negative-binomial-sensitivity-analysis"></a>
 </h2>
-<p>If prior evidence suggests overdispersion, repeat the calculations
-with the negative-binomial model. The <code>dispersion</code> parameter
-controls the amount of overdispersion; larger values imply greater
-variability.</p>
+<p>If prior evidence suggests overdispersion, repeat the final joint
+Poisson sample-size calculation with the negative-binomial model. All
+study settings are kept the same as in <code>joint_result</code>; only
+the distribution and dispersion are changed. The <code>dispersion</code>
+parameter controls the amount of overdispersion; larger values imply
+greater variability.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">nb_sensitivity</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simPower.html">simPower</a></span><span class="op">(</span></span>
-<span>  n <span class="op">=</span> <span class="va">required_per_arm</span>,</span>
+<code class="sourceCode R"><span><span class="va">nb_dispersion</span> <span class="op">&lt;-</span> <span class="fl">0.10</span></span>
+<span></span>
+<span><span class="va">joint_negative_binomial_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sampleSize.html">sampleSize</a></span><span class="op">(</span></span>
+<span>  power <span class="op">=</span> <span class="fl">0.80</span>,</span>
 <span>  distribution <span class="op">=</span> <span class="st">"nbinom"</span>,</span>
-<span>  rate_list <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>    TEST <span class="op">=</span> <span class="va">rate_list</span><span class="op">$</span><span class="va">TEST</span><span class="op">[[</span><span class="st">"Exacerbations"</span><span class="op">]</span><span class="op">]</span>,</span>
-<span>    EU_REF <span class="op">=</span> <span class="va">rate_list</span><span class="op">$</span><span class="va">EU_REF</span><span class="op">[[</span><span class="st">"Exacerbations"</span><span class="op">]</span><span class="op">]</span></span>
+<span>  rate_list <span class="op">=</span> <span class="va">rate_list</span>,</span>
+<span>  list_comparator <span class="op">=</span> <span class="va">comparisons</span>,</span>
+<span>  list_lequi.tol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>    EU_comparison <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">lower_margin</span>, <span class="fl">3</span><span class="op">)</span>,</span>
+<span>    US_comparison <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">lower_margin</span>, <span class="fl">3</span><span class="op">)</span></span>
 <span>  <span class="op">)</span>,</span>
-<span>  list_comparator <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>TEST_vs_EU <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"TEST"</span>, <span class="st">"EU_REF"</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>  list_lequi.tol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>TEST_vs_EU <span class="op">=</span> <span class="va">lower_margin</span><span class="op">)</span>,</span>
-<span>  list_uequi.tol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>TEST_vs_EU <span class="op">=</span> <span class="va">upper_margin</span><span class="op">)</span>,</span>
-<span>  exposure <span class="op">=</span> <span class="va">exposure</span>,</span>
+<span>  list_uequi.tol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>    EU_comparison <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">upper_margin</span>, <span class="fl">3</span><span class="op">)</span>,</span>
+<span>    US_comparison <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">upper_margin</span>, <span class="fl">3</span><span class="op">)</span></span>
+<span>  <span class="op">)</span>,</span>
+<span>  exposure <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">exposure</span>, <span class="fl">3</span><span class="op">)</span>,</span>
+<span>  cor_mat <span class="op">=</span> <span class="va">endpoint_corr</span>,</span>
 <span>  dtype <span class="op">=</span> <span class="st">"parallel"</span>,</span>
-<span>  dispersion <span class="op">=</span> <span class="fl">0.10</span>,</span>
-<span>  nsim <span class="op">=</span> <span class="fl">300</span>,</span>
-<span>  seed <span class="op">=</span> <span class="fl">1234</span></span>
+<span>  dispersion <span class="op">=</span> <span class="va">nb_dispersion</span>,</span>
+<span>  nsim <span class="op">=</span> <span class="fl">500</span>,</span>
+<span>  seed <span class="op">=</span> <span class="fl">1234</span>,</span>
+<span>  lower <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>  upper <span class="op">=</span> <span class="fl">3000</span>,</span>
+<span>  k <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>  adjust <span class="op">=</span> <span class="st">"bonferroni"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">nb_sensitivity</span></span>
-<span><span class="co">#&gt; Fixed-sample-size power</span></span>
-<span><span class="co">#&gt; Distribution: nbinom </span></span>
-<span><span class="co">#&gt; Sample size: 903 </span></span>
-<span><span class="co">#&gt; Power: 0.2633 [0.2152, 0.3177]</span></span></code></pre></div>
-</div>
-<div class="section level2">
-<h2 id="interpretation-and-limitations">Interpretation and limitations<a class="anchor" aria-label="anchor" href="#interpretation-and-limitations"></a>
-</h2>
-<p>This vignette demonstrates both a conservative and a joint endpoint
-workflow for a three-arm, three-endpoint count study using the current
-API. In the separate-search workflow, endpoint and comparison
-calculations are performed independently, whereas the joint workflow
-evaluates the required success event in the same simulated trial. The
-distributional and dependence assumptions are described in the companion
-<a href="methodological_assumptions.Rmd"><code>methodological_assumptions.Rmd</code></a>
-vignette.</p>
-<p>For a confirmatory three-arm/three-endpoint trial, the statistical
-analysis plan should specify the familywise error strategy and joint
-success criterion.</p>
+<span><span class="va">nb_sample_size</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>  n_per_arm <span class="op">=</span> <span class="va">joint_negative_binomial_result</span><span class="op">$</span><span class="va">n_per_arm</span>,</span>
+<span>  n_total <span class="op">=</span> <span class="va">joint_negative_binomial_result</span><span class="op">$</span><span class="va">n_total</span>,</span>
+<span>  achieved_power <span class="op">=</span> <span class="va">joint_negative_binomial_result</span><span class="op">$</span><span class="va">power</span>,</span>
+<span>  k <span class="op">=</span> <span class="va">joint_negative_binomial_result</span><span class="op">$</span><span class="va">k</span>,</span>
+<span>  adjustment <span class="op">=</span> <span class="va">joint_negative_binomial_result</span><span class="op">$</span><span class="va">adjust</span>,</span>
+<span>  dispersion <span class="op">=</span> <span class="va">nb_dispersion</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">nb_sample_size</span></span>
+<span><span class="co">#&gt;   n_per_arm n_total achieved_power k adjustment dispersion</span></span>
+<span><span class="co">#&gt; 1      1925    5775            0.8 3 bonferroni        0.1</span></span></code></pre></div>
 </div>
   </div>
 

@@ -126,37 +126,39 @@ presented below for two different approaches:</p>
 <div class="section level3">
 <h3 id="difference-of-means-dom">Difference of Means (DOM)<a class="anchor" aria-label="anchor" href="#difference-of-means-dom"></a>
 </h3>
-<p>One common approach for assessing bio-equivalence involves comparing
-pharmacokinetic (PK) measures between test and reference products. This
-is done using the following interval (null) hypothesis:</p>
-<p>Null Hypothesis
-(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>H</mi><mn>0</mn></msub><annotation encoding="application/x-tex">H_0</annotation></semantics></math>):
-At least one endpoint does not meet the equivalence criteria:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>H</mi><mn>0</mn></msub><mo>:</mo><msubsup><mi>m</mi><mi>T</mi><mrow><mo stretchy="false" form="prefix">(</mo><mi>j</mi><mo stretchy="false" form="postfix">)</mo></mrow></msubsup><mo>−</mo><msubsup><mi>m</mi><mi>R</mi><mrow><mo stretchy="false" form="prefix">(</mo><mi>j</mi><mo stretchy="false" form="postfix">)</mo></mrow></msubsup><mo>≤</mo><msub><mi>δ</mi><mi>L</mi></msub><mspace width="0.222em"></mspace><mspace width="0.222em"></mspace><mtext mathvariant="normal">or</mtext><mspace width="0.222em"></mspace><mspace width="0.222em"></mspace><msubsup><mi>m</mi><mi>T</mi><mrow><mo stretchy="false" form="prefix">(</mo><mi>j</mi><mo stretchy="false" form="postfix">)</mo></mrow></msubsup><mo>−</mo><msubsup><mi>m</mi><mi>R</mi><mrow><mo stretchy="false" form="prefix">(</mo><mi>j</mi><mo stretchy="false" form="postfix">)</mo></mrow></msubsup><mo>≥</mo><msub><mi>δ</mi><mi>U</mi></msub><mspace width="1.0em"></mspace><mtext mathvariant="normal">for at least one</mtext><mspace width="0.278em"></mspace><mi>j</mi></mrow><annotation encoding="application/x-tex">H_0: m_T^{(j)} - m_R^{(j)} \le \delta_L ~~ \text{or}~~ m_T^{(j)} - m_R^{(j)} \ge \delta_U \quad \text{for at least one}\;j</annotation></semantics></math></p>
-<p>Alternative Hypothesis
-(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>H</mi><mn>1</mn></msub><annotation encoding="application/x-tex">H_1</annotation></semantics></math>):
-All endpoints meet the equivalence criteria:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>H</mi><mn>1</mn></msub><mo>:</mo><msub><mi>δ</mi><mi>L</mi></msub><mo>&lt;</mo><msubsup><mi>m</mi><mi>T</mi><mrow><mo stretchy="false" form="prefix">(</mo><mi>j</mi><mo stretchy="false" form="postfix">)</mo></mrow></msubsup><mo>−</mo><msubsup><mi>m</mi><mi>R</mi><mrow><mo stretchy="false" form="prefix">(</mo><mi>j</mi><mo stretchy="false" form="postfix">)</mo></mrow></msubsup><mo>&lt;</mo><msub><mi>δ</mi><mi>U</mi></msub><mspace width="1.0em"></mspace><mtext mathvariant="normal">for all</mtext><mspace width="0.278em"></mspace><mi>j</mi></mrow><annotation encoding="application/x-tex">H_1: \delta_L&lt;m_{T}^{(j)}-m_{R}^{(j)} &lt;\delta_U \quad\text{for all}\;j</annotation></semantics></math></p>
-<p>Here,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>m</mi><mi>T</mi></msub><annotation encoding="application/x-tex">m_T</annotation></semantics></math>
+<p>Individual equivalence between a test treatment
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>T</mi><annotation encoding="application/x-tex">T</annotation></semantics></math>)
+and a reference treatment
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>R</mi><annotation encoding="application/x-tex">R</annotation></semantics></math>)
+is assessed by comparing the difference between their means,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>μ</mi><mi>T</mi></msub><mo>−</mo><msub><mi>μ</mi><mi>R</mi></msub></mrow><annotation encoding="application/x-tex">\mu_T - \mu_R</annotation></semantics></math>,
+with lower and upper equivalence limits
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>L</mi><annotation encoding="application/x-tex">L</annotation></semantics></math>
 and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>m</mi><mi>R</mi></msub><annotation encoding="application/x-tex">m_R</annotation></semantics></math>
-represent the mean endpoints for the test product (the proposed
-biosimilar) and the reference product, respectively. The equivalence
-limits,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>δ</mi><mi>L</mi></msub><annotation encoding="application/x-tex">\delta_L</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>U</mi><annotation encoding="application/x-tex">U</annotation></semantics></math>.
+The TOST procedure evaluates two one-sided hypotheses:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>H</mi><mn>01</mn></msub><mo>:</mo><msub><mi>μ</mi><mi>T</mi></msub><mo>−</mo><msub><mi>μ</mi><mi>R</mi></msub><mo>≤</mo><mi>L</mi><mspace width="2.0em"></mspace><mtext mathvariant="normal">versus</mtext><mspace width="2.0em"></mspace><msub><mi>H</mi><mn>11</mn></msub><mo>:</mo><msub><mi>μ</mi><mi>T</mi></msub><mo>−</mo><msub><mi>μ</mi><mi>R</mi></msub><mo>&gt;</mo><mi>L</mi><mo>,</mo></mrow><annotation encoding="application/x-tex">H_{01}: \mu_T - \mu_R \leq L
+\qquad\text{versus}\qquad
+H_{11}: \mu_T - \mu_R &gt; L,</annotation></semantics></math></p>
+<p>and</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>H</mi><mn>02</mn></msub><mo>:</mo><msub><mi>μ</mi><mi>T</mi></msub><mo>−</mo><msub><mi>μ</mi><mi>R</mi></msub><mo>≥</mo><mi>U</mi><mspace width="2.0em"></mspace><mtext mathvariant="normal">versus</mtext><mspace width="2.0em"></mspace><msub><mi>H</mi><mn>12</mn></msub><mo>:</mo><msub><mi>μ</mi><mi>T</mi></msub><mo>−</mo><msub><mi>μ</mi><mi>R</mi></msub><mo>&lt;</mo><mi>U</mi><mi>.</mi></mrow><annotation encoding="application/x-tex">H_{02}: \mu_T - \mu_R \geq U
+\qquad\text{versus}\qquad
+H_{12}: \mu_T - \mu_R &lt; U.</annotation></semantics></math></p>
+<p>Equivalence is established if and only if both
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>H</mi><mn>01</mn></msub><annotation encoding="application/x-tex">H_{01}</annotation></semantics></math>
 and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>δ</mi><mi>u</mi></msub><annotation encoding="application/x-tex">\delta_u</annotation></semantics></math>,
-are typically chosen to be symmetric, such that
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>δ</mi><mo>=</mo><mi>−</mi><msub><mi>δ</mi><mi>L</mi></msub><mo>=</mo><msub><mi>δ</mi><mi>U</mi></msub></mrow><annotation encoding="application/x-tex">\delta = - \delta_L = \delta_U</annotation></semantics></math>.</p>
-<p>The null hypothesis
-(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>H</mi><mn>0</mn></msub><annotation encoding="application/x-tex">H_0</annotation></semantics></math>)
-is rejected if, and only if, all null hypotheses associated with the
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>K</mi><annotation encoding="application/x-tex">K</annotation></semantics></math>
-primary endpoints are rejected at a significance level of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>H</mi><mn>02</mn></msub><annotation encoding="application/x-tex">H_{02}</annotation></semantics></math>
+are rejected at the chosen significance level
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>α</mi><annotation encoding="application/x-tex">\alpha</annotation></semantics></math>.
-This ensures that equivalence is established across all endpoints
-simultaneously.</p>
+Equivalently, the alternative equivalence hypothesis is</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>H</mi><mn>1</mn></msub><mo>:</mo><mi>L</mi><mo>&lt;</mo><msub><mi>μ</mi><mi>T</mi></msub><mo>−</mo><msub><mi>μ</mi><mi>R</mi></msub><mo>&lt;</mo><mi>U</mi><mo>,</mo></mrow><annotation encoding="application/x-tex">H_1: L &lt; \mu_T - \mu_R &lt; U,</annotation></semantics></math></p>
+<p>against the composite null hypothesis</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>H</mi><mn>0</mn></msub><mo>:</mo><msub><mi>μ</mi><mi>T</mi></msub><mo>−</mo><msub><mi>μ</mi><mi>R</mi></msub><mo>≤</mo><mi>L</mi><mspace width="2.0em"></mspace><mtext mathvariant="normal">or</mtext><mspace width="2.0em"></mspace><msub><mi>μ</mi><mi>T</mi></msub><mo>−</mo><msub><mi>μ</mi><mi>R</mi></msub><mo>≥</mo><mi>U</mi><mi>.</mi></mrow><annotation encoding="application/x-tex">H_0: \mu_T - \mu_R \leq L
+\qquad\text{or}\qquad
+\mu_T - \mu_R \geq U.</annotation></semantics></math></p>
+<p>For multiple endpoints, these hypotheses are evaluated for each
+endpoint, and the trial-level decision requires the specified number of
+endpoint hypotheses to be rejected.</p>
 <p>The DOM test can be implemented in <a href="../reference/sampleSize.html">sampleSize()</a> by setting
 <code>ctype = "DOM"</code> and <code>distribution = "norm"</code>.</p>
 <p>For pharmacokinetic (PK) outcomes, such as the area under the curve
@@ -174,22 +176,36 @@ with the transformed data.</p>
 <div class="section level3">
 <h3 id="ratio-of-means-rom">Ratio of Means (ROM)<a class="anchor" aria-label="anchor" href="#ratio-of-means-rom"></a>
 </h3>
-<p>The equivalence hypotheses can also be expressed as a Ratio of Means
-(ROM):</p>
-<p>Null Hypothesis
-(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>H</mi><mn>0</mn></msub><annotation encoding="application/x-tex">H_0</annotation></semantics></math>):
-At least one endpoint does not meet the equivalence criteria:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>H</mi><mn>0</mn></msub><mo>:</mo><mfrac><msubsup><mi>μ</mi><mi>T</mi><mrow><mo stretchy="false" form="prefix">(</mo><mi>j</mi><mo stretchy="false" form="postfix">)</mo></mrow></msubsup><msubsup><mi>μ</mi><mi>R</mi><mrow><mo stretchy="false" form="prefix">(</mo><mi>j</mi><mo stretchy="false" form="postfix">)</mo></mrow></msubsup></mfrac><mo>≤</mo><msub><mi>E</mi><mi>L</mi></msub><mspace width="0.222em"></mspace><mspace width="0.222em"></mspace><mtext mathvariant="normal">or</mtext><mspace width="0.222em"></mspace><mspace width="0.222em"></mspace><mfrac><msubsup><mi>μ</mi><mi>T</mi><mrow><mo stretchy="false" form="prefix">(</mo><mi>j</mi><mo stretchy="false" form="postfix">)</mo></mrow></msubsup><msubsup><mi>μ</mi><mi>R</mi><mrow><mo stretchy="false" form="prefix">(</mo><mi>j</mi><mo stretchy="false" form="postfix">)</mo></mrow></msubsup></mfrac><mo>≥</mo><msub><mi>E</mi><mi>U</mi></msub><mspace width="1.0em"></mspace><mtext mathvariant="normal">for at least one</mtext><mspace width="0.278em"></mspace><mi>j</mi></mrow><annotation encoding="application/x-tex">H_0: \frac{\mu_T^{(j)}}{\mu_R^{(j)}} \le E_L ~~ \text{or}~~ \frac{\mu_T^{(j)}}{\mu_R^{(j)}} \ge E_U \quad \text{for at least one}\;j</annotation></semantics></math></p>
-<p>Alternative Hypothesis
-(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>H</mi><mn>1</mn></msub><annotation encoding="application/x-tex">H_1</annotation></semantics></math>):
-All endpoints meet the equivalence criteria:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>H</mi><mn>1</mn></msub><mo>:</mo><msub><mi>E</mi><mi>L</mi></msub><mo>&lt;</mo><mfrac><msubsup><mi>μ</mi><mi>T</mi><mrow><mo stretchy="false" form="prefix">(</mo><mi>j</mi><mo stretchy="false" form="postfix">)</mo></mrow></msubsup><msubsup><mi>μ</mi><mi>R</mi><mrow><mo stretchy="false" form="prefix">(</mo><mi>j</mi><mo stretchy="false" form="postfix">)</mo></mrow></msubsup></mfrac><mo>&lt;</mo><msub><mi>E</mi><mi>U</mi></msub><mspace width="1.0em"></mspace><mtext mathvariant="normal">for all</mtext><mspace width="0.278em"></mspace><mi>j</mi></mrow><annotation encoding="application/x-tex">H_1: E_L&lt; \frac{\mu_{T}^{(j)}}{\mu_{R}^{(j)}} &lt; E_U \quad\text{for all}\;j</annotation></semantics></math></p>
+<p>The same two one-sided structure can be expressed for the ratio of
+means,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>μ</mi><mi>T</mi></msub><mi>/</mi><msub><mi>μ</mi><mi>R</mi></msub></mrow><annotation encoding="application/x-tex">\mu_T / \mu_R</annotation></semantics></math>,
+using lower and upper ratio limits
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>L</mi><annotation encoding="application/x-tex">L</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>U</mi><annotation encoding="application/x-tex">U</annotation></semantics></math>:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>H</mi><mn>01</mn></msub><mo>:</mo><mfrac><msub><mi>μ</mi><mi>T</mi></msub><msub><mi>μ</mi><mi>R</mi></msub></mfrac><mo>≤</mo><mi>L</mi><mspace width="2.0em"></mspace><mtext mathvariant="normal">versus</mtext><mspace width="2.0em"></mspace><msub><mi>H</mi><mn>11</mn></msub><mo>:</mo><mfrac><msub><mi>μ</mi><mi>T</mi></msub><msub><mi>μ</mi><mi>R</mi></msub></mfrac><mo>&gt;</mo><mi>L</mi><mo>,</mo></mrow><annotation encoding="application/x-tex">H_{01}: \frac{\mu_T}{\mu_R} \leq L
+\qquad\text{versus}\qquad
+H_{11}: \frac{\mu_T}{\mu_R} &gt; L,</annotation></semantics></math></p>
+<p>and</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>H</mi><mn>02</mn></msub><mo>:</mo><mfrac><msub><mi>μ</mi><mi>T</mi></msub><msub><mi>μ</mi><mi>R</mi></msub></mfrac><mo>≥</mo><mi>U</mi><mspace width="2.0em"></mspace><mtext mathvariant="normal">versus</mtext><mspace width="2.0em"></mspace><msub><mi>H</mi><mn>12</mn></msub><mo>:</mo><mfrac><msub><mi>μ</mi><mi>T</mi></msub><msub><mi>μ</mi><mi>R</mi></msub></mfrac><mo>&lt;</mo><mi>U</mi><mi>.</mi></mrow><annotation encoding="application/x-tex">H_{02}: \frac{\mu_T}{\mu_R} \geq U
+\qquad\text{versus}\qquad
+H_{12}: \frac{\mu_T}{\mu_R} &lt; U.</annotation></semantics></math></p>
+<p>Thus, equivalence requires rejection of both
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>H</mi><mn>01</mn></msub><annotation encoding="application/x-tex">H_{01}</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>H</mi><mn>02</mn></msub><annotation encoding="application/x-tex">H_{02}</annotation></semantics></math>,
+or equivalently:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>H</mi><mn>1</mn></msub><mo>:</mo><mi>L</mi><mo>&lt;</mo><mfrac><msub><mi>μ</mi><mi>T</mi></msub><msub><mi>μ</mi><mi>R</mi></msub></mfrac><mo>&lt;</mo><mi>U</mi><mo>,</mo></mrow><annotation encoding="application/x-tex">H_1: L &lt; \frac{\mu_T}{\mu_R} &lt; U,</annotation></semantics></math></p>
+<p>against</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>H</mi><mn>0</mn></msub><mo>:</mo><mfrac><msub><mi>μ</mi><mi>T</mi></msub><msub><mi>μ</mi><mi>R</mi></msub></mfrac><mo>≤</mo><mi>L</mi><mspace width="2.0em"></mspace><mtext mathvariant="normal">or</mtext><mspace width="2.0em"></mspace><mfrac><msub><mi>μ</mi><mi>T</mi></msub><msub><mi>μ</mi><mi>R</mi></msub></mfrac><mo>≥</mo><mi>U</mi><mi>.</mi></mrow><annotation encoding="application/x-tex">H_0: \frac{\mu_T}{\mu_R} \leq L
+\qquad\text{or}\qquad
+\frac{\mu_T}{\mu_R} \geq U.</annotation></semantics></math></p>
 <p>Here,
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>μ</mi><mi>T</mi></msub><annotation encoding="application/x-tex">\mu_T</annotation></semantics></math>
 and
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>μ</mi><mi>R</mi></msub><annotation encoding="application/x-tex">\mu_R</annotation></semantics></math>
-represent the arithmetic mean endpoints for the test product (the
-proposed biosimilar) and the reference product, respectively.</p>
+represent the arithmetic mean endpoints for the test and reference
+products, respectively.</p>
 <p>The ROM test can be implemented in <a href="../reference/sampleSize.html">sampleSize()</a> by setting
 <code>ctype = "ROM"</code> and <code>distribution = "lnorm"</code>. Note
 that the <code>mu_list</code> argument should contain the arithmetic
@@ -203,6 +219,60 @@ log scale is calculated using the normalized variance formula:</p>
 </annotation></semantics></math></p>
 <p>The logarithmic mean is then calculated as:</p>
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">Logarithmic Mean</mtext><mo>=</mo><mrow><mi mathvariant="normal">log</mi><mo>⁡</mo></mrow><mo stretchy="false" form="prefix">(</mo><mtext mathvariant="normal">Arithmetic Mean</mtext><mo stretchy="false" form="postfix">)</mo><mo>−</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mo stretchy="false" form="prefix">(</mo><mtext mathvariant="normal">Logarithmic Variance</mtext><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">\text{Logarithmic Mean} = \log(\text{Arithmetic Mean}) - \frac{1}{2}(\text{Logarithmic Variance})</annotation></semantics></math></p>
+</div>
+<div class="section level3">
+<h3 id="count-outcomes-event-rate-ratio-rr">Count outcomes: event-rate ratio (RR)<a class="anchor" aria-label="anchor" href="#count-outcomes-event-rate-ratio-rr"></a>
+</h3>
+<p>For count outcomes, such as the number of events observed during a
+specified exposure period, SimTOST uses the event-rate ratio rather than
+the continuous outcome ratio of means. The event-rate ratio is</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi><mi>R</mi><mo>=</mo><mfrac><msub><mi>λ</mi><mi>T</mi></msub><msub><mi>λ</mi><mi>R</mi></msub></mfrac><mo>,</mo></mrow><annotation encoding="application/x-tex">RR = \frac{\lambda_T}{\lambda_R},</annotation></semantics></math></p>
+<p>where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>λ</mi><mi>T</mi></msub><annotation encoding="application/x-tex">\lambda_T</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>λ</mi><mi>R</mi></msub><annotation encoding="application/x-tex">\lambda_R</annotation></semantics></math>
+are the event rates in the test and reference groups. For lower and
+upper rate-ratio limits
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>L</mi><annotation encoding="application/x-tex">L</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>U</mi><annotation encoding="application/x-tex">U</annotation></semantics></math>,
+the hypotheses are:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>H</mi><mn>01</mn></msub><mo>:</mo><mfrac><msub><mi>λ</mi><mi>T</mi></msub><msub><mi>λ</mi><mi>R</mi></msub></mfrac><mo>≤</mo><mi>L</mi><mspace width="2.0em"></mspace><mtext mathvariant="normal">versus</mtext><mspace width="2.0em"></mspace><msub><mi>H</mi><mn>11</mn></msub><mo>:</mo><mfrac><msub><mi>λ</mi><mi>T</mi></msub><msub><mi>λ</mi><mi>R</mi></msub></mfrac><mo>&gt;</mo><mi>L</mi><mo>,</mo></mrow><annotation encoding="application/x-tex">H_{01}: \frac{\lambda_T}{\lambda_R} \leq L
+\qquad\text{versus}\qquad
+H_{11}: \frac{\lambda_T}{\lambda_R} &gt; L,</annotation></semantics></math></p>
+<p>and</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>H</mi><mn>02</mn></msub><mo>:</mo><mfrac><msub><mi>λ</mi><mi>T</mi></msub><msub><mi>λ</mi><mi>R</mi></msub></mfrac><mo>≥</mo><mi>U</mi><mspace width="2.0em"></mspace><mtext mathvariant="normal">versus</mtext><mspace width="2.0em"></mspace><msub><mi>H</mi><mn>12</mn></msub><mo>:</mo><mfrac><msub><mi>λ</mi><mi>T</mi></msub><msub><mi>λ</mi><mi>R</mi></msub></mfrac><mo>&lt;</mo><mi>U</mi><mi>.</mi></mrow><annotation encoding="application/x-tex">H_{02}: \frac{\lambda_T}{\lambda_R} \geq U
+\qquad\text{versus}\qquad
+H_{12}: \frac{\lambda_T}{\lambda_R} &lt; U.</annotation></semantics></math></p>
+<p>Equivalence is concluded only when both one-sided null hypotheses are
+rejected. Equivalently:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>H</mi><mn>1</mn></msub><mo>:</mo><mi>L</mi><mo>&lt;</mo><mfrac><msub><mi>λ</mi><mi>T</mi></msub><msub><mi>λ</mi><mi>R</mi></msub></mfrac><mo>&lt;</mo><mi>U</mi><mo>,</mo></mrow><annotation encoding="application/x-tex">H_1: L &lt; \frac{\lambda_T}{\lambda_R} &lt; U,</annotation></semantics></math></p>
+<p>against the composite null</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>H</mi><mn>0</mn></msub><mo>:</mo><mfrac><msub><mi>λ</mi><mi>T</mi></msub><msub><mi>λ</mi><mi>R</mi></msub></mfrac><mo>≤</mo><mi>L</mi><mspace width="2.0em"></mspace><mtext mathvariant="normal">or</mtext><mspace width="2.0em"></mspace><mfrac><msub><mi>λ</mi><mi>T</mi></msub><msub><mi>λ</mi><mi>R</mi></msub></mfrac><mo>≥</mo><mi>U</mi><mi>.</mi></mrow><annotation encoding="application/x-tex">H_0: \frac{\lambda_T}{\lambda_R} \leq L
+\qquad\text{or}\qquad
+\frac{\lambda_T}{\lambda_R} \geq U.</annotation></semantics></math></p>
+<p>The count test is implemented on the log-rate-ratio scale, using
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mi mathvariant="normal">log</mi><mo>⁡</mo></mrow><mo stretchy="false" form="prefix">(</mo><mi>L</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">\log(L)</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mi mathvariant="normal">log</mi><mo>⁡</mo></mrow><mo stretchy="false" form="prefix">(</mo><mi>U</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">\log(U)</annotation></semantics></math>
+as the boundaries. It is distinct from the continuous ROM estimand. In
+<a href="../reference/sampleSize.html">sampleSize()</a> and <a href="../reference/simPower.html">simPower()</a>, use
+<code>distribution = "pois"</code> or
+<code>distribution = "nbinom"</code> and provide a named
+<code>rate_list</code>. Count outcomes also require
+<code>exposure</code>; negative-binomial outcomes additionally require a
+positive <code>dispersion</code> value. The <code>ctype</code> argument
+is not used for count outcomes because the estimand is automatically the
+event-rate ratio.</p>
+<p>For multiple endpoints, <code>list_comparator</code> identifies the
+treatment pairs and <code>list_lequi.tol</code> and
+<code>list_uequi.tol</code> provide the rate-ratio limits for each
+selected endpoint. A simulated trial is successful when the required
+number of endpoints passes for every required comparator. Endpoint
+dependence can be specified with <code>cor_mat</code>; for count
+outcomes this is a latent Gaussian-copula correlation and need not equal
+the Pearson correlation of the observed discrete counts <span class="citation">(<a href="#ref-chang_sample_2017">Chang et al.
+2017</a>)</span>.</p>
 </div>
 <div class="section level3">
 <h3 id="regulatory-requirements">Regulatory Requirements<a class="anchor" aria-label="anchor" href="#regulatory-requirements"></a>
@@ -362,41 +432,6 @@ function, the Bonferroni correction can be applied by setting
 <code>adjust = "bon"</code>.</p>
 </div>
 <div class="section level4">
-<h4 id="t-adjustment-mielkes-strong-k-out-of-m-correction">T adjustment: Mielke’s strong k-out-of-m correction<a class="anchor" aria-label="anchor" href="#t-adjustment-mielkes-strong-k-out-of-m-correction"></a>
-</h4>
-<p>When the decision rule requires equivalence for at least
-<code>k</code> of <code>m</code> endpoints, the null hypothesis is a
-partial-conjunction hypothesis. In this setting,
-<code>adjust = "t"</code> applies Mielke et al.’s strong k-out-of-m
-calibration. The significance level for each relevant boundary endpoint
-is:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>α</mi><mi>t</mi></msub><mo>=</mo><mfrac><mi>α</mi><mrow><mi>m</mi><mo>−</mo><mi>k</mi><mo>+</mo><mn>1</mn></mrow></mfrac></mrow><annotation encoding="application/x-tex">\alpha_{t}= \frac{\alpha}{m-k+1}</annotation></semantics></math></p>
-<p>where <code>m</code> is the number of selected endpoints and
-<code>k</code> is the minimum number that must demonstrate equivalence.
-For example, with <code>m = 3</code>, <code>k = 2</code>, and
-<code>alpha = 0.05</code>, the endpoint-wise level is
-<code>0.025</code>. This calibration controls the Type I error rate for
-the partial-conjunction decision, including cases in which only some
-endpoints satisfy the null hypothesis <span class="citation">(<a href="#ref-mielke_sample_2018">Mielke et al. 2018</a>)</span>.</p>
-<p>The adjustment is available in <code><a href="../reference/sampleSize.html">sampleSize()</a></code>,
-<code><a href="../reference/simPower.html">simPower()</a></code>, and the count-outcome functions:</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/sampleSize.html">sampleSize</a></span><span class="op">(</span></span>
-<span>  <span class="va">...</span>, k <span class="op">=</span> <span class="fl">2</span>, adjust <span class="op">=</span> <span class="st">"t"</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="../reference/simPower.html">simPower</a></span><span class="op">(</span></span>
-<span>  <span class="va">...</span>, k <span class="op">=</span> <span class="fl">2</span>, adjust <span class="op">=</span> <span class="st">"t"</span></span>
-<span><span class="op">)</span></span></code></pre></div>
-<p>The effective <code>m</code> is determined separately for each
-comparator from the endpoints actually selected or inferred. The legacy
-<code>adjust = "pc"</code> and
-<code>adjust = "partial-conjunction"</code> labels are accepted as
-aliases for <code>"t"</code>. In contrast, <code>adjust = "k"</code>
-uses <code>k * alpha / m</code> and provides weak complete-null
-control.</p>
-</div>
-<div class="section level4">
 <h4 id="sidak-correction">Sidak correction<a class="anchor" aria-label="anchor" href="#sidak-correction"></a>
 </h4>
 <p>The Sidak correction is an alternative method for controlling the
@@ -431,6 +466,22 @@ level is calculated as:</p>
 is the number of endpoints required for equivalence, and
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>m</mi><annotation encoding="application/x-tex">m</annotation></semantics></math>
 is the total number of endpoints evaluated.</p>
+</div>
+<div class="section level4">
+<h4 id="t-adjustment-mielkes-strong-k-out-of-m-correction">T adjustment: Mielke’s strong k-out-of-m correction<a class="anchor" aria-label="anchor" href="#t-adjustment-mielkes-strong-k-out-of-m-correction"></a>
+</h4>
+<p>When the decision rule requires equivalence for at least
+<code>k</code> of <code>m</code> endpoints, the null hypothesis is a
+partial-conjunction hypothesis. In this setting,
+<code>adjust = "t"</code> applies Mielke et al.’s strong k-out-of-m
+calibration. The significance level for each relevant boundary endpoint
+is:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>α</mi><mi>t</mi></msub><mo>=</mo><mfrac><mi>α</mi><mrow><mi>m</mi><mo>−</mo><mi>k</mi><mo>+</mo><mn>1</mn></mrow></mfrac></mrow><annotation encoding="application/x-tex">\alpha_{t}= \frac{\alpha}{m-k+1}</annotation></semantics></math></p>
+<p>where <code>m</code> is the number of selected endpoints and
+<code>k</code> is the minimum number that must demonstrate equivalence.
+This adjustment controls the Type I error rate for the
+partial-conjunction decision, including cases in which only some
+endpoints satisfy the null hypothesis <span class="citation">(<a href="#ref-mielke_sample_2018">Mielke et al. 2018</a>)</span>.</p>
 </div>
 </div>
 <div class="section level3">
@@ -505,6 +556,12 @@ treatment arms.</p>
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
 <div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-chang_sample_2017" class="csl-entry">
+Chang, Yu-Wei, Yi Tsong, and Zhigen Zhao. 2017. <span>“Sample Size
+Determination for a Three-Arm Equivalence Trial of Poisson and Negative
+Binomial Responses.”</span> <em>Journal of Biopharmaceutical
+Statistics</em> 27 (2): 239–56. <a href="https://doi.org/10.1080/10543406.2016.1269787" class="external-link">https://doi.org/10.1080/10543406.2016.1269787</a>.
+</div>
 <div id="ref-chowdhry_finding_2024" class="csl-entry">
 Chowdhry, Amit K., John Park, John Kang, Gukan Sakthivel, and Stephanie
 Pugh. 2024. <span>“Finding <span>Multiple Signals</span> in the

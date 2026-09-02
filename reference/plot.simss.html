@@ -90,7 +90,7 @@ The plot also includes confidence intervals for power estimates and highlights t
 
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S3 method for class 'simss'</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">x</span>, target_power <span class="op">=</span> <span class="fl">0.8</span>, display <span class="op">=</span> <span class="st">"all"</span>, all <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">x</span>, target_power <span class="op">=</span> <span class="fl">0.8</span>, display <span class="op">=</span> <span class="st">"all"</span>, all <span class="op">=</span> <span class="cn">TRUE</span>, endpoint <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -118,6 +118,12 @@ names such as <code>"R_vs_T"</code> to display selected panels.</p></dd>
 <dd><p>Logical. If <code>TRUE</code> (the default), display only the aggregate
 <code>All comparators</code> result without a comparator facet. If <code>FALSE</code>, display
 the comparator panels selected by <code>display</code>.</p></dd>
+
+
+<dt id="arg-endpoint">endpoint<a class="anchor" aria-label="anchor" href="#arg-endpoint"></a></dt>
+<dd><p>Endpoint names to display. By default, <code>"Total"</code> is used
+when <code>all = TRUE</code>, while all retained endpoints are used when <code>all = FALSE</code>.
+Use <code>"all"</code> to show all retained endpoints explicitly.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>

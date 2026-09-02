@@ -185,9 +185,10 @@ or endpoint vector shared by arms, or a named list of arm-specific values.</p></
 
 
 <dt id="arg-dispersion">dispersion<a class="anchor" aria-label="anchor" href="#arg-dispersion"></a></dt>
-<dd><p>Positive negative-binomial dispersion parameter. Supply
-a scalar or endpoint vector shared by arms, or a named list of arm-specific
-values.</p></dd>
+<dd><p>Positive negative-binomial dispersion parameter. The
+per-subject negative-binomial size is <code>1 / dispersion</code>; parallel-arm
+totals use size <code>n / dispersion</code>. Supply a scalar or endpoint vector shared
+by arms, or a named list of arm-specific values.</p></dd>
 
 
 <dt id="arg-eper">Eper<a class="anchor" aria-label="anchor" href="#arg-eper"></a></dt>

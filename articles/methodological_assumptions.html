@@ -207,30 +207,12 @@ interpretation. Use <code>distribution = "lnorm", ctype = "ROM"</code>
 for an arithmetic mean ratio, or use the normal distribution for an
 additive mean difference.</p>
 </div>
-<div class="section level3">
-<h3 id="equivalence-hypotheses-and-estimands">Equivalence hypotheses and estimands<a class="anchor" aria-label="anchor" href="#equivalence-hypotheses-and-estimands"></a>
-</h3>
-<p>All tests use TOST. For lower and upper bounds L and U:</p>
-<p>[ H_0: theta &lt;= L or theta &gt;= U, \ H_1: L &lt; theta &lt;
-U.]</p>
-<p>For normal continuous outcomes, theta is the mean difference for DOM
-and the mean ratio for ROM. For log-normal outcomes, the supported ROM
-analysis estimates the arithmetic mean ratio and tests it on the log
-scale. These estimands apply in both parallel and 2x2 designs.</p>
-<p>For Poisson and negative-binomial outcomes, the estimand is the
-event-rate ratio theta = lambda_T / lambda_R, where lambda_T and
-lambda_R are treatment and reference rates per unit exposure. The same
-TOST hypotheses apply on the log-rate-ratio scale. Negative-binomial
-dispersion changes the variance, not the estimand. In a 2x2 crossover,
-the rate ratio is estimated from paired log-rate contrasts averaged over
-the two sequences.</p>
-</div>
 </div>
 <div class="section level2">
 <h2 id="count-outcomes">Count outcomes<a class="anchor" aria-label="anchor" href="#count-outcomes"></a>
 </h2>
 <p>For count outcomes, <code>rate_list</code> supplies the event rate
-per unit exposure. For arm
+per unit exposure. For a parallel arm
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>a</mi><annotation encoding="application/x-tex">a</annotation></semantics></math>
 and endpoint
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>j</mi><annotation encoding="application/x-tex">j</annotation></semantics></math>,
@@ -265,19 +247,47 @@ anticonservative.</p>
 <div class="section level3">
 <h3 id="negative-binomial-outcomes">Negative Binomial outcomes<a class="anchor" aria-label="anchor" href="#negative-binomial-outcomes"></a>
 </h3>
-<p>For <code>distribution = "nbinom"</code>, the marginal count follows
-a negative-binomial model with mean
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>μ</mi><mrow><mi>a</mi><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>n</mi><mi>a</mi></msub><msub><mi>e</mi><mrow><mi>a</mi><mi>j</mi></mrow></msub><msub><mi>λ</mi><mrow><mi>a</mi><mi>j</mi></mrow></msub></mrow><annotation encoding="application/x-tex">\mu_{aj}=n_a e_{aj}\lambda_{aj}</annotation></semantics></math>
-and dispersion parameter
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ϕ</mi><mrow><mi>a</mi><mi>j</mi></mrow></msub><annotation encoding="application/x-tex">\phi_{aj}</annotation></semantics></math>
-such that the implementation uses the size parameter
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mi>/</mi><msub><mi>ϕ</mi><mrow><mi>a</mi><mi>j</mi></mrow></msub></mrow><annotation encoding="application/x-tex">1/\phi_{aj}</annotation></semantics></math>.
-The dispersion parameter is positive and controls the amount of
-variation beyond the Poisson variance.</p>
+<p>For <code>distribution = "nbinom"</code>, let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ϕ</mi><mrow><mi>a</mi><mi>j</mi></mrow></msub><mo>&gt;</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\phi_{aj} &gt; 0</annotation></semantics></math>
+denote the per-subject dispersion parameter. A subject-level count with
+mean</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>μ</mi><mrow><mi>a</mi><mi>j</mi></mrow><mrow><mo stretchy="false" form="prefix">(</mo><mrow><mi mathvariant="normal">s</mi><mi mathvariant="normal">u</mi><mi mathvariant="normal">b</mi><mi mathvariant="normal">j</mi></mrow><mo stretchy="false" form="postfix">)</mo></mrow></msubsup><mo>=</mo><msub><mi>e</mi><mrow><mi>a</mi><mi>j</mi></mrow></msub><msub><mi>λ</mi><mrow><mi>a</mi><mi>j</mi></mrow></msub></mrow><annotation encoding="application/x-tex">
+\mu^{(\mathrm{subj})}_{aj} = e_{aj}\lambda_{aj}
+</annotation></semantics></math></p>
+<p>has variance</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mi mathvariant="normal">Var</mi><mo>⁡</mo></mrow><mo stretchy="false" form="prefix">(</mo><msubsup><mi>Y</mi><mrow><mi>a</mi><mi>j</mi></mrow><mrow><mo stretchy="false" form="prefix">(</mo><mrow><mi mathvariant="normal">s</mi><mi mathvariant="normal">u</mi><mi mathvariant="normal">b</mi><mi mathvariant="normal">j</mi></mrow><mo stretchy="false" form="postfix">)</mo></mrow></msubsup><mo stretchy="false" form="postfix">)</mo><mo>=</mo><msubsup><mi>μ</mi><mrow><mi>a</mi><mi>j</mi></mrow><mrow><mo stretchy="false" form="prefix">(</mo><mrow><mi mathvariant="normal">s</mi><mi mathvariant="normal">u</mi><mi mathvariant="normal">b</mi><mi mathvariant="normal">j</mi></mrow><mo stretchy="false" form="postfix">)</mo></mrow></msubsup><mo>+</mo><msub><mi>ϕ</mi><mrow><mi>a</mi><mi>j</mi></mrow></msub><msup><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mi>μ</mi><mrow><mi>a</mi><mi>j</mi></mrow><mrow><mo stretchy="false" form="prefix">(</mo><mrow><mi mathvariant="normal">s</mi><mi mathvariant="normal">u</mi><mi mathvariant="normal">b</mi><mi mathvariant="normal">j</mi></mrow><mo stretchy="false" form="postfix">)</mo></mrow></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup><mo>,</mo></mrow><annotation encoding="application/x-tex">
+\operatorname{Var}(Y^{(\mathrm{subj})}_{aj})
+ = \mu^{(\mathrm{subj})}_{aj}
+ + \phi_{aj}\left(\mu^{(\mathrm{subj})}_{aj}\right)^2,
+</annotation></semantics></math></p>
+<p>which is the negative-binomial parameterization with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mi mathvariant="normal">size</mi><mo>⁡</mo></mrow><mo>=</mo><mn>1</mn><mi>/</mi><msub><mi>ϕ</mi><mrow><mi>a</mi><mi>j</mi></mrow></msub></mrow><annotation encoding="application/x-tex">\operatorname{size}=1/\phi_{aj}</annotation></semantics></math>.
+In a parallel design, the aggregate count over
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>n</mi><mi>a</mi></msub><annotation encoding="application/x-tex">n_a</annotation></semantics></math>
+independent subjects has mean</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>μ</mi><mrow><mi>a</mi><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>n</mi><mi>a</mi></msub><msub><mi>e</mi><mrow><mi>a</mi><mi>j</mi></mrow></msub><msub><mi>λ</mi><mrow><mi>a</mi><mi>j</mi></mrow></msub></mrow><annotation encoding="application/x-tex">
+\mu_{aj} = n_a e_{aj}\lambda_{aj}
+</annotation></semantics></math></p>
+<p>and the implementation uses
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mi mathvariant="normal">size</mi><mo>⁡</mo></mrow><mo>=</mo><msub><mi>n</mi><mi>a</mi></msub><mi>/</mi><msub><mi>ϕ</mi><mrow><mi>a</mi><mi>j</mi></mrow></msub></mrow><annotation encoding="application/x-tex">\operatorname{size}=n_a/\phi_{aj}</annotation></semantics></math>.
+Equivalently, its variance is</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mi mathvariant="normal">Var</mi><mo>⁡</mo></mrow><mo stretchy="false" form="prefix">(</mo><msub><mi>Y</mi><mrow><mi>a</mi><mi>j</mi></mrow></msub><mo stretchy="false" form="postfix">)</mo><mo>=</mo><msub><mi>n</mi><mi>a</mi></msub><mrow><mo stretchy="true" form="prefix">{</mo><msubsup><mi>μ</mi><mrow><mi>a</mi><mi>j</mi></mrow><mrow><mo stretchy="false" form="prefix">(</mo><mrow><mi mathvariant="normal">s</mi><mi mathvariant="normal">u</mi><mi mathvariant="normal">b</mi><mi mathvariant="normal">j</mi></mrow><mo stretchy="false" form="postfix">)</mo></mrow></msubsup><mo>+</mo><msub><mi>ϕ</mi><mrow><mi>a</mi><mi>j</mi></mrow></msub><msup><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mi>μ</mi><mrow><mi>a</mi><mi>j</mi></mrow><mrow><mo stretchy="false" form="prefix">(</mo><mrow><mi mathvariant="normal">s</mi><mi mathvariant="normal">u</mi><mi mathvariant="normal">b</mi><mi mathvariant="normal">j</mi></mrow><mo stretchy="false" form="postfix">)</mo></mrow></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup><mo stretchy="true" form="postfix">}</mo></mrow><mi>.</mi></mrow><annotation encoding="application/x-tex">
+\operatorname{Var}(Y_{aj})
+ = n_a\left\{\mu^{(\mathrm{subj})}_{aj}
+ + \phi_{aj}\left(\mu^{(\mathrm{subj})}_{aj}\right)^2\right\}.
+</annotation></semantics></math></p>
+<p>Thus, larger values of <code>dispersion</code> produce more variation
+beyond the Poisson variance, while values closer to zero give behavior
+closer to the Poisson model. This parallel-design scaling of the size
+parameter is important: using
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mi>/</mi><msub><mi>ϕ</mi><mrow><mi>a</mi><mi>j</mi></mrow></msub></mrow><annotation encoding="application/x-tex">1/\phi_{aj}</annotation></semantics></math>
+for an aggregate count would incorrectly make the overdispersion
+increase with sample size. The dispersion parameter is positive and
+should preferably be based on historical data, pilot data, or a
+clinically justified sensitivity range.</p>
 <p>The Negative Binomial model assumes that the selected mean-dispersion
-relationship adequately represents overdispersion in the planned study.
-The dispersion should preferably be based on historical data, pilot
-data, or a clinically justified sensitivity range.</p>
+relationship adequately represents overdispersion in the planned
+study.</p>
 </div>
 </div>
 <div class="section level2">
@@ -371,31 +381,22 @@ retaining the within-participant pairing.</p>
 </div>
 </div>
 <div class="section level2">
-<h2 id="equivalence-testing-and-multiplicity">Equivalence testing and multiplicity<a class="anchor" aria-label="anchor" href="#equivalence-testing-and-multiplicity"></a>
-</h2>
-<p>The equivalence decision is based on two one-sided tests. For a rate
-or mean ratio, the null and alternative are expressed using the supplied
-lower and upper equivalence limits. A study-level success criterion can
-require all endpoints or only <code>k</code> endpoints to pass for each
-comparison.</p>
-<p>When multiple comparisons and endpoints are simulated jointly,
-<code>adjust</code> controls the endpoint- and comparison-level
-significance allocation. Separate sample-size searches for individual
-comparisons do not generally provide the desired probability that all
-requirements succeed in the same trial. Joint planning is therefore
-recommended when the confirmatory conclusion requires a joint success
-event.</p>
-</div>
-<div class="section level2">
 <h2 id="design-specific-assumptions">Design-specific assumptions<a class="anchor" aria-label="anchor" href="#design-specific-assumptions"></a>
 </h2>
+<div class="section level3">
+<h3 id="parallel-design">Parallel design<a class="anchor" aria-label="anchor" href="#parallel-design"></a>
+</h3>
 <p>For a parallel design, observations are generated independently
 between participants and treatment arms, apart from endpoint dependence
 specified by the model. Allocation and dropout determine the number of
 analyzable participants in each arm.</p>
+</div>
 <div class="section level3">
-<h3 id="normal-and-log-normal-outcomes-in-a-2x2-crossover">Normal and Log-Normal outcomes in a 2x2 crossover<a class="anchor" aria-label="anchor" href="#normal-and-log-normal-outcomes-in-a-2x2-crossover"></a>
+<h3 id="x2-crossover-design">2x2 crossover design<a class="anchor" aria-label="anchor" href="#x2-crossover-design"></a>
 </h3>
+<div class="section level4">
+<h4 id="normal-and-log-normal-outcomes">Normal and Log-Normal outcomes<a class="anchor" aria-label="anchor" href="#normal-and-log-normal-outcomes"></a>
+</h4>
 <p>For continuous outcomes, <code>dtype = "2x2"</code> represents a
 balanced two-sequence, two-period crossover. The two treatment sequences
 are reference–test (RT) and test–reference (TR), and <code>n</code> is
@@ -463,9 +464,9 @@ matrix is constructed). This differs from the count implementation,
 where <code>cor_mat</code> is used as a latent Gaussian-copula
 correlation.</p>
 </div>
-<div class="section level3">
-<h3 id="poisson-and-negative-binomial-outcomes-in-a-2x2-crossover">Poisson and Negative Binomial outcomes in a 2x2 crossover<a class="anchor" aria-label="anchor" href="#poisson-and-negative-binomial-outcomes-in-a-2x2-crossover"></a>
-</h3>
+<div class="section level4">
+<h4 id="poisson-and-negative-binomial-outcomes">Poisson and Negative Binomial outcomes<a class="anchor" aria-label="anchor" href="#poisson-and-negative-binomial-outcomes"></a>
+</h4>
 <p>For a 2x2 crossover design, the count extension uses a paired
 log-link rate analysis. Each complete participant contributes one count
 under the test treatment and one count under the reference treatment.
@@ -523,6 +524,7 @@ determines the joint simulated success event. Thus, <code>cor_mat</code>
 is used by both the joint parallel engine and the multi-endpoint 2x2
 engine. The supplied matrix remains a latent Gaussian correlation, not
 necessarily the Pearson correlation of the observed counts.</p>
+</div>
 </div>
 </div>
 <div class="section level2">

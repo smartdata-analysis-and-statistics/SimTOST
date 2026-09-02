@@ -113,336 +113,36 @@
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
-<p>This vignette illustrates the unified <code><a href="../reference/sampleSize.html">sampleSize()</a></code> and
-<code><a href="../reference/simPower.html">simPower()</a></code> interface for count outcomes. The
-<code>distribution</code> argument selects either a Poisson or a
-negative-binomial model, while <code>dtype</code> selects a parallel or
-2x2 crossover design. The estimand is the event-rate ratio</p>
+<p>This vignette follows the workflow in <code>workflow.Rmd</code> for
+count outcomes. It starts with a published two-arm Poisson benchmark,
+then validates a two-endpoint Poisson model, calculates its required
+sample size, repeats the calculation under a negative-binomial model,
+and finally uses the same model settings for a balanced two-by-two
+crossover design.</p>
+<p>For count outcomes, the estimand is the event-rate ratio</p>
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi><mi>R</mi><mo>=</mo><mfrac><msub><mi>λ</mi><mi>T</mi></msub><msub><mi>λ</mi><mi>R</mi></msub></mfrac><mo>,</mo></mrow><annotation encoding="application/x-tex">
 RR = \frac{\lambda_T}{\lambda_R},
 </annotation></semantics></math></p>
-<p>where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>λ</mi><mi>T</mi></msub><annotation encoding="application/x-tex">\lambda_T</annotation></semantics></math>
-and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>λ</mi><mi>R</mi></msub><annotation encoding="application/x-tex">\lambda_R</annotation></semantics></math>
-are the event rates in the test and reference groups. Equivalence is
-assessed with a two-one-sided test on the log-rate-ratio scale. The
-examples use equal exposure per participant and simulation-based power
-calculations.</p>
-<p>The recommended workflow is to separate three questions. First, are
-the user-specified rates, exposures, and dispersion values represented
-correctly in the simulated data? Second, do the simulated endpoint
-correlations reproduce the dependence assumption? Third, what power and
-sample size follow from that data-generating model? The first two
-questions are addressed with the distribution diagnostics below; they
-are model checks, not additional equivalence tests.</p>
+<p>where the first arm in each comparator is the test arm and the second
+is the reference arm. Equivalence is assessed using two one-sided tests
+on the log-rate-ratio scale. The workflow separates model validation
+from the final equivalence calculation: first check the supplied
+parameters and retained simulated data, then calculate and interpret the
+sample size.</p>
 </div>
 <div class="section level2">
-<h2 id="parallel-design-poisson-outcomes">Parallel design: Poisson outcomes<a class="anchor" aria-label="anchor" href="#parallel-design-poisson-outcomes"></a>
+<h2 id="a-published-poisson-benchmark">A Published Poisson benchmark<a class="anchor" aria-label="anchor" href="#a-published-poisson-benchmark"></a>
 </h2>
-<p>The following example uses event rates of 0.21 and 0.20 per
-participant for the test and reference groups, respectively.
-<code><a href="../reference/simPower.html">simPower()</a></code> evaluates the achieved power at a fixed sample
-size, while <code><a href="../reference/sampleSize.html">sampleSize()</a></code> searches for the smallest sample
-size per arm that reaches the target power.</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">parallel_power</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simPower.html">simPower</a></span><span class="op">(</span></span>
-<span>  n <span class="op">=</span> <span class="fl">1000</span>,</span>
-<span>  distribution <span class="op">=</span> <span class="st">"pois"</span>,</span>
-<span>  rate_list <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>TEST <span class="op">=</span> <span class="fl">0.21</span>, REF <span class="op">=</span> <span class="fl">0.20</span><span class="op">)</span>,</span>
-<span>  list_comparator <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>TEST_vs_REF <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"TEST"</span>, <span class="st">"REF"</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>  list_lequi.tol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>TEST_vs_REF <span class="op">=</span> <span class="fl">0.80</span><span class="op">)</span>,</span>
-<span>  list_uequi.tol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>TEST_vs_REF <span class="op">=</span> <span class="fl">1.25</span><span class="op">)</span>,</span>
-<span>  exposure <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  dtype <span class="op">=</span> <span class="st">"parallel"</span>,</span>
-<span>  nsim <span class="op">=</span> <span class="fl">500</span>,</span>
-<span>  seed <span class="op">=</span> <span class="fl">1234</span>,</span>
-<span>  keep_sim_data <span class="op">=</span> <span class="cn">TRUE</span></span>
-<span><span class="op">)</span></span>
-<span><span class="va">parallel_power</span></span>
-<span><span class="co">#&gt; Fixed-sample-size power</span></span>
-<span><span class="co">#&gt; Distribution: pois </span></span>
-<span><span class="co">#&gt; Sample size: 1000 </span></span>
-<span><span class="co">#&gt; Power: 0.4200 [0.3765, 0.4647]</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/stats/confint.html" class="external-link">confint</a></span><span class="op">(</span><span class="va">parallel_power</span><span class="op">)</span></span>
-<span><span class="co">#&gt;      n n_total power     Lower     Upper</span></span>
-<span><span class="co">#&gt; 1 1000    2000  0.42 0.3763231 0.4646284</span></span></code></pre></div>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">parallel_sample_size</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sampleSize.html">sampleSize</a></span><span class="op">(</span></span>
-<span>  power <span class="op">=</span> <span class="fl">0.80</span>,</span>
-<span>  distribution <span class="op">=</span> <span class="st">"pois"</span>,</span>
-<span>  rate_list <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>TEST <span class="op">=</span> <span class="fl">0.21</span>, REF <span class="op">=</span> <span class="fl">0.20</span><span class="op">)</span>,</span>
-<span>  list_comparator <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>TEST_vs_REF <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"TEST"</span>, <span class="st">"REF"</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>  list_lequi.tol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>TEST_vs_REF <span class="op">=</span> <span class="fl">0.80</span><span class="op">)</span>,</span>
-<span>  list_uequi.tol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>TEST_vs_REF <span class="op">=</span> <span class="fl">1.25</span><span class="op">)</span>,</span>
-<span>  exposure <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  dtype <span class="op">=</span> <span class="st">"parallel"</span>,</span>
-<span>  lower <span class="op">=</span> <span class="fl">100</span>,</span>
-<span>  upper <span class="op">=</span> <span class="fl">2200</span>,</span>
-<span>  nsim <span class="op">=</span> <span class="fl">500</span>,</span>
-<span>  seed <span class="op">=</span> <span class="fl">1234</span></span>
-<span><span class="op">)</span></span>
-<span><span class="va">parallel_sample_size</span></span>
-<span><span class="co">#&gt; Count-rate equivalence sample size</span></span>
-<span><span class="co">#&gt; Subjects per arm: 2006 </span></span>
-<span><span class="co">#&gt; Total subjects: 4012 </span></span>
-<span><span class="co">#&gt; Endpoints: 1 (required: 1 )</span></span>
-<span><span class="co">#&gt; Alpha adjustment: none </span></span>
-<span><span class="co">#&gt; Achieved power: 0.8000 [0.7617, 0.8336]</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">parallel_sample_size</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Sample Size Summary</span></span>
-<span><span class="co">#&gt; ---------------------- </span></span>
-<span><span class="co">#&gt; Design type        : parallel </span></span>
-<span><span class="co">#&gt; Distribution       : pois </span></span>
-<span><span class="co">#&gt; Comparison type    : RR</span></span>
-<span><span class="co">#&gt; Estimand           : event-rate ratio (lambda_T / lambda_R)</span></span>
-<span><span class="co">#&gt; Hypotheses         : H0: RR &lt;= L or &gt;= U; H1: L &lt; RR &lt; U</span></span>
-<span><span class="co">#&gt; Alpha              : 0.05 </span></span>
-<span><span class="co">#&gt; Target power       : 0.8000 </span></span>
-<span><span class="co">#&gt; Achieved power     : 0.8000 </span></span>
-<span><span class="co">#&gt; Power interval     : [0.7617, 0.8336] </span></span>
-<span><span class="co">#&gt; Required endpoints : 1 </span></span>
-<span><span class="co">#&gt; Alpha adjustment   : none </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Equivalence Margins:</span></span>
-<span><span class="co">#&gt;   Comparison   Endpoint Lower Upper</span></span>
-<span><span class="co">#&gt;  TEST_vs_REF endpoint_1   0.8  1.25</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Estimated Sample Size:</span></span>
-<span><span class="co">#&gt;  TEST  REF Total</span></span>
-<span><span class="co">#&gt;  2006 2006  4012</span></span></code></pre></div>
-<p>The returned sample size is reported per arm and as a total for the
-two-arm parallel trial. Simulation error can be reduced by increasing
-<code>nsim</code>.</p>
-</div>
-<div class="section level2">
-<h2 id="updating-a-count-calculation">Updating a count calculation<a class="anchor" aria-label="anchor" href="#updating-a-count-calculation"></a>
-</h2>
-<p>Results retain the arguments used to create them, so a new scenario
-can be evaluated with <code><a href="https://rdrr.io/r/stats/update.html" class="external-link">update()</a></code> rather than repeating the
-full call. For example, the following changes only the fixed sample size
-and simulation precision for the power calculation, and only the target
-power for the sample-size search:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">parallel_power_larger</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/update.html" class="external-link">update</a></span><span class="op">(</span><span class="va">parallel_power</span>, n <span class="op">=</span> <span class="fl">1500</span>, nsim <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span>
-<span><span class="va">parallel_sample_size_90</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/update.html" class="external-link">update</a></span><span class="op">(</span><span class="va">parallel_sample_size</span>, power <span class="op">=</span> <span class="fl">0.90</span>,upper <span class="op">=</span> <span class="fl">5000</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">parallel_power_larger</span></span>
-<span><span class="co">#&gt; Fixed-sample-size power</span></span>
-<span><span class="co">#&gt; Distribution: pois </span></span>
-<span><span class="co">#&gt; Sample size: 1500 </span></span>
-<span><span class="co">#&gt; Power: 0.6580 [0.6275, 0.6872]</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">parallel_sample_size_90</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Sample Size Summary</span></span>
-<span><span class="co">#&gt; ---------------------- </span></span>
-<span><span class="co">#&gt; Design type        : parallel </span></span>
-<span><span class="co">#&gt; Distribution       : pois </span></span>
-<span><span class="co">#&gt; Comparison type    : RR</span></span>
-<span><span class="co">#&gt; Estimand           : event-rate ratio (lambda_T / lambda_R)</span></span>
-<span><span class="co">#&gt; Hypotheses         : H0: RR &lt;= L or &gt;= U; H1: L &lt; RR &lt; U</span></span>
-<span><span class="co">#&gt; Alpha              : 0.05 </span></span>
-<span><span class="co">#&gt; Target power       : 0.9000 </span></span>
-<span><span class="co">#&gt; Achieved power     : 0.9020 </span></span>
-<span><span class="co">#&gt; Power interval     : [0.8717, 0.9260] </span></span>
-<span><span class="co">#&gt; Required endpoints : 1 </span></span>
-<span><span class="co">#&gt; Alpha adjustment   : none </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Equivalence Margins:</span></span>
-<span><span class="co">#&gt;   Comparison   Endpoint Lower Upper</span></span>
-<span><span class="co">#&gt;  TEST_vs_REF endpoint_1   0.8  1.25</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Estimated Sample Size:</span></span>
-<span><span class="co">#&gt;  TEST  REF Total</span></span>
-<span><span class="co">#&gt;  2563 2563  5126</span></span></code></pre></div>
-<p>All other rates, margins, design settings, and random-number settings
-are carried forward from the original result. This is useful for
-sensitivity analyses, but a changed scientific estimand should still be
-documented by showing the relevant endpoint or comparator arguments
-explicitly.</p>
-</div>
-<div class="section level2">
-<h2 id="a-step-by-step-validation-workflow">A step-by-step validation workflow<a class="anchor" aria-label="anchor" href="#a-step-by-step-validation-workflow"></a>
-</h2>
-<p>The plots in this vignette answer different validation questions.
-They should be read in the following order:</p>
-<ol style="list-style-type: decimal">
-<li>
-<strong>Result and precision:</strong> check the estimated power,
-its Monte Carlo interval, and the total sample size.</li>
-<li>
-<strong>Marginal outcome model:</strong> check whether simulated
-counts follow the specified Poisson or negative-binomial
-distribution.</li>
-<li>
-<strong>Rate scale:</strong> check whether counts divided by
-exposure are centered on the user-specified event rates.</li>
-<li>
-<strong>Endpoint dependence:</strong> check whether within-trial
-correlations are compatible with <code>cor_mat</code>.</li>
-</ol>
-<p>The first four checks validate the data-generating inputs. Only after
-those checks should the power or sample-size conclusion be
-interpreted.</p>
-<div class="section level3">
-<h3 id="step-1-check-the-reported-result-and-monte-carlo-uncertainty">Step 1: Check the reported result and Monte Carlo uncertainty<a class="anchor" aria-label="anchor" href="#step-1-check-the-reported-result-and-monte-carlo-uncertainty"></a>
-</h3>
-<p>For a fixed sample size, <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> shows the achieved power
-and its confidence interval. For a sample-size calculation,
-<code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> and <code><a href="https://rdrr.io/r/stats/confint.html" class="external-link">confint()</a></code> show the selected
-sample size and the achieved power at that design. The confidence
-interval measures simulation uncertainty; it does not account for
-uncertainty in the user-supplied rates, exposure, or dispersion.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">parallel_sample_size</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Sample Size Summary</span></span>
-<span><span class="co">#&gt; ---------------------- </span></span>
-<span><span class="co">#&gt; Design type        : parallel </span></span>
-<span><span class="co">#&gt; Distribution       : pois </span></span>
-<span><span class="co">#&gt; Comparison type    : RR</span></span>
-<span><span class="co">#&gt; Estimand           : event-rate ratio (lambda_T / lambda_R)</span></span>
-<span><span class="co">#&gt; Hypotheses         : H0: RR &lt;= L or &gt;= U; H1: L &lt; RR &lt; U</span></span>
-<span><span class="co">#&gt; Alpha              : 0.05 </span></span>
-<span><span class="co">#&gt; Target power       : 0.8000 </span></span>
-<span><span class="co">#&gt; Achieved power     : 0.8000 </span></span>
-<span><span class="co">#&gt; Power interval     : [0.7617, 0.8336] </span></span>
-<span><span class="co">#&gt; Required endpoints : 1 </span></span>
-<span><span class="co">#&gt; Alpha adjustment   : none </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Equivalence Margins:</span></span>
-<span><span class="co">#&gt;   Comparison   Endpoint Lower Upper</span></span>
-<span><span class="co">#&gt;  TEST_vs_REF endpoint_1   0.8  1.25</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Estimated Sample Size:</span></span>
-<span><span class="co">#&gt;  TEST  REF Total</span></span>
-<span><span class="co">#&gt;  2006 2006  4012</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/stats/confint.html" class="external-link">confint</a></span><span class="op">(</span><span class="va">parallel_sample_size</span><span class="op">)</span></span>
-<span><span class="co">#&gt;     Lower     Upper </span></span>
-<span><span class="co">#&gt; 0.7622082 0.8341999 </span></span>
-<span><span class="co">#&gt; attr(,"conf.level")</span></span>
-<span><span class="co">#&gt; [1] 0.95</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">parallel_power</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   distribution   model ctype         estimand</span></span>
-<span><span class="co">#&gt; 1         pois poisson    RR event-rate ratio</span></span>
-<span><span class="co">#&gt;                               hypothesis   design n_per_arm n_total power</span></span>
-<span><span class="co">#&gt; 1 H0: RR &lt;= L or RR &gt;= U; H1: L &lt; RR &lt; U parallel      1000    2000  0.42</span></span>
-<span><span class="co">#&gt;   power_LCI power_UCI nsim</span></span>
-<span><span class="co">#&gt; 1 0.3765311 0.4647169  500</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/stats/confint.html" class="external-link">confint</a></span><span class="op">(</span><span class="va">parallel_power</span><span class="op">)</span></span>
-<span><span class="co">#&gt;      n n_total power     Lower     Upper</span></span>
-<span><span class="co">#&gt; 1 1000    2000  0.42 0.3763231 0.4646284</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">parallel_power</span><span class="op">)</span></span></code></pre></div>
-<p><img src="count_files/figure-html/count-validation-result-1.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;"></p>
-<p>Focus on the achieved power and its interval for the fixed-size
-result. For the sample-size result, confirm the selected subjects per
-arm, the resulting total sample size, and whether achieved power reaches
-the target. If the interval is too wide for the planned decision,
-increase <code>nsim</code>; do not treat a Monte Carlo fluctuation as
-evidence that the clinical assumptions are wrong.</p>
-</div>
-<div class="section level3">
-<h3 id="step-2-check-the-marginal-count-distribution">Step 2: Check the marginal count distribution<a class="anchor" aria-label="anchor" href="#step-2-check-the-marginal-count-distribution"></a>
-</h3>
-<p>Raw observations are not retained by default. Set
-<code>keep_sim_data = TRUE</code> when the purpose of the run includes
-checking the data-generating mechanism. The following two-endpoint
-example supplies a latent endpoint correlation of 0.5. The same
-parameter can be supplied for a negative-binomial simulation by changing
-<code>distribution</code>.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">count_corr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0.5</span>, <span class="fl">0.5</span>, <span class="fl">1</span><span class="op">)</span>, nrow <span class="op">=</span> <span class="fl">2</span>,</span>
-<span>                     dimnames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"y1"</span>, <span class="st">"y2"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"y1"</span>, <span class="st">"y2"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">poisson_diagnostic</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simPower.html">simPower</a></span><span class="op">(</span></span>
-<span>  n <span class="op">=</span> <span class="fl">500</span>,</span>
-<span>  distribution <span class="op">=</span> <span class="st">"pois"</span>,</span>
-<span>  rate_list <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>TEST <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>y1 <span class="op">=</span> <span class="fl">0.21</span>, y2 <span class="op">=</span> <span class="fl">0.24</span><span class="op">)</span>,</span>
-<span>                   REF <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>y1 <span class="op">=</span> <span class="fl">0.20</span>, y2 <span class="op">=</span> <span class="fl">0.22</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>  list_comparator <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>TEST_vs_REF <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"TEST"</span>, <span class="st">"REF"</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>  list_lequi.tol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>TEST_vs_REF <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>y1 <span class="op">=</span> <span class="fl">0.80</span>, y2 <span class="op">=</span> <span class="fl">0.80</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>  list_uequi.tol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>TEST_vs_REF <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>y1 <span class="op">=</span> <span class="fl">1.25</span>, y2 <span class="op">=</span> <span class="fl">1.25</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>  exposure <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  cor_mat <span class="op">=</span> <span class="va">count_corr</span>,</span>
-<span>  dtype <span class="op">=</span> <span class="st">"parallel"</span>,</span>
-<span>  nsim <span class="op">=</span> <span class="fl">500</span>,</span>
-<span>  seed <span class="op">=</span> <span class="fl">1234</span>,</span>
-<span>  keep_sim_data <span class="op">=</span> <span class="cn">TRUE</span></span>
-<span><span class="op">)</span></span></code></pre></div>
-<p><code><a href="../reference/plot_distribution.html">plot_distribution()</a></code> with
-<code>estimand = "outcome"</code> shows the distribution of the
-individual simulated event counts. For count outcomes, the dashed orange
-curve is the specified Poisson or negative-binomial distribution. This
-checks the outcome scale, but it is not the most direct check of the
-rate parameter because the rate also depends on exposure.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_distribution.html">plot_distribution</a></span><span class="op">(</span><span class="va">poisson_diagnostic</span>, estimand <span class="op">=</span> <span class="st">"outcome"</span>, type <span class="op">=</span> <span class="st">"histogram"</span>,</span>
-<span>                  arms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"TEST"</span>, <span class="st">"REF"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="count_files/figure-html/poisson-outcome-distribution-1.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;"></p>
-<p>Focus first on the shape and scale of the blue empirical bars. They
-should be compatible with the dashed orange Poisson reference. For a
-negative-binomial analysis, the same comparison should show the extra
-variation implied by the specified dispersion.</p>
-</div>
-<div class="section level3">
-<h3 id="step-3-check-the-exposure-adjusted-rate-scale">Step 3: Check the exposure-adjusted rate scale<a class="anchor" aria-label="anchor" href="#step-3-check-the-exposure-adjusted-rate-scale"></a>
-</h3>
-<p>For the parameter-scale check, use <code>estimand = "rate"</code>.
-The function first combines counts and exposure within each simulated
-trial and arm, then plots the resulting exposure-adjusted rate. The
-dashed line is the rate supplied in <code>rate_list</code>; therefore,
-the plot directly answers whether the simulated trial rates are centered
-on the intended values.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_distribution.html">plot_distribution</a></span><span class="op">(</span><span class="va">poisson_diagnostic</span>, estimand <span class="op">=</span> <span class="st">"rate"</span>, type <span class="op">=</span> <span class="st">"density"</span>,</span>
-<span>                  arms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"TEST"</span>, <span class="st">"REF"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="count_files/figure-html/poisson-rate-distribution-1.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;"></p>
-<p>Focus on whether the empirical rate distribution is centered near the
-dashed line for each arm and endpoint. If it is systematically shifted,
-check the rate, exposure, arm names, and endpoint names before
-interpreting power. This plot is more informative than a raw count plot
-when exposure differs between participants or arms.</p>
-</div>
-<div class="section level3">
-<h3 id="step-4-check-endpoint-dependence">Step 4: Check endpoint dependence<a class="anchor" aria-label="anchor" href="#step-4-check-endpoint-dependence"></a>
-</h3>
-<p>Finally, <code>plot_distribution(estimand = "correlation")</code>
-calculates a correlation between endpoints within each simulated trial
-and arm. The blue distribution shows the sampling variation of those
-empirical correlations; the dashed orange line is the latent correlation
-supplied through <code>cor_mat</code>. For discrete outcomes, the
-observed Pearson correlation need not equal the latent correlation
-exactly, because rates, exposure, overdispersion, and discreteness all
-affect it.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_distribution.html">plot_distribution</a></span><span class="op">(</span><span class="va">poisson_diagnostic</span>, estimand <span class="op">=</span> <span class="st">"correlation"</span>,</span>
-<span>                  arms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"TEST"</span>, <span class="st">"REF"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="count_files/figure-html/poisson-correlation-distribution-1.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;"></p>
-<p>Focus on whether the empirical correlations fluctuate around the
-dashed reference value. For count outcomes, the dashed line represents
-the latent correlation supplied through <code>cor_mat</code>; the
-observed Pearson correlation can differ because of discreteness,
-exposure, event rates, and dispersion.</p>
-<p>These diagnostics should be inspected before interpreting power. A
-mismatch between the empirical rate or correlation distributions and
-their reference values usually indicates that the input structure,
-exposure specification, or simulation assumptions need review.</p>
-<p>After these four checks, repeat the workflow for the
-negative-binomial and 2x2 crossover scenarios if they are plausible
-alternatives for the study. A model that gives the desired power but
-fails one of these input checks should be corrected before changing the
-sample size or equivalence margins.</p>
-</div>
-</div>
-<div class="section level2">
-<h2 id="published-two-arm-poisson-benchmark">Published two-arm Poisson benchmark<a class="anchor" aria-label="anchor" href="#published-two-arm-poisson-benchmark"></a>
-</h2>
-<p>As a simple external check, Zhu <span class="citation">(<a href="#ref-zhu_sample_2017">Zhu 2017</a>)</span> reports a two-arm
-Poisson equivalence calculation with equal event rates of 1 per time
-unit, average exposure of 0.7, equivalence limits of 0.9 and
+<p>Zhu <span class="citation">(<a href="#ref-zhu_sample_2017">Zhu
+2017</a>)</span> reports a two-arm Poisson equivalence calculation with
+equal event rates of 1 per time unit, average exposure of 0.7,
+equivalence limits of 0.9 and
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mi>/</mi><mn>0.9</mn></mrow><annotation encoding="application/x-tex">1/0.9</annotation></semantics></math>,
-one-sided \(\alpha=0.025\), and 2,705 participants per arm. The reported
-total sample size is therefore 5,410, with approximated power 0.80012.
-The following uses the unified <code><a href="../reference/simPower.html">simPower()</a></code> interface for the
-same treatment-versus-control scenario.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+one-sided
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>α</mi><mo>=</mo><mn>0.025</mn></mrow><annotation encoding="application/x-tex">\alpha=0.025</annotation></semantics></math>,
+and 2,705 participants per arm. The reported total sample size is 5,410,
+with approximated power 0.80012.</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">zhu_benchmark</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simPower.html">simPower</a></span><span class="op">(</span></span>
 <span>  n <span class="op">=</span> <span class="fl">2705</span>,</span>
 <span>  distribution <span class="op">=</span> <span class="st">"pois"</span>,</span>
@@ -456,101 +156,242 @@ same treatment-versus-control scenario.</p>
 <span>  nsim <span class="op">=</span> <span class="fl">5000</span>,</span>
 <span>  seed <span class="op">=</span> <span class="fl">2024</span></span>
 <span><span class="op">)</span></span>
-<span></span>
 <span><span class="va">zhu_benchmark</span></span>
 <span><span class="co">#&gt; Fixed-sample-size power</span></span>
 <span><span class="co">#&gt; Distribution: pois </span></span>
 <span><span class="co">#&gt; Sample size: 2705 </span></span>
 <span><span class="co">#&gt; Power: 0.7936 [0.7821, 0.8047]</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
-<span>  reference_power <span class="op">=</span> <span class="fl">0.80012</span>,</span>
-<span>  simulated_power <span class="op">=</span> <span class="va">zhu_benchmark</span><span class="op">$</span><span class="va">power</span>,</span>
-<span>  simulated_lower <span class="op">=</span> <span class="va">zhu_benchmark</span><span class="op">$</span><span class="va">power_LCI</span>,</span>
-<span>  simulated_upper <span class="op">=</span> <span class="va">zhu_benchmark</span><span class="op">$</span><span class="va">power_UCI</span></span>
-<span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>reference_power <span class="op">=</span> <span class="fl">0.80012</span>,</span>
+<span>           simulated_power <span class="op">=</span> <span class="va">zhu_benchmark</span><span class="op">$</span><span class="va">power</span>,</span>
+<span>           simulated_lower <span class="op">=</span> <span class="va">zhu_benchmark</span><span class="op">$</span><span class="va">power_LCI</span>,</span>
+<span>           simulated_upper <span class="op">=</span> <span class="va">zhu_benchmark</span><span class="op">$</span><span class="va">power_UCI</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   reference_power simulated_power simulated_lower simulated_upper</span></span>
 <span><span class="co">#&gt; 1         0.80012          0.7936       0.7820566       0.8046886</span></span></code></pre></div>
-<p>The simulation should be close to the published approximation, but it
-is not expected to reproduce it exactly. Zhu’s value is based on a
-large-sample calculation, whereas <code><a href="../reference/simPower.html">simPower()</a></code> simulates
-discrete Poisson event totals and uses the package’s finite-sample
-equivalence procedure. In addition, the Monte Carlo estimate varies
-slightly with <code>nsim</code> and the random seed. The benchmark is
-intended as a plausibility check for the simple two-arm case; the
-three-arm, multi-endpoint examples below address a different, joint
-multiple-comparison problem.</p>
-<p>Exposure and negative-binomial dispersion can also vary by arm. Each
-list must use the same arm names as <code>rate_list</code>; values may
-be scalar or endpoint vectors.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/simPower.html">simPower</a></span><span class="op">(</span></span>
-<span>  n <span class="op">=</span> <span class="fl">1000</span>,</span>
-<span>  distribution <span class="op">=</span> <span class="st">"nbinom"</span>,</span>
-<span>  rate_list <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>TEST <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>endpoint_1 <span class="op">=</span> <span class="fl">0.21</span><span class="op">)</span>,</span>
-<span>                   REF <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>endpoint_1 <span class="op">=</span> <span class="fl">0.20</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>  list_comparator <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>TEST_vs_REF <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"TEST"</span>, <span class="st">"REF"</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>  list_lequi.tol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>TEST_vs_REF <span class="op">=</span> <span class="fl">0.80</span><span class="op">)</span>,</span>
-<span>  list_uequi.tol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>TEST_vs_REF <span class="op">=</span> <span class="fl">1.25</span><span class="op">)</span>,</span>
-<span>  exposure <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>TEST <span class="op">=</span> <span class="fl">1</span>, REF <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>,</span>
-<span>  dispersion <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>TEST <span class="op">=</span> <span class="fl">0.005</span>, REF <span class="op">=</span> <span class="fl">0.010</span><span class="op">)</span>,</span>
-<span>  dtype <span class="op">=</span> <span class="st">"parallel"</span>, nsim <span class="op">=</span> <span class="fl">1000</span>, seed <span class="op">=</span> <span class="fl">1234</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<p>The simulation need not reproduce the published value exactly. The
+published result is a large-sample approximation, whereas
+<code><a href="../reference/simPower.html">simPower()</a></code> simulates discrete event totals and reports a
+finite-sample Monte Carlo estimate.</p>
 </div>
 <div class="section level2">
-<h2 id="x2-crossover-design-negative-binomial-outcomes">2x2 crossover design: negative-binomial outcomes<a class="anchor" aria-label="anchor" href="#x2-crossover-design-negative-binomial-outcomes"></a>
+<h2 id="a-poisson-study">A Poisson study<a class="anchor" aria-label="anchor" href="#a-poisson-study"></a>
 </h2>
-<p>The same unified functions can plan a balanced 2x2 crossover design.
-For <code>dtype = "2x2"</code>, <code>n</code> in
-<code><a href="../reference/simPower.html">simPower()</a></code> and the returned <code>n_per_arm</code> in
-<code><a href="../reference/sampleSize.html">sampleSize()</a></code> refer to the number of participants per
-sequence. The negative-binomial example uses arm-specific exposure and
-dispersion values; larger dispersion values represent more
-overdispersion.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">crossover_power</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simPower.html">simPower</a></span><span class="op">(</span></span>
-<span>  n <span class="op">=</span> <span class="fl">1000</span>,</span>
-<span>  distribution <span class="op">=</span> <span class="st">"nbinom"</span>,</span>
-<span>  rate_list <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>TEST <span class="op">=</span> <span class="fl">0.21</span>, REF <span class="op">=</span> <span class="fl">0.20</span><span class="op">)</span>,</span>
-<span>  list_comparator <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>TEST_vs_REF <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"TEST"</span>, <span class="st">"REF"</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>  list_lequi.tol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>TEST_vs_REF <span class="op">=</span> <span class="fl">0.80</span><span class="op">)</span>,</span>
-<span>  list_uequi.tol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>TEST_vs_REF <span class="op">=</span> <span class="fl">1.25</span><span class="op">)</span>,</span>
-<span>  exposure <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>TEST <span class="op">=</span> <span class="fl">1</span>, REF <span class="op">=</span> <span class="fl">1.2</span><span class="op">)</span>,</span>
-<span>  dispersion <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>TEST <span class="op">=</span> <span class="fl">0.005</span>, REF <span class="op">=</span> <span class="fl">0.008</span><span class="op">)</span>,</span>
-<span>  dtype <span class="op">=</span> <span class="st">"2x2"</span>,</span>
-<span>  nsim <span class="op">=</span> <span class="fl">200</span>,</span>
-<span>  seed <span class="op">=</span> <span class="fl">1234</span></span>
+<div class="section level3">
+<h3 id="step-1-define-the-study-and-theoretical-targets">Step 1: Define the study and theoretical targets<a class="anchor" aria-label="anchor" href="#step-1-define-the-study-and-theoretical-targets"></a>
+</h3>
+<p>We now use the two-endpoint settings used throughout the rest of this
+vignette. The supplied endpoint correlation is a latent Gaussian-copula
+correlation, not the expected Pearson correlation of the observed
+counts.</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">count_corr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0.5</span>, <span class="fl">0.5</span>, <span class="fl">1</span><span class="op">)</span>, nrow <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>                     dimnames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"y1"</span>, <span class="st">"y2"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"y1"</span>, <span class="st">"y2"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">count_rates</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>TEST <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>y1 <span class="op">=</span> <span class="fl">0.21</span>, y2 <span class="op">=</span> <span class="fl">0.24</span><span class="op">)</span>,</span>
+<span>                    REF <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>y1 <span class="op">=</span> <span class="fl">0.20</span>, y2 <span class="op">=</span> <span class="fl">0.22</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">count_comparators</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>TEST_vs_REF <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"TEST"</span>, <span class="st">"REF"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">count_lower</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>TEST_vs_REF <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>y1 <span class="op">=</span> <span class="fl">0.80</span>, y2 <span class="op">=</span> <span class="fl">0.80</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">count_upper</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>TEST_vs_REF <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>y1 <span class="op">=</span> <span class="fl">1.25</span>, y2 <span class="op">=</span> <span class="fl">1.25</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">count_exposure</span> <span class="op">&lt;-</span> <span class="fl">10</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="step-2-run-a-pilot-with-samplesize">Step 2: Run a pilot with sampleSize()<a class="anchor" aria-label="anchor" href="#step-2-run-a-pilot-with-samplesize"></a>
+</h3>
+<p>As in the workflow vignette, first run a fixed-sample pilot while
+retaining the simulated data. This object is used for the diagnostics
+below.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">poisson_diagnostic</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sampleSize.html">sampleSize</a></span><span class="op">(</span></span>
+<span>  distribution <span class="op">=</span> <span class="st">"pois"</span>, rate_list <span class="op">=</span> <span class="va">count_rates</span>,</span>
+<span>  list_comparator <span class="op">=</span> <span class="va">count_comparators</span>,</span>
+<span>  list_lequi.tol <span class="op">=</span> <span class="va">count_lower</span>, list_uequi.tol <span class="op">=</span> <span class="va">count_upper</span>,</span>
+<span>  exposure <span class="op">=</span> <span class="va">count_exposure</span>, cor_mat <span class="op">=</span> <span class="va">count_corr</span>,</span>
+<span>  dtype <span class="op">=</span> <span class="st">"parallel"</span>, nsim <span class="op">=</span> <span class="fl">500</span>, seed <span class="op">=</span> <span class="fl">1234</span>,</span>
+<span>  keep_sim_data <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
-<span><span class="va">crossover_power</span></span>
-<span><span class="co">#&gt; Fixed-sample-size power</span></span>
-<span><span class="co">#&gt; Distribution: nbinom </span></span>
-<span><span class="co">#&gt; Sample size: 1000 </span></span>
-<span><span class="co">#&gt; Power: 1.0000 [0.9765, 1.0000]</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/stats/confint.html" class="external-link">confint</a></span><span class="op">(</span><span class="va">crossover_power</span><span class="op">)</span></span>
-<span><span class="co">#&gt;      n n_total power     Lower Upper</span></span>
-<span><span class="co">#&gt; 1 1000    2000     1 0.9817247     1</span></span></code></pre></div>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">crossover_sample_size</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sampleSize.html">sampleSize</a></span><span class="op">(</span></span>
-<span>  power <span class="op">=</span> <span class="fl">0.80</span>,</span>
-<span>  distribution <span class="op">=</span> <span class="st">"nbinom"</span>,</span>
-<span>  rate_list <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>TEST <span class="op">=</span> <span class="fl">0.21</span>, REF <span class="op">=</span> <span class="fl">0.20</span><span class="op">)</span>,</span>
-<span>  list_comparator <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>TEST_vs_REF <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"TEST"</span>, <span class="st">"REF"</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>  list_lequi.tol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>TEST_vs_REF <span class="op">=</span> <span class="fl">0.80</span><span class="op">)</span>,</span>
-<span>  list_uequi.tol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>TEST_vs_REF <span class="op">=</span> <span class="fl">1.25</span><span class="op">)</span>,</span>
-<span>  exposure <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>TEST <span class="op">=</span> <span class="fl">1</span>, REF <span class="op">=</span> <span class="fl">1.2</span><span class="op">)</span>,</span>
-<span>  dispersion <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>TEST <span class="op">=</span> <span class="fl">0.005</span>, REF <span class="op">=</span> <span class="fl">0.008</span><span class="op">)</span>,</span>
-<span>  dtype <span class="op">=</span> <span class="st">"2x2"</span>,</span>
-<span>  lower <span class="op">=</span> <span class="fl">300</span>,</span>
-<span>  upper <span class="op">=</span> <span class="fl">1200</span>,</span>
-<span>  nsim <span class="op">=</span> <span class="fl">100</span>,</span>
-<span>  seed <span class="op">=</span> <span class="fl">1234</span></span>
-<span><span class="op">)</span></span>
-<span><span class="va">crossover_sample_size</span></span>
+<span><span class="va">poisson_diagnostic</span></span>
 <span><span class="co">#&gt; Count-rate equivalence sample size</span></span>
-<span><span class="co">#&gt; Subjects per arm: 300 </span></span>
-<span><span class="co">#&gt; Total subjects: 600 </span></span>
-<span><span class="co">#&gt; Endpoints: 1 (required: 1 )</span></span>
+<span><span class="co">#&gt; Subjects per arm: 314 </span></span>
+<span><span class="co">#&gt; Total subjects: 628 </span></span>
+<span><span class="co">#&gt; Endpoints: 2 (required: 2 )</span></span>
 <span><span class="co">#&gt; Alpha adjustment: none </span></span>
-<span><span class="co">#&gt; Achieved power: 0.8800 [0.7960, 0.9337]</span></span>
+<span><span class="co">#&gt; Achieved power: 0.8040 [0.7659, 0.8373]</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/confint.html" class="external-link">confint</a></span><span class="op">(</span><span class="va">poisson_diagnostic</span><span class="op">)</span></span>
+<span><span class="co">#&gt;     Lower     Upper </span></span>
+<span><span class="co">#&gt; 0.7664479 0.8379112 </span></span>
+<span><span class="co">#&gt; attr(,"conf.level")</span></span>
+<span><span class="co">#&gt; [1] 0.95</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="step-3-validate-the-generated-data-and-estimands">Step 3: Validate the generated data and estimands<a class="anchor" aria-label="anchor" href="#step-3-validate-the-generated-data-and-estimands"></a>
+</h3>
+<p>The workflow checks result precision, marginal outcomes,
+exposure-adjusted rates, endpoint dependence, and Monte Carlo stability
+before planning.</p>
+<div class="section level4">
+<h4 id="a--arm-specific-parameters">3a. Arm-specific parameters<a class="anchor" aria-label="anchor" href="#a--arm-specific-parameters"></a>
+</h4>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_distribution.html">plot_distribution</a></span><span class="op">(</span><span class="va">poisson_diagnostic</span>, estimand <span class="op">=</span> <span class="st">"rate"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="count_files/figure-html/poisson-rate-distribution-1.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;"></p>
+<p>The empirical rate distributions should be centered near the values
+in <code>count_rates</code>.</p>
+</div>
+<div class="section level4">
+<h4 id="b--endpoint-correlations">3b. Endpoint correlations<a class="anchor" aria-label="anchor" href="#b--endpoint-correlations"></a>
+</h4>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_distribution.html">plot_distribution</a></span><span class="op">(</span><span class="va">poisson_diagnostic</span>, estimand <span class="op">=</span> <span class="st">"correlation"</span>,</span>
+<span>                  arms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"TEST"</span>, <span class="st">"REF"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p><img src="count_files/figure-html/poisson-correlation-distribution-1.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;">
+The dashed line is the latent correlation supplied through
+<code>count_corr</code>. The observed Pearson correlation can differ
+because the latent normal variables are transformed into discrete
+counts. The plot checks the direction and approximate magnitude of the
+generated dependence; <code>endpoint_corr</code> is the exact parameter
+check.</p>
+</div>
+<div class="section level4">
+<h4 id="c--estimand-direction-and-sampling-distribution">3c. Estimand direction and sampling distribution<a class="anchor" aria-label="anchor" href="#c--estimand-direction-and-sampling-distribution"></a>
+</h4>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_distribution.html">plot_distribution</a></span><span class="op">(</span><span class="va">poisson_diagnostic</span>, estimand <span class="op">=</span> <span class="st">"outcome"</span>, type <span class="op">=</span> <span class="st">"histogram"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="count_files/figure-html/poisson-outcome-distribution-1.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;">
+The empirical counts should be compatible with the Poisson reference
+distribution.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_distribution.html">plot_distribution</a></span><span class="op">(</span><span class="va">poisson_diagnostic</span>, estimand <span class="op">=</span> <span class="st">"RR"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="count_files/figure-html/poisson-estimand-distribution-1.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;"></p>
+</div>
+</div>
+<div class="section level3">
+<h3 id="step-4-check-monte-carlo-stability-and-precision">Step 4: Check Monte Carlo stability and precision<a class="anchor" aria-label="anchor" href="#step-4-check-monte-carlo-stability-and-precision"></a>
+</h3>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_stability.html">plot_stability</a></span><span class="op">(</span><span class="va">poisson_diagnostic</span><span class="op">)</span></span></code></pre></div>
+<p><img src="count_files/figure-html/poisson-stability-1.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;"></p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_mc_error.html">plot_mc_error</a></span><span class="op">(</span><span class="va">poisson_diagnostic</span><span class="op">)</span></span></code></pre></div>
+<p><img src="count_files/figure-html/poisson-stability-2.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;"></p>
+</div>
+<div class="section level3">
+<h3 id="step-5-check-type-i-error-at-the-equivalence-boundaries">Step 5: Check Type I error at the equivalence boundaries<a class="anchor" aria-label="anchor" href="#step-5-check-type-i-error-at-the-equivalence-boundaries"></a>
+</h3>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">type1_one</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/type1Error.html">type1Error</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">poisson_diagnostic</span>, null <span class="op">=</span> <span class="st">"both"</span>, joint <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">type1_one</span><span class="op">)</span></span></code></pre></div>
+<p><img src="count_files/figure-html/poisson-type1-1.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;"></p>
+</div>
+<div class="section level3">
+<h3 id="step-6-run-the-final-sample-size-calculation">Step 6: Run the final sample-size calculation<a class="anchor" aria-label="anchor" href="#step-6-run-the-final-sample-size-calculation"></a>
+</h3>
+<p>This call uses exactly the rates, exposure, correlation matrix,
+margins, and parallel design used by
+<code>poisson_diagnostic</code>.</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">poisson_sample_size</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sampleSize.html">sampleSize</a></span><span class="op">(</span></span>
+<span>  power <span class="op">=</span> <span class="fl">0.80</span>, distribution <span class="op">=</span> <span class="st">"pois"</span>, rate_list <span class="op">=</span> <span class="va">count_rates</span>,</span>
+<span>  list_comparator <span class="op">=</span> <span class="va">count_comparators</span>,</span>
+<span>  list_lequi.tol <span class="op">=</span> <span class="va">count_lower</span>, list_uequi.tol <span class="op">=</span> <span class="va">count_upper</span>,</span>
+<span>  exposure <span class="op">=</span> <span class="va">count_exposure</span>, cor_mat <span class="op">=</span> <span class="va">count_corr</span>, dtype <span class="op">=</span> <span class="st">"parallel"</span>,</span>
+<span>  lower <span class="op">=</span> <span class="fl">100</span>, upper <span class="op">=</span> <span class="fl">1000</span>, nsim <span class="op">=</span> <span class="fl">1000</span>, seed <span class="op">=</span> <span class="fl">1234</span>, ncores <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  keep_sim_data <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">poisson_sample_size</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Sample Size Summary</span></span>
+<span><span class="co">#&gt; ---------------------- </span></span>
+<span><span class="co">#&gt; Design type        : parallel </span></span>
+<span><span class="co">#&gt; Distribution       : pois </span></span>
+<span><span class="co">#&gt; Comparison type    : RR</span></span>
+<span><span class="co">#&gt; Estimand           : event-rate ratio (lambda_T / lambda_R)</span></span>
+<span><span class="co">#&gt; Hypotheses         : H0: RR &lt;= L or &gt;= U; H1: L &lt; RR &lt; U</span></span>
+<span><span class="co">#&gt; Alpha              : 0.05 </span></span>
+<span><span class="co">#&gt; Target power       : 0.8000 </span></span>
+<span><span class="co">#&gt; Achieved power     : 0.8010 </span></span>
+<span><span class="co">#&gt; Power interval     : [0.7746, 0.8250] </span></span>
+<span><span class="co">#&gt; Required endpoints : 2 </span></span>
+<span><span class="co">#&gt; Alpha adjustment   : none </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Equivalence Margins:</span></span>
+<span><span class="co">#&gt;   Comparison Endpoint Lower Upper</span></span>
+<span><span class="co">#&gt;  TEST_vs_REF       y1   0.8  1.25</span></span>
+<span><span class="co">#&gt;  TEST_vs_REF       y2   0.8  1.25</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Estimated Sample Size:</span></span>
+<span><span class="co">#&gt;  TEST REF Total</span></span>
+<span><span class="co">#&gt;   316 316   632</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/confint.html" class="external-link">confint</a></span><span class="op">(</span><span class="va">poisson_sample_size</span><span class="op">)</span></span>
+<span><span class="co">#&gt;     Lower     Upper </span></span>
+<span><span class="co">#&gt; 0.7748841 0.8253299 </span></span>
+<span><span class="co">#&gt; attr(,"conf.level")</span></span>
+<span><span class="co">#&gt; [1] 0.95</span></span></code></pre></div>
+<p>For final planning, increase <code>nsim</code> and independently
+verify the selected sample size with <code><a href="../reference/simPower.html">simPower()</a></code>.</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">poisson_sample_size</span><span class="op">)</span></span></code></pre></div>
+<p><img src="count_files/figure-html/poisson-result-1.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;"></p>
+</div>
+<div class="section level3">
+<h3 id="repeat-with-a-negative-binomial-distribution">Repeat with a negative-binomial distribution<a class="anchor" aria-label="anchor" href="#repeat-with-a-negative-binomial-distribution"></a>
+</h3>
+<p>The negative-binomial calculation keeps the same rates, exposure,
+correlation, margins, and parallel design. The dispersion parameter
+allows the count variance to exceed its Poisson value. We use
+<code>dispersion = 0.50</code> here as a deliberately visible
+sensitivity example. For a mean count near 2, the Poisson variance is
+about 2, whereas the negative-binomial variance is approximately
+<code>2 + 0.50 * 2^2 = 4</code>.</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">nb_dispersion</span> <span class="op">&lt;-</span> <span class="fl">0.50</span></span>
+<span><span class="va">negative_binomial_sample_size</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/update.html" class="external-link">update</a></span><span class="op">(</span><span class="va">poisson_sample_size</span>,</span>
+<span>                                        distribution <span class="op">=</span> <span class="st">"nbinom"</span>,</span>
+<span>                                        dispersion <span class="op">=</span> <span class="va">nb_dispersion</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">negative_binomial_sample_size</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Sample Size Summary</span></span>
+<span><span class="co">#&gt; ---------------------- </span></span>
+<span><span class="co">#&gt; Design type        : parallel </span></span>
+<span><span class="co">#&gt; Distribution       : nbinom </span></span>
+<span><span class="co">#&gt; Comparison type    : RR</span></span>
+<span><span class="co">#&gt; Estimand           : event-rate ratio (lambda_T / lambda_R)</span></span>
+<span><span class="co">#&gt; Hypotheses         : H0: RR &lt;= L or &gt;= U; H1: L &lt; RR &lt; U</span></span>
+<span><span class="co">#&gt; Alpha              : 0.05 </span></span>
+<span><span class="co">#&gt; Target power       : 0.8000 </span></span>
+<span><span class="co">#&gt; Achieved power     : 0.8000 </span></span>
+<span><span class="co">#&gt; Power interval     : [0.7736, 0.8241] </span></span>
+<span><span class="co">#&gt; Required endpoints : 2 </span></span>
+<span><span class="co">#&gt; Alpha adjustment   : none </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Equivalence Margins:</span></span>
+<span><span class="co">#&gt;   Comparison Endpoint Lower Upper</span></span>
+<span><span class="co">#&gt;  TEST_vs_REF       y1   0.8  1.25</span></span>
+<span><span class="co">#&gt;  TEST_vs_REF       y2   0.8  1.25</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Estimated Sample Size:</span></span>
+<span><span class="co">#&gt;  TEST REF Total</span></span>
+<span><span class="co">#&gt;   443 443   886</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/confint.html" class="external-link">confint</a></span><span class="op">(</span><span class="va">negative_binomial_sample_size</span><span class="op">)</span></span>
+<span><span class="co">#&gt;     Lower     Upper </span></span>
+<span><span class="co">#&gt; 0.7738406 0.8243794 </span></span>
+<span><span class="co">#&gt; attr(,"conf.level")</span></span>
+<span><span class="co">#&gt; [1] 0.95</span></span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_distribution.html">plot_distribution</a></span><span class="op">(</span><span class="va">negative_binomial_sample_size</span>, estimand <span class="op">=</span> <span class="st">"outcome"</span>, type <span class="op">=</span> <span class="st">"histogram"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="count_files/figure-html/nb-outcome-distribution-1.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;"></p>
+<p>The result is conditional on <code>nb_dispersion</code>; vary it in
+sensitivity analyses when overdispersion is uncertain.</p>
+</div>
+<div class="section level3">
+<h3 id="use-the-same-settings-for-a-two-by-two-crossover">Use the same settings for a two-by-two crossover<a class="anchor" aria-label="anchor" href="#use-the-same-settings-for-a-two-by-two-crossover"></a>
+</h3>
+<p>Finally, we retain the negative-binomial rates, exposure, dispersion,
+correlation matrix, margins, and target power, and change only the
+design to a balanced two-by-two crossover. For
+<code>dtype = "2x2"</code>, <code>n</code> and <code>n_per_arm</code>
+refer to participants per sequence.</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="va">crossover_sample_size</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/update.html" class="external-link">update</a></span><span class="op">(</span><span class="va">negative_binomial_sample_size</span>,</span>
+<span>                                dtype <span class="op">=</span> <span class="st">"2x2"</span><span class="op">)</span></span>
+<span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">crossover_sample_size</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Sample Size Summary</span></span>
 <span><span class="co">#&gt; ---------------------- </span></span>
@@ -561,55 +402,41 @@ overdispersion.</p>
 <span><span class="co">#&gt; Hypotheses         : H0: RR &lt;= L or &gt;= U; H1: L &lt; RR &lt; U</span></span>
 <span><span class="co">#&gt; Alpha              : 0.05 </span></span>
 <span><span class="co">#&gt; Target power       : 0.8000 </span></span>
-<span><span class="co">#&gt; Achieved power     : 0.8800 </span></span>
-<span><span class="co">#&gt; Power interval     : [0.7960, 0.9337] </span></span>
-<span><span class="co">#&gt; Required endpoints : 1 </span></span>
+<span><span class="co">#&gt; Achieved power     : 0.8030 </span></span>
+<span><span class="co">#&gt; Power interval     : [0.7767, 0.8269] </span></span>
+<span><span class="co">#&gt; Required endpoints : 2 </span></span>
 <span><span class="co">#&gt; Alpha adjustment   : none </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Equivalence Margins:</span></span>
-<span><span class="co">#&gt;   Comparison   Endpoint Lower Upper</span></span>
-<span><span class="co">#&gt;  TEST_vs_REF endpoint_1   0.8  1.25</span></span>
+<span><span class="co">#&gt;   Comparison Endpoint Lower Upper</span></span>
+<span><span class="co">#&gt;  TEST_vs_REF       y1   0.8  1.25</span></span>
+<span><span class="co">#&gt;  TEST_vs_REF       y2   0.8  1.25</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Estimated Sample Size:</span></span>
 <span><span class="co">#&gt;  seq0 seq1 Total</span></span>
-<span><span class="co">#&gt;   300  300   600</span></span></code></pre></div>
-<p>In the current count crossover implementation, the two sequences are
-balanced and each participant contributes one exposure under each
-treatment. The kernel can additionally accept <code>sigmaB</code>,
-<code>Eper</code>, <code>Eco</code>, and <code>dropout</code> to
-represent between-subject variability, period effects, carry-over
-effects, and sequence-specific dropout. The paired log-rate analysis and
-its assumptions are described in the companion
-<code>methodological_assumptions.Rmd</code> vignette.</p>
+<span><span class="co">#&gt;   229  229   458</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/confint.html" class="external-link">confint</a></span><span class="op">(</span><span class="va">crossover_sample_size</span><span class="op">)</span></span>
+<span><span class="co">#&gt;     Lower     Upper </span></span>
+<span><span class="co">#&gt; 0.7769717 0.8272302 </span></span>
+<span><span class="co">#&gt; attr(,"conf.level")</span></span>
+<span><span class="co">#&gt; [1] 0.95</span></span></code></pre></div>
+<p>The crossover calculation uses the same treatment-effect and endpoint
+settings but evaluates paired treatment-period data. Additional
+assumptions can be supplied through <code>sigmaB</code>,
+<code>Eper</code>, <code>Eco</code>, and <code>dropout</code> when
+supported by the study design or prior data.</p>
+</div>
 </div>
 <div class="section level2">
 <h2 id="interpretation-and-scope">Interpretation and scope<a class="anchor" aria-label="anchor" href="#interpretation-and-scope"></a>
 </h2>
-<p>The count extension is intended for planning studies in which the
-estimand is an event-rate ratio based on aggregate event counts. Users
-should select the Poisson or negative-binomial model using prior
-information about event-rate variability. The simulated power is
-conditional on the specified rates, exposure, equivalence margins,
-dispersion, and design assumptions.</p>
-<p>For multi-endpoint count simulations, <code>cor_mat</code> is a
-latent Gaussian-copula correlation matrix. It describes dependence
-between endpoints within the simulation, not the Pearson correlation of
-the observed discrete counts and not a correlation between the test and
-reference arms. Use <code>diag(m)</code> for latent endpoint
-independence. Because the observed correlation also depends on the
-rates, exposure, dispersion, and discreteness of the counts,
-<code>cor_mat</code> should be justified from prior data or varied in
-sensitivity analyses.</p>
-<p>The diagnostics above make this distinction visible:
-<code><a href="../reference/plot_distribution.html">plot_distribution()</a></code> checks the marginal outcome or rate
-distributions, whereas
-<code>plot_distribution(estimand = "correlation")</code> checks the
-dependence generated between endpoints. Neither plot estimates an
-additional treatment effect; the estimand used for the equivalence
-decision remains the event-rate ratio
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi><mi>R</mi><mo>=</mo><msub><mi>λ</mi><mi>T</mi></msub><mi>/</mi><msub><mi>λ</mi><mi>R</mi></msub><mi>.</mi></mrow><annotation encoding="application/x-tex">
-RR = \lambda_T / \lambda_R.
-</annotation></semantics></math></p>
+<p>The Poisson, negative-binomial, and crossover results are conditional
+on the specified rates, exposure, margins, endpoint dependence,
+dispersion, and design. Compare sample sizes only after the
+corresponding model checks pass. For count outcomes,
+<code>cor_mat</code> is a latent Gaussian-copula correlation matrix; it
+is not a correlation between treatment arms and is not required to equal
+the Pearson correlation of the observed counts.</p>
 <div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-zhu_sample_2017" class="csl-entry">
 Zhu, Haiyuan. 2017. <span>“Sample Size Calculation for Comparing Two
