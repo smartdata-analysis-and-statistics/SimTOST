@@ -127,9 +127,64 @@
 <dd><p>Target joint power.</p></dd>
 
 
+<dt id="arg-rates">rates<a class="anchor" aria-label="anchor" href="#arg-rates"></a></dt>
+<dd><p>Named list of equal-length endpoint-rate vectors, one per arm.</p></dd>
+
+
+<dt id="arg-comparisons">comparisons<a class="anchor" aria-label="anchor" href="#arg-comparisons"></a></dt>
+<dd><p>Named list of treatment-reference arm pairs.</p></dd>
+
+
+<dt id="arg-exposure">exposure<a class="anchor" aria-label="anchor" href="#arg-exposure"></a></dt>
+<dd><p>Exposure per subject, scalar or one value per endpoint, or
+a named list with one scalar/vector per arm.</p></dd>
+
+
+<dt id="arg-margin-lower">margin_lower<a class="anchor" aria-label="anchor" href="#arg-margin-lower"></a></dt>
+<dd><p>Lower rate-ratio equivalence margin.</p></dd>
+
+
+<dt id="arg-margin-upper">margin_upper<a class="anchor" aria-label="anchor" href="#arg-margin-upper"></a></dt>
+<dd><p>Upper rate-ratio equivalence margin.</p></dd>
+
+
+<dt id="arg-model">model<a class="anchor" aria-label="anchor" href="#arg-model"></a></dt>
+<dd><p>Count model: <code>"poisson"</code> or <code>"negative-binomial"</code>.</p></dd>
+
+
+<dt id="arg-dispersion">dispersion<a class="anchor" aria-label="anchor" href="#arg-dispersion"></a></dt>
+<dd><p>Positive negative-binomial dispersion parameter.</p></dd>
+
+
+<dt id="arg-alpha">alpha<a class="anchor" aria-label="anchor" href="#arg-alpha"></a></dt>
+<dd><p>One-sided significance level.</p></dd>
+
+
+<dt id="arg-endpoint-corr">endpoint_corr<a class="anchor" aria-label="anchor" href="#arg-endpoint-corr"></a></dt>
+<dd><p>Endpoint correlation matrix; the default is
+independence.</p></dd>
+
+
+<dt id="arg-k">k<a class="anchor" aria-label="anchor" href="#arg-k"></a></dt>
+<dd><p>Number of endpoints that must pass within every comparison.</p></dd>
+
+
 <dt id="arg-type-y">type_y<a class="anchor" aria-label="anchor" href="#arg-type-y"></a></dt>
 <dd><p>Numeric endpoint hierarchy used with <code>adjust = "seq"</code>: <code>1</code>
 for primary/co-primary endpoints and <code>2</code> for secondary endpoints.</p></dd>
+
+
+<dt id="arg-adjust">adjust<a class="anchor" aria-label="anchor" href="#arg-adjust"></a></dt>
+<dd><p>Multiplicity adjustment within each comparison's endpoint
+family.</p></dd>
+
+
+<dt id="arg-nsim">nsim<a class="anchor" aria-label="anchor" href="#arg-nsim"></a></dt>
+<dd><p>Number of simulated trials.</p></dd>
+
+
+<dt id="arg-seed">seed<a class="anchor" aria-label="anchor" href="#arg-seed"></a></dt>
+<dd><p>Optional random seed.</p></dd>
 
 
 <dt id="arg-lower">lower<a class="anchor" aria-label="anchor" href="#arg-lower"></a></dt>
@@ -138,6 +193,21 @@ for primary/co-primary endpoints and <code>2</code> for secondary endpoints.</p>
 
 <dt id="arg-upper">upper<a class="anchor" aria-label="anchor" href="#arg-upper"></a></dt>
 <dd><p>Maximum subjects per arm.</p></dd>
+
+
+<dt id="arg-design">design<a class="anchor" aria-label="anchor" href="#arg-design"></a></dt>
+<dd><p>Joint multi-arm design; currently only <code>"parallel"</code> is
+supported.</p></dd>
+
+
+<dt id="arg-list-margin-lower">list_margin_lower<a class="anchor" aria-label="anchor" href="#arg-list-margin-lower"></a></dt>
+<dd><p>Optional named list of lower margins, one vector
+per comparison.</p></dd>
+
+
+<dt id="arg-list-margin-upper">list_margin_upper<a class="anchor" aria-label="anchor" href="#arg-list-margin-upper"></a></dt>
+<dd><p>Optional named list of upper margins, one vector
+per comparison.</p></dd>
 
 
 <dt id="arg-optimization-method">optimization_method<a class="anchor" aria-label="anchor" href="#arg-optimization-method"></a></dt>
@@ -166,6 +236,11 @@ searches always return the smallest candidate reaching the target.</p></dd>
 <dd><p>Number of worker processes used for count simulations.
 Set to 1 for serial execution. Parallel execution splits <code>nsim</code> into
 reproducible independent chunks and combines the resulting successes.</p></dd>
+
+
+<dt id="arg--warn-redundant-bon">.warn_redundant_bon<a class="anchor" aria-label="anchor" href="#arg--warn-redundant-bon"></a></dt>
+<dd><p>Logical. If <code>TRUE</code>, warn about redundant or
+uncalibrated multiplicity configurations.</p></dd>
 
 </dl></div>
     <div id="value">

@@ -131,6 +131,46 @@ simulated power reaches the target for a rate-ratio equivalence test.</p>
 <dd><p>Target power.</p></dd>
 
 
+<dt id="arg-rate-test">rate_test<a class="anchor" aria-label="anchor" href="#arg-rate-test"></a></dt>
+<dd><p>Event rate in the test arm.</p></dd>
+
+
+<dt id="arg-rate-reference">rate_reference<a class="anchor" aria-label="anchor" href="#arg-rate-reference"></a></dt>
+<dd><p>Event rate in the reference arm.</p></dd>
+
+
+<dt id="arg-exposure">exposure<a class="anchor" aria-label="anchor" href="#arg-exposure"></a></dt>
+<dd><p>Exposure per subject; a scalar or one value per endpoint.</p></dd>
+
+
+<dt id="arg-margin-lower">margin_lower<a class="anchor" aria-label="anchor" href="#arg-margin-lower"></a></dt>
+<dd><p>Lower rate-ratio equivalence margin.</p></dd>
+
+
+<dt id="arg-margin-upper">margin_upper<a class="anchor" aria-label="anchor" href="#arg-margin-upper"></a></dt>
+<dd><p>Upper rate-ratio equivalence margin.</p></dd>
+
+
+<dt id="arg-model">model<a class="anchor" aria-label="anchor" href="#arg-model"></a></dt>
+<dd><p>Count model: <code>"poisson"</code> or <code>"negative-binomial"</code>.</p></dd>
+
+
+<dt id="arg-dispersion">dispersion<a class="anchor" aria-label="anchor" href="#arg-dispersion"></a></dt>
+<dd><p>Positive negative-binomial dispersion parameter.</p></dd>
+
+
+<dt id="arg-alpha">alpha<a class="anchor" aria-label="anchor" href="#arg-alpha"></a></dt>
+<dd><p>One-sided significance level.</p></dd>
+
+
+<dt id="arg-nsim">nsim<a class="anchor" aria-label="anchor" href="#arg-nsim"></a></dt>
+<dd><p>Number of simulated trials.</p></dd>
+
+
+<dt id="arg-seed">seed<a class="anchor" aria-label="anchor" href="#arg-seed"></a></dt>
+<dd><p>Optional random seed.</p></dd>
+
+
 <dt id="arg-lower">lower<a class="anchor" aria-label="anchor" href="#arg-lower"></a></dt>
 <dd><p>Minimum subjects per arm.</p></dd>
 
@@ -166,6 +206,22 @@ The <code>"t"</code> option uses Mielke's strong k-out-of-m calibration
 <code>alpha / (m - k + 1)</code>; legacy partial-conjunction labels are accepted.</p></dd>
 
 
+<dt id="arg-sigmab">sigmaB<a class="anchor" aria-label="anchor" href="#arg-sigmab"></a></dt>
+<dd><p>Between-subject standard deviation for the count 2x2 design.</p></dd>
+
+
+<dt id="arg-eper">Eper<a class="anchor" aria-label="anchor" href="#arg-eper"></a></dt>
+<dd><p>Period effects for the count 2x2 design.</p></dd>
+
+
+<dt id="arg-eco">Eco<a class="anchor" aria-label="anchor" href="#arg-eco"></a></dt>
+<dd><p>Carry-over effects for the count 2x2 design.</p></dd>
+
+
+<dt id="arg-dropout">dropout<a class="anchor" aria-label="anchor" href="#arg-dropout"></a></dt>
+<dd><p>Dropout proportions for the count 2x2 design.</p></dd>
+
+
 <dt id="arg-optimization-method">optimization_method<a class="anchor" aria-label="anchor" href="#arg-optimization-method"></a></dt>
 <dd><p>Search method. <code>"fast"</code> brackets the power
 crossing and uses integer bisection; <code>"step-by-step"</code> evaluates every
@@ -193,6 +249,11 @@ searches return the smallest candidate reaching the target.</p></dd>
 <dd><p>Number of worker processes used for count simulations.
 Set to 1 for serial execution. Parallel execution splits <code>nsim</code> into
 reproducible independent chunks and combines the resulting successes.</p></dd>
+
+
+<dt id="arg--warn-redundant-bon">.warn_redundant_bon<a class="anchor" aria-label="anchor" href="#arg--warn-redundant-bon"></a></dt>
+<dd><p>Logical. If <code>TRUE</code>, warn about redundant or
+uncalibrated multiplicity configurations.</p></dd>
 
 </dl></div>
     <div id="value">

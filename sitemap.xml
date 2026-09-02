@@ -20,6 +20,7 @@
 <url><loc>/reference/SimTOST.html</loc></url>
 <url><loc>/reference/as.numeric.simss_mielke.html</loc></url>
 <url><loc>/reference/check_equivalence.html</loc></url>
+<url><loc>/reference/confint.countpower.html</loc></url>
 <url><loc>/reference/confint.simpower.html</loc></url>
 <url><loc>/reference/confint.simss.html</loc></url>
 <url><loc>/reference/derive_allocation_rate.html</loc></url>
@@ -36,6 +37,7 @@
 <url><loc>/reference/info_msg.html</loc></url>
 <url><loc>/reference/plot.countpower.html</loc></url>
 <url><loc>/reference/plot.countss.html</loc></url>
+<url><loc>/reference/plot.simpower.html</loc></url>
 <url><loc>/reference/plot.simpower_curve.html</loc></url>
 <url><loc>/reference/plot.simss.html</loc></url>
 <url><loc>/reference/plot.type1error.html</loc></url>
@@ -49,6 +51,7 @@
 <url><loc>/reference/prepare_joint_count_inputs.html</loc></url>
 <url><loc>/reference/print.countpower.html</loc></url>
 <url><loc>/reference/print.countss.html</loc></url>
+<url><loc>/reference/print.simpower.html</loc></url>
 <url><loc>/reference/print.simss.html</loc></url>
 <url><loc>/reference/print.simss_mielke.html</loc></url>
 <url><loc>/reference/ptv.html</loc></url>
@@ -65,7 +68,6 @@
 <url><loc>/reference/sign_Mielke.html</loc></url>
 <url><loc>/reference/simParallelEndpoints.html</loc></url>
 <url><loc>/reference/simPower.html</loc></url>
-<url><loc>/reference/simpower-methods.html</loc></url>
 <url><loc>/reference/sub-.simss_mielke.html</loc></url>
 <url><loc>/reference/summary.countpower.html</loc></url>
 <url><loc>/reference/summary.countss.html</loc></url>
