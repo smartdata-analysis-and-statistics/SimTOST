@@ -40,3 +40,28 @@ test_that("retained count outcomes reproduce supplied rates and correlations", {
     expect_equal(observed_corr, target_corr["y1", "y2"], tolerance = 0.12)
   }
 })
+
+test_that("count distribution diagnostics preserve the requested arm order", {
+  skip_if_not_installed("ggplot2")
+  result <- simPower(
+    n = 20, distribution = "poisson",
+    rate_list = list(TEST = c(y1 = 0.5, y2 = 0.7),
+                     REF = c(y1 = 0.5, y2 = 0.7)),
+    exposure = 10,
+    cor_mat = matrix(c(1, 0.5, 0.5, 1), nrow = 2,
+                     dimnames = list(c("y1", "y2"), c("y1", "y2"))),
+    list_comparator = list(TEST_vs_REF = c("TEST", "REF")),
+    list_lequi.tol = list(TEST_vs_REF = c(y1 = 0.8, y2 = 0.8)),
+    list_uequi.tol = list(TEST_vs_REF = c(y1 = 1.25, y2 = 1.25)),
+    nsim = 10, seed = 2026, ncores = 1, keep_sim_data = TRUE
+  )
+
+  rate_plot <- ggplot2::ggplot_build(
+    plot_distribution(result, estimand = "rate", arms = c("TEST", "REF"))
+  )
+  correlation_plot <- ggplot2::ggplot_build(
+    plot_distribution(result, estimand = "correlation", arms = c("TEST", "REF"))
+  )
+  expect_identical(unique(as.character(rate_plot$layout$layout$arm)), c("TEST", "REF"))
+  expect_identical(unique(as.character(correlation_plot$layout$layout$arm)), c("TEST", "REF"))
+})

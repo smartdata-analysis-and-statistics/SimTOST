@@ -306,40 +306,50 @@ remove the need for a joint calculation.
 
 ## Negative-binomial sensitivity analysis
 
-If prior evidence suggests overdispersion, repeat the calculations with the
-negative-binomial model. The `dispersion` parameter controls the amount of
-overdispersion; larger values imply greater variability.
+If prior evidence suggests overdispersion, repeat the final joint Poisson
+sample-size calculation with the negative-binomial model. All study settings
+are kept the same as in `joint_result`; only the distribution and dispersion
+are changed. The `dispersion` parameter controls the amount of overdispersion;
+larger values imply greater variability.
 
 ```{r negative-binomial-sensitivity}
-nb_sensitivity <- simPower(
-  n = required_per_arm,
+nb_dispersion <- 0.10
+
+joint_negative_binomial_result <- sampleSize(
+  power = 0.80,
   distribution = "nbinom",
-  rate_list = list(
-    TEST = rate_list$TEST[["Exacerbations"]],
-    EU_REF = rate_list$EU_REF[["Exacerbations"]]
+  rate_list = rate_list,
+  list_comparator = comparisons,
+  list_lequi.tol = list(
+    EU_comparison = rep(lower_margin, 3),
+    US_comparison = rep(lower_margin, 3)
   ),
-  list_comparator = list(TEST_vs_EU = c("TEST", "EU_REF")),
-  list_lequi.tol = list(TEST_vs_EU = lower_margin),
-  list_uequi.tol = list(TEST_vs_EU = upper_margin),
-  exposure = exposure,
+  list_uequi.tol = list(
+    EU_comparison = rep(upper_margin, 3),
+    US_comparison = rep(upper_margin, 3)
+  ),
+  exposure = rep(exposure, 3),
+  cor_mat = endpoint_corr,
   dtype = "parallel",
-  dispersion = 0.10,
-  nsim = 300,
-  seed = 1234
+  dispersion = nb_dispersion,
+  nsim = 500,
+  seed = 1234,
+  lower = 10,
+  upper = 3000,
+  k = 3,
+  adjust = "bonferroni"
 )
 
-nb_sensitivity
+nb_sample_size <- data.frame(
+  n_per_arm = joint_negative_binomial_result$n_per_arm,
+  n_total = joint_negative_binomial_result$n_total,
+  achieved_power = joint_negative_binomial_result$power,
+  k = joint_negative_binomial_result$k,
+  adjustment = joint_negative_binomial_result$adjust,
+  dispersion = nb_dispersion
+)
+
+nb_sample_size
 ```
 
-## Interpretation and limitations
 
-This vignette demonstrates both a conservative and a joint endpoint workflow
-for a three-arm, three-endpoint count study using the current API. In the
-separate-search workflow, endpoint and comparison calculations are performed
-independently, whereas the joint workflow evaluates the required success event
-in the same simulated trial. The distributional and dependence assumptions
-are described in the companion
-[`methodological_assumptions.Rmd`](methodological_assumptions.Rmd) vignette.
-
-For a confirmatory three-arm/three-endpoint trial, the statistical analysis
-plan should specify the familywise error strategy and joint success criterion.

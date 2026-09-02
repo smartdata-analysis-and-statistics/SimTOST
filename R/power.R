@@ -23,8 +23,10 @@
 #' @param rate_list Named arm-rate list for count outcomes.
 #' @param exposure Count exposure per subject. This can be a scalar or
 #' endpoint vector shared by arms, or a named list of arm-specific values.
-#' @param dispersion Negative-binomial dispersion. This can be a scalar or
-#' endpoint vector shared by arms, or a named list of arm-specific values.
+#' @param dispersion Negative-binomial dispersion. The per-subject
+#' negative-binomial size is `1 / dispersion`; parallel-arm totals use size
+#' `n / dispersion`. This can be a scalar or endpoint vector shared by arms,
+#' or a named list of arm-specific values.
 #' @param Eper Period effects for a 2x2 design.
 #' @param Eco Carry-over effects for a 2x2 design.
 #' @param rho Common endpoint correlation when `cor_mat` is not supplied.

@@ -117,6 +117,18 @@
   data[data$Comparator %in% display, , drop = FALSE]
 }
 
+.filter_diagnostic_endpoint <- function(data, endpoint) {
+  if (!is.character(endpoint) || length(endpoint) == 0L || anyNA(endpoint))
+    stop("'endpoint' must be 'all' or a non-empty character vector of endpoint names.")
+  endpoint <- unique(endpoint)
+  if (any(endpoint == "all")) return(data)
+  available <- unique(data$Endpoint)
+  unknown <- setdiff(endpoint, available)
+  if (length(unknown))
+    stop("Unknown endpoint(s) in 'endpoint': ", paste(unknown, collapse = ", "))
+  data[data$Endpoint %in% endpoint, , drop = FALSE]
+}
+
 .diagnostic_theme <- function() {
   ggplot2::theme_minimal(base_size = 11.5) +
     ggplot2::theme(
@@ -155,6 +167,8 @@
 #'   `nsim` values.
 #' @param target_power Target power shown as a horizontal reference line.
 #' @param display Comparator names to display, or `"all"`.
+#' @param endpoint Endpoint names to display. The default, `"Total"`, shows
+#'   only the aggregate endpoint. Use `"all"` to show all retained endpoints.
 #' @param overall Logical. If `TRUE`, display only the `All comparators`
 #'   aggregate result. This is useful for assessing the overall decision when
 #'   several comparisons are required; `display` is ignored in this mode.
@@ -162,7 +176,7 @@
 #' @return A `ggplot` object.
 #' @export
 plot_stability <- function(x, target_power = 0.80, display = "all",
-                           overall = FALSE, ...) {
+                           overall = FALSE, endpoint = "Total", ...) {
   if (!is.numeric(target_power) || length(target_power) != 1L ||
       !is.finite(target_power) || target_power <= 0 || target_power >= 1)
     stop("'target_power' must be a single number between 0 and 1.")
@@ -176,6 +190,7 @@ plot_stability <- function(x, target_power = 0.80, display = "all",
   } else {
     data <- .filter_diagnostic_display(raw_data, display)
   }
+  data <- .filter_diagnostic_endpoint(data, endpoint)
   data <- data[!is.na(data$value), , drop = FALSE]
   data$trial <- ave(data$value, data$n_total, data$nsim,
                     data$Comparator, data$Endpoint,
@@ -218,13 +233,16 @@ plot_stability <- function(x, target_power = 0.80, display = "all",
 #'   such objects. A list can compare simulations with different `n` and
 #'   `nsim` values.
 #' @param display Comparator names to display, or `"all"`.
+#' @param endpoint Endpoint names to display. The default, `"Total"`, shows
+#'   only the aggregate endpoint. Use `"all"` to show all retained endpoints.
 #' @param overall Logical. If `TRUE`, display only the `All comparators`
 #'   aggregate result. This is useful for assessing the overall decision when
 #'   several comparisons are required; `display` is ignored in this mode.
 #' @param ... Unused additional arguments.
 #' @return A `ggplot` object.
 #' @export
-plot_mc_error <- function(x, display = "all", overall = FALSE, ...) {
+plot_mc_error <- function(x, display = "all", overall = FALSE,
+                          endpoint = "Total", ...) {
   dots <- list(...)
   if ("target_error" %in% names(dots))
     stop("'target_error' is no longer available; inspect the achieved final Monte Carlo error instead.")
@@ -238,6 +256,7 @@ plot_mc_error <- function(x, display = "all", overall = FALSE, ...) {
   } else {
     data <- .filter_diagnostic_display(raw_data, display)
   }
+  data <- .filter_diagnostic_endpoint(data, endpoint)
   data <- data[!is.na(data$value), , drop = FALSE]
   data$trial <- ave(data$value, data$n_total, data$nsim,
                     data$Comparator, data$Endpoint,

@@ -71,8 +71,10 @@ this is also the endpoint correlation matrix used by the joint count engine.}
 \item{exposure}{Count exposure per subject. This can be a scalar or
 endpoint vector shared by arms, or a named list of arm-specific values.}
 
-\item{dispersion}{Negative-binomial dispersion. This can be a scalar or
-endpoint vector shared by arms, or a named list of arm-specific values.}
+\item{dispersion}{Negative-binomial dispersion. The per-subject
+negative-binomial size is \code{1 / dispersion}; parallel-arm totals use size
+\code{n / dispersion}. This can be a scalar or endpoint vector shared by arms,
+or a named list of arm-specific values.}
 
 \item{Eper}{Period effects for a 2x2 design.}
 

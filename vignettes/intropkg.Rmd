@@ -24,19 +24,36 @@ In the `SimTOST` R package, which is specifically designed for sample size estim
 The null and alternative hypotheses for the equivalence test are presented below for two different approaches:
 
 ## Difference of Means (DOM)
-One common approach for assessing bio-equivalence involves comparing pharmacokinetic (PK) measures between test and reference products. This is done using the following interval (null) hypothesis:
+Individual equivalence between a test treatment ($T$) and a reference
+treatment ($R$) is assessed by comparing the difference between their means,
+$\mu_T - \mu_R$, with lower and upper equivalence limits $L$ and $U$. The
+TOST procedure evaluates two one-sided hypotheses:
 
-Null Hypothesis ($H_0$): At least one endpoint does not meet the equivalence criteria:
+$$H_{01}: \mu_T - \mu_R \leq L
+\qquad\text{versus}\qquad
+H_{11}: \mu_T - \mu_R > L,$$
 
-$$H_0: m_T^{(j)} - m_R^{(j)} \le \delta_L ~~ \text{or}~~ m_T^{(j)} - m_R^{(j)} \ge \delta_U \quad \text{for at least one}\;j$$
+and
 
-Alternative Hypothesis ($H_1$): All endpoints meet the equivalence criteria:
+$$H_{02}: \mu_T - \mu_R \geq U
+\qquad\text{versus}\qquad
+H_{12}: \mu_T - \mu_R < U.$$
 
-$$H_1: \delta_L<m_{T}^{(j)}-m_{R}^{(j)} <\delta_U \quad\text{for all}\;j$$
+Equivalence is established if and only if both $H_{01}$ and $H_{02}$ are
+rejected at the chosen significance level $\alpha$. Equivalently, the
+alternative equivalence hypothesis is
 
-Here, $m_T$ and $m_R$ represent the mean endpoints for the test product (the proposed biosimilar) and the reference product, respectively. The equivalence limits, $\delta_L$ and $\delta_u$, are typically chosen to be symmetric, such that  $\delta = - \delta_L = \delta_U$.
+$$H_1: L < \mu_T - \mu_R < U,$$
 
-The null hypothesis ($H_0$) is rejected if, and only if, all null hypotheses associated with the $K$ primary endpoints are rejected at a significance level of $\alpha$. This ensures that equivalence is established across all endpoints simultaneously.
+against the composite null hypothesis
+
+$$H_0: \mu_T - \mu_R \leq L
+\qquad\text{or}\qquad
+\mu_T - \mu_R \geq U.$$
+
+For multiple endpoints, these hypotheses are evaluated for each endpoint,
+and the trial-level decision requires the specified number of endpoint
+hypotheses to be rejected.
 
 The DOM test can be implemented in [sampleSize()](../reference/sampleSize.html) by setting `ctype = "DOM"` and `distribution = "norm"`.
 
@@ -50,17 +67,32 @@ Equivalence limits must also be specified on the log scale to align with the tra
 
 
 ## Ratio of Means (ROM)
-The equivalence hypotheses can also be expressed as a Ratio of Means (ROM):
+The same two one-sided structure can be expressed for the ratio of means,
+$\mu_T / \mu_R$, using lower and upper ratio limits $L$ and $U$:
 
-Null Hypothesis ($H_0$): At least one endpoint does not meet the equivalence criteria:
+$$H_{01}: \frac{\mu_T}{\mu_R} \leq L
+\qquad\text{versus}\qquad
+H_{11}: \frac{\mu_T}{\mu_R} > L,$$
 
-$$H_0: \frac{\mu_T^{(j)}}{\mu_R^{(j)}} \le E_L ~~ \text{or}~~ \frac{\mu_T^{(j)}}{\mu_R^{(j)}} \ge E_U \quad \text{for at least one}\;j$$
+and
 
-Alternative Hypothesis ($H_1$): All endpoints meet the equivalence criteria:
+$$H_{02}: \frac{\mu_T}{\mu_R} \geq U
+\qquad\text{versus}\qquad
+H_{12}: \frac{\mu_T}{\mu_R} < U.$$
 
-$$H_1: E_L< \frac{\mu_{T}^{(j)}}{\mu_{R}^{(j)}} < E_U \quad\text{for all}\;j$$
+Thus, equivalence requires rejection of both $H_{01}$ and $H_{02}$, or
+equivalently:
 
-Here, $\mu_T$ and $\mu_R$ represent the arithmetic mean endpoints for the test product (the proposed biosimilar) and the reference product, respectively.
+$$H_1: L < \frac{\mu_T}{\mu_R} < U,$$
+
+against
+
+$$H_0: \frac{\mu_T}{\mu_R} \leq L
+\qquad\text{or}\qquad
+\frac{\mu_T}{\mu_R} \geq U.$$
+
+Here, $\mu_T$ and $\mu_R$ represent the arithmetic mean endpoints for the
+test and reference products, respectively.
 
 The ROM test can be implemented in [sampleSize()](../reference/sampleSize.html) by setting `ctype = "ROM"` and `distribution = "lnorm"`. Note that the `mu_list` argument should contain the arithmetic means of the endpoints, while `sigma_list` should contain their corresponding variances.
 
@@ -73,6 +105,56 @@ $$
 The logarithmic mean is then calculated as:
 
 $$\text{Logarithmic Mean} = \log(\text{Arithmetic Mean}) - \frac{1}{2}(\text{Logarithmic Variance})$$
+
+## Count outcomes: event-rate ratio (RR)
+
+For count outcomes, such as the number of events observed during a specified
+exposure period, SimTOST uses the event-rate ratio rather than the continuous
+outcome ratio of means. The event-rate ratio is
+
+$$RR = \frac{\lambda_T}{\lambda_R},$$
+
+where $\lambda_T$ and $\lambda_R$ are the event rates in the test and
+reference groups. For lower and upper rate-ratio limits $L$ and $U$, the
+hypotheses are:
+
+$$H_{01}: \frac{\lambda_T}{\lambda_R} \leq L
+\qquad\text{versus}\qquad
+H_{11}: \frac{\lambda_T}{\lambda_R} > L,$$
+
+and
+
+$$H_{02}: \frac{\lambda_T}{\lambda_R} \geq U
+\qquad\text{versus}\qquad
+H_{12}: \frac{\lambda_T}{\lambda_R} < U.$$
+
+Equivalence is concluded only when both one-sided null hypotheses are
+rejected. Equivalently:
+
+$$H_1: L < \frac{\lambda_T}{\lambda_R} < U,$$
+
+against the composite null
+
+$$H_0: \frac{\lambda_T}{\lambda_R} \leq L
+\qquad\text{or}\qquad
+\frac{\lambda_T}{\lambda_R} \geq U.$$
+
+The count test is implemented on the log-rate-ratio scale, using $\log(L)$
+and $\log(U)$ as the boundaries. It is distinct from the continuous ROM
+estimand. In [sampleSize()](../reference/sampleSize.html) and
+[simPower()](../reference/simPower.html), use `distribution = "pois"` or
+`distribution = "nbinom"` and provide a named `rate_list`. Count outcomes
+also require `exposure`; negative-binomial outcomes additionally require a
+positive `dispersion` value. The `ctype` argument is not used for count
+outcomes because the estimand is automatically the event-rate ratio.
+
+For multiple endpoints, `list_comparator` identifies the treatment pairs and
+`list_lequi.tol` and `list_uequi.tol` provide the rate-ratio limits for each
+selected endpoint. A simulated trial is successful when the required number
+of endpoints passes for every required comparator. Endpoint dependence can
+be specified with `cor_mat`; for count outcomes this is a latent
+Gaussian-copula correlation and need not equal the Pearson correlation of
+the observed discrete counts [@chang_sample_2017].
 
 ## Regulatory Requirements
 When evaluating bioequivalence, certain statistical and methodological requirements must be adhered to, as outlined in the European Medicines Agency's bioequivalence guidelines [@CHMP2010]. These requirements ensure that the test and reference products meet predefined criteria for equivalence in terms of PK parameters. The key considerations are summarized below:
@@ -133,40 +215,6 @@ where $m$ is the total number of tests. Although simple, this method is highly c
 
 In the [sampleSize()](../reference/sampleSize.html) function, the Bonferroni correction can be applied by setting `adjust = "bon"`.
 
-### T adjustment: Mielke's strong k-out-of-m correction
-
-When the decision rule requires equivalence for at least `k` of `m` endpoints,
-the null hypothesis is a partial-conjunction hypothesis. In this setting,
-`adjust = "t"` applies Mielke et al.'s strong k-out-of-m calibration. The
-significance level for each relevant boundary endpoint is:
-
-$$\alpha_{t}= \frac{\alpha}{m-k+1}$$
-
-where `m` is the number of selected endpoints and `k` is the minimum number
-that must demonstrate equivalence. For example, with `m = 3`, `k = 2`, and
-`alpha = 0.05`, the endpoint-wise level is `0.025`. This calibration controls
-the Type I error rate for the partial-conjunction decision, including cases in
-which only some endpoints satisfy the null hypothesis [@mielke_sample_2018].
-
-The adjustment is available in `sampleSize()`, `simPower()`, and the
-count-outcome functions:
-
-```{r t-adjustment-example, eval = FALSE}
-sampleSize(
-  ..., k = 2, adjust = "t"
-)
-
-simPower(
-  ..., k = 2, adjust = "t"
-)
-```
-
-The effective `m` is determined separately for each comparator from the
-endpoints actually selected or inferred. The legacy `adjust = "pc"` and
-`adjust = "partial-conjunction"` labels are accepted as aliases for `"t"`.
-In contrast, `adjust = "k"` uses `k * alpha / m` and provides weak
-complete-null control.
-
 ### Sidak correction
 
 The Sidak correction is an alternative method for controlling the FWER. Like the Bonferroni correction, it assumes that tests are independent. However, the Sidak correction accounts for the joint probability of all tests being non-significant, making it mathematically less conservative than the Bonferroni method. The adjusted significance level is calculated as:
@@ -182,6 +230,20 @@ This correction explicitly accounts for the scenario where equivalence is requir
 $$\alpha_k= \frac{k*\alpha}{m}$$
 
 where $k$ is the number of endpoints required for equivalence, and $m$ is the total number of endpoints evaluated.
+
+### T adjustment: Mielke's strong k-out-of-m correction
+
+When the decision rule requires equivalence for at least `k` of `m` endpoints,
+the null hypothesis is a partial-conjunction hypothesis. In this setting,
+`adjust = "t"` applies Mielke et al.'s strong k-out-of-m calibration. The
+significance level for each relevant boundary endpoint is:
+
+$$\alpha_{t}= \frac{\alpha}{m-k+1}$$
+
+where `m` is the number of selected endpoints and `k` is the minimum number
+that must demonstrate equivalence. This adjustment controls
+the Type I error rate for the partial-conjunction decision, including cases in
+which only some endpoints satisfy the null hypothesis [@mielke_sample_2018].
 
 ## Hierarchical testing of multiple endpoints
 Hierarchical testing is an approach to multiple endpoint testing where endpoints are tested in a predefined order, typically based on their clinical or regulatory importance. A fallback testing strategy is applied, allowing sequential hypothesis testing. If a hypothesis earlier in the sequence fails to be rejected, testing stops, and subsequent hypotheses are not evaluated. [@chowdhry_finding_2024]

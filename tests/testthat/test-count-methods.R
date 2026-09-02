@@ -18,6 +18,27 @@ test_that("single-comparison count methods support Poisson and negative binomial
   }
 })
 
+test_that("parallel negative-binomial totals gain precision with sample size", {
+  corr <- matrix(c(1, 0.5, 0.5, 1), nrow = 2,
+                 dimnames = list(c("y1", "y2"), c("y1", "y2")))
+  result <- sampleSize(
+    power = 0.80, distribution = "nbinom",
+    rate_list = list(TEST = c(y1 = 0.21, y2 = 0.24),
+                     REF = c(y1 = 0.20, y2 = 0.22)),
+    list_comparator = list(TEST_vs_REF = c("TEST", "REF")),
+    list_lequi.tol = list(TEST_vs_REF = c(y1 = 0.80, y2 = 0.80)),
+    list_uequi.tol = list(TEST_vs_REF = c(y1 = 1.25, y2 = 1.25)),
+    exposure = 10, dispersion = 0.10, cor_mat = corr,
+    dtype = "parallel", lower = 100, upper = 1000,
+    nsim = 50, seed = 1234, ncores = 1
+  )
+  expect_s3_class(result, "countss")
+  expect_gte(result$power, 0.80)
+  expect_lt(result$n_per_arm, 1000)
+  stability <- plot_stability(result)
+  expect_gt(length(rle(stability$data$value)$lengths), 2L)
+})
+
 test_that("count sample-size methods return canonical count classes", {
   result <- SimTOST:::sampleSize_count(
     power = 0.8, rate_test = 5.1, rate_reference = 5,
@@ -38,7 +59,14 @@ test_that("count sample-size methods return canonical count classes", {
   expect_equal(nrow(result$table.test), nrow(result$table.iter) * 20)
   count_plot <- ggplot2::ggplot_build(plot(result))
   expect_s3_class(plot(result), "ggplot")
-  expect_equal(nrow(count_plot$data[[2]]), nrow(result$table.iter) * 2)
+  count_plot_object <- plot(result)
+  expect_null(count_plot_object$labels$title)
+  expect_null(count_plot_object$labels$subtitle)
+  expect_equal(nrow(count_plot$data[[2]]), nrow(result$table.iter))
+  detailed_count_plot <- plot(result, endpoint = "all")
+  expect_equal(nrow(ggplot2::ggplot_build(detailed_count_plot)$data[[2]]),
+               nrow(result$table.iter) * 2)
+  expect_error(plot(result, endpoint = "missing"), "Unknown endpoint")
   expect_true(all(count_plot$data[[3]]$linewidth >= 1))
   expect_true(is.data.frame(summary(result)))
   expect_named(confint(result), c("Lower", "Upper"))

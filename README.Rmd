@@ -45,6 +45,9 @@ The main features of this package is `sampleSize` function which can be used to 
 
 | **Vignette**                                    | **Design**   | **Number of Arms** | **Number of Endpoints** |
 |------------------------------------------------|--------------|---------------------|--------------------------|
+| [Introduction](https://smartdata-analysis-and-statistics.github.io/SimTOST/articles/intropkg.html) | All supported designs | Varies | Varies |
+| [Methodological Assumptions in SimTOST](https://smartdata-analysis-and-statistics.github.io/SimTOST/articles/methodological_assumptions.html) | All supported designs | Varies | Varies |
+| [A Step-by-Step Simulation Validation Workflow](https://smartdata-analysis-and-statistics.github.io/SimTOST/articles/workflow.html) | All supported designs | Varies | Varies |
 | [Bioequivalence Tests for Parallel Trial Designs with Log-Normal Data](https://smartdata-analysis-and-statistics.github.io/SimTOST/articles/continuous_parallel.html) | Parallel    | 2                  | Multiple (e.g., 2 or 3)                 |
 | [Bioequivalence Tests for 2x2 Cross-Over Trial Designs with Log-Normal Data](https://smartdata-analysis-and-statistics.github.io/SimTOST/articles/continuous_crossover.html) | Cross-over    | 2                  | 2                 |
 | [Bioequivalence Tests for Parallel Trial Designs: 2 Arms, 1 Endpoint](https://smartdata-analysis-and-statistics.github.io/SimTOST/articles/continuous_parallel_2A1E.html) | Parallel    | 2                  | 1                        |
@@ -53,6 +56,4 @@ The main features of this package is `sampleSize` function which can be used to 
 | [Bioequivalence Tests for Parallel Trial Designs: 3 Arms, 3 Endpoints](https://smartdata-analysis-and-statistics.github.io/SimTOST/articles/continuous_parallel_3A3E.html)  | Parallel    | 3                  | 3 |
 | [Count Outcomes](https://smartdata-analysis-and-statistics.github.io/SimTOST/articles/count.html) | Parallel and 2x2 crossover | 2 | 1 or more |
 | [Count-Outcome Equivalence: Parallel Design with 3 Arms and 3 Endpoints](https://smartdata-analysis-and-statistics.github.io/SimTOST/articles/count_parallel_3A3E.html) | Parallel | 3 | 3 |
-| [Introduction](https://smartdata-analysis-and-statistics.github.io/SimTOST/articles/intropkg.html) | All supported designs | Varies | Varies |
-| [Methodological Assumptions in SimTOST](https://smartdata-analysis-and-statistics.github.io/SimTOST/articles/methodological_assumptions.html) | All supported designs | Varies | Varies |
-| [A Step-by-Step Simulation Validation Workflow](https://smartdata-analysis-and-statistics.github.io/SimTOST/articles/workflow.html) | All supported designs | Varies | Varies |
+

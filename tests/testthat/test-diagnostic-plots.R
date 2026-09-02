@@ -11,9 +11,17 @@ test_that("stability and Monte Carlo plots facet a sample-size curve", {
   )
   stability <- plot_stability(curve)
   mc_error <- plot_mc_error(curve)
+  power_plot <- plot(curve)
   expect_gt(nrow(ggplot2::ggplot_build(stability)$layout$layout), 1)
   expect_gt(nrow(ggplot2::ggplot_build(mc_error)$layout$layout), 1)
   expect_s3_class(mc_error, "ggplot")
+  expect_identical(unique(as.character(stability$data$Endpoint)), "Total")
+  expect_identical(unique(as.character(mc_error$data$Endpoint)), "Total")
+  expect_true(all(c("y1", "Total") %in%
+                  unique(as.character(plot_stability(curve, endpoint = "all")$data$Endpoint))))
+  expect_error(plot_stability(curve, endpoint = "missing"), "Unknown endpoint")
+  expect_null(power_plot$labels$title)
+  expect_null(power_plot$labels$subtitle)
   expect_match(mc_error$labels$title, "Achieved Monte Carlo error")
   expect_true(any(grepl("%", mc_error$data$label)))
   expect_match(stability$labels$subtitle, "Compared total sample sizes")
@@ -55,6 +63,8 @@ test_that("simss diagnostics retain only the suggested sample size", {
   ), class = "simss")
   stability <- plot_stability(object)
   mc_error <- plot_mc_error(object)
+  expect_identical(unique(as.character(stability$data$Endpoint)), "Total")
+  expect_identical(unique(as.character(mc_error$data$Endpoint)), "Total")
   expect_match(stability$labels$subtitle, "Suggested total sample size = 20")
   expect_match(mc_error$labels$subtitle, "Suggested total sample size = 20")
   expect_equal(nrow(ggplot2::ggplot_build(stability)$layout$layout), 1)
@@ -81,6 +91,7 @@ test_that("continuous sample-size plots show intervals on every point", {
   expect_equal(nrow(built$layout$layout), 1L)
   overall_built <- ggplot2::ggplot_build(plot(object))
   expect_false("Comparator" %in% names(overall_built$layout$layout))
+  expect_identical(unique(as.character(overall_built$plot$data$Endpoint)), "Total")
   point_layer <- built$data[[3L]]
   selected_layer <- built$data[[4L]]
   interval_layer <- built$data[[5L]]
@@ -91,10 +102,11 @@ test_that("continuous sample-size plots show intervals on every point", {
   expect_identical(built$plot$theme$legend.position, "none")
   expect_true(all(interval_layer$width >= 0.4))
   expect_equal(nrow(selected_layer), 2L)
-  expect_match(built$plot$labels$title, "Continuous-outcome")
-  expect_match(built$plot$labels$subtitle, "95% Monte Carlo")
+  expect_null(built$plot$labels$title)
+  expect_null(built$plot$labels$subtitle)
   expect_error(plot(object, target_power = 1.1), "target_power")
   expect_error(plot(object, display = "missing"), "Unknown comparator")
+  expect_error(plot(object, endpoint = "missing"), "Unknown endpoint")
 })
 
 test_that("continuous sample-size plots sort candidates and highlight the first target crossing", {
@@ -204,7 +216,8 @@ test_that("count sample-size plots highlight the global target crossing", {
   expect_true(all(c("ymin", "ymax") %in% names(built$data[[4L]])))
   expect_true(all(built$data[[4L]]$linewidth >= 0.8))
   expect_equal(unique(built$data[[5]]$x), 30)
-  expect_match(built$plot$labels$subtitle, "95% Monte Carlo")
+  expect_null(built$plot$labels$title)
+  expect_null(built$plot$labels$subtitle)
 })
 
 test_that("distribution plots can display reconstructed TOST t-values", {

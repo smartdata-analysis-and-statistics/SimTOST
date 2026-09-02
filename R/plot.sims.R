@@ -13,6 +13,9 @@
 #' @param all Logical. If `TRUE` (the default), display only the aggregate
 #'   `All comparators` result without a comparator facet. If `FALSE`, display
 #'   the comparator panels selected by `display`.
+#' @param endpoint Endpoint names to display. By default, `"Total"` is used
+#'   when `all = TRUE`, while all retained endpoints are used when `all = FALSE`.
+#'   Use `"all"` to show all retained endpoints explicitly.
 #' @param \ldots Additional arguments to be passed to the `plot.simss` function for customization.
 #'
 #' @return A `ggplot` object illustrating:
@@ -34,7 +37,8 @@
 #' @export plot.simss
 #'
 #' @export
-plot.simss <- function(x, target_power = 0.80, display = "all", all = TRUE, ...){
+plot.simss <- function(x, target_power = 0.80, display = "all", all = TRUE,
+                       endpoint = NULL, ...){
   if (missing(target_power))
     target_power <- .stored_plot_target_power(x, fallback = target_power)
   if (!is.numeric(target_power) || length(target_power) != 1L ||
@@ -43,7 +47,7 @@ plot.simss <- function(x, target_power = 0.80, display = "all", all = TRUE, ...)
   }
   if (inherits(x, "countss")) {
     return(plot.countss(x, target_power = target_power,
-                        display = display, all = all, ...))
+                        display = display, all = all, endpoint = endpoint, ...))
   }
 
   qnam = n_iter = n_total = t_true = power = Endpoint = power_LCI = power_UCI = NULL # due to NSE notes in R CMD check
@@ -104,6 +108,7 @@ plot.simss <- function(x, target_power = 0.80, display = "all", all = TRUE, ...)
     stop("'display' must be 'all' or a non-empty character vector of comparator names.")
   if (!is.logical(all) || length(all) != 1L || is.na(all))
     stop("'all' must be a single logical value.")
+  if (is.null(endpoint)) endpoint <- if (all) "Total" else "all"
   display <- unique(gsub(" vs ", "_vs_", display, fixed = TRUE))
 
   if (all) {
@@ -129,6 +134,7 @@ plot.simss <- function(x, target_power = 0.80, display = "all", all = TRUE, ...)
       stop("Unknown comparator(s) in 'display': ", paste(unknown, collapse = ", "))
     plotdata <- plotdata[Comparator %in% display]
   }
+  plotdata <- .filter_diagnostic_endpoint(plotdata, endpoint)
 
   endpoint_levels <- setdiff(unique(plotdata$Endpoint), "Total")
   endpoint_colors <- stats::setNames(
@@ -200,9 +206,7 @@ plot.simss <- function(x, target_power = 0.80, display = "all", all = TRUE, ...)
                                 labels = scales::label_number(accuracy = 1,
                                                               big.mark = ","),
                                 expand = ggplot2::expansion(mult = c(0.02, 0.04))) +
-    ggplot2::labs(color = "Endpoint",
-                  title = "Continuous-outcome sample size",
-                  subtitle = "Vertical bars show 95% Monte Carlo confidence intervals") +
+    ggplot2::labs(color = "Endpoint") +
     ggplot2::theme_minimal(base_size = 11.5) +
     ggplot2::theme(
       panel.grid.minor = ggplot2::element_blank(),

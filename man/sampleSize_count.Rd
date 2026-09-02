@@ -52,7 +52,9 @@ sampleSize_count(
 
 \item{model}{Count model: \code{"poisson"} or \code{"negative-binomial"}.}
 
-\item{dispersion}{Positive negative-binomial dispersion parameter.}
+\item{dispersion}{Positive negative-binomial dispersion parameter. The
+per-subject negative-binomial size is \code{1 / dispersion}; parallel-arm
+totals use size \code{n / dispersion}.}
 
 \item{alpha}{One-sided significance level.}
 

@@ -66,6 +66,11 @@
                truth = z$true_rate[[1L]], stringsAsFactors = FALSE)
   })
   result <- do.call(rbind, result)
+  if (!is.null(arm) && !any(arm == "all")) {
+    result <- result[order(match(as.character(result$arm), arm)), , drop = FALSE]
+    result$arm <- factor(result$arm, levels = arm)
+    rownames(result) <- NULL
+  }
   if (nrow(result) > max_points) {
     set.seed(1L)
     result <- result[sample.int(nrow(result), max_points), , drop = FALSE]
@@ -219,6 +224,11 @@
   }
   if (!length(rows)) stop("No endpoint correlations could be calculated.")
   result <- do.call(rbind, rows)
+  if (!is.null(arm) && !any(arm == "all")) {
+    result <- result[order(match(as.character(result$arm), arm)), , drop = FALSE]
+    result$arm <- factor(result$arm, levels = arm)
+    rownames(result) <- NULL
+  }
   if (nrow(result) > max_points) {
     set.seed(1L)
     result <- result[sample.int(nrow(result), max_points), , drop = FALSE]
@@ -730,7 +740,12 @@ plot_distribution <- function(x, estimand = "mu", arms = NULL,
         stop("'scale = \"log\"' requires strictly positive simulated values.")
       data$value <- log(data$value)
     }
-    data$arm <- factor(data$arm, levels = unique(data$arm))
+    arm_levels <- if (!is.null(arms) && !any(arms == "all")) {
+      arms[arms %in% unique(as.character(data$arm))]
+    } else {
+      if (is.factor(data$arm)) levels(data$arm) else unique(as.character(data$arm))
+    }
+    data$arm <- factor(as.character(data$arm), levels = arm_levels)
     data$endpoint <- factor(data$endpoint, levels = unique(data$endpoint))
     facet_formula <- stats::as.formula("endpoint ~ arm")
     x_label <- if (scale == "log") "log(simulated outcome)" else "Simulated outcome"
@@ -740,7 +755,14 @@ plot_distribution <- function(x, estimand = "mu", arms = NULL,
     data <- .rate_distribution_data(x, display, endpoint, arm, as.integer(max_points))
     data <- .select_distribution_trials(data, n_trials, seed)
     reference <- if (show_reference) unique(data[, c("arm", "endpoint", "truth")]) else NULL
-    data$arm <- factor(data$arm, levels = unique(data$arm))
+    arm_levels <- if (!is.null(arms) && !any(arms == "all")) {
+      arms[arms %in% unique(as.character(data$arm))]
+    } else if (is.factor(data$arm)) {
+      levels(data$arm)
+    } else {
+      unique(as.character(data$arm))
+    }
+    data$arm <- factor(as.character(data$arm), levels = arm_levels)
     data$endpoint <- factor(data$endpoint, levels = unique(data$endpoint))
     facet_formula <- stats::as.formula("endpoint ~ arm")
     x_label <- "Estimated event rate"
@@ -766,7 +788,14 @@ plot_distribution <- function(x, estimand = "mu", arms = NULL,
                                          max_points = as.integer(max_points))
     data <- .select_distribution_trials(data, n_trials, seed)
     reference <- if (show_reference) unique(data[, c("arm", "endpoint", "truth")]) else NULL
-    data$arm <- factor(data$arm, levels = unique(data$arm))
+    arm_levels <- if (!is.null(arms) && !any(arms == "all")) {
+      arms[arms %in% unique(as.character(data$arm))]
+    } else if (is.factor(data$arm)) {
+      levels(data$arm)
+    } else {
+      unique(as.character(data$arm))
+    }
+    data$arm <- factor(as.character(data$arm), levels = arm_levels)
     data$endpoint <- factor(data$endpoint, levels = unique(data$endpoint))
     facet_formula <- stats::as.formula("endpoint ~ arm")
     x_label <- paste("Simulated", parameter)
@@ -945,7 +974,12 @@ plot_distribution <- function(x, estimand = "mu", arms = NULL,
   type <- match.arg(type)
   data <- .correlation_distribution_data(x, display, endpoint, arm,
                                          as.integer(max_points))
-  data$arm <- factor(data$arm, levels = unique(data$arm))
+  arm_levels <- if (!is.null(arm) && !any(arm == "all")) {
+    arm[arm %in% unique(as.character(data$arm))]
+  } else {
+    if (is.factor(data$arm)) levels(data$arm) else unique(as.character(data$arm))
+  }
+  data$arm <- factor(as.character(data$arm), levels = arm_levels)
   data$pair <- factor(data$pair, levels = unique(data$pair))
   p <- ggplot2::ggplot(data, ggplot2::aes(x = value))
   if (type == "density") {

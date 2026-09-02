@@ -114,12 +114,16 @@ confint.simpower <- function(object, parm, level = 0.95, ...) {
 #' @param all Logical. If `TRUE` (the default), display only the aggregate
 #'   `All comparators` result without a comparator facet. If `FALSE`, display
 #'   the current comparator panels selected by `display`.
+#' @param endpoint Endpoint names to display. By default, `"Total"` is used
+#'   when `all = TRUE`, while all retained endpoints are used when `all = FALSE`.
+#'   Use `"all"` to show all retained endpoints explicitly.
 #' @param ... Unused additional arguments.
 #' @return A `ggplot` object showing estimated power and its Monte Carlo
 #' confidence interval as a clearly visible vertical line.
 #' @export
 #' @method plot simpower_curve
-plot.simpower_curve <- function(x, target_power = 0.80, display = "all", all = TRUE, ...) {
+plot.simpower_curve <- function(x, target_power = 0.80, display = "all", all = TRUE,
+                               endpoint = NULL, ...) {
   if (!is.numeric(target_power) || length(target_power) != 1L ||
       !is.finite(target_power) || target_power <= 0 || target_power >= 1)
     stop("'target_power' must be a single number between 0 and 1.")
@@ -131,6 +135,7 @@ plot.simpower_curve <- function(x, target_power = 0.80, display = "all", all = T
     stop("'display' must be 'all' or a non-empty character vector of comparator names.")
   if (!is.logical(all) || length(all) != 1L || is.na(all))
     stop("'all' must be a single logical value.")
+  if (is.null(endpoint)) endpoint <- if (all) "Total" else "all"
   display <- unique(gsub(" vs ", "_vs_", display, fixed = TRUE))
 
   first_result <- x$curve_results[[1L]]
@@ -233,6 +238,7 @@ plot.simpower_curve <- function(x, target_power = 0.80, display = "all", all = T
     if (nrow(plotdata) == 0L)
       stop("'display' did not select any comparator panels.")
   }
+  plotdata <- .filter_diagnostic_endpoint(plotdata, endpoint)
   plotdata$Endpoint <- factor(
     plotdata$Endpoint,
     levels = c(setdiff(unique(plotdata$Endpoint), "Total"), "Total")
@@ -303,15 +309,20 @@ plot.simpower_curve <- function(x, target_power = 0.80, display = "all", all = T
 #'   argument is retained for compatibility with curve results.
 #' @param all Logical retained for compatibility with curve results. If
 #'   `TRUE`, the aggregate result is displayed when available.
+#' @param endpoint Endpoint names to display for curve results. By default,
+#'   `"Total"` is used when `all = TRUE`, while all retained endpoints are
+#'   used when `all = FALSE`. Use `"all"` to show all retained endpoints.
 #' @param ... Unused additional arguments.
 #' @return A `ggplot` object showing estimated power and its Monte Carlo
 #'   confidence interval.
 #' @export
 #' @method plot simpower
-plot.simpower <- function(x, target_power = 0.80, display = "all", all = TRUE, ...) {
+plot.simpower <- function(x, target_power = 0.80, display = "all", all = TRUE,
+                          endpoint = NULL, ...) {
   if (inherits(x, "simpower_curve"))
     return(plot.simpower_curve(x, target_power = target_power,
-                               display = display, all = all, ...))
+                               display = display, all = all,
+                               endpoint = endpoint, ...))
   if (!is.numeric(target_power) || length(target_power) != 1L ||
       !is.finite(target_power) || target_power <= 0 || target_power >= 1)
     stop("'target_power' must be a single number between 0 and 1.")
@@ -394,7 +405,7 @@ plot.countpower <- function(x, target_power = 0.80, ...) {
                                 labels = scales::label_percent(accuracy = 1)) +
     ggplot2::scale_x_continuous(labels = scales::label_number(accuracy = 1,
                                                               big.mark = ",")) +
-    ggplot2::labs(x = "Total sample size", title = "Count-outcome power") +
+    ggplot2::labs(x = "Total sample size") +
     ggplot2::theme_minimal(base_size = 12)
 }
 
@@ -412,6 +423,9 @@ plot.countpower <- function(x, target_power = 0.80, ...) {
 #' @param all Logical. If `TRUE` (the default), display only the aggregate
 #'   `All comparators` result without a comparator facet. If `FALSE`, display
 #'   the comparator panels selected by `display`.
+#' @param endpoint Endpoint names to display. By default, `"Total"` is used
+#'   when `all = TRUE`, while all retained endpoints are used when `all = FALSE`.
+#'   Use `"all"` to show all retained endpoints explicitly.
 #' @param ... Unused additional arguments.
 #' @return A `ggplot` object showing the simulated power curve over the
 #' evaluated candidate sample sizes, with the selected sample size highlighted.
@@ -421,7 +435,8 @@ plot.countpower <- function(x, target_power = 0.80, ...) {
 #' the selected-sample-size point.
 #' @export
 #' @method plot countss
-plot.countss <- function(x, target_power = 0.80, display = "all", all = TRUE, ...) {
+plot.countss <- function(x, target_power = 0.80, display = "all", all = TRUE,
+                         endpoint = NULL, ...) {
   if (missing(target_power))
     target_power <- .stored_plot_target_power(x, fallback = target_power)
   if (!is.numeric(target_power) || length(target_power) != 1L ||
@@ -429,6 +444,7 @@ plot.countss <- function(x, target_power = 0.80, display = "all", all = TRUE, ..
     stop("'target_power' must be a single number between 0 and 1.")
   if (!is.logical(all) || length(all) != 1L || is.na(all))
     stop("'all' must be a single logical value.")
+  if (is.null(endpoint)) endpoint <- if (all) "Total" else "all"
   history <- x$table.test
   has_history <- is.data.frame(history) && nrow(history) > 0L
   decision_cols <- if (has_history)
@@ -496,6 +512,7 @@ plot.countss <- function(x, target_power = 0.80, display = "all", all = TRUE, ..
         stop("Unknown comparator(s) in 'display': ", paste(unknown, collapse = ", "))
       plotdata <- plotdata[plotdata$Comparator %in% display, , drop = FALSE]
     }
+    plotdata <- .filter_diagnostic_endpoint(plotdata, endpoint)
     plotdata$Endpoint <- factor(
       plotdata$Endpoint,
       levels = c(setdiff(unique(plotdata$Endpoint), "Total"), "Total")
@@ -547,8 +564,7 @@ plot.countss <- function(x, target_power = 0.80, display = "all", all = TRUE, ..
           labels = scales::label_number(accuracy = 1, big.mark = ",")
         ) +
         ggplot2::labs(
-          color = "Endpoint", title = "Count-outcome sample size",
-          subtitle = "Vertical bars show 95% Monte Carlo confidence intervals"
+          color = "Endpoint"
         ) +
         ggplot2::theme_minimal(base_size = 11.5) +
         ggplot2::theme(
@@ -580,6 +596,6 @@ plot.countss <- function(x, target_power = 0.80, display = "all", all = TRUE, ..
                                 labels = scales::label_percent(accuracy = 1)) +
     ggplot2::scale_x_continuous(labels = scales::label_number(accuracy = 1,
                                                               big.mark = ",")) +
-    ggplot2::labs(x = "Total sample size", title = "Count-outcome sample size") +
+    ggplot2::labs(x = "Total sample size") +
     ggplot2::theme_minimal(base_size = 12)
 }

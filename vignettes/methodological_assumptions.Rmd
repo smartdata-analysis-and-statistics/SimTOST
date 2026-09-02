@@ -101,31 +101,10 @@ original scale, not an additive difference interpretation. Use
 `distribution = "lnorm", ctype = "ROM"` for an arithmetic mean ratio,
 or use the normal distribution for an additive mean difference.
 
-### Equivalence hypotheses and estimands
-
-All tests use TOST. For lower and upper bounds L and U:
-
-[
-H_0: theta <= L or theta >= U, \\
-H_1: L < theta < U.
-]
-
-For normal continuous outcomes, theta is the mean difference for DOM and the
-mean ratio for ROM. For log-normal outcomes, the supported ROM analysis
-estimates the arithmetic mean ratio and tests it on the log scale. These
-estimands apply in both parallel and 2x2 designs.
-
-For Poisson and negative-binomial outcomes, the estimand is the event-rate
-ratio theta = lambda_T / lambda_R, where lambda_T and lambda_R are treatment
-and reference rates per unit exposure. The same TOST hypotheses apply on the
-log-rate-ratio scale. Negative-binomial dispersion changes the variance, not
-the estimand. In a 2x2 crossover, the rate ratio is estimated from paired
-log-rate contrasts averaged over the two sequences.
-
 ## Count outcomes
 
 For count outcomes, `rate_list` supplies the event rate per unit exposure.
-For arm $a$ and endpoint $j$, the expected aggregate count is
+For a parallel arm $a$ and endpoint $j$, the expected aggregate count is
 
 \[
   \mathrm{E}(Y_{aj}) = n_a e_{aj}\lambda_{aj},
@@ -152,16 +131,48 @@ dependence can make a Poisson analysis anticonservative.
 
 ### Negative Binomial outcomes
 
-For `distribution = "nbinom"`, the marginal count follows a
-negative-binomial model with mean $\mu_{aj}=n_a e_{aj}\lambda_{aj}$ and
-dispersion parameter $\phi_{aj}$ such that the implementation uses the size
-parameter $1/\phi_{aj}$. The dispersion parameter is positive and controls the
-amount of variation beyond the Poisson variance.
+For `distribution = "nbinom"`, let $\phi_{aj} > 0$ denote the per-subject
+dispersion parameter. A subject-level count with mean
+
+\[
+\mu^{(\mathrm{subj})}_{aj} = e_{aj}\lambda_{aj}
+\]
+
+has variance
+
+\[
+\operatorname{Var}(Y^{(\mathrm{subj})}_{aj})
+ = \mu^{(\mathrm{subj})}_{aj}
+ + \phi_{aj}\left(\mu^{(\mathrm{subj})}_{aj}\right)^2,
+\]
+
+which is the negative-binomial parameterization with
+$\operatorname{size}=1/\phi_{aj}$. In a parallel design, the aggregate count
+over $n_a$ independent subjects has mean
+
+\[
+\mu_{aj} = n_a e_{aj}\lambda_{aj}
+\]
+
+and the implementation uses
+$\operatorname{size}=n_a/\phi_{aj}$. Equivalently, its variance is
+
+\[
+\operatorname{Var}(Y_{aj})
+ = n_a\left\{\mu^{(\mathrm{subj})}_{aj}
+ + \phi_{aj}\left(\mu^{(\mathrm{subj})}_{aj}\right)^2\right\}.
+\]
+
+Thus, larger values of `dispersion` produce more variation beyond the
+Poisson variance, while values closer to zero give behavior closer to the
+Poisson model. This parallel-design scaling of the size parameter is
+important: using $1/\phi_{aj}$ for an aggregate count would incorrectly make
+the overdispersion increase with sample size. The dispersion parameter is
+positive and should preferably be based on historical data, pilot data, or a
+clinically justified sensitivity range.
 
 The Negative Binomial model assumes that the selected mean-dispersion
-relationship adequately represents overdispersion in the planned study. The
-dispersion should preferably be based on historical data, pilot data, or a
-clinically justified sensitivity range.
+relationship adequately represents overdispersion in the planned study.
 
 ## Dependence between endpoints
 
@@ -240,28 +251,19 @@ to endpoint-specific subject effects and to the period-specific count
 innovations within a participant. This preserves the intended endpoint
 dependence while retaining the within-participant pairing.
 
-## Equivalence testing and multiplicity
-
-The equivalence decision is based on two one-sided tests. For a rate or mean
-ratio, the null and alternative are expressed using the supplied lower and
-upper equivalence limits. A study-level success criterion can require all
-endpoints or only `k` endpoints to pass for each comparison.
-
-When multiple comparisons and endpoints are simulated jointly, `adjust`
-controls the endpoint- and comparison-level significance allocation. Separate
-sample-size searches for individual comparisons do not generally provide the
-desired probability that all requirements succeed in the same trial. Joint
-planning is therefore recommended when the confirmatory conclusion requires a
-joint success event.
-
 ## Design-specific assumptions
+
+### Parallel design
 
 For a parallel design, observations are generated independently between
 participants and treatment arms, apart from endpoint dependence specified by
 the model. Allocation and dropout determine the number of analyzable
 participants in each arm.
 
-### Normal and Log-Normal outcomes in a 2x2 crossover
+
+### 2x2 crossover design
+
+#### Normal and Log-Normal outcomes
 
 For continuous outcomes, `dtype = "2x2"` represents a balanced two-sequence,
 two-period crossover. The two treatment sequences are reference--test (RT)
@@ -328,7 +330,7 @@ directly through `SigmaW` (or through `sigma_list` and `cor_mat` when the
 covariance matrix is constructed). This differs from the count implementation,
 where `cor_mat` is used as a latent Gaussian-copula correlation.
 
-### Poisson and Negative Binomial outcomes in a 2x2 crossover
+#### Poisson and Negative Binomial outcomes
 
 For a 2x2 crossover design, the count extension uses a paired log-link rate
 analysis. Each complete participant contributes one count under the test

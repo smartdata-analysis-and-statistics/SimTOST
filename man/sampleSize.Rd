@@ -77,9 +77,10 @@ count-outcome arm.}
 \item{exposure}{Exposure per subject for count outcomes. Supply a scalar
 or endpoint vector shared by arms, or a named list of arm-specific values.}
 
-\item{dispersion}{Positive negative-binomial dispersion parameter. Supply
-a scalar or endpoint vector shared by arms, or a named list of arm-specific
-values.}
+\item{dispersion}{Positive negative-binomial dispersion parameter. The
+per-subject negative-binomial size is \code{1 / dispersion}; parallel-arm
+totals use size \code{n / dispersion}. Supply a scalar or endpoint vector shared
+by arms, or a named list of arm-specific values.}
 
 \item{Eper}{Optional numeric vector of length 2 specifying period effects.
 For count outcomes these are log-rate effects applied to periods 1 and 2.}

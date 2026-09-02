@@ -4,7 +4,7 @@
 \alias{plot.simpower}
 \title{Plot fixed-sample-size power results}
 \usage{
-\method{plot}{simpower}(x, target_power = 0.8, display = "all", all = TRUE, ...)
+\method{plot}{simpower}(x, target_power = 0.8, display = "all", all = TRUE, endpoint = NULL, ...)
 }
 \arguments{
 \item{x}{An object returned by \code{\link[=simPower]{simPower()}}.}
@@ -16,6 +16,10 @@ argument is retained for compatibility with curve results.}
 
 \item{all}{Logical retained for compatibility with curve results. If
 \code{TRUE}, the aggregate result is displayed when available.}
+
+\item{endpoint}{Endpoint names to display for curve results. By default,
+\code{"Total"} is used when \code{all = TRUE}, while all retained endpoints are
+used when \code{all = FALSE}. Use \code{"all"} to show all retained endpoints.}
 
 \item{...}{Unused additional arguments.}
 }

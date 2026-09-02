@@ -9,7 +9,9 @@
 #' @param margin_lower Lower rate-ratio margin; a scalar or one value per endpoint.
 #' @param margin_upper Upper rate-ratio margin; a scalar or one value per endpoint.
 #' @param model Count model: `"poisson"` or `"negative-binomial"`.
-#' @param dispersion Positive negative-binomial dispersion parameter.
+#' @param dispersion Positive negative-binomial dispersion parameter. The
+#' per-subject negative-binomial size is `1 / dispersion`; parallel-arm
+#' totals use size `n / dispersion`.
 #' @param alpha One-sided significance level.
 #' @param nsim Number of simulations.
 #' @param seed Optional random seed.
@@ -320,7 +322,9 @@ power_count <- function(n_per_arm, rate_test, rate_reference, exposure = 1,
 #' @param margin_lower Lower rate-ratio equivalence margin.
 #' @param margin_upper Upper rate-ratio equivalence margin.
 #' @param model Count model: `"poisson"` or `"negative-binomial"`.
-#' @param dispersion Positive negative-binomial dispersion parameter.
+#' @param dispersion Positive negative-binomial dispersion parameter. The
+#' per-subject negative-binomial size is `1 / dispersion`; parallel-arm
+#' totals use size `n / dispersion`.
 #' @param alpha One-sided significance level.
 #' @param nsim Number of simulated trials.
 #' @param seed Optional random seed.
@@ -565,6 +569,9 @@ find_count_sample_size <- function(power_fun, target_power, lower, upper,
 # rather than the raw endpoint-level statistics retained by the continuous
 # simulation. Reconstruct decision indicators with the same marginal success
 # counts so count sample-size objects expose compatible search-history fields.
+# A common deterministic permutation is applied to each candidate's indicators:
+# the kernel does not return trial-level decisions, so placing all successes
+# before all failures would create an artificial block-shaped stability plot.
 .count_search_tables <- function(search) {
   if (!is.list(search) || !length(search$results) ||
       length(search$n_per_arm) != length(search$results))
@@ -583,6 +590,21 @@ find_count_sample_size <- function(power_fun, target_power, lower, upper,
   })
   table.iter <- do.call(rbind, rows_iter)
   rownames(table.iter) <- NULL
+
+  indicator_permutation <- function(nsim, candidate) {
+    if (nsim < 2L) return(seq_len(nsim))
+    had_seed <- exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE)
+    old_seed <- if (had_seed) get(".Random.seed", envir = .GlobalEnv) else NULL
+    on.exit({
+      if (had_seed) {
+        assign(".Random.seed", old_seed, envir = .GlobalEnv)
+      } else if (exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE)) {
+        rm(".Random.seed", envir = .GlobalEnv)
+      }
+    }, add = TRUE)
+    set.seed(104729L + as.integer(candidate))
+    sample.int(nsim)
+  }
 
   rows_test <- lapply(seq_along(search$results), function(i) {
     result <- search$results[[i]]
@@ -608,6 +630,10 @@ find_count_sample_size <- function(power_fun, target_power, lower, upper,
       n_total = rep.int(as.numeric(result$n_total), nsim),
       stringsAsFactors = FALSE
     )
+    permutation <- indicator_permutation(nsim, i)
+    indicator_values <- function(success_count) {
+      c(rep.int(1L, success_count), rep.int(0L, nsim - success_count))[permutation]
+    }
     endpoint_is_matrix <- is.matrix(endpoint_successes)
     if (endpoint_is_matrix &&
         !identical(dim(endpoint_successes),
@@ -624,20 +650,17 @@ find_count_sample_size <- function(power_fun, target_power, lower, upper,
         ncol(endpoint_successes) else length(endpoint_successes)))
     for (comparison in seq_along(comparison_successes)) {
       comparison_label <- comparison_names[[comparison]]
-      data[[paste0("totalyComp:", comparison_label)]] <- c(
-        rep.int(1L, comparison_successes[[comparison]]),
-        rep.int(0L, nsim - comparison_successes[[comparison]])
-      )
+      data[[paste0("totalyComp:", comparison_label)]] <-
+        indicator_values(comparison_successes[[comparison]])
       for (endpoint in seq_along(endpoint_names)) {
         component_count <- if (endpoint_is_matrix)
           endpoint_successes[comparison, endpoint] else
           endpoint_successes[[endpoint]]
-        data[[paste0(endpoint_names[[endpoint]], "Comp:", comparison_label)]] <- c(
-          rep.int(1L, component_count), rep.int(0L, nsim - component_count)
-        )
+        data[[paste0(endpoint_names[[endpoint]], "Comp:", comparison_label)]] <-
+          indicator_values(component_count)
       }
     }
-    data$totaly <- c(rep.int(1L, successes), rep.int(0L, nsim - successes))
+    data$totaly <- indicator_values(successes)
     data
   })
   table.test <- do.call(rbind, rows_test)

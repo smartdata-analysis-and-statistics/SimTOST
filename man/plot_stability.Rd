@@ -4,7 +4,14 @@
 \alias{plot_stability}
 \title{Plot simulation stability}
 \usage{
-plot_stability(x, target_power = 0.8, display = "all", overall = FALSE, ...)
+plot_stability(
+  x,
+  target_power = 0.8,
+  display = "all",
+  overall = FALSE,
+  endpoint = "Total",
+  ...
+)
 }
 \arguments{
 \item{x}{A \code{simss}, \code{simpower}, or \code{simpower_curve} object, or a list of
@@ -18,6 +25,9 @@ such objects. A list can compare simulations with different \code{n} and
 \item{overall}{Logical. If \code{TRUE}, display only the \verb{All comparators}
 aggregate result. This is useful for assessing the overall decision when
 several comparisons are required; \code{display} is ignored in this mode.}
+
+\item{endpoint}{Endpoint names to display. The default, \code{"Total"}, shows
+only the aggregate endpoint. Use \code{"all"} to show all retained endpoints.}
 
 \item{...}{Unused additional arguments.}
 }

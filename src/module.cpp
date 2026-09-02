@@ -315,17 +315,21 @@ Rcpp::NumericVector count_power_multi_cpp(
           subjects_per_treatment * exposure_test[j];
         const double total_exposure_reference =
           subjects_per_treatment * exposure_reference[j];
+        // The arm total is the sum of subjects' independent negative-
+        // binomial counts. Therefore its size is n / dispersion, rather
+        // than the per-subject size 1 / dispersion.
+        const double size_test = subjects_per_treatment / dispersion_test[j];
+        const double size_reference = subjects_per_treatment / dispersion_reference[j];
         y_test[j] = model == 0 ? R::qpois(p_test, total_exposure_test * rate_test[j], 1, 0) :
-          R::qnbinom(p_test, 1.0 / dispersion_test[j],
-                     (1.0 / dispersion_test[j]) /
-                       ((1.0 / dispersion_test[j]) +
-                        total_exposure_test * rate_test[j]), 1, 0);
+          R::qnbinom(p_test, size_test,
+                     size_test /
+                       (size_test + total_exposure_test * rate_test[j]), 1, 0);
         y_reference[j] = model == 0 ?
           R::qpois(p_reference, total_exposure_reference * rate_reference[j], 1, 0) :
-          R::qnbinom(p_reference, 1.0 / dispersion_reference[j],
-                     (1.0 / dispersion_reference[j]) /
-                       ((1.0 / dispersion_reference[j]) +
-                        total_exposure_reference * rate_reference[j]), 1, 0);
+          R::qnbinom(p_reference, size_reference,
+                     size_reference /
+                       (size_reference + total_exposure_reference * rate_reference[j]),
+                     1, 0);
       }
       for (int j = 0; j < m; ++j) {
         const double test_cc = y_test[j] + 0.5;
@@ -521,7 +525,8 @@ Rcpp::NumericVector count_power_joint_cpp(
         if (model == 0) {
           counts[arm][endpoint] = R::qpois(p, mu, 1, 0);
         } else {
-          const double size = 1.0 / dispersion(arm, endpoint);
+          // Aggregate n independent subject-level negative-binomial counts.
+          const double size = n_per_arm / dispersion(arm, endpoint);
           const double probability = size / (size + mu);
           counts[arm][endpoint] = R::qnbinom(p, size, probability, 1, 0);
         }

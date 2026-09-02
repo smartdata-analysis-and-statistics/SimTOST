@@ -1,0 +1,84 @@
+* using log directory '/Users/johanna/GitHub/SimTOST/..Rcheck'
+* using R version 4.6.0 (2026-04-24)
+* using platform: aarch64-apple-darwin23
+* R was compiled by
+    Apple clang version 17.0.0 (clang-1700.3.19.1)
+    GNU Fortran (GCC) 14.2.0
+* running under: macOS Sonoma 14.5
+* using session charset: ASCII
+* current time: 2026-09-02 12:22:34 UTC
+* checking for file './DESCRIPTION' ... OK
+* this is package 'SimTOST' version '1.0.2'
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... OK
+* checking if this is a source package ... WARNING
+Subdirectory 'SimTOST/src' contains apparent object files/libraries
+  RcppExports.o SimTOST.so module.o
+Object files/libraries should not be included in a source package.
+* checking if there is a namespace ... OK
+* checking for executable files ... WARNING
+Found the following executable files:
+  .git/objects/21/f2a30299926aaab2c098de7187c63428d8edcc
+  .git/objects/27/75b69078fb5cda33463465c6173785da219308
+  .git/objects/9e/efba3490abd7a368909451082afa0c4d361e12
+  .git/objects/a1/4e13bb20d6b81ad8f3c915194c4300742dfdb8
+Source packages should not contain undeclared executable files.
+See section 'Package structure' in the 'Writing R Extensions' manual.
+* checking for hidden files and directories ... NOTE
+Found the following hidden files and directories:
+  .DS_Store
+  .Rhistory
+  .gitignore
+  manuscript/.DS_Store
+  manuscript/.gitignore
+  src/.gitignore
+  vignettes/.gitignore
+  ..Rcheck
+  .Rproj.user
+  .git
+  .github
+  manuscript/.git
+These were most likely included in error. See section 'Package
+structure' in the 'Writing R Extensions' manual.
+* checking for portable file names ... WARNING
+Found the following file with a non-portable file name:
+  manuscript/reviewer_feedback/[JSS] Editor Decision 2025-05-03T22_57_48+02_00.eml
+These are not fully portable file names.
+See section 'Package structure' in the 'Writing R Extensions' manual.
+ ERROR
+Found the following non-portable file paths:
+  SimTOST/.Rproj.user/shared/notebooks/8C74E1C7-continuous_parallel_3A1E/1/s/c6f2azz3lv7ua/000012.error
+  SimTOST/.Rproj.user/shared/notebooks/8C74E1C7-continuous_parallel_3A1E/1/s/coc871kaj3rr0/000010.metadata
+  SimTOST/.Rproj.user/shared/notebooks/AD9CCD12-continuous_parallel_2A3E/1/s/c8gl3lcqmc50h/00001a.metadata
+  SimTOST/.Rproj.user/shared/notebooks/AD9CCD12-continuous_parallel_2A3E/1/s/c8gl3lcqmc50h/00001c.metadata
+  SimTOST/.Rproj.user/shared/notebooks/AD9CCD12-continuous_parallel_2A3E/1/s/c8gl3lcqmc50h/00001e.error
+  SimTOST/.git/refs/codex/turn-diffs/checkpoints/238a7e784b7e19cfc6c3cc656faa5631997a6a3d56568899bd4051c1674e30d0/3415aaba4e1f6f8a21ff652e82e9a6768c8444a4a209bab08ce13357a2880fba/1788351336191/4912a27c-c073-4b56-807b-bbc8227b3ab9
+  SimTOST/.git/refs/codex/turn-diffs/checkpoints/238a7e784b7e19cfc6c3cc656faa5631997a6a3d56568899bd4051c1674e30d0/3415aaba4e1f6f8a21ff652e82e9a6768c8444a4a209bab08ce13357a2880fba/1788351336191
+
+Tarballs are only required to store paths of up to 100 bytes and cannot
+store those of more than 256 bytes, with restrictions including to 100
+bytes for the final component.
+See section 'Package structure' in the 'Writing R Extensions' manual.
+* checking for sufficient/correct file permissions ... OK
+* checking whether package 'SimTOST' can be installed ... OK
+* used C++ compiler: 'Apple clang version 15.0.0 (clang-1500.3.9.4)'
+* used SDK: 'MacOSX14.5.sdk'
+* checking installed package size ... OK
+* checking package directory ... OK
+* checking DESCRIPTION meta-information ... WARNING
+During startup - Warning messages:
+1: Setting LC_CTYPE failed, using "C" 
+2: Setting LC_COLLATE failed, using "C" 
+3: Setting LC_TIME failed, using "C" 
+4: Setting LC_MESSAGES failed, using "C" 
+5: Setting LC_MONETARY failed, using "C" 
+ ERROR
+During startup - Warning messages:
+1: Setting LC_CTYPE failed, using "C" 
+2: Setting LC_COLLATE failed, using "C" 
+3: Setting LC_TIME failed, using "C" 
+4: Setting LC_MESSAGES failed, using "C" 
+5: Setting LC_MONETARY failed, using "C" 
+* DONE
+Status: 2 ERRORs, 4 WARNINGs, 1 NOTE

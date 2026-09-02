@@ -1,0 +1,57 @@
+Package: SimTOST
+Title: Sample Size Estimation for Bio-Equivalence Trials Through
+        Simulation
+Version: 1.0.2
+Authors@R: c(
+    person(given = "Thomas", 
+           family = "Debray", 
+           email = "tdebray@fromdatatowisdom.com", 
+           role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0002-1790-2719")),
+    person(given = "Johanna", 
+           family = "Munoz", 
+           email = "johanna.munoz@fromdatatowisdom.com", 
+           role = c("ctb")),
+    person(given = "Dewi",
+           family = "Amaliah",
+           email = "dewi.amaliah@fromdatatowisdom.com",
+           role = c("ctb")),
+    person(given = "Wei",
+           family = "Wei",
+           email = "wei.wei@biogen.com",
+           role = c("ctb")),
+    person(given = "Marian",
+           family = "Mitroiu",
+           email = "marian.mitroiu@biogen.com",
+           role = c("ctb")),
+    person(given = "Scott",
+           family = "McDonald",
+           email = "scott.mcdonald@fromdatatowisdom.com",
+           role = c("ctb")),
+    person("Biogen Inc", role = c("cph", "fnd"))
+    )
+Author: Thomas Debray [aut, cre]
+Maintainer: Thomas Debray <tdebray@fromdatatowisdom.com>
+Description: 
+    Sample size estimation for bio-equivalence trials is supported through a simulation-based approach 
+    that extends the Two One-Sided Tests (TOST) procedure. The methodology provides flexibility in 
+    hypothesis testing, accommodates multiple treatment comparisons, and accounts for correlated endpoints. 
+    Users can model complex trial scenarios, including parallel and crossover designs, intra-subject variability, 
+    and different equivalence margins. Monte Carlo simulations enable accurate estimation of power and type I error 
+    rates, ensuring well-calibrated study designs. The statistical framework builds on established methods for 
+    equivalence testing and multiple hypothesis testing in bio-equivalence studies, as described in Schuirmann (1987) 
+    <doi:10.1007/BF01068419>, Mielke et al. (2018) <doi:10.1080/19466315.2017.1371071>, Shieh (2022) 
+    <doi:10.1371/journal.pone.0269128>, and Sozu et al. (2015) <doi:10.1007/978-3-319-22005-5>. 
+    Comprehensive documentation and vignettes guide users through implementation and interpretation of results.
+License: Apache License (>= 2)
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+Imports: MASS, Rcpp (>= 1.0.13), data.table, matrixcalc, parallel
+Suggests: ggplot2, kableExtra, knitr, rmarkdown, scales, testthat (>=
+        3.0.0), tibble
+VignetteBuilder: knitr
+Config/testthat/edition: 3
+LinkingTo: Rcpp, RcppArmadillo
+URL: https://smartdata-analysis-and-statistics.github.io/SimTOST/
+Config/roxygen2/version: 8.1.0
+Built: R 4.6.0; aarch64-apple-darwin23; 2026-09-02 12:22:36 UTC; unix

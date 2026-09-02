@@ -4,7 +4,7 @@
 \alias{plot.simss}
 \title{Plot Power vs Sample Size for Simulation Results}
 \usage{
-\method{plot}{simss}(x, target_power = 0.8, display = "all", all = TRUE, ...)
+\method{plot}{simss}(x, target_power = 0.8, display = "all", all = TRUE, endpoint = NULL, ...)
 }
 \arguments{
 \item{x}{An object of class \code{simss} containing simulation results.}
@@ -21,6 +21,10 @@ names such as \code{"R_vs_T"} to display selected panels.}
 \item{all}{Logical. If \code{TRUE} (the default), display only the aggregate
 \verb{All comparators} result without a comparator facet. If \code{FALSE}, display
 the comparator panels selected by \code{display}.}
+
+\item{endpoint}{Endpoint names to display. By default, \code{"Total"} is used
+when \code{all = TRUE}, while all retained endpoints are used when \code{all = FALSE}.
+Use \code{"all"} to show all retained endpoints explicitly.}
 
 \item{\ldots}{Additional arguments to be passed to the \code{plot.simss} function for customization.}
 }

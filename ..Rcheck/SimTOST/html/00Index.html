@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head><title>R: Sample Size Estimation for Bio-Equivalence Trials Through
+Simulation</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<link rel="stylesheet" type="text/css" href="R.css">
+</head><body><div class="container">
+<h1> Sample Size Estimation for Bio-Equivalence Trials Through
+Simulation
+<img class="toplogo" src="figures/logo.png" alt="[R logo]">
+</h1>
+<hr>
+<div style="text-align: center;">
+<a href="../../../doc/html/packages.html"><img class="arrow" src="../../../doc/html/left.jpg" alt="[Up]"></a>
+<a href="../../../doc/html/index.html"><img class="arrow" src="../../../doc/html/up.jpg" alt="[Top]"></a>
+</div><h2>Documentation for package &lsquo;SimTOST&rsquo; version 1.0.2</h2>
+
+<ul><li><a href="../DESCRIPTION" type="text/plain; charset=utf-8">DESCRIPTION file</a></li>
+<li><a href="../NEWS.md">Package NEWS</a></li>
+<li><a href="../README.md">Package README</a></li>
+</ul>
+
+<h2>Help Pages</h2>
+
+
+<table style="width: 100%;">
+<tr><td style="width: 25%;"><a href="SimTOST.html">SimTOST-package</a></td>
+<td>Sample Size Estimation via Simulation</td></tr>
+<tr><td style="width: 25%;"><a href="dot-plot_correlation.html">.plot_correlation</a></td>
+<td>Plot simulated endpoint correlations</td></tr>
+<tr><td style="width: 25%;"><a href="dot-power_count_joint_serial.html">.power_count_joint_serial</a></td>
+<td>Estimate joint power for correlated count endpoints and multiple comparisons</td></tr>
+<tr><td style="width: 25%;"><a href="dot-power_count_serial.html">.power_count_serial</a></td>
+<td>Estimate power for count-rate equivalence</td></tr>
+<tr><td style="width: 25%;"><a href="as.numeric.simss_mielke.html">as.numeric.simss_mielke</a></td>
+<td>Coerce a Mielke result to a numeric sample size</td></tr>
+<tr><td style="width: 25%;"><a href="confint.countpower.html">confint.countpower</a></td>
+<td>Extract the Monte Carlo confidence interval from count power results</td></tr>
+<tr><td style="width: 25%;"><a href="confint.countpower.html">confint.countss</a></td>
+<td>Extract the Monte Carlo confidence interval from count power results</td></tr>
+<tr><td style="width: 25%;"><a href="confint.simpower.html">confint.simpower</a></td>
+<td>Extract the Monte Carlo confidence interval from fixed-sample-size power results</td></tr>
+<tr><td style="width: 25%;"><a href="confint.simss.html">confint.simss</a></td>
+<td>Confidence Interval for Achieved Power from simss object</td></tr>
+<tr><td style="width: 25%;"><a href="get_par.html">get_par</a></td>
+<td>Parameter Configuration for Endpoints and Comparators</td></tr>
+<tr><td style="width: 25%;"><a href="plot.countpower.html">plot.countpower</a></td>
+<td>Plot count-outcome power results</td></tr>
+<tr><td style="width: 25%;"><a href="plot.countss.html">plot.countss</a></td>
+<td>Plot count-outcome sample-size results</td></tr>
+<tr><td style="width: 25%;"><a href="plot.simpower.html">plot.simpower</a></td>
+<td>Plot fixed-sample-size power results</td></tr>
+<tr><td style="width: 25%;"><a href="plot.simpower_curve.html">plot.simpower_curve</a></td>
+<td>Plot fixed-sample-size power results</td></tr>
+<tr><td style="width: 25%;"><a href="plot.simss.html">plot.simss</a></td>
+<td>Plot Power vs Sample Size for Simulation Results</td></tr>
+<tr><td style="width: 25%;"><a href="plot.type1error.html">plot.type1error</a></td>
+<td>Plot empirical Type I error</td></tr>
+<tr><td style="width: 25%;"><a href="plot.type1error_joint.html">plot.type1error_joint</a></td>
+<td>Plot joint Type I error scenarios</td></tr>
+<tr><td style="width: 25%;"><a href="plot_decision_heatmap.html">plot_decision_heatmap</a></td>
+<td>Plot simulated decision heatmaps</td></tr>
+<tr><td style="width: 25%;"><a href="plot_distribution.html">plot_distribution</a></td>
+<td>Plot distributions of retained simulated observations</td></tr>
+<tr><td style="width: 25%;"><a href="plot_mc_error.html">plot_mc_error</a></td>
+<td>Plot Monte Carlo error</td></tr>
+<tr><td style="width: 25%;"><a href="plot_stability.html">plot_stability</a></td>
+<td>Plot simulation stability</td></tr>
+<tr><td style="width: 25%;"><a href="power_dom.html">power_dom</a></td>
+<td>Power Calculation for Difference of Means (DOM) Hypothesis Test</td></tr>
+<tr><td style="width: 25%;"><a href="print.countpower.html">print.countpower</a></td>
+<td>Print count-outcome power results</td></tr>
+<tr><td style="width: 25%;"><a href="print.countss.html">print.countss</a></td>
+<td>Print count-outcome sample-size results</td></tr>
+<tr><td style="width: 25%;"><a href="print.simpower.html">print.simpower</a></td>
+<td>Print fixed-sample-size power results</td></tr>
+<tr><td style="width: 25%;"><a href="print.simss.html">print.simss</a></td>
+<td>Print Summary of Sample Size Estimation</td></tr>
+<tr><td style="width: 25%;"><a href="print.simss_mielke.html">print.simss_mielke</a></td>
+<td>Print a Mielke sample-size result</td></tr>
+<tr><td style="width: 25%;"><a href="run_simulations.html">run_simulations</a></td>
+<td>Run a design-specific simulation</td></tr>
+<tr><td style="width: 25%;"><a href="run_simulations_2x2_dom.html">run_simulations_2x2_dom</a></td>
+<td>Run Simulations for a 2x2 Crossover Design with Difference of Means (DOM) test</td></tr>
+<tr><td style="width: 25%;"><a href="run_simulations_2x2_rom.html">run_simulations_2x2_rom</a></td>
+<td>Run Simulations for a 2x2 Crossover Design with Ratio of Means (ROM) test</td></tr>
+<tr><td style="width: 25%;"><a href="run_simulations_par_dom.html">run_simulations_par_dom</a></td>
+<td>Run Simulations for a Parallel Design with Difference of Means (DOM) test</td></tr>
+<tr><td style="width: 25%;"><a href="run_simulations_par_rom.html">run_simulations_par_rom</a></td>
+<td>Run Simulations for a Parallel Design with Ratio of Means (ROM) test</td></tr>
+<tr><td style="width: 25%;"><a href="sampleSize.html">sampleSize</a></td>
+<td>Sample Size Calculation for Bioequivalence and Multi-Endpoint Studies</td></tr>
+<tr><td style="width: 25%;"><a href="sampleSize_count.html">sampleSize_count</a></td>
+<td>Estimate sample size for count-rate equivalence</td></tr>
+<tr><td style="width: 25%;"><a href="sampleSize_count_joint.html">sampleSize_count_joint</a></td>
+<td>Estimate sample size for joint correlated count equivalence</td></tr>
+<tr><td style="width: 25%;"><a href="sampleSize_Mielke.html">sampleSize_Mielke</a></td>
+<td>Sample Size Estimation for Multiple Hypothesis Testing Using Mielke's Method</td></tr>
+<tr><td style="width: 25%;"><a href="simParallelEndpoints.html">simParallelEndpoints</a></td>
+<td>Generate Simulated Endpoint Data for Parallel Group Design</td></tr>
+<tr><td style="width: 25%;"><a href="simPower.html">simPower</a></td>
+<td>Estimate power at a fixed sample size</td></tr>
+<tr><td style="width: 25%;"><a href="SimTOST.html">SimTOST</a></td>
+<td>Sample Size Estimation via Simulation</td></tr>
+<tr><td style="width: 25%;"><a href="summary.countpower.html">summary.countpower</a></td>
+<td>Summarize count-outcome power results</td></tr>
+<tr><td style="width: 25%;"><a href="summary.countss.html">summary.countss</a></td>
+<td>Summary for Count Sample-Size Results</td></tr>
+<tr><td style="width: 25%;"><a href="summary.simpower.html">summary.simpower</a></td>
+<td>Summarize fixed-sample-size power results</td></tr>
+<tr><td style="width: 25%;"><a href="summary.simss.html">summary.simss</a></td>
+<td>Summary for Simulation Results</td></tr>
+<tr><td style="width: 25%;"><a href="test_2x2_dom.html">test_2x2_dom</a></td>
+<td>Simulate a 2x2 Crossover Design and Compute Difference of Means (DOM)</td></tr>
+<tr><td style="width: 25%;"><a href="test_2x2_rom.html">test_2x2_rom</a></td>
+<td>Simulate a 2x2 Crossover Design and Compute Ratio of Means (ROM)</td></tr>
+<tr><td style="width: 25%;"><a href="test_par_dom.html">test_par_dom</a></td>
+<td>Simulate a Parallel Design and Test Difference of Means (DOM)</td></tr>
+<tr><td style="width: 25%;"><a href="test_par_rom.html">test_par_rom</a></td>
+<td>Simulate a Parallel Design and Test Ratio of Means (ROM)</td></tr>
+<tr><td style="width: 25%;"><a href="type1Error.html">type1Error</a></td>
+<td>Empirical Type I Error at the Least-Favorable Null</td></tr>
+<tr><td style="width: 25%;"><a href="update.countpower.html">update.countpower</a></td>
+<td>Update a standalone count power calculation</td></tr>
+<tr><td style="width: 25%;"><a href="update.countss.html">update.countss</a></td>
+<td>Update a standalone count sample-size calculation</td></tr>
+<tr><td style="width: 25%;"><a href="update.simpower.html">update.simpower</a></td>
+<td>Update a SimTOST fixed-sample-size power calculation</td></tr>
+<tr><td style="width: 25%;"><a href="update.simss.html">update.simss</a></td>
+<td>Update a SimTOST sample-size calculation</td></tr>
+<tr><td style="width: 25%;"><a href="sub-.simss_mielke.html">[.simss_mielke</a></td>
+<td>Preserve named-vector indexing for legacy Mielke examples</td></tr>
+</table>
+</div></body></html>

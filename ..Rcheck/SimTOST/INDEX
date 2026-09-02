@@ -1,0 +1,82 @@
+.plot_correlation       Plot simulated endpoint correlations
+.power_count_joint_serial
+                        Estimate joint power for correlated count
+                        endpoints and multiple comparisons
+.power_count_serial     Estimate power for count-rate equivalence
+SimTOST                 Sample Size Estimation via Simulation
+[.simss_mielke          Preserve named-vector indexing for legacy
+                        Mielke examples
+as.numeric.simss_mielke
+                        Coerce a Mielke result to a numeric sample size
+confint.countpower      Extract the Monte Carlo confidence interval
+                        from count power results
+confint.simpower        Extract the Monte Carlo confidence interval
+                        from fixed-sample-size power results
+confint.simss           Confidence Interval for Achieved Power from
+                        simss object
+get_par                 Parameter Configuration for Endpoints and
+                        Comparators
+plot.countpower         Plot count-outcome power results
+plot.countss            Plot count-outcome sample-size results
+plot.simpower           Plot fixed-sample-size power results
+plot.simpower_curve     Plot fixed-sample-size power results
+plot.simss              Plot Power vs Sample Size for Simulation
+                        Results
+plot.type1error         Plot empirical Type I error
+plot.type1error_joint   Plot joint Type I error scenarios
+plot_decision_heatmap   Plot simulated decision heatmaps
+plot_distribution       Plot distributions of retained simulated
+                        observations
+plot_mc_error           Plot Monte Carlo error
+plot_stability          Plot simulation stability
+power_dom               Power Calculation for Difference of Means (DOM)
+                        Hypothesis Test
+print.countpower        Print count-outcome power results
+print.countss           Print count-outcome sample-size results
+print.simpower          Print fixed-sample-size power results
+print.simss             Print Summary of Sample Size Estimation
+print.simss_mielke      Print a Mielke sample-size result
+run_simulations         Run a design-specific simulation
+run_simulations_2x2_dom
+                        Run Simulations for a 2x2 Crossover Design with
+                        Difference of Means (DOM) test
+run_simulations_2x2_rom
+                        Run Simulations for a 2x2 Crossover Design with
+                        Ratio of Means (ROM) test
+run_simulations_par_dom
+                        Run Simulations for a Parallel Design with
+                        Difference of Means (DOM) test
+run_simulations_par_rom
+                        Run Simulations for a Parallel Design with
+                        Ratio of Means (ROM) test
+sampleSize              Sample Size Calculation for Bioequivalence and
+                        Multi-Endpoint Studies
+sampleSize_Mielke       Sample Size Estimation for Multiple Hypothesis
+                        Testing Using Mielke's Method
+sampleSize_count        Estimate sample size for count-rate equivalence
+sampleSize_count_joint
+                        Estimate sample size for joint correlated count
+                        equivalence
+simParallelEndpoints    Generate Simulated Endpoint Data for Parallel
+                        Group Design
+simPower                Estimate power at a fixed sample size
+summary.countpower      Summarize count-outcome power results
+summary.countss         Summary for Count Sample-Size Results
+summary.simpower        Summarize fixed-sample-size power results
+summary.simss           Summary for Simulation Results
+test_2x2_dom            Simulate a 2x2 Crossover Design and Compute
+                        Difference of Means (DOM)
+test_2x2_rom            Simulate a 2x2 Crossover Design and Compute
+                        Ratio of Means (ROM)
+test_par_dom            Simulate a Parallel Design and Test Difference
+                        of Means (DOM)
+test_par_rom            Simulate a Parallel Design and Test Ratio of
+                        Means (ROM)
+type1Error              Empirical Type I Error at the Least-Favorable
+                        Null
+update.countpower       Update a standalone count power calculation
+update.countss          Update a standalone count sample-size
+                        calculation
+update.simpower         Update a SimTOST fixed-sample-size power
+                        calculation
+update.simss            Update a SimTOST sample-size calculation
