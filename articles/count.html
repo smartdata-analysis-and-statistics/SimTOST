@@ -129,6 +129,66 @@ on the log-rate-ratio scale. The workflow separates model validation
 from the final equivalence calculation: first check the supplied
 parameters and retained simulated data, then calculate and interpret the
 sample size.</p>
+<div class="section level3">
+<h3 id="parameters-required-for-count-outcomes">Parameters required for count outcomes<a class="anchor" aria-label="anchor" href="#parameters-required-for-count-outcomes"></a>
+</h3>
+<p>Count models require an event rate for every arm and endpoint, rather
+than a mean and standard deviation as in a continuous-outcome model. The
+main inputs are:</p>
+<ul>
+<li>
+<code>rate_list</code>: the event rate for each arm, expressed per
+unit of exposure;</li>
+<li>
+<code>exposure</code>: the amount of observation time or opportunity
+contributed by one participant;</li>
+<li>
+<code>list_comparator</code>: the arm pairs to compare;</li>
+<li>
+<code>list_lequi.tol</code> and <code>list_uequi.tol</code>: the
+lower and upper rate-ratio equivalence margins;</li>
+<li>
+<code>cor_mat</code>: the dependence between endpoints when there is
+more than one endpoint; and</li>
+<li>
+<code>distribution</code>: either <code>"pois"</code> for Poisson
+counts or <code>"nbinom"</code> for negative-binomial counts.</li>
+</ul>
+<p>The expected count is the rate multiplied by the exposure:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>E</mi><mo stretchy="false" form="prefix">(</mo><mi>Y</mi><mo stretchy="false" form="postfix">)</mo><mo>=</mo><mtext mathvariant="normal">rate</mtext><mo>×</mo><mtext mathvariant="normal">exposure</mtext><mi>.</mi></mrow><annotation encoding="application/x-tex">
+E(Y) = \text{rate} \times \text{exposure}.
+</annotation></semantics></math></p>
+<p>For example, a rate of <code>0.20</code> per week and an exposure of
+<code>10</code> weeks imply an expected count of <code>2</code> events
+per participant. Exposure is therefore not the number of participants.
+If the supplied rate is already an expected count per participant over
+the complete study period, use <code>exposure = 1</code>. The rate and
+exposure must use compatible time units. Exposure can be a scalar, an
+endpoint-specific vector, or arm-specific values when follow-up differs
+between arms.</p>
+<p>For a Poisson model, the variance equals the mean and no dispersion
+parameter is needed. A negative-binomial model is used when the observed
+counts are more variable than a Poisson model allows. It requires the
+additional argument <code>dispersion</code>, which controls the extra
+variability while leaving the expected count unchanged:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mi mathvariant="normal">Var</mi><mo>⁡</mo></mrow><mo stretchy="false" form="prefix">(</mo><mi>Y</mi><mo stretchy="false" form="postfix">)</mo><mo>=</mo><mi>μ</mi><mo>+</mo><mtext mathvariant="normal">dispersion</mtext><mspace width="0.167em"></mspace><msup><mi>μ</mi><mn>2</mn></msup><mo>,</mo><mspace width="2.0em"></mspace><mi>μ</mi><mo>=</mo><mtext mathvariant="normal">rate</mtext><mo>×</mo><mtext mathvariant="normal">exposure</mtext><mi>.</mi></mrow><annotation encoding="application/x-tex">
+\operatorname{Var}(Y) = \mu + \text{dispersion}\,\mu^2,
+\qquad \mu = \text{rate} \times \text{exposure}.
+</annotation></semantics></math></p>
+<p>Thus, with an expected count of <code>2</code>,
+<code>dispersion = 0.50</code> gives a variance of approximately
+<code>2 + 0.50 * 2^2 = 4</code>. Larger dispersion means more variation
+between participants and usually less information per participant, which
+can increase the required sample size. The dispersion should be chosen
+from pilot data or prior knowledge and examined in a sensitivity
+analysis; it is not a replacement for the event rate or the
+exposure.</p>
+<p>The remaining planning inputs have the same meaning as for continuous
+outcomes: <code>power</code>, <code>alpha</code>, <code>nsim</code>,
+<code>seed</code>, and <code>dtype</code> specify the target power,
+type-I error level, number of simulations, reproducibility, and study
+design, respectively.</p>
+</div>
 </div>
 <div class="section level2">
 <h2 id="a-published-poisson-benchmark">A Published Poisson benchmark<a class="anchor" aria-label="anchor" href="#a-published-poisson-benchmark"></a>
@@ -173,12 +233,13 @@ published result is a large-sample approximation, whereas
 finite-sample Monte Carlo estimate.</p>
 </div>
 <div class="section level2">
-<h2 id="a-poisson-study">A Poisson study<a class="anchor" aria-label="anchor" href="#a-poisson-study"></a>
+<h2 id="a-count-study-example">A Count Study Example<a class="anchor" aria-label="anchor" href="#a-count-study-example"></a>
 </h2>
 <div class="section level3">
-<h3 id="step-1-define-the-study-and-theoretical-targets">Step 1: Define the study and theoretical targets<a class="anchor" aria-label="anchor" href="#step-1-define-the-study-and-theoretical-targets"></a>
+<h3 id="step-1-define-the-study-and-theoretical-targets">Step 1: Define the Study and Theoretical Targets<a class="anchor" aria-label="anchor" href="#step-1-define-the-study-and-theoretical-targets"></a>
 </h3>
-<p>We now use the two-endpoint settings used throughout the rest of this
+<p>For this example, we utilize a two-endpoint, two-comparator count
+study, which will serve as the foundation for the remainder of this
 vignette. The supplied endpoint correlation is a latent Gaussian-copula
 correlation, not the expected Pearson correlation of the observed
 counts.</p>
@@ -195,9 +256,9 @@ counts.</p>
 <div class="section level3">
 <h3 id="step-2-run-a-pilot-with-samplesize">Step 2: Run a pilot with sampleSize()<a class="anchor" aria-label="anchor" href="#step-2-run-a-pilot-with-samplesize"></a>
 </h3>
-<p>As in the workflow vignette, first run a fixed-sample pilot while
-retaining the simulated data. This object is used for the diagnostics
-below.</p>
+<p>As in the workflow vignette, begin by running a pilot sample size
+calculation while retaining the simulated data. This object will be used
+for the diagnostics in the subsequent steps.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">poisson_diagnostic</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sampleSize.html">sampleSize</a></span><span class="op">(</span></span>
 <span>  distribution <span class="op">=</span> <span class="st">"pois"</span>, rate_list <span class="op">=</span> <span class="va">count_rates</span>,</span>
@@ -382,15 +443,48 @@ sensitivity analyses when overdispersion is uncertain.</p>
 <div class="section level3">
 <h3 id="use-the-same-settings-for-a-two-by-two-crossover">Use the same settings for a two-by-two crossover<a class="anchor" aria-label="anchor" href="#use-the-same-settings-for-a-two-by-two-crossover"></a>
 </h3>
-<p>Finally, we retain the negative-binomial rates, exposure, dispersion,
-correlation matrix, margins, and target power, and change only the
-design to a balanced two-by-two crossover. For
+<p>In a crossover calculation, the count-model inputs from the parallel
+design are still needed: <code>rate_list</code>, <code>exposure</code>,
+<code>dispersion</code> (for a negative-binomial model),
+<code>list_comparator</code>, the equivalence margins, and the endpoint
+correlation. These describe the treatment effect and the count
+distribution. The crossover design additionally describes how each
+participant contributes observations under both treatments:</p>
+<ul>
+<li>
+<code>sigmaB</code> is the between-participant standard deviation on
+the log-rate scale. It represents persistent participant-to-participant
+heterogeneity in event rates.</li>
+<li>
+<code>Eper</code> is a length-two vector of period effects on the
+log-rate scale. For example, <code>c(0, 0.10)</code> means that the
+second period has a 0.10 log-rate increase relative to the first
+period.</li>
+<li>
+<code>Eco</code> is a length-two vector of carry-over effects,
+ordered as reference carry-over and treatment carry-over. Use
+<code>c(0, 0)</code> when there is no carry-over effect assumed.</li>
+<li>
+<code>dropout</code> is a length-two vector of dropout proportions
+for the two sequences. Use <code>c(0, 0)</code> when no dropout is
+expected.</li>
+</ul>
+<p>For the crossover, <code>exposure</code> refers to the observation
+time or opportunity for each treatment-period count. A participant
+contributes one count under each treatment when complete. For
 <code>dtype = "2x2"</code>, <code>n</code> and <code>n_per_arm</code>
-refer to participants per sequence.</p>
+refer to participants per sequence, not the total number of participants
+across both sequences. The crossover-specific parameters should be
+obtained from pilot data or subject-matter knowledge; they should not be
+copied from the parallel-arm standard deviations.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">crossover_sample_size</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/update.html" class="external-link">update</a></span><span class="op">(</span><span class="va">negative_binomial_sample_size</span>,</span>
-<span>                                dtype <span class="op">=</span> <span class="st">"2x2"</span><span class="op">)</span></span>
+<span>                                dtype <span class="op">=</span> <span class="st">"2x2"</span>,</span>
+<span>                                sigmaB <span class="op">=</span> <span class="fl">0.30</span>,</span>
+<span>                                Eper <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.10</span><span class="op">)</span>,</span>
+<span>                                Eco <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span>,</span>
+<span>                                dropout <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.10</span>, <span class="fl">0.10</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">crossover_sample_size</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Sample Size Summary</span></span>
@@ -402,8 +496,8 @@ refer to participants per sequence.</p>
 <span><span class="co">#&gt; Hypotheses         : H0: RR &lt;= L or &gt;= U; H1: L &lt; RR &lt; U</span></span>
 <span><span class="co">#&gt; Alpha              : 0.05 </span></span>
 <span><span class="co">#&gt; Target power       : 0.8000 </span></span>
-<span><span class="co">#&gt; Achieved power     : 0.8030 </span></span>
-<span><span class="co">#&gt; Power interval     : [0.7767, 0.8269] </span></span>
+<span><span class="co">#&gt; Achieved power     : 0.8160 </span></span>
+<span><span class="co">#&gt; Power interval     : [0.7903, 0.8393] </span></span>
 <span><span class="co">#&gt; Required endpoints : 2 </span></span>
 <span><span class="co">#&gt; Alpha adjustment   : none </span></span>
 <span><span class="co">#&gt; </span></span>
@@ -414,17 +508,17 @@ refer to participants per sequence.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Estimated Sample Size:</span></span>
 <span><span class="co">#&gt;  seq0 seq1 Total</span></span>
-<span><span class="co">#&gt;   229  229   458</span></span>
+<span><span class="co">#&gt;   232  232   514</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/stats/confint.html" class="external-link">confint</a></span><span class="op">(</span><span class="va">crossover_sample_size</span><span class="op">)</span></span>
 <span><span class="co">#&gt;     Lower     Upper </span></span>
-<span><span class="co">#&gt; 0.7769717 0.8272302 </span></span>
+<span><span class="co">#&gt; 0.7905659 0.8395577 </span></span>
 <span><span class="co">#&gt; attr(,"conf.level")</span></span>
 <span><span class="co">#&gt; [1] 0.95</span></span></code></pre></div>
 <p>The crossover calculation uses the same treatment-effect and endpoint
-settings but evaluates paired treatment-period data. Additional
-assumptions can be supplied through <code>sigmaB</code>,
-<code>Eper</code>, <code>Eco</code>, and <code>dropout</code> when
-supported by the study design or prior data.</p>
+settings but evaluates paired treatment-period data. The values above
+are illustrative; in an actual study, <code>sigmaB</code>, period
+effects, carry-over effects, and sequence-specific dropout should be
+justified from prior data or a sensitivity analysis.</p>
 </div>
 </div>
 <div class="section level2">
@@ -458,7 +552,7 @@ Trials.”</span> <em>Statistics in Biopharmaceutical Research</em> 9 (1):
 
       <footer><div class="copyright">
   <p></p>
-<p>Developed by Thomas Debray, Biogen Inc.</p>
+<p>Developed by Thomas Debray, Biogen Inc, Smart Data Analysis and Statistics B.V..</p>
 </div>
 
 <div class="pkgdown">
