@@ -17,7 +17,8 @@
 #'   \item Wei Wei \email{wei.wei@biogen.com} \code{[contributor]}
 #'   \item Marian Mitroiu \email{marian.mitroiu@biogen.com} \code{[contributor]}
 #'   \item Scott McDonald \email{scott.mcdonald@fromdatatowisdom.com} \code{[contributor]}
-#'   \item Biogen Inc \code{[copyright holder, funder]}
+#'   \item Biogen Inc \code{[copyright holder, funder]} (original implementation v1.0.0)
+#'   \item Smart Data Analysis and Statistics B.V. \code{[copyright holder, funder]} (subsequent developments)
 #' }
 #' @references
 #' Mielke, J., Jones, B., Jilma, B. & König, F. Sample Size for Multiple Hypothesis Testing in Biosimilar Development. \emph{Statistics in Biopharmaceutical Research} 10, 39–49 (2018).

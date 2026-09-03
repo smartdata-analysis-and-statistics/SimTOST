@@ -76,6 +76,7 @@ Other contributors:
 \item Wei Wei \email{wei.wei@biogen.com} \code{[contributor]}
 \item Marian Mitroiu \email{marian.mitroiu@biogen.com} \code{[contributor]}
 \item Scott McDonald \email{scott.mcdonald@fromdatatowisdom.com} \code{[contributor]}
-\item Biogen Inc \code{[copyright holder, funder]}
+\item Biogen Inc \code{[copyright holder, funder]} (original implementation v1.0.0)
+\item Smart Data Analysis and Statistics B.V. \code{[copyright holder, funder]} (subsequent developments)
 }
 }

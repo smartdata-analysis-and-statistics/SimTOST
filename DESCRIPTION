@@ -31,7 +31,12 @@ Authors@R: c(
            family = "McDonald",
            email = "scott.mcdonald@fromdatatowisdom.com",
            role = c("ctb")),
-    person("Biogen Inc", role = c("cph", "fnd"))
+    person("Biogen Inc",
+           role = c("cph", "fnd"),
+           comment = "Copyright holder and funder of the original implementation v1.0.0"),
+    person("Smart Data Analysis and Statistics B.V.",
+           role = c("cph", "fnd"),
+           comment = "Copyright holder and funder of subsequent developments")
     )
 Description: 
     Sample size estimation for bio-equivalence trials is supported through a simulation-based approach 

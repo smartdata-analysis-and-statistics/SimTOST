@@ -37,6 +37,60 @@ log-rate-ratio scale. The workflow separates model validation from the final
 equivalence calculation: first check the supplied parameters and retained
 simulated data, then calculate and interpret the sample size.
 
+### Parameters required for count outcomes
+
+Count models require an event rate for every arm and endpoint, rather than a
+mean and standard deviation as in a continuous-outcome model. The main inputs
+are:
+
+* `rate_list`: the event rate for each arm, expressed per unit of exposure;
+* `exposure`: the amount of observation time or opportunity contributed by
+  one participant;
+* `list_comparator`: the arm pairs to compare;
+* `list_lequi.tol` and `list_uequi.tol`: the lower and upper rate-ratio
+  equivalence margins;
+* `cor_mat`: the dependence between endpoints when there is more than one
+  endpoint; and
+* `distribution`: either `"pois"` for Poisson counts or `"nbinom"` for
+  negative-binomial counts.
+
+The expected count is the rate multiplied by the exposure:
+
+\[
+E(Y) = \text{rate} \times \text{exposure}.
+\]
+
+For example, a rate of `0.20` per week and an exposure of `10` weeks imply
+an expected count of `2` events per participant. Exposure is therefore not
+the number of participants. If the supplied rate is already an expected
+count per participant over the complete study period, use `exposure = 1`.
+The rate and exposure must use compatible time units. Exposure can be a
+scalar, an endpoint-specific vector, or arm-specific values when follow-up
+differs between arms.
+
+For a Poisson model, the variance equals the mean and no dispersion parameter
+is needed. A negative-binomial model is used when the observed counts are more
+variable than a Poisson model allows. It requires the additional argument
+`dispersion`, which controls the extra variability while leaving the expected
+count unchanged:
+
+\[
+\operatorname{Var}(Y) = \mu + \text{dispersion}\,\mu^2,
+\qquad \mu = \text{rate} \times \text{exposure}.
+\]
+
+Thus, with an expected count of `2`, `dispersion = 0.50` gives a variance of
+approximately `2 + 0.50 * 2^2 = 4`. Larger dispersion means more variation
+between participants and usually less information per participant, which can
+increase the required sample size. The dispersion should be chosen from pilot
+data or prior knowledge and examined in a sensitivity analysis; it is not a
+replacement for the event rate or the exposure.
+
+The remaining planning inputs have the same meaning as for continuous
+outcomes: `power`, `alpha`, `nsim`, `seed`, and `dtype` specify the target
+power, type-I error level, number of simulations, reproducibility, and study
+design, respectively.
+
 ## A Published Poisson benchmark
 
 Zhu [@zhu_sample_2017] reports a two-arm Poisson equivalence calculation with
@@ -70,11 +124,11 @@ The simulation need not reproduce the published value exactly. The published
 result is a large-sample approximation, whereas `simPower()` simulates
 discrete event totals and reports a finite-sample Monte Carlo estimate.
 
-## A Poisson study
-### Step 1: Define the study and theoretical targets
+## A Count Study Example
 
-We now use the two-endpoint settings used throughout the rest of this
-vignette. The supplied endpoint correlation is a latent Gaussian-copula
+### Step 1:  Define the Study and Theoretical Targets
+
+For this example, we utilize a two-endpoint, two-comparator count study, which will serve as the foundation for the remainder of this vignette. The supplied endpoint correlation is a latent Gaussian-copula
 correlation, not the expected Pearson correlation of the observed counts.
 
 ```{r poisson-inputs}
@@ -89,8 +143,7 @@ count_exposure <- 10
 ```
 
 ### Step 2: Run a pilot with sampleSize()
-As in the workflow vignette, first run a fixed-sample pilot while retaining
-the simulated data. This object is used for the diagnostics below.
+As in the workflow vignette, begin by running a pilot sample size calculation while retaining the simulated data. This object will be used for the diagnostics in the subsequent steps.
 
 ```{r poisson-diagnostics}
 poisson_diagnostic <- sampleSize(
@@ -214,24 +267,51 @@ when overdispersion is uncertain.
 
 ### Use the same settings for a two-by-two crossover
 
-Finally, we retain the negative-binomial rates, exposure, dispersion,
-correlation matrix, margins, and target power, and change only the design to a
-balanced two-by-two crossover. For `dtype = "2x2"`, `n` and `n_per_arm` refer
-to participants per sequence.
+In a crossover calculation, the count-model inputs from the parallel design
+are still needed: `rate_list`, `exposure`, `dispersion` (for a
+negative-binomial model), `list_comparator`, the equivalence margins, and the
+endpoint correlation. These describe the treatment effect and the count
+distribution. The crossover design additionally describes how each participant
+contributes observations under both treatments:
+
+* `sigmaB` is the between-participant standard deviation on the log-rate
+  scale. It represents persistent participant-to-participant heterogeneity in
+  event rates.
+* `Eper` is a length-two vector of period effects on the log-rate scale. For
+  example, `c(0, 0.10)` means that the second period has a 0.10 log-rate
+  increase relative to the first period.
+* `Eco` is a length-two vector of carry-over effects, ordered as reference
+  carry-over and treatment carry-over. Use `c(0, 0)` when there is no
+  carry-over effect assumed.
+* `dropout` is a length-two vector of dropout proportions for the two
+  sequences. Use `c(0, 0)` when no dropout is expected.
+
+For the crossover, `exposure` refers to the observation time or opportunity
+for each treatment-period count. A participant contributes one count under
+each treatment when complete. For `dtype = "2x2"`, `n` and `n_per_arm` refer
+to participants per sequence, not the total number of participants across
+both sequences. The crossover-specific parameters should be obtained from
+pilot data or subject-matter knowledge; they should not be copied from the
+parallel-arm standard deviations.
 
 ```{r crossover-negative-binomial-sample-size}
 
 crossover_sample_size <- update(negative_binomial_sample_size,
-                                dtype = "2x2")
+                                dtype = "2x2",
+                                sigmaB = 0.30,
+                                Eper = c(0, 0.10),
+                                Eco = c(0, 0),
+                                dropout = c(0.10, 0.10))
 
 summary(crossover_sample_size)
 confint(crossover_sample_size)
 ```
 
 The crossover calculation uses the same treatment-effect and endpoint
-settings but evaluates paired treatment-period data. Additional assumptions
-can be supplied through `sigmaB`, `Eper`, `Eco`, and `dropout` when supported
-by the study design or prior data.
+settings but evaluates paired treatment-period data. The values above are
+illustrative; in an actual study, `sigmaB`, period effects, carry-over effects,
+and sequence-specific dropout should be justified from prior data or a
+sensitivity analysis.
 
 ## Interpretation and scope
 
