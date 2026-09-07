@@ -116,7 +116,7 @@ for 2x2 cross-over trials. As a first step, we load the package.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://smartdata-analysis-and-statistics.github.io/SimTOST/" class="external-link">SimTOST</a></span><span class="op">)</span></span></code></pre></div>
 <div class="section level2">
-<h2 id="bioequivalence-tests-for-auc-and-cmax">Bioequivalence Tests for AUC and Cmax<a class="anchor" aria-label="anchor" href="#bioequivalence-tests-for-auc-and-cmax"></a>
+<h2 id="bioequivalence-tests-for-auc-and-cmax">Bioequivalence tests for AUC and Cmax<a class="anchor" aria-label="anchor" href="#bioequivalence-tests-for-auc-and-cmax"></a>
 </h2>
 <p>We consider Example 1 from the PASS Sample Size Software Chapter 351
 <span class="citation">(<a href="#ref-PASSch351">NCSS 2025</a>)</span>.
@@ -151,7 +151,7 @@ function.</p>
 <span>                 list_lequi.tol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"T_vs_R"</span> <span class="op">=</span> <span class="va">lequi_lower</span><span class="op">)</span>,</span>
 <span>                 list_uequi.tol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"T_vs_R"</span> <span class="op">=</span> <span class="va">lequi_upper</span><span class="op">)</span>,</span>
 <span>                 dtype <span class="op">=</span> <span class="st">"2x2"</span>, ctype <span class="op">=</span> <span class="st">"DOM"</span>, distribution <span class="op">=</span> <span class="st">"norm"</span>,</span>
-<span>                 adjust <span class="op">=</span> <span class="st">"no"</span>, nsim <span class="op">=</span> <span class="fl">5000</span>, seed <span class="op">=</span> <span class="fl">1234</span><span class="op">)</span><span class="op">)</span></span>
+<span>                 adjust <span class="op">=</span> <span class="st">"none"</span>, nsim <span class="op">=</span> <span class="fl">5000</span>, seed <span class="op">=</span> <span class="fl">1234</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Sample Size Calculation Results</span></span>
 <span><span class="co">#&gt; -------------------------------------------------------------</span></span>
 <span><span class="co">#&gt; Study Design: 2x2 trial targeting 80% power with a 5% type-I error.</span></span>

@@ -160,9 +160,10 @@ E(Y) = \text{rate} \times \text{exposure}.
 </annotation></semantics></math></p>
 <p>For example, a rate of <code>0.20</code> per week and an exposure of
 <code>10</code> weeks imply an expected count of <code>2</code> events
-per participant. Exposure is therefore not the number of participants.
-If the supplied rate is already an expected count per participant over
-the complete study period, use <code>exposure = 1</code>. The rate and
+per participant. In this example, exposure is not the number of
+participants; instead, it is the number of follow-up weeks. If the
+supplied rate is already an expected count per participant over the
+complete study period, use <code>exposure = 1</code>. The rate and
 exposure must use compatible time units. Exposure can be a scalar, an
 endpoint-specific vector, or arm-specific values when follow-up differs
 between arms.</p>
@@ -191,7 +192,7 @@ design, respectively.</p>
 </div>
 </div>
 <div class="section level2">
-<h2 id="a-published-poisson-benchmark">A Published Poisson benchmark<a class="anchor" aria-label="anchor" href="#a-published-poisson-benchmark"></a>
+<h2 id="a-published-poisson-benchmark">A published Poisson benchmark<a class="anchor" aria-label="anchor" href="#a-published-poisson-benchmark"></a>
 </h2>
 <p>Zhu <span class="citation">(<a href="#ref-zhu_sample_2017">Zhu
 2017</a>)</span> reports a two-arm Poisson equivalence calculation with
@@ -233,16 +234,16 @@ published result is a large-sample approximation, whereas
 finite-sample Monte Carlo estimate.</p>
 </div>
 <div class="section level2">
-<h2 id="a-count-study-example">A Count Study Example<a class="anchor" aria-label="anchor" href="#a-count-study-example"></a>
+<h2 id="a-count-outcome-study-example">A count outcome study example<a class="anchor" aria-label="anchor" href="#a-count-outcome-study-example"></a>
 </h2>
 <div class="section level3">
-<h3 id="step-1-define-the-study-and-theoretical-targets">Step 1: Define the Study and Theoretical Targets<a class="anchor" aria-label="anchor" href="#step-1-define-the-study-and-theoretical-targets"></a>
+<h3 id="step-1-define-the-study-and-theoretical-targets">Step 1: Define the study and theoretical targets<a class="anchor" aria-label="anchor" href="#step-1-define-the-study-and-theoretical-targets"></a>
 </h3>
 <p>For this example, we utilize a two-endpoint, two-comparator count
-study, which will serve as the foundation for the remainder of this
-vignette. The supplied endpoint correlation is a latent Gaussian-copula
-correlation, not the expected Pearson correlation of the observed
-counts.</p>
+outcome study, which will serve as the foundation for the remainder of
+this vignette. The supplied endpoint correlation is a latent
+Gaussian-copula correlation, not the expected Pearson correlation of the
+observed counts.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">count_corr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0.5</span>, <span class="fl">0.5</span>, <span class="fl">1</span><span class="op">)</span>, nrow <span class="op">=</span> <span class="fl">2</span>,</span>
 <span>                     dimnames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"y1"</span>, <span class="st">"y2"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"y1"</span>, <span class="st">"y2"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
@@ -254,7 +255,7 @@ counts.</p>
 <span><span class="va">count_exposure</span> <span class="op">&lt;-</span> <span class="fl">10</span></span></code></pre></div>
 </div>
 <div class="section level3">
-<h3 id="step-2-run-a-pilot-with-samplesize">Step 2: Run a pilot with sampleSize()<a class="anchor" aria-label="anchor" href="#step-2-run-a-pilot-with-samplesize"></a>
+<h3 id="step-2-run-a-pilot-with-samplesize">Step 2: Run a pilot with <code>sampleSize()</code><a class="anchor" aria-label="anchor" href="#step-2-run-a-pilot-with-samplesize"></a>
 </h3>
 <p>As in the workflow vignette, begin by running a pilot sample size
 calculation while retaining the simulated data. This object will be used
@@ -441,13 +442,13 @@ about 2, whereas the negative-binomial variance is approximately
 sensitivity analyses when overdispersion is uncertain.</p>
 </div>
 <div class="section level3">
-<h3 id="use-the-same-settings-for-a-two-by-two-crossover">Use the same settings for a two-by-two crossover<a class="anchor" aria-label="anchor" href="#use-the-same-settings-for-a-two-by-two-crossover"></a>
+<h3 id="use-the-same-settings-for-a-two-by-two-crossover-design">Use the same settings for a two-by-two crossover design<a class="anchor" aria-label="anchor" href="#use-the-same-settings-for-a-two-by-two-crossover-design"></a>
 </h3>
-<p>In a crossover calculation, the count-model inputs from the parallel
-design are still needed: <code>rate_list</code>, <code>exposure</code>,
-<code>dispersion</code> (for a negative-binomial model),
-<code>list_comparator</code>, the equivalence margins, and the endpoint
-correlation. These describe the treatment effect and the count
+<p>In a crossover design calculation, the count-model inputs from the
+parallel design are still needed: <code>rate_list</code>,
+<code>exposure</code>, <code>dispersion</code> (for a negative-binomial
+model), <code>list_comparator</code>, the equivalence margins, and the
+endpoint correlation. These describe the treatment effect and the count
 distribution. The crossover design additionally describes how each
 participant contributes observations under both treatments:</p>
 <ul>
@@ -469,14 +470,15 @@ ordered as reference carry-over and treatment carry-over. Use
 for the two sequences. Use <code>c(0, 0)</code> when no dropout is
 expected.</li>
 </ul>
-<p>For the crossover, <code>exposure</code> refers to the observation
-time or opportunity for each treatment-period count. A participant
-contributes one count under each treatment when complete. For
-<code>dtype = "2x2"</code>, <code>n</code> and <code>n_per_arm</code>
-refer to participants per sequence, not the total number of participants
-across both sequences. The crossover-specific parameters should be
-obtained from pilot data or subject-matter knowledge; they should not be
-copied from the parallel-arm standard deviations.</p>
+<p>For the crossover design, <code>exposure</code> refers to the
+observation time or opportunity for each treatment-period count. A
+participant contributes one count under each treatment when complete.
+For <code>dtype = "2x2"</code>, <code>n</code> and
+<code>n_per_arm</code> refer to participants per sequence, not the total
+number of participants across both sequences. The crossover-specific
+parameters should be obtained from pilot data or subject-matter
+knowledge; they should not be copied from the parallel-arm standard
+deviations.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">crossover_sample_size</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/update.html" class="external-link">update</a></span><span class="op">(</span><span class="va">negative_binomial_sample_size</span>,</span>
@@ -514,29 +516,18 @@ copied from the parallel-arm standard deviations.</p>
 <span><span class="co">#&gt; 0.7905659 0.8395577 </span></span>
 <span><span class="co">#&gt; attr(,"conf.level")</span></span>
 <span><span class="co">#&gt; [1] 0.95</span></span></code></pre></div>
-<p>The crossover calculation uses the same treatment-effect and endpoint
-settings but evaluates paired treatment-period data. The values above
-are illustrative; in an actual study, <code>sigmaB</code>, period
+<p>The crossover design calculation uses the same treatment-effect and
+endpoint settings but evaluates paired treatment-period data. The values
+above are illustrative; in an actual study, <code>sigmaB</code>, period
 effects, carry-over effects, and sequence-specific dropout should be
 justified from prior data or a sensitivity analysis.</p>
-</div>
-</div>
-<div class="section level2">
-<h2 id="interpretation-and-scope">Interpretation and scope<a class="anchor" aria-label="anchor" href="#interpretation-and-scope"></a>
-</h2>
-<p>The Poisson, negative-binomial, and crossover results are conditional
-on the specified rates, exposure, margins, endpoint dependence,
-dispersion, and design. Compare sample sizes only after the
-corresponding model checks pass. For count outcomes,
-<code>cor_mat</code> is a latent Gaussian-copula correlation matrix; it
-is not a correlation between treatment arms and is not required to equal
-the Pearson correlation of the observed counts.</p>
 <div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-zhu_sample_2017" class="csl-entry">
 Zhu, Haiyuan. 2017. <span>“Sample Size Calculation for Comparing Two
 Poisson or Negative Binomial Rates in Non-Inferiority or Equivalence
 Trials.”</span> <em>Statistics in Biopharmaceutical Research</em> 9 (1):
 107–15. <a href="https://doi.org/10.1080/19466315.2016.1225594" class="external-link">https://doi.org/10.1080/19466315.2016.1225594</a>.
+</div>
 </div>
 </div>
 </div>

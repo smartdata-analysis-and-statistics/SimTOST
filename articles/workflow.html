@@ -188,16 +188,16 @@ parameter, estimand, and correlation diagnostics.</p>
 <span>  rho <span class="op">=</span> <span class="fl">0.50</span>, list_comparator <span class="op">=</span> <span class="va">comparators</span>,</span>
 <span>  list_y_comparator <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>T_vs_R1 <span class="op">=</span> <span class="va">endpoints</span>, T_vs_R2 <span class="op">=</span> <span class="va">endpoints</span><span class="op">)</span>,</span>
 <span>  list_lequi.tol <span class="op">=</span> <span class="va">lower</span>, list_uequi.tol <span class="op">=</span> <span class="va">upper</span>,</span>
-<span>  dtype <span class="op">=</span> <span class="st">"parallel"</span>, adjust <span class="op">=</span> <span class="st">"no"</span>, k <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>  dtype <span class="op">=</span> <span class="st">"parallel"</span>, adjust <span class="op">=</span> <span class="st">"none"</span>, k <span class="op">=</span> <span class="fl">3</span>,</span>
 <span>  distribution <span class="op">=</span> <span class="st">"lnorm"</span>, ctype <span class="op">=</span> <span class="st">"ROM"</span>, ncores <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  nsim <span class="op">=</span> <span class="fl">500</span>, seed <span class="op">=</span> <span class="fl">2026</span>, keep_sim_data <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>The returned <code>simss</code> object is the <code>k = 3</code>
 pilot used for the diagnostic checks below. To evaluate the same pilot
 design under the alternative rule that requires at least two of the
-three endpoints per comparator, update the pilot. <code><a href="https://rdrr.io/r/stats/update.html" class="external-link">update()</a></code>
-retains the design, endpoint, margin, and simulation settings and
-replaces only the supplied arguments:</p>
+three endpoints per comparator, update the pilot using the following
+syntax. <code><a href="https://rdrr.io/r/stats/update.html" class="external-link">update()</a></code> retains the design, endpoint, margin, and
+simulation settings and replaces only the supplied arguments:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ss_pilot_k2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/update.html" class="external-link">update</a></span><span class="op">(</span><span class="va">ss_pilot</span>, adjust <span class="op">=</span> <span class="st">"bon"</span>, k <span class="op">=</span> <span class="fl">2</span>, seed <span class="op">=</span> <span class="fl">2026</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Warning: The adjustment is applied within each comparator's selected endpoint</span></span>
@@ -310,20 +310,21 @@ by the power calculation; that number is <code>nsim</code>.</p>
 <div class="section level3">
 <h3 id="step-4-check-monte-carlo-stability-and-precision">Step 4: Check Monte Carlo stability and precision<a class="anchor" aria-label="anchor" href="#step-4-check-monte-carlo-stability-and-precision"></a>
 </h3>
-<p>This step addresses: <em>“Is the number of simulations (nsim)
-sufficient for a stable estimate?”</em> It assesses precision, not model
-validity or study sample size. Every simulation estimate has Monte Carlo
-uncertainty. Simulation-study guidance recommends reporting this
-uncertainty and choosing the number of repetitions to achieve a stated
-precision <span class="citation">(<a href="#ref-siepe_simulation_2024">Siepe et al. 2024</a>)</span>.</p>
-<p>The <strong><code><a href="../reference/plot_stability.html">plot_stability()</a></code></strong> checks if the
-estimated rejection probability stabilizes as simulations accumulate.
-Compare the final value to the target power (0.80). By default, it
-diagnoses each comparator separately (<code>overall = FALSE</code>), use
-find which individual comparator or endpoint is causing instability. On
-the other hand use <code>overall = TRUE</code> for study-level precision
-checks, i.e to show the probability that the complete all-comparators
-decision passes in a trial.</p>
+<p>This step addresses Step 4 in the workflow above: <em>“Is the number
+of simulations (nsim) sufficient for a stable estimate?”</em> It
+assesses precision, not model validity or study sample size. Every
+simulation estimate has Monte Carlo uncertainty. Simulation-study
+guidance recommends reporting this uncertainty and choosing the number
+of repetitions to achieve a stated precision <span class="citation">(<a href="#ref-siepe_simulation_2024">Siepe et al. 2024</a>)</span>.</p>
+<p>The <strong><code><a href="../reference/plot_stability.html">plot_stability()</a></code> function</strong> checks if
+the estimated rejection probability stabilizes as simulations
+accumulate. Compare the final value to the target power (0.80). By
+default, it diagnoses each comparator separately
+(<code>overall = FALSE</code>), use find which individual comparator or
+endpoint is causing instability. On the other hand use
+<code>overall = TRUE</code> for study-level precision checks, i.e to
+show the probability that the complete all-comparators decision passes
+in a trial.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_stability.html">plot_stability</a></span><span class="op">(</span><span class="va">ss_pilot</span>, overall <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="workflow_files/figure-html/workflow-stability-1.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;"></p>
@@ -904,7 +905,7 @@ the same trial.</p>
 approximation</strong> of the worst-case scenario among the evaluated
 boundary configurations. Compare the global interval to the nominal
 value (<strong>5%) line</strong> as we did in the previous section.</p>
-<p>For <code>k = m</code>, <code>adjust = "no"</code> is generally
+<p>For <code>k = m</code>, <code>adjust = "none"</code> is generally
 appropriate for the endpoint IUT. For <code>k &lt; m</code>, use
 Mielke’s strong <code>adjust = "t"</code> calibration
 <code>alpha / (m - k + 1)</code> when strong control over partial null
@@ -933,7 +934,7 @@ simulated outcomes.</p>
 <span>  list_y_comparator <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>T_vs_R1 <span class="op">=</span> <span class="va">endpoints</span>, T_vs_R2 <span class="op">=</span> <span class="va">endpoints</span><span class="op">)</span>,</span>
 <span>  list_lequi.tol <span class="op">=</span> <span class="va">lower</span>, list_uequi.tol <span class="op">=</span> <span class="va">upper</span>,</span>
 <span>  dtype <span class="op">=</span> <span class="st">"parallel"</span>, ctype <span class="op">=</span> <span class="st">"ROM"</span>, distribution <span class="op">=</span> <span class="st">"lnorm"</span>,</span>
-<span>  adjust <span class="op">=</span> <span class="st">"no"</span>, k <span class="op">=</span> <span class="fl">3</span>, ncores <span class="op">=</span> <span class="fl">1</span>, nsim <span class="op">=</span> <span class="fl">2000</span>, seed <span class="op">=</span> <span class="fl">2026</span>,</span>
+<span>  adjust <span class="op">=</span> <span class="st">"none"</span>, k <span class="op">=</span> <span class="fl">3</span>, ncores <span class="op">=</span> <span class="fl">1</span>, nsim <span class="op">=</span> <span class="fl">2000</span>, seed <span class="op">=</span> <span class="fl">2026</span>,</span>
 <span>  keep_sim_data <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>In this example, the final run uses more trials than the 500-trial

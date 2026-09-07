@@ -126,13 +126,12 @@ general distributional assumptions used by all SimTOST outcomes are
 described in the companion vignette <a href="methodological_assumptions.Rmd"><code>methodological_assumptions.Rmd</code></a>.</p>
 <p>The count module supports scalar or vector-valued endpoint inputs. A
 joint simulation can require equivalence for <code>k</code> of the
-<code>m</code> endpoints and can apply Bonferroni, Mielke’s strong
-k-out-of-m (<code>adjust = "t"</code>), or Šidák adjustment to the
-endpoint-wise one-sided significance level. For a
-<code>k</code>-of-<code>m</code> decision, the t-adjustment uses
-<code>alpha / (m - k + 1)</code> <span class="citation">[@mielke_sample_2018]</span>. The joint count kernel
-can also simulate correlated endpoints through the <code>cor_mat</code>
-argument.</p>
+<code>m</code> endpoints and can apply Bonferroni, Mielke’s weak
+k-out-of-m (<code>adjust = "k"</code>), Mielke’s strong k-out-of-m
+(<code>adjust = "t"</code>), or Šidák adjustment to the endpoint-wise
+one-sided significance level.</p>
+<p>The joint count kernel can also simulate correlated endpoints through
+the <code>cor_mat</code> argument.</p>
 </div>
 <div class="section level2">
 <h2 id="study-assumptions">Study assumptions<a class="anchor" aria-label="anchor" href="#study-assumptions"></a>
@@ -158,8 +157,6 @@ argument.</p>
 <span></span>
 <span><span class="va">lower_margin</span> <span class="op">&lt;-</span> <span class="fl">0.80</span></span>
 <span><span class="va">upper_margin</span> <span class="op">&lt;-</span> <span class="fl">1.25</span></span>
-<span><span class="co"># Five units of follow-up provide a realistic event-count scale for this</span></span>
-<span><span class="co"># illustrative example and allow the target power to be reached efficiently.</span></span>
 <span><span class="va">exposure</span> <span class="op">&lt;-</span> <span class="fl">5</span></span></code></pre></div>
 <p>The rate-ratio equivalence interval is 0.80 to 1.25. We use a Poisson
 model for the primary example and a one-sided significance level of 0.05
@@ -172,30 +169,46 @@ for each TOST component.</p>
 endpoint and comparison. Here we use 100 participants per treatment arm
 and a small number of simulations to keep the vignette fast.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">fixed_power</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">comparisons</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">comp</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">arms</span> <span class="op">&lt;-</span> <span class="va">comparisons</span><span class="op">[[</span><span class="va">comp</span><span class="op">]</span><span class="op">]</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">rate_list</span><span class="op">[[</span><span class="va">arms</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">endpoint</span><span class="op">)</span> <span class="op">{</span></span>
-<span>    <span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simPower.html">simPower</a></span><span class="op">(</span></span>
-<span>      n <span class="op">=</span> <span class="fl">100</span>,</span>
-<span>      distribution <span class="op">=</span> <span class="st">"pois"</span>,</span>
-<span>      rate_list <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>        <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span><span class="va">rate_list</span><span class="op">[[</span><span class="va">arms</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="va">endpoint</span><span class="op">]</span><span class="op">]</span>, <span class="va">endpoint</span><span class="op">)</span>,</span>
-<span>        <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span><span class="va">rate_list</span><span class="op">[[</span><span class="va">arms</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="va">endpoint</span><span class="op">]</span><span class="op">]</span>, <span class="va">endpoint</span><span class="op">)</span></span>
-<span>      <span class="op">)</span>, <span class="va">arms</span><span class="op">)</span>,</span>
-<span>      list_comparator <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">arms</span><span class="op">)</span>, <span class="va">comp</span><span class="op">)</span>,</span>
-<span>      list_lequi.tol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">lower_margin</span><span class="op">)</span>, <span class="va">comp</span><span class="op">)</span>,</span>
-<span>      list_uequi.tol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">upper_margin</span><span class="op">)</span>, <span class="va">comp</span><span class="op">)</span>,</span>
-<span>      exposure <span class="op">=</span> <span class="va">exposure</span>,</span>
-<span>      dtype <span class="op">=</span> <span class="st">"parallel"</span>,</span>
-<span>      nsim <span class="op">=</span> <span class="fl">1000</span>,</span>
-<span>      seed <span class="op">=</span> <span class="fl">1234</span></span>
-<span>    <span class="op">)</span></span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>comparison <span class="op">=</span> <span class="va">comp</span>, endpoint <span class="op">=</span> <span class="va">endpoint</span>,</span>
-<span>               power <span class="op">=</span> <span class="va">result</span><span class="op">$</span><span class="va">power</span>,</span>
-<span>               power_LCI <span class="op">=</span> <span class="va">result</span><span class="op">$</span><span class="va">power_LCI</span>,</span>
-<span>               power_UCI <span class="op">=</span> <span class="va">result</span><span class="op">$</span><span class="va">power_UCI</span><span class="op">)</span></span>
-<span>  <span class="op">}</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="op">}</span><span class="op">)</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">run_fixed_power</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">comparison_name</span>, <span class="va">endpoint_name</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">arms</span> <span class="op">&lt;-</span> <span class="va">comparisons</span><span class="op">[[</span><span class="va">comparison_name</span><span class="op">]</span><span class="op">]</span></span>
+<span>  <span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simPower.html">simPower</a></span><span class="op">(</span></span>
+<span>    n <span class="op">=</span> <span class="fl">100</span>,</span>
+<span>    distribution <span class="op">=</span> <span class="st">"pois"</span>,</span>
+<span>    rate_list <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>      <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span><span class="va">rate_list</span><span class="op">[[</span><span class="va">arms</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="va">endpoint_name</span><span class="op">]</span><span class="op">]</span>, <span class="va">endpoint_name</span><span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span><span class="va">rate_list</span><span class="op">[[</span><span class="va">arms</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="va">endpoint_name</span><span class="op">]</span><span class="op">]</span>, <span class="va">endpoint_name</span><span class="op">)</span></span>
+<span>    <span class="op">)</span>, <span class="va">arms</span><span class="op">)</span>,</span>
+<span>    list_comparator <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">arms</span><span class="op">)</span>, <span class="va">comparison_name</span><span class="op">)</span>,</span>
+<span>    list_lequi.tol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">lower_margin</span><span class="op">)</span>, <span class="va">comparison_name</span><span class="op">)</span>,</span>
+<span>    list_uequi.tol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">upper_margin</span><span class="op">)</span>, <span class="va">comparison_name</span><span class="op">)</span>,</span>
+<span>    exposure <span class="op">=</span> <span class="va">exposure</span>,</span>
+<span>    dtype <span class="op">=</span> <span class="st">"parallel"</span>,</span>
+<span>    nsim <span class="op">=</span> <span class="fl">1000</span>,</span>
+<span>    seed <span class="op">=</span> <span class="fl">1234</span></span>
+<span>  <span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>    comparison <span class="op">=</span> <span class="va">comparison_name</span>, endpoint <span class="op">=</span> <span class="va">endpoint_name</span>,</span>
+<span>    power <span class="op">=</span> <span class="va">result</span><span class="op">$</span><span class="va">power</span>, power_LCI <span class="op">=</span> <span class="va">result</span><span class="op">$</span><span class="va">power_LCI</span>,</span>
+<span>    power_UCI <span class="op">=</span> <span class="va">result</span><span class="op">$</span><span class="va">power_UCI</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="co"># Each object is one transparent comparison-endpoint calculation.</span></span>
+<span><span class="va">fixed_power_EU_Exacerbations</span> <span class="op">&lt;-</span> <span class="fu">run_fixed_power</span><span class="op">(</span><span class="st">"EU_comparison"</span>, <span class="st">"Exacerbations"</span><span class="op">)</span></span>
+<span><span class="va">fixed_power_EU_Hospitalizations</span> <span class="op">&lt;-</span> <span class="fu">run_fixed_power</span><span class="op">(</span><span class="st">"EU_comparison"</span>, <span class="st">"Hospitalizations"</span><span class="op">)</span></span>
+<span><span class="va">fixed_power_EU_RescueEvents</span> <span class="op">&lt;-</span> <span class="fu">run_fixed_power</span><span class="op">(</span><span class="st">"EU_comparison"</span>, <span class="st">"RescueEvents"</span><span class="op">)</span></span>
+<span><span class="va">fixed_power_US_Exacerbations</span> <span class="op">&lt;-</span> <span class="fu">run_fixed_power</span><span class="op">(</span><span class="st">"US_comparison"</span>, <span class="st">"Exacerbations"</span><span class="op">)</span></span>
+<span><span class="va">fixed_power_US_Hospitalizations</span> <span class="op">&lt;-</span> <span class="fu">run_fixed_power</span><span class="op">(</span><span class="st">"US_comparison"</span>, <span class="st">"Hospitalizations"</span><span class="op">)</span></span>
+<span><span class="va">fixed_power_US_RescueEvents</span> <span class="op">&lt;-</span> <span class="fu">run_fixed_power</span><span class="op">(</span><span class="st">"US_comparison"</span>, <span class="st">"RescueEvents"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">fixed_power</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span></span>
+<span>  <span class="va">fixed_power_EU_Exacerbations</span>,</span>
+<span>  <span class="va">fixed_power_EU_Hospitalizations</span>,</span>
+<span>  <span class="va">fixed_power_EU_RescueEvents</span>,</span>
+<span>  <span class="va">fixed_power_US_Exacerbations</span>,</span>
+<span>  <span class="va">fixed_power_US_Hospitalizations</span>,</span>
+<span>  <span class="va">fixed_power_US_RescueEvents</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">fixed_power</span></span>
 <span><span class="co">#&gt;      comparison         endpoint power    power_LCI   power_UCI</span></span>
@@ -212,32 +225,49 @@ and a small number of simulations to keep the vignette fast.</p>
 <p>We now estimate the smallest sample size per arm that reaches 80%
 power for each individual comparison and endpoint.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">sample_size_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">comparisons</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">comp</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">arms</span> <span class="op">&lt;-</span> <span class="va">comparisons</span><span class="op">[[</span><span class="va">comp</span><span class="op">]</span><span class="op">]</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">rate_list</span><span class="op">[[</span><span class="va">arms</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">endpoint</span><span class="op">)</span> <span class="op">{</span></span>
-<span>    <span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sampleSize.html">sampleSize</a></span><span class="op">(</span></span>
-<span>      power <span class="op">=</span> <span class="fl">0.80</span>,</span>
-<span>      distribution <span class="op">=</span> <span class="st">"pois"</span>,</span>
-<span>      rate_list <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>        <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span><span class="va">rate_list</span><span class="op">[[</span><span class="va">arms</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="va">endpoint</span><span class="op">]</span><span class="op">]</span>, <span class="va">endpoint</span><span class="op">)</span>,</span>
-<span>        <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span><span class="va">rate_list</span><span class="op">[[</span><span class="va">arms</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="va">endpoint</span><span class="op">]</span><span class="op">]</span>, <span class="va">endpoint</span><span class="op">)</span></span>
-<span>      <span class="op">)</span>, <span class="va">arms</span><span class="op">)</span>,</span>
-<span>      list_comparator <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">arms</span><span class="op">)</span>, <span class="va">comp</span><span class="op">)</span>,</span>
-<span>      list_lequi.tol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">lower_margin</span><span class="op">)</span>, <span class="va">comp</span><span class="op">)</span>,</span>
-<span>      list_uequi.tol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">upper_margin</span><span class="op">)</span>, <span class="va">comp</span><span class="op">)</span>,</span>
-<span>      exposure <span class="op">=</span> <span class="va">exposure</span>,</span>
-<span>      dtype <span class="op">=</span> <span class="st">"parallel"</span>,</span>
-<span>      nsim <span class="op">=</span> <span class="fl">1000</span>,</span>
-<span>      seed <span class="op">=</span> <span class="fl">1234</span>,</span>
-<span>      lower <span class="op">=</span> <span class="fl">10</span>,</span>
-<span>      upper <span class="op">=</span> <span class="fl">2000</span></span>
-<span>    <span class="op">)</span></span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>comparison <span class="op">=</span> <span class="va">comp</span>, endpoint <span class="op">=</span> <span class="va">endpoint</span>,</span>
-<span>               n_per_arm <span class="op">=</span> <span class="va">result</span><span class="op">$</span><span class="va">n_per_arm</span>,</span>
-<span>               n_total_for_pair <span class="op">=</span> <span class="va">result</span><span class="op">$</span><span class="va">n_total</span>,</span>
-<span>               achieved_power <span class="op">=</span> <span class="va">result</span><span class="op">$</span><span class="va">power</span><span class="op">)</span></span>
-<span>  <span class="op">}</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="op">}</span><span class="op">)</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">run_sample_size</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">comparison_name</span>, <span class="va">endpoint_name</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">arms</span> <span class="op">&lt;-</span> <span class="va">comparisons</span><span class="op">[[</span><span class="va">comparison_name</span><span class="op">]</span><span class="op">]</span></span>
+<span>  <span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sampleSize.html">sampleSize</a></span><span class="op">(</span></span>
+<span>    power <span class="op">=</span> <span class="fl">0.80</span>,</span>
+<span>    distribution <span class="op">=</span> <span class="st">"pois"</span>,</span>
+<span>    rate_list <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>      <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span><span class="va">rate_list</span><span class="op">[[</span><span class="va">arms</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="va">endpoint_name</span><span class="op">]</span><span class="op">]</span>, <span class="va">endpoint_name</span><span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span><span class="va">rate_list</span><span class="op">[[</span><span class="va">arms</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="va">endpoint_name</span><span class="op">]</span><span class="op">]</span>, <span class="va">endpoint_name</span><span class="op">)</span></span>
+<span>    <span class="op">)</span>, <span class="va">arms</span><span class="op">)</span>,</span>
+<span>    list_comparator <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">arms</span><span class="op">)</span>, <span class="va">comparison_name</span><span class="op">)</span>,</span>
+<span>    list_lequi.tol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">lower_margin</span><span class="op">)</span>, <span class="va">comparison_name</span><span class="op">)</span>,</span>
+<span>    list_uequi.tol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">upper_margin</span><span class="op">)</span>, <span class="va">comparison_name</span><span class="op">)</span>,</span>
+<span>    exposure <span class="op">=</span> <span class="va">exposure</span>,</span>
+<span>    dtype <span class="op">=</span> <span class="st">"parallel"</span>,</span>
+<span>    nsim <span class="op">=</span> <span class="fl">1000</span>,</span>
+<span>    seed <span class="op">=</span> <span class="fl">1234</span>,</span>
+<span>    lower <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>    upper <span class="op">=</span> <span class="fl">2000</span></span>
+<span>  <span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>    comparison <span class="op">=</span> <span class="va">comparison_name</span>, endpoint <span class="op">=</span> <span class="va">endpoint_name</span>,</span>
+<span>    n_per_arm <span class="op">=</span> <span class="va">result</span><span class="op">$</span><span class="va">n_per_arm</span>, n_total_for_pair <span class="op">=</span> <span class="va">result</span><span class="op">$</span><span class="va">n_total</span>,</span>
+<span>    achieved_power <span class="op">=</span> <span class="va">result</span><span class="op">$</span><span class="va">power</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="co"># Again, keep the six calculations as named objects so each result can be</span></span>
+<span><span class="co"># inspected independently before combining them into one table.</span></span>
+<span><span class="va">sample_size_EU_Exacerbations</span> <span class="op">&lt;-</span> <span class="fu">run_sample_size</span><span class="op">(</span><span class="st">"EU_comparison"</span>, <span class="st">"Exacerbations"</span><span class="op">)</span></span>
+<span><span class="va">sample_size_EU_Hospitalizations</span> <span class="op">&lt;-</span> <span class="fu">run_sample_size</span><span class="op">(</span><span class="st">"EU_comparison"</span>, <span class="st">"Hospitalizations"</span><span class="op">)</span></span>
+<span><span class="va">sample_size_EU_RescueEvents</span> <span class="op">&lt;-</span> <span class="fu">run_sample_size</span><span class="op">(</span><span class="st">"EU_comparison"</span>, <span class="st">"RescueEvents"</span><span class="op">)</span></span>
+<span><span class="va">sample_size_US_Exacerbations</span> <span class="op">&lt;-</span> <span class="fu">run_sample_size</span><span class="op">(</span><span class="st">"US_comparison"</span>, <span class="st">"Exacerbations"</span><span class="op">)</span></span>
+<span><span class="va">sample_size_US_Hospitalizations</span> <span class="op">&lt;-</span> <span class="fu">run_sample_size</span><span class="op">(</span><span class="st">"US_comparison"</span>, <span class="st">"Hospitalizations"</span><span class="op">)</span></span>
+<span><span class="va">sample_size_US_RescueEvents</span> <span class="op">&lt;-</span> <span class="fu">run_sample_size</span><span class="op">(</span><span class="st">"US_comparison"</span>, <span class="st">"RescueEvents"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">sample_size_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span></span>
+<span>  <span class="va">sample_size_EU_Exacerbations</span>,</span>
+<span>  <span class="va">sample_size_EU_Hospitalizations</span>,</span>
+<span>  <span class="va">sample_size_EU_RescueEvents</span>,</span>
+<span>  <span class="va">sample_size_US_Exacerbations</span>,</span>
+<span>  <span class="va">sample_size_US_Hospitalizations</span>,</span>
+<span>  <span class="va">sample_size_US_RescueEvents</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">sample_size_results</span></span>
 <span><span class="co">#&gt;      comparison         endpoint n_per_arm n_total_for_pair achieved_power</span></span>
@@ -246,9 +276,7 @@ power for each individual comparison and endpoint.</p>
 <span><span class="co">#&gt; 3 EU_comparison     RescueEvents       846             1692          0.800</span></span>
 <span><span class="co">#&gt; 4 US_comparison    Exacerbations       793             1586          0.815</span></span>
 <span><span class="co">#&gt; 5 US_comparison Hospitalizations       903             1806          0.803</span></span>
-<span><span class="co">#&gt; 6 US_comparison     RescueEvents       846             1692          0.800</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/stopifnot.html" class="external-link">stopifnot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/all.html" class="external-link">all</a></span><span class="op">(</span><span class="va">sample_size_results</span><span class="op">$</span><span class="va">achieved_power</span> <span class="op">&gt;=</span> <span class="fl">0.80</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span><span class="co">#&gt; 6 US_comparison     RescueEvents       846             1692          0.800</span></span></code></pre></div>
 <p>For a simple conservative planning rule, select the maximum required
 sample size per arm across all six comparison-endpoint combinations:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
@@ -270,10 +298,17 @@ power calculation.</p>
 <p>The joint sample-size function receives all three arms, both
 comparison families, and all three endpoints at once. Here,
 <code>k = 3</code> requires all three endpoints to demonstrate
-equivalence for every comparison, while the Bonferroni option adjusts
-across all six comparison-endpoint tests. The returned sample size is
-therefore based on one joint simulated success criterion rather than the
-maximum of separate searches.</p>
+equivalence for every comparison. Because <code>k = m = 3</code>, all
+three endpoints must pass; no endpoint can be selected or omitted. An
+endpoint-wise adjustment is needed when the rule allows the study to
+pass by choosing only some endpoints, such as <code>k = 2</code> of
+<code>m = 3</code>, because there are then several possible successful
+endpoint subsets. With <code>k = m</code>, there is only one acceptable
+outcome: all three endpoints pass. The joint success rule therefore
+already defines the required criterion, and no endpoint-wise Bonferroni
+adjustment is required. The returned sample size is based on one joint
+simulated success criterion rather than the maximum of separate
+searches.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">endpoint_corr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
 <span>  <span class="fl">1.0</span>, <span class="fl">0.40</span>, <span class="fl">0.25</span>,</span>
@@ -302,7 +337,7 @@ maximum of separate searches.</p>
 <span>  lower <span class="op">=</span> <span class="fl">10</span>,</span>
 <span>  upper <span class="op">=</span> <span class="fl">3000</span>,</span>
 <span>  k <span class="op">=</span> <span class="fl">3</span>,</span>
-<span>  adjust <span class="op">=</span> <span class="st">"bonferroni"</span></span>
+<span>  adjust <span class="op">=</span> <span class="st">"none"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">joint_sample_size</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
@@ -315,8 +350,7 @@ maximum of separate searches.</p>
 <span></span>
 <span><span class="va">joint_sample_size</span></span>
 <span><span class="co">#&gt;   n_per_arm n_total achieved_power k adjustment</span></span>
-<span><span class="co">#&gt; 1      1881    5643            0.8 3 bonferroni</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/stopifnot.html" class="external-link">stopifnot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/all.html" class="external-link">all</a></span><span class="op">(</span><span class="va">joint_sample_size</span><span class="op">$</span><span class="va">achieved_power</span> <span class="op">&gt;=</span> <span class="fl">0.80</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span><span class="co">#&gt; 1      1443    4329          0.804 3       none</span></span></code></pre></div>
 <p>For a three-arm allocation, the reported total is three times the
 selected number per arm. Both comparison families share the simulated
 test-arm counts, and the endpoint correlation is generated through a
@@ -333,11 +367,12 @@ if two requirements each have 80% power and are independent, their joint
 success probability is only
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0.80</mn><mo>×</mo><mn>0.80</mn><mo>=</mo><mn>0.64</mn></mrow><annotation encoding="application/x-tex">0.80 \times 0.80 = 0.64</annotation></semantics></math>.</p>
 <p>The following comparison evaluates the separate result under the
-actual joint criterion. The joint calculations use Bonferroni adjustment
-across the six comparison-endpoint tests and require all three endpoints
-for both comparison families (<code>k = 3</code>). The
-independent-endpoint scenario uses an identity correlation matrix; the
-correlated scenario uses the matrix specified above.</p>
+actual joint criterion. The joint calculations require all three
+endpoints for both comparison families (<code>k = 3</code>). Since
+<code>k = m</code>, no endpoint-wise adjustment is needed here;
+Bonferroni could be added only as a conservative sensitivity analysis.
+The independent-endpoint scenario uses an identity correlation matrix;
+the correlated scenario uses the matrix specified above.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">joint_power_at_separate</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simPower.html">simPower</a></span><span class="op">(</span></span>
 <span>  n <span class="op">=</span> <span class="va">required_per_arm</span>,</span>
@@ -358,31 +393,14 @@ correlated scenario uses the matrix specified above.</p>
 <span>  nsim <span class="op">=</span> <span class="fl">1000</span>,</span>
 <span>  seed <span class="op">=</span> <span class="fl">1234</span>,</span>
 <span>  k <span class="op">=</span> <span class="fl">3</span>,</span>
-<span>  adjust <span class="op">=</span> <span class="st">"bonferroni"</span></span>
+<span>  adjust <span class="op">=</span> <span class="st">"none"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">joint_independent_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sampleSize.html">sampleSize</a></span><span class="op">(</span></span>
-<span>  power <span class="op">=</span> <span class="fl">0.80</span>,</span>
-<span>  distribution <span class="op">=</span> <span class="st">"pois"</span>,</span>
-<span>  rate_list <span class="op">=</span> <span class="va">rate_list</span>,</span>
-<span>  list_comparator <span class="op">=</span> <span class="va">comparisons</span>,</span>
-<span>  list_lequi.tol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>    EU_comparison <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">lower_margin</span>, <span class="fl">3</span><span class="op">)</span>,</span>
-<span>    US_comparison <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">lower_margin</span>, <span class="fl">3</span><span class="op">)</span></span>
-<span>  <span class="op">)</span>,</span>
-<span>  list_uequi.tol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>    EU_comparison <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">upper_margin</span>, <span class="fl">3</span><span class="op">)</span>,</span>
-<span>    US_comparison <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">upper_margin</span>, <span class="fl">3</span><span class="op">)</span></span>
-<span>  <span class="op">)</span>,</span>
-<span>  exposure <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">exposure</span>, <span class="fl">3</span><span class="op">)</span>,</span>
+<span><span class="va">joint_independent_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/update.html" class="external-link">update</a></span><span class="op">(</span></span>
+<span>  <span class="va">joint_result</span>,</span>
 <span>  cor_mat <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span>,</span>
-<span>  dtype <span class="op">=</span> <span class="st">"parallel"</span>,</span>
 <span>  nsim <span class="op">=</span> <span class="fl">500</span>,</span>
-<span>  seed <span class="op">=</span> <span class="fl">1234</span>,</span>
-<span>  lower <span class="op">=</span> <span class="fl">10</span>,</span>
-<span>  upper <span class="op">=</span> <span class="fl">3000</span>,</span>
-<span>  k <span class="op">=</span> <span class="fl">3</span>,</span>
-<span>  adjust <span class="op">=</span> <span class="st">"bonferroni"</span></span>
+<span>  seed <span class="op">=</span> <span class="fl">1234</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">joint_comparison</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
@@ -405,55 +423,38 @@ correlated scenario uses the matrix specified above.</p>
 <span></span>
 <span><span class="va">joint_comparison</span></span>
 <span><span class="co">#&gt;                                             approach n_per_arm joint_power</span></span>
-<span><span class="co">#&gt; 1 Separate searches; joint power evaluated afterward       903       0.159</span></span>
-<span><span class="co">#&gt; 2                Joint search; independent endpoints      1916       0.800</span></span>
-<span><span class="co">#&gt; 3                 Joint search; correlated endpoints      1881       0.800</span></span></code></pre></div>
+<span><span class="co">#&gt; 1 Separate searches; joint power evaluated afterward       903       0.437</span></span>
+<span><span class="co">#&gt; 2                Joint search; independent endpoints      1477       0.802</span></span>
+<span><span class="co">#&gt; 3                 Joint search; correlated endpoints      1443       0.804</span></span></code></pre></div>
 <p>The separate-search sample size is smaller because it guarantees only
-the individual 80% targets. In this example, its joint power is
-approximately 5% after the six-test Bonferroni adjustment, whereas the
-joint searches achieve the requested 80% trial-level power. This is the
-main advantage of joint planning: it answers the question that matters
-for the confirmatory trial, namely the probability that all required
-comparisons and endpoints succeed in the same simulated study. Positive
-endpoint correlation can reduce the joint sample size because endpoint
-successes tend to occur together, but it does not remove the need for a
-joint calculation.</p>
+the individual 80% targets. Its joint power can therefore be
+substantially below 80%, even without an endpoint-wise adjustment,
+whereas the joint search targets the requested 80% trial-level power
+directly. This is the main advantage of joint planning: it answers the
+question that matters for the confirmatory trial, namely the probability
+that all required comparisons and endpoints succeed in the same
+simulated study. Positive endpoint correlation can reduce the joint
+sample size because endpoint successes tend to occur together, but it
+does not remove the need for a joint calculation.</p>
 </div>
 <div class="section level2">
 <h2 id="negative-binomial-sensitivity-analysis">Negative-binomial sensitivity analysis<a class="anchor" aria-label="anchor" href="#negative-binomial-sensitivity-analysis"></a>
 </h2>
 <p>If prior evidence suggests overdispersion, repeat the final joint
 Poisson sample-size calculation with the negative-binomial model. All
-study settings are kept the same as in <code>joint_result</code>; only
-the distribution and dispersion are changed. The <code>dispersion</code>
-parameter controls the amount of overdispersion; larger values imply
-greater variability.</p>
+study settings are kept the same as in <code>joint_result</code>;
+<code><a href="https://rdrr.io/r/stats/update.html" class="external-link">update()</a></code> changes only the distribution and dispersion. The
+<code>dispersion</code> parameter controls the amount of overdispersion;
+larger values imply greater variability.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">nb_dispersion</span> <span class="op">&lt;-</span> <span class="fl">0.10</span></span>
 <span></span>
-<span><span class="va">joint_negative_binomial_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sampleSize.html">sampleSize</a></span><span class="op">(</span></span>
-<span>  power <span class="op">=</span> <span class="fl">0.80</span>,</span>
+<span><span class="va">joint_negative_binomial_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/update.html" class="external-link">update</a></span><span class="op">(</span></span>
+<span>  <span class="va">joint_result</span>,</span>
 <span>  distribution <span class="op">=</span> <span class="st">"nbinom"</span>,</span>
-<span>  rate_list <span class="op">=</span> <span class="va">rate_list</span>,</span>
-<span>  list_comparator <span class="op">=</span> <span class="va">comparisons</span>,</span>
-<span>  list_lequi.tol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>    EU_comparison <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">lower_margin</span>, <span class="fl">3</span><span class="op">)</span>,</span>
-<span>    US_comparison <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">lower_margin</span>, <span class="fl">3</span><span class="op">)</span></span>
-<span>  <span class="op">)</span>,</span>
-<span>  list_uequi.tol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>    EU_comparison <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">upper_margin</span>, <span class="fl">3</span><span class="op">)</span>,</span>
-<span>    US_comparison <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">upper_margin</span>, <span class="fl">3</span><span class="op">)</span></span>
-<span>  <span class="op">)</span>,</span>
-<span>  exposure <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">exposure</span>, <span class="fl">3</span><span class="op">)</span>,</span>
-<span>  cor_mat <span class="op">=</span> <span class="va">endpoint_corr</span>,</span>
-<span>  dtype <span class="op">=</span> <span class="st">"parallel"</span>,</span>
 <span>  dispersion <span class="op">=</span> <span class="va">nb_dispersion</span>,</span>
 <span>  nsim <span class="op">=</span> <span class="fl">500</span>,</span>
-<span>  seed <span class="op">=</span> <span class="fl">1234</span>,</span>
-<span>  lower <span class="op">=</span> <span class="fl">10</span>,</span>
-<span>  upper <span class="op">=</span> <span class="fl">3000</span>,</span>
-<span>  k <span class="op">=</span> <span class="fl">3</span>,</span>
-<span>  adjust <span class="op">=</span> <span class="st">"bonferroni"</span></span>
+<span>  seed <span class="op">=</span> <span class="fl">1234</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">nb_sample_size</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
@@ -467,7 +468,7 @@ greater variability.</p>
 <span></span>
 <span><span class="va">nb_sample_size</span></span>
 <span><span class="co">#&gt;   n_per_arm n_total achieved_power k adjustment dispersion</span></span>
-<span><span class="co">#&gt; 1      1925    5775            0.8 3 bonferroni        0.1</span></span></code></pre></div>
+<span><span class="co">#&gt; 1      1482    4446            0.8 3       none        0.1</span></span></code></pre></div>
 </div>
   </div>
 

@@ -269,13 +269,17 @@ treatment pairs and <code>list_lequi.tol</code> and
 <code>list_uequi.tol</code> provide the rate-ratio limits for each
 selected endpoint. A simulated trial is successful when the required
 number of endpoints passes for every required comparator. Endpoint
-dependence can be specified with <code>cor_mat</code>; for count
-outcomes this is a latent Gaussian-copula correlation and need not equal
-the Pearson correlation of the observed discrete counts <span class="citation">(<a href="#ref-chang_sample_2017">Chang et al.
+dependence can be specified with <code>cor_mat</code>. For count
+outcomes, <code>cor_mat</code> specifies the dependence between latent
+normal variables used to generate correlated counts. The resulting
+Pearson correlation between the observed discrete counts is generally
+different and depends on the marginal count distributions. For normally
+distributed continuous outcomes, the latent correlation and Pearson
+correlation coincide because the transformation is linear <span class="citation">(<a href="#ref-chang_sample_2017">Chang et al.
 2017</a>)</span>.</p>
 </div>
 <div class="section level3">
-<h3 id="regulatory-requirements">Regulatory Requirements<a class="anchor" aria-label="anchor" href="#regulatory-requirements"></a>
+<h3 id="regulatory-requirements">Regulatory requirements<a class="anchor" aria-label="anchor" href="#regulatory-requirements"></a>
 </h3>
 <p>When evaluating bioequivalence, certain statistical and
 methodological requirements must be adhered to, as outlined in the
@@ -288,8 +292,8 @@ summarized below:</p>
 <li>Hypothesis testing should be based on the ratio of the population
 geometric means</li>
 <li>The 90% confidence interval for the ratio of the test and reference
-products should be contained within the acceptance interval of 80.00 to
-125.00%.</li>
+products should be contained within the acceptance interval of 80 to
+125%.</li>
 <li>A margin of clinical equivalence
 (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi mathvariant="normal">Δ</mi><annotation encoding="application/x-tex">\Delta</annotation></semantics></math>)
 is chosen by defining the largest difference that is clinically
@@ -298,7 +302,7 @@ practice.</li>
 <li>The data should be transformed prior to analysis using a logarithmic
 transformation and subsequently be analyzed using ANOVA</li>
 </ul>
-<p>When conducting a DOM test, The FDA recommends that the equivalence
+<p>When conducting a DOM test, the FDA recommends that the equivalence
 acceptance criterion (EAC) be defined as
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>δ</mi><mo>=</mo><mi>E</mi><mi>A</mi><mi>C</mi><mo>=</mo><mn>1.5</mn><msub><mi>σ</mi><mi>R</mi></msub></mrow><annotation encoding="application/x-tex">\delta = EAC = 1.5 \sigma_R</annotation></semantics></math>,
 where
@@ -312,8 +316,8 @@ reference product.</p>
 </h2>
 <p>Assessment of equivalence is often required for more than one primary
 variable. <span class="citation">(<a href="#ref-sozu_sample_2015">Sozu
-et al. 2015b</a>)</span> For example, EMA recommends showing equivalence
-both for AUC and Cmax</p>
+et al. 2015b</a>)</span> For example, the EMA recommends showing
+equivalence both for AUC and Cmax</p>
 <p>A decision must be made as to whether it is desirable to</p>
 <ul>
 <li>Demonstrate equivalence for all primary endpoints
@@ -408,9 +412,6 @@ increases to approximately 14%.</p>
 necessary for multiple endpoint comparisons for which various methods
 have been proposed. In SimTOST, the following approaches are
 included:</p>
-<p>The <code>t</code> adjustment described below is the strong
-k-out-of-m procedure for partial-conjunction decisions and is distinct
-from the weak <code>k</code> adjustment.</p>
 <div class="section level4">
 <h4 id="bonferroni-correction">Bonferroni correction<a class="anchor" aria-label="anchor" href="#bonferroni-correction"></a>
 </h4>
@@ -470,6 +471,9 @@ is the total number of endpoints evaluated.</p>
 <div class="section level4">
 <h4 id="t-adjustment-mielkes-strong-k-out-of-m-correction">T adjustment: Mielke’s strong k-out-of-m correction<a class="anchor" aria-label="anchor" href="#t-adjustment-mielkes-strong-k-out-of-m-correction"></a>
 </h4>
+<p>The <code>t</code> adjustment described below is the strong
+k-out-of-m procedure for partial-conjunction decisions and is distinct
+from the weak <code>k</code> adjustment.</p>
 <p>When the decision rule requires equivalence for at least
 <code>k</code> of <code>m</code> endpoints, the null hypothesis is a
 partial-conjunction hypothesis. In this setting,

@@ -153,7 +153,7 @@ analysis:</p>
 <span>                               sd <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">11113.62172</span>, <span class="fl">12332.41615</span>,<span class="fl">12113.72</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="sample-size-calculation-for-aucinf-equivalence-to-eu-remicade">Sample Size Calculation for AUCinf: Equivalence to EU Remicade<a class="anchor" aria-label="anchor" href="#sample-size-calculation-for-aucinf-equivalence-to-eu-remicade"></a>
+<h2 id="sample-size-calculation-for-aucinf-equivalence-to-eu-remicade">Sample-size calculation for AUCinf: equivalence to EU Remicade<a class="anchor" aria-label="anchor" href="#sample-size-calculation-for-aucinf-equivalence-to-eu-remicade"></a>
 </h2>
 <p>This example demonstrates how to calculate the required sample size
 when testing the equivalence of SB2 to a reference drug, Remicade, as
@@ -197,7 +197,7 @@ contains a single element specifying these two arms:</p>
 <span><span class="va">list_uequi.tol</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"Comparison"</span> <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">0.8</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
-<h3 id="computing-sample-size">Computing Sample Size<a class="anchor" aria-label="anchor" href="#computing-sample-size"></a>
+<h3 id="computing-sample-size">Computing sample size<a class="anchor" aria-label="anchor" href="#computing-sample-size"></a>
 </h3>
 <p>Finally, we use the <a href="../reference/sampleSize.html">sampleSize()</a> function to
 calculate the required sample size based on stochastic simulations of
@@ -242,7 +242,7 @@ arm.</p>
 </div>
 </div>
 <div class="section level2">
-<h2 id="sample-size-calculation-for-aucinf-equivalence-to-us-remicade-and-eu-remicade">Sample Size Calculation for AUCinf: Equivalence to US Remicade and
+<h2 id="sample-size-calculation-for-aucinf-equivalence-to-us-remicade-and-eu-remicade">Sample-size calculation for AUCinf: equivalence to US Remicade and
 EU Remicade<a class="anchor" aria-label="anchor" href="#sample-size-calculation-for-aucinf-equivalence-to-us-remicade-and-eu-remicade"></a>
 </h2>
 <p>In this section, we calculate the sample size required to demonstrate
@@ -268,7 +268,7 @@ families.</li>
 </ul>
 </div>
 <div class="section level3">
-<h3 id="implementation-details">Implementation Details<a class="anchor" aria-label="anchor" href="#implementation-details"></a>
+<h3 id="implementation-details">Implementation details<a class="anchor" aria-label="anchor" href="#implementation-details"></a>
 </h3>
 <p>Implementation of this scenario is similar to the initial example, in
 which the <code>list_comparator</code> is modified to include multiple
@@ -286,7 +286,7 @@ for equivalence and are provided separately for each comparator.</p>
 <span><span class="va">list_uequi.tol</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"EMA"</span> <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">0.8</span>, <span class="st">"FDA"</span> <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">0.8</span><span class="op">)</span> <span class="co"># Upper equivalence boundary</span></span></code></pre></div>
 </div>
 <div class="section level3">
-<h3 id="computing-sample-size-1">Computing Sample Size<a class="anchor" aria-label="anchor" href="#computing-sample-size-1"></a>
+<h3 id="computing-sample-size-1">Computing sample size<a class="anchor" aria-label="anchor" href="#computing-sample-size-1"></a>
 </h3>
 <p>We then update the one-comparator result with the second comparison.
 This avoids repeating the common treatment-arm, distribution, and
@@ -317,7 +317,7 @@ simulation arguments while recalculating the joint design.</p>
 <span><span class="co">#&gt; -------------------------------------------------------------</span></span></code></pre></div>
 </div>
 <div class="section level3">
-<h3 id="results-and-interpretation">Results and Interpretation<a class="anchor" aria-label="anchor" href="#results-and-interpretation"></a>
+<h3 id="results-and-interpretation">Results and interpretation<a class="anchor" aria-label="anchor" href="#results-and-interpretation"></a>
 </h3>
 <p>The required total sample size for this scenario is 150. Notably, an
 additional 8 patients per arm are required to achieve equivalence with

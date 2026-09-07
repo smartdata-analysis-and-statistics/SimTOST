@@ -118,10 +118,8 @@ studies and applying the planned equivalence procedure to each simulated
 study. The same framework is available through <code><a href="../reference/sampleSize.html">sampleSize()</a></code>
 for planning and <code><a href="../reference/simPower.html">simPower()</a></code> for evaluating power at a fixed
 sample size. The <code>distribution</code> argument selects the outcome
-model:</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"norm"</span>, <span class="st">"lnorm"</span>, <span class="st">"pois"</span>, <span class="st">"nbinom"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "norm"   "lnorm"  "pois"   "nbinom"</span></span></code></pre></div>
+model using one of the documented choices: <code>"norm"</code>,
+<code>"lnorm"</code>, <code>"pois"</code>, or <code>"nbinom"</code>.</p>
 <p>This vignette describes the assumptions that should be considered
 when using these models. It is methodological guidance, not a substitute
 for a prespecified statistical analysis plan.</p>
@@ -181,7 +179,7 @@ appropriate when the scientific question concerns a ratio of means and
 the outcome scale supports that interpretation.</p>
 </div>
 <div class="section level3">
-<h3 id="log-normal-outcomes">Log Normal outcomes<a class="anchor" aria-label="anchor" href="#log-normal-outcomes"></a>
+<h3 id="log-normal-outcomes">Log-normal outcomes<a class="anchor" aria-label="anchor" href="#log-normal-outcomes"></a>
 </h3>
 <p>For <code>distribution = "lnorm"</code>, the simulated outcomes are
 positive and right-skewed. The ratio-of-means procedure is applied on
@@ -191,7 +189,7 @@ implementation.</p>
 <p>The Log Normal model assumes:</p>
 <ul>
 <li>strictly positive outcomes;</li>
-<li>approximately normal log-outcomes;</li>
+<li>approximately normal log-transformed outcomes;</li>
 <li>endpoint dependence represented through the supplied covariance or
 correlation inputs; and</li>
 <li>a ratio-based equivalence question rather than an additive one.</li>
@@ -201,8 +199,8 @@ zeros or negative values without an explicit transformation and a
 corresponding reconsideration of the estimand.</p>
 <p><code>distribution = "lnorm"</code> with <code>ctype = "DOM"</code>
 is rejected because the current implementation converts arithmetic means
-and covariances to the log scale and applies a DOM test there. That has
-a ratio interpretation on the original scale, not an additive difference
+and covariances to the log scale and applies a DOM test. This has a
+ratio interpretation on the original scale, not an additive difference
 interpretation. Use <code>distribution = "lnorm", ctype = "ROM"</code>
 for an arithmetic mean ratio, or use the normal distribution for an
 additive mean difference.</p>
@@ -245,7 +243,7 @@ recurrent-event dependence can make a Poisson analysis
 anticonservative.</p>
 </div>
 <div class="section level3">
-<h3 id="negative-binomial-outcomes">Negative Binomial outcomes<a class="anchor" aria-label="anchor" href="#negative-binomial-outcomes"></a>
+<h3 id="negative-binomial-outcomes">Negative-binomial outcomes<a class="anchor" aria-label="anchor" href="#negative-binomial-outcomes"></a>
 </h3>
 <p>For <code>distribution = "nbinom"</code>, let
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ϕ</mi><mrow><mi>a</mi><mi>j</mi></mrow></msub><mo>&gt;</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\phi_{aj} &gt; 0</annotation></semantics></math>
@@ -309,14 +307,14 @@ definite.</p>
 <p>For joint count simulations, <code>cor_mat</code> is interpreted as
 the correlation matrix of latent Gaussian variables. For each arm,
 SimTOST:</p>
-<ol style="list-style-type: decimal">
+<ul>
 <li>draws a multivariate standard-normal latent vector with correlation
 <code>cor_mat</code>;</li>
 <li>transforms each latent value to a uniform value using the standard
 normal CDF; and</li>
 <li>transforms each uniform value through the Poisson or
 negative-binomial inverse CDF for the specified arm and endpoint.</li>
-</ol>
+</ul>
 <p>This is a Gaussian-copula construction. It preserves the selected
 marginal count distributions while inducing dependence between
 endpoints. The entries of <code>cor_mat</code> are not Pearson
@@ -395,7 +393,7 @@ analyzable participants in each arm.</p>
 <h3 id="x2-crossover-design">2x2 crossover design<a class="anchor" aria-label="anchor" href="#x2-crossover-design"></a>
 </h3>
 <div class="section level4">
-<h4 id="normal-and-log-normal-outcomes">Normal and Log-Normal outcomes<a class="anchor" aria-label="anchor" href="#normal-and-log-normal-outcomes"></a>
+<h4 id="normal-and-log-normal-outcomes">Normal and log-normal outcomes<a class="anchor" aria-label="anchor" href="#normal-and-log-normal-outcomes"></a>
 </h4>
 <p>For continuous outcomes, <code>dtype = "2x2"</code> represents a
 balanced two-sequence, two-period crossover. The two treatment sequences
@@ -465,7 +463,7 @@ where <code>cor_mat</code> is used as a latent Gaussian-copula
 correlation.</p>
 </div>
 <div class="section level4">
-<h4 id="poisson-and-negative-binomial-outcomes">Poisson and Negative Binomial outcomes<a class="anchor" aria-label="anchor" href="#poisson-and-negative-binomial-outcomes"></a>
+<h4 id="poisson-and-negative-binomial-outcomes">Poisson and negative-binomial outcomes<a class="anchor" aria-label="anchor" href="#poisson-and-negative-binomial-outcomes"></a>
 </h4>
 <p>For a 2x2 crossover design, the count extension uses a paired
 log-link rate analysis. Each complete participant contributes one count

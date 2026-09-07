@@ -133,7 +133,7 @@ the assumptions used to obtain that result.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://smartdata-analysis-and-statistics.github.io/SimTOST/" class="external-link">SimTOST</a></span><span class="op">)</span></span></code></pre></div>
 <div class="section level2">
-<h2 id="multiple-independent-co-primary-endpoints">Multiple Independent Co-Primary Endpoints<a class="anchor" aria-label="anchor" href="#multiple-independent-co-primary-endpoints"></a>
+<h2 id="multiple-independent-co-primary-endpoints">Multiple independent co-primary endpoints<a class="anchor" aria-label="anchor" href="#multiple-independent-co-primary-endpoints"></a>
 </h2>
 <p>Here, we consider a bio-equivalence trial with 2 treatment arms and
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi><mo>=</mo><mn>5</mn></mrow><annotation encoding="application/x-tex">m=5</annotation></semantics></math>
@@ -163,7 +163,7 @@ parameters.</p>
 <code class="sourceCode R"><span><span class="va">ssMielke</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sampleSize_Mielke.html">sampleSize_Mielke</a></span><span class="op">(</span>power <span class="op">=</span> <span class="fl">0.8</span>, Nmax <span class="op">=</span> <span class="fl">1000</span>, m <span class="op">=</span> <span class="fl">5</span>, k <span class="op">=</span> <span class="fl">5</span>, rho <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>                              sigma <span class="op">=</span> <span class="fl">0.3</span>, true.diff <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fl">1.05</span><span class="op">)</span>,</span>
 <span>                              equi.tol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fl">1.25</span><span class="op">)</span>, design <span class="op">=</span> <span class="st">"parallel"</span>,</span>
-<span>                              alpha <span class="op">=</span> <span class="fl">0.05</span>, adjust <span class="op">=</span> <span class="st">"no"</span>, seed <span class="op">=</span> <span class="fl">1234</span>,</span>
+<span>                              alpha <span class="op">=</span> <span class="fl">0.05</span>, adjust <span class="op">=</span> <span class="st">"none"</span>, seed <span class="op">=</span> <span class="fl">1234</span>,</span>
 <span>                              nsim <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span>
 <span><span class="va">ssMielke</span></span>
 <span><span class="co">#&gt; Mielke sample-size calculation</span></span>
@@ -196,7 +196,7 @@ variation.</p>
 <span>                 list_lequi.tol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"R_vs_T"</span> <span class="op">=</span> <span class="va">lequi_lower</span><span class="op">)</span>,</span>
 <span>                 list_uequi.tol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"R_vs_T"</span> <span class="op">=</span> <span class="va">lequi_upper</span><span class="op">)</span>,</span>
 <span>                 dtype <span class="op">=</span> <span class="st">"parallel"</span>, ctype <span class="op">=</span> <span class="st">"ROM"</span>, distribution <span class="op">=</span> <span class="st">"lnorm"</span>,</span>
-<span>                 adjust <span class="op">=</span> <span class="st">"no"</span>, ncores <span class="op">=</span> <span class="fl">1</span>, nsim <span class="op">=</span> <span class="fl">1000</span>, seed <span class="op">=</span> <span class="fl">1234</span>,</span>
+<span>                 adjust <span class="op">=</span> <span class="st">"none"</span>, ncores <span class="op">=</span> <span class="fl">1</span>, nsim <span class="op">=</span> <span class="fl">1000</span>, seed <span class="op">=</span> <span class="fl">1234</span>,</span>
 <span>                 keep_sim_data <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="va">ss</span></span>
 <span><span class="co">#&gt; Sample Size Calculation Results</span></span>
@@ -278,7 +278,7 @@ intervals for the treatment effect.</p>
 </div>
 </div>
 <div class="section level2">
-<h2 id="multiple-correlated-co-primary-endpoints">Multiple Correlated Co-Primary Endpoints<a class="anchor" aria-label="anchor" href="#multiple-correlated-co-primary-endpoints"></a>
+<h2 id="multiple-correlated-co-primary-endpoints">Multiple correlated co-primary endpoints<a class="anchor" aria-label="anchor" href="#multiple-correlated-co-primary-endpoints"></a>
 </h2>
 <p>In the second example, we set
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi><mo>=</mo><mi>m</mi><mo>=</mo><mn>5</mn></mrow><annotation encoding="application/x-tex">k=m=5</annotation></semantics></math>,
@@ -302,7 +302,7 @@ parameters.</p>
 <code class="sourceCode R"><span><span class="va">ssMielke</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sampleSize_Mielke.html">sampleSize_Mielke</a></span><span class="op">(</span>power <span class="op">=</span> <span class="fl">0.8</span>, Nmax <span class="op">=</span> <span class="fl">1000</span>, m <span class="op">=</span> <span class="fl">5</span>, k <span class="op">=</span> <span class="fl">5</span>, rho <span class="op">=</span> <span class="fl">0.8</span>,</span>
 <span>                              sigma <span class="op">=</span> <span class="fl">0.3</span>, true.diff <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fl">1.05</span><span class="op">)</span>,</span>
 <span>                              equi.tol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fl">1.25</span><span class="op">)</span>, design <span class="op">=</span> <span class="st">"parallel"</span>,</span>
-<span>                              alpha <span class="op">=</span> <span class="fl">0.05</span>, adjust <span class="op">=</span> <span class="st">"no"</span>, seed <span class="op">=</span> <span class="fl">1234</span>,</span>
+<span>                              alpha <span class="op">=</span> <span class="fl">0.05</span>, adjust <span class="op">=</span> <span class="st">"none"</span>, seed <span class="op">=</span> <span class="fl">1234</span>,</span>
 <span>                              nsim <span class="op">=</span> <span class="fl">10000</span><span class="op">)</span></span>
 <span><span class="va">ssMielke</span></span>
 <span><span class="co">#&gt; Mielke sample-size calculation</span></span>
@@ -336,7 +336,7 @@ correlation parameter <code>rho</code>.</p>
 <span>                 list_lequi.tol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"R_vs_T"</span> <span class="op">=</span> <span class="va">lequi_lower</span><span class="op">)</span>,</span>
 <span>                 list_uequi.tol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"R_vs_T"</span> <span class="op">=</span> <span class="va">lequi_upper</span><span class="op">)</span>,</span>
 <span>                 dtype <span class="op">=</span> <span class="st">"parallel"</span>, ctype <span class="op">=</span> <span class="st">"ROM"</span>, distribution <span class="op">=</span> <span class="st">"lnorm"</span>,</span>
-<span>                 adjust <span class="op">=</span> <span class="st">"no"</span>, ncores <span class="op">=</span> <span class="fl">1</span>, k <span class="op">=</span> <span class="fl">5</span>, nsim <span class="op">=</span> <span class="fl">10000</span>, seed <span class="op">=</span> <span class="fl">1234</span><span class="op">)</span></span>
+<span>                 adjust <span class="op">=</span> <span class="st">"none"</span>, ncores <span class="op">=</span> <span class="fl">1</span>, k <span class="op">=</span> <span class="fl">5</span>, nsim <span class="op">=</span> <span class="fl">10000</span>, seed <span class="op">=</span> <span class="fl">1234</span><span class="op">)</span></span>
 <span><span class="va">ss</span></span>
 <span><span class="co">#&gt; Sample Size Calculation Results</span></span>
 <span><span class="co">#&gt; -------------------------------------------------------------</span></span>
