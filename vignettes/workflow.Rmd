@@ -98,7 +98,7 @@ ss_pilot <- sampleSize(
   rho = 0.50, list_comparator = comparators,
   list_y_comparator = list(T_vs_R1 = endpoints, T_vs_R2 = endpoints),
   list_lequi.tol = lower, list_uequi.tol = upper,
-  dtype = "parallel", adjust = "no", k = 3,
+  dtype = "parallel", adjust = "none", k = 3,
   distribution = "lnorm", ctype = "ROM", ncores = 1,
   nsim = 500, seed = 2026, keep_sim_data = TRUE
 )
@@ -107,8 +107,9 @@ ss_pilot <- sampleSize(
 The returned `simss` object is the `k = 3` pilot used for the diagnostic
 checks below. To evaluate the same pilot design under the alternative
 rule that requires at least two of the three endpoints per comparator,
-update the pilot. `update()` retains the design, endpoint, margin, and
-simulation settings and replaces only the supplied arguments:
+update the pilot using the following syntax. `update()` retains the design,
+endpoint, margin, and simulation settings and replaces only the supplied
+arguments:
 
 ```{r workflow-pilot-k2, eval=TRUE}
 ss_pilot_k2 <- update(ss_pilot, adjust = "bon", k = 2, seed = 2026)
@@ -222,14 +223,14 @@ calculation; that number is `nsim`.
 
 ## Step 4: Check Monte Carlo stability and precision
 
-This step addresses: *"Is the number of simulations (nsim) sufficient
-for a stable estimate?"* It assesses precision, not model validity or
+This step addresses Step 4 in the workflow above: *"Is the number of
+simulations (nsim) sufficient for a stable estimate?"* It assesses precision, not model validity or
 study sample size. Every simulation estimate has Monte Carlo
 uncertainty. Simulation-study guidance recommends reporting this
 uncertainty and choosing the number of repetitions to achieve a stated
 precision [@siepe_simulation_2024].
 
-The **`plot_stability()`** checks if the estimated rejection probability
+The **`plot_stability()` function** checks if the estimated rejection probability
 stabilizes as simulations accumulate. Compare the final value to the
 target power (0.80). By default, it diagnoses each comparator separately
 (`overall = FALSE`), use find which individual comparator or endpoint is
@@ -569,7 +570,7 @@ the worst-case scenario among the evaluated boundary configurations.
 Compare the global interval to the nominal value
 (**5%) line** as we did in the previous section.
 
-For `k = m`, `adjust = "no"` is generally
+For `k = m`, `adjust = "none"` is generally
 appropriate for the endpoint IUT. For `k < m`, use Mielke's strong
 `adjust = "t"` calibration `alpha / (m - k + 1)` when strong control over
 partial null configurations is required. The package's `adjust = "k"` method
@@ -594,7 +595,7 @@ ss <- sampleSize(
   list_y_comparator = list(T_vs_R1 = endpoints, T_vs_R2 = endpoints),
   list_lequi.tol = lower, list_uequi.tol = upper,
   dtype = "parallel", ctype = "ROM", distribution = "lnorm",
-  adjust = "no", k = 3, ncores = 1, nsim = 2000, seed = 2026,
+  adjust = "none", k = 3, ncores = 1, nsim = 2000, seed = 2026,
   keep_sim_data = TRUE
 )
 ```

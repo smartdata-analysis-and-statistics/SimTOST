@@ -41,7 +41,7 @@ kableExtra::kable_styling(kableExtra::kable(data,
 ```
 
 
-# Input Data
+# Input data
 As in [this vignette](continuous_parallel_2A3E.html), the following inputs are required:
 
 * Means for each endpoint and treatment arm (`mu_list`),
@@ -75,12 +75,12 @@ sigma_list <- list(
 
 
 
-# Simultaneous Testing of Independent Co-Primary Endpoints
+# Simultaneous testing of independent co-primary endpoints
 
 In this analysis, we adopt the **Ratio of Means (ROM)** approach to evaluate bioequivalence across independent co-primary endpoints.
 
 
-## Different Hypotheses across endpoints
+## Different hypotheses across endpoints
 In this example, we aim to demonstrate:
 
 * Bioequivalence of SB2 vs. EU_REF for AUCinf and Cmax, and
@@ -143,9 +143,9 @@ library(SimTOST)
 
 A total sample size of `r N_ss$response$n_total` patients (or `r N_ss$response$n_total/3` per arm) is required to demonstrate equivalence.
 
-# Simultaneous Testing of Independent Primary Endpoints
+# Simultaneous testing of independent primary endpoints
 
-## Equivalence for At Least 2 of the 3 Endpoints with Mielke's t-Adjustment
+## Equivalence for at least 2 of the 3 endpoints with Mielke's t-adjustment
 In this example, we aim to establish equivalence for at least two out of three primary endpoints. For this k-out-of-m rule, `adjust = "t"` uses Mielke et al.'s strong calibration \(\alpha/(m-k+1)\), so the endpoint-wise level is 0.025 when \(m=3\), \(k=2\), and \(\alpha=0.05\) [@mielke_sample_2018]. The general partial-conjunction framework is described by Benjamini and Heller (2008) [@benjamini2008]. The following assumptions are made:
 
 * Equality of Variances: variances are assumed to be equal across groups (`vareq = TRUE`).
@@ -190,7 +190,7 @@ only the endpoint rule and multiplicity adjustment:
                 k = 2, adjust = "t", seed = 1234))
 ```
 
-## Unequal Allocation Rates Across Arms
+## Unequal allocation rates across arms
 In this example, we build upon the previous scenario but introduce unequal allocation rates across treatment arms. Specifically, we require that the number of patients in the new treatment arm is double the number in each of the reference arms.
 
 This can be achieved by specifying the treatment allocation rate parameter (`TAR`). Rates are provided as a vector, for example: `TAR = c(2, 1, 1)`. This ensures that for every two patients assigned to the new treatment arm, one patient is assigned to each reference arm.
@@ -203,7 +203,7 @@ This can be achieved by specifying the treatment allocation rate parameter (`TAR
 
 Results indicate that `r N_mp2$response$n_SB2` patients are required for the active treatment arm (SB2), and `r N_mp2$response$n_EU_REF` patients are required for each reference arm. The total sample size required is `r N_mp2$response$n_total`, which is larger compared to the trial with an equal allocation ratio, for which the total sample size was `r N_mp$response$n_total`.
 
-## Accounting for Participant Dropout
+## Accounting for participant dropout
 In the examples above, the sample size calculations assumed that all enrolled patients complete the trial. However, in practice, a certain percentage of participants drop out, which can impact the required sample size. To account for this, we consider a 20% dropout rate across all treatment arms.
 
 ```{r}

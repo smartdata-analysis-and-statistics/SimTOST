@@ -19,11 +19,8 @@ SimTOST estimates sample size by repeatedly simulating complete studies and
 applying the planned equivalence procedure to each simulated study. The same
 framework is available through `sampleSize()` for planning and `simPower()`
 for evaluating power at a fixed sample size. The `distribution` argument
-selects the outcome model:
-
-```{r distributions}
-c("norm", "lnorm", "pois", "nbinom")
-```
+selects the outcome model using one of the documented choices: `"norm"`,
+`"lnorm"`, `"pois"`, or `"nbinom"`.
 
 This vignette describes the assumptions that should be considered when using
 these models. It is methodological guidance, not a substitute for a
@@ -75,7 +72,7 @@ The DOM test uses additive equivalence margins. The ROM test is appropriate
 when the scientific question concerns a ratio of means and the outcome scale
 supports that interpretation.
 
-### Log Normal outcomes
+### Log-normal outcomes
 
 For `distribution = "lnorm"`, the simulated outcomes are positive and
 right-skewed. The ratio-of-means procedure is applied on the scale specified by
@@ -85,7 +82,7 @@ must be interpreted consistently with that implementation.
 The Log Normal model assumes:
 
 * strictly positive outcomes;
-* approximately normal log-outcomes;
+* approximately normal log-transformed outcomes;
 * endpoint dependence represented through the supplied covariance or
   correlation inputs; and
 * a ratio-based equivalence question rather than an additive one.
@@ -96,7 +93,7 @@ reconsideration of the estimand.
 
 `distribution = "lnorm"` with `ctype = "DOM"` is rejected because the
 current implementation converts arithmetic means and covariances to the log
-scale and applies a DOM test there. That has a ratio interpretation on the
+scale and applies a DOM test. This has a ratio interpretation on the
 original scale, not an additive difference interpretation. Use
 `distribution = "lnorm", ctype = "ROM"` for an arithmetic mean ratio,
 or use the normal distribution for an additive mean difference.
@@ -129,7 +126,7 @@ variation are negligible or have already been incorporated into the model.
 Overdispersion caused by unobserved subject heterogeneity or recurrent-event
 dependence can make a Poisson analysis anticonservative.
 
-### Negative Binomial outcomes
+### Negative-binomial outcomes
 
 For `distribution = "nbinom"`, let $\phi_{aj} > 0$ denote the per-subject
 dispersion parameter. A subject-level count with mean
@@ -188,11 +185,11 @@ endpoint means and standard deviations and must be positive definite.
 For joint count simulations, `cor_mat` is interpreted as the correlation
 matrix of latent Gaussian variables. For each arm, SimTOST:
 
-1. draws a multivariate standard-normal latent vector with correlation
+* draws a multivariate standard-normal latent vector with correlation
    `cor_mat`;
-2. transforms each latent value to a uniform value using the standard normal
+* transforms each latent value to a uniform value using the standard normal
    CDF; and
-3. transforms each uniform value through the Poisson or negative-binomial
+* transforms each uniform value through the Poisson or negative-binomial
    inverse CDF for the specified arm and endpoint.
 
 This is a Gaussian-copula construction. It preserves the selected marginal
@@ -263,7 +260,7 @@ participants in each arm.
 
 ### 2x2 crossover design
 
-#### Normal and Log-Normal outcomes
+#### Normal and log-normal outcomes
 
 For continuous outcomes, `dtype = "2x2"` represents a balanced two-sequence,
 two-period crossover. The two treatment sequences are reference--test (RT)
@@ -330,7 +327,7 @@ directly through `SigmaW` (or through `sigma_list` and `cor_mat` when the
 covariance matrix is constructed). This differs from the count implementation,
 where `cor_mat` is used as a latent Gaussian-copula correlation.
 
-#### Poisson and Negative Binomial outcomes
+#### Poisson and negative-binomial outcomes
 
 For a 2x2 crossover design, the count extension uses a paired log-link rate
 analysis. Each complete participant contributes one count under the test

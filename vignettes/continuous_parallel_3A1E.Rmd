@@ -38,7 +38,7 @@ data <- data.table::data.table(arm = c("SB2","RemEU","RemUSA"),
 ```
 
 
-# Sample Size Calculation for AUCinf: Equivalence to EU Remicade
+# Sample-size calculation for AUCinf: equivalence to EU Remicade
 
 This example demonstrates how to calculate the required sample size when testing the equivalence of SB2 to a reference drug, Remicade, as administered in the EU. The goal is to determine the minimum number of participants needed to ensure adequate power for the equivalence test.
 
@@ -73,7 +73,7 @@ list_lequi.tol <- list("Comparison" = 0.8)
 list_uequi.tol <- list("Comparison" = 1/0.8)
 ```
 
-## Computing Sample Size
+## Computing sample size
 
 Finally, we use the [sampleSize()](../reference/sampleSize.html) function to calculate the required sample size based on stochastic simulations of the trial. The function accepts several parameters, such as the desired power, confidence level, and design specifications. By default, it assumes:
 
@@ -102,7 +102,7 @@ AUCinf_1comp
 The required sample size for this scenario is `r AUCinf_1comp$response$n_total`, or `r AUCinf_1comp$response$n_SB2` for each arm. 
 
 
-# Sample Size Calculation for AUCinf: Equivalence to US Remicade and EU Remicade
+# Sample-size calculation for AUCinf: equivalence to US Remicade and EU Remicade
 
 In this section, we calculate the sample size required to demonstrate equivalence with both the European reference product (RemEU) and the US reference product (RemUS). This scenario involves a more complex comparison, as we must simultaneously establish equivalence with two distinct reference arms. 
 
@@ -124,7 +124,7 @@ $$H_1: E_L<\frac{\mu_{SB2}}{\mu_{RemEU}} < E_U~~ and~~E_L<\frac{\mu_{SB2}}{\mu_{
   Use `type1Error()` to check the resulting trial-level error rate when the
   design contains several comparison families.
 
-## Implementation Details
+## Implementation details
 
 Implementation of this scenario is similar to the initial example, in which the `list_comparator` is modified to include multiple comparators. The list contains two elements specifying the simultaneous comparison between SB2 vs. RemEU and SB2 vs. RemUSA. This approach ensures that the equivalence assessment accounts for both reference products.
 
@@ -137,7 +137,7 @@ list_lequi.tol <- list("EMA" = 0.8, "FDA" = 0.8)     # Lower equivalence boundar
 list_uequi.tol <- list("EMA" = 1/0.8, "FDA" = 1/0.8) # Upper equivalence boundary
 ```
 
-## Computing Sample Size
+## Computing sample size
 
 We then update the one-comparator result with the second comparison. This
 avoids repeating the common treatment-arm, distribution, and simulation
@@ -152,7 +152,7 @@ arguments while recalculating the joint design.
 ))
 ```
 
-## Results and Interpretation
+## Results and interpretation
 
 The required total sample size for this scenario is `r AUCinf_2comp$response$n_total`. Notably, an additional `r AUCinf_2comp$response$n_SB2 - AUCinf_1comp$response$n_SB2` patients per arm are required to achieve equivalence with both reference products (RemEU and RemUSA), compared to the scenario where equivalence is required with only one reference arm (`r AUCinf_1comp$response$n_SB2`).
 

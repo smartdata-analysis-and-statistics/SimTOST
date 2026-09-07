@@ -61,8 +61,9 @@ E(Y) = \text{rate} \times \text{exposure}.
 \]
 
 For example, a rate of `0.20` per week and an exposure of `10` weeks imply
-an expected count of `2` events per participant. Exposure is therefore not
-the number of participants. If the supplied rate is already an expected
+an expected count of `2` events per participant. In this example, exposure
+is not the number of participants; instead, it is the number of follow-up
+weeks. If the supplied rate is already an expected
 count per participant over the complete study period, use `exposure = 1`.
 The rate and exposure must use compatible time units. Exposure can be a
 scalar, an endpoint-specific vector, or arm-specific values when follow-up
@@ -91,7 +92,7 @@ outcomes: `power`, `alpha`, `nsim`, `seed`, and `dtype` specify the target
 power, type-I error level, number of simulations, reproducibility, and study
 design, respectively.
 
-## A Published Poisson benchmark
+## A published Poisson benchmark
 
 Zhu [@zhu_sample_2017] reports a two-arm Poisson equivalence calculation with
 equal event rates of 1 per time unit, average exposure of 0.7, equivalence
@@ -124,11 +125,13 @@ The simulation need not reproduce the published value exactly. The published
 result is a large-sample approximation, whereas `simPower()` simulates
 discrete event totals and reports a finite-sample Monte Carlo estimate.
 
-## A Count Study Example
+## A count outcome study example
 
-### Step 1:  Define the Study and Theoretical Targets
+### Step 1: Define the study and theoretical targets
 
-For this example, we utilize a two-endpoint, two-comparator count study, which will serve as the foundation for the remainder of this vignette. The supplied endpoint correlation is a latent Gaussian-copula
+For this example, we utilize a two-endpoint, two-comparator count outcome
+study, which will serve as the foundation for the remainder of this vignette.
+The supplied endpoint correlation is a latent Gaussian-copula
 correlation, not the expected Pearson correlation of the observed counts.
 
 ```{r poisson-inputs}
@@ -142,7 +145,7 @@ count_upper <- list(TEST_vs_REF = c(y1 = 1.25, y2 = 1.25))
 count_exposure <- 10
 ```
 
-### Step 2: Run a pilot with sampleSize()
+### Step 2: Run a pilot with `sampleSize()`
 As in the workflow vignette, begin by running a pilot sample size calculation while retaining the simulated data. This object will be used for the diagnostics in the subsequent steps.
 
 ```{r poisson-diagnostics}
@@ -265,9 +268,9 @@ plot_distribution(negative_binomial_sample_size, estimand = "outcome", type = "h
 The result is conditional on `nb_dispersion`; vary it in sensitivity analyses
 when overdispersion is uncertain.
 
-### Use the same settings for a two-by-two crossover
+### Use the same settings for a two-by-two crossover design
 
-In a crossover calculation, the count-model inputs from the parallel design
+In a crossover design calculation, the count-model inputs from the parallel design
 are still needed: `rate_list`, `exposure`, `dispersion` (for a
 negative-binomial model), `list_comparator`, the equivalence margins, and the
 endpoint correlation. These describe the treatment effect and the count
@@ -286,7 +289,7 @@ contributes observations under both treatments:
 * `dropout` is a length-two vector of dropout proportions for the two
   sequences. Use `c(0, 0)` when no dropout is expected.
 
-For the crossover, `exposure` refers to the observation time or opportunity
+For the crossover design, `exposure` refers to the observation time or opportunity
 for each treatment-period count. A participant contributes one count under
 each treatment when complete. For `dtype = "2x2"`, `n` and `n_per_arm` refer
 to participants per sequence, not the total number of participants across
@@ -307,17 +310,9 @@ summary(crossover_sample_size)
 confint(crossover_sample_size)
 ```
 
-The crossover calculation uses the same treatment-effect and endpoint
+The crossover design calculation uses the same treatment-effect and endpoint
 settings but evaluates paired treatment-period data. The values above are
 illustrative; in an actual study, `sigmaB`, period effects, carry-over effects,
 and sequence-specific dropout should be justified from prior data or a
 sensitivity analysis.
 
-## Interpretation and scope
-
-The Poisson, negative-binomial, and crossover results are conditional on the
-specified rates, exposure, margins, endpoint dependence, dispersion, and
-design. Compare sample sizes only after the corresponding model checks pass.
-For count outcomes, `cor_mat` is a latent Gaussian-copula correlation matrix;
-it is not a correlation between treatment arms and is not required to equal
-the Pearson correlation of the observed counts.

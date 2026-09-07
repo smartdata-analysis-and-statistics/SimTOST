@@ -21,17 +21,17 @@ In the `SimTOST` R package, which is specifically designed for sample size estim
 
 # Introduction
 
-## Difference of Means Test
+## Difference of means test
 This example, adapted from Example 1 in the PASS manual chapter 685 [@PASSch685], illustrates the process of planning a clinical trial to assess biosimilarity. Specifically, the trial aims to compare blood pressure outcomes between two groups.
 
 ### Scenario
-Drug B is a well-established biologic drug used to control blood pressure. Its exclusive marketing license has expired, creating an opportunity for other companies to develop biosimilars. Drug A is a new competing drug being developed as a potential biosimilar to Drug B. The goal is to determine whether Drug A meets FDA biosimilarity requirements in terms of safety, purity, and therapeutic response when compared to Drug B.
+Drug B is a well-established biologic drug used to control blood pressure. Its exclusive marketing license has expired, creating an opportunity for other companies to develop biosimilars. Drug A is a new competing drug being developed as a potential biosimilar to Drug B. The goal is to determine whether Drug A meets the FDA's biosimilarity requirements in terms of safety, purity, and therapeutic response when compared to Drug B.
 
-### Trial Design
+### Trial design
 The study follows a parallel-group design with the following key assumptions:
 
 * Reference Group (Drug B): Average blood pressure is 96 mmHg, with a within-group standard deviation of 18 mmHg.
-* Mean Difference: As per FDA guidelines, the assumed difference between the two groups is set to $\delta = \sigma/8 = 2.25$ mmHg.
+* Mean Difference: As per the FDA guidelines, the assumed difference between the two groups is set to $\delta = \sigma/8 = 2.25$ mmHg.
 * Biosimilarity Limits: Defined as ±1.5σ = ±27 mmHg.
 * Desired Type-I Error: 2.5%
 * Target Power: 90%

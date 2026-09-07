@@ -32,7 +32,7 @@ obtain that result.
 library(SimTOST)
 ```
 
-# Multiple Independent Co-Primary Endpoints
+# Multiple independent co-primary endpoints
 Here, we consider a bio-equivalence trial with 2 treatment arms and $m=5$ endpoints. The sample size is calculated to ensure that the test and reference products are equivalent with respect to all 5 endpoints. The true ratio between the test and reference products is assumed to be 1.05. Outcomes are simulated on the original scale from a log-normal distribution, with a standard deviation of $0.3$ on the log scale and independent endpoints ($\rho = 0$). The equivalence limits are set at 0.80 and 1.25. The significance level is 0.05. The sample size is determined at a power of 0.8.
 
 This example is adapted from @mielke_sample_2018, who employed a difference-of-means test on the log scale. The log-normal analysis below uses a ratio-of-means TOST, which is equivalent to testing the difference on the log scale under the log-normal model.
@@ -44,7 +44,7 @@ In the first approach, we calculate the required sample size for 80% power using
 ssMielke <- sampleSize_Mielke(power = 0.8, Nmax = 1000, m = 5, k = 5, rho = 0,
                               sigma = 0.3, true.diff = log(1.05),
                               equi.tol = log(1.25), design = "parallel",
-                              alpha = 0.05, adjust = "no", seed = 1234,
+                              alpha = 0.05, adjust = "none", seed = 1234,
                               nsim = 1000)
 ssMielke
 ```
@@ -70,7 +70,7 @@ ss <- sampleSize(power = 0.8, alpha = 0.05,
                  list_lequi.tol = list("R_vs_T" = lequi_lower),
                  list_uequi.tol = list("R_vs_T" = lequi_upper),
                  dtype = "parallel", ctype = "ROM", distribution = "lnorm",
-                 adjust = "no", ncores = 1, nsim = 1000, seed = 1234,
+                 adjust = "none", ncores = 1, nsim = 1000, seed = 1234,
                  keep_sim_data = TRUE)
 ss
 ```
@@ -132,7 +132,7 @@ parallel design, the x-axis uses total sample size. These intervals quantify
 simulation uncertainty and are not confidence intervals for the treatment
 effect.
 
-# Multiple Correlated Co-Primary Endpoints
+# Multiple correlated co-primary endpoints
 In the second example, we set $k=m=5$, $\sigma = 0.3$ and $\rho = 0.8$. This example is also adapted from @mielke_sample_2018, who employed a difference-of-means test on the log scale. The sample size calculation can again be conducted using two approaches, both of which are illustrated below.
 
 ## Approach 1: Using sampleSize_Mielke
@@ -142,7 +142,7 @@ In the first approach, we calculate the required sample size for 80% power using
 ssMielke <- sampleSize_Mielke(power = 0.8, Nmax = 1000, m = 5, k = 5, rho = 0.8,
                               sigma = 0.3, true.diff = log(1.05),
                               equi.tol = log(1.25), design = "parallel",
-                              alpha = 0.05, adjust = "no", seed = 1234,
+                              alpha = 0.05, adjust = "none", seed = 1234,
                               nsim = 10000)
 ssMielke
 ss_value <- if (is.list(ssMielke)) ssMielke$SS else unname(ssMielke["SS"])
@@ -167,7 +167,7 @@ ss <- sampleSize(power = 0.8, alpha = 0.05,
                  list_lequi.tol = list("R_vs_T" = lequi_lower),
                  list_uequi.tol = list("R_vs_T" = lequi_upper),
                  dtype = "parallel", ctype = "ROM", distribution = "lnorm",
-                 adjust = "no", ncores = 1, k = 5, nsim = 10000, seed = 1234)
+                 adjust = "none", ncores = 1, k = 5, nsim = 10000, seed = 1234)
 ss
 ```
 

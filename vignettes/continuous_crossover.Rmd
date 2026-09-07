@@ -24,7 +24,7 @@ In the example below, we illustrate the use of `SimTOST` for 2x2 cross-over tria
 library(SimTOST)
 ```
 
-# Bioequivalence Tests for AUC and Cmax
+# Bioequivalence tests for AUC and Cmax
 We consider Example 1 from the PASS Sample Size Software Chapter 351 [@PASSch351]. We aim to estimate the sample size required to demonstrate bioequivalence between a test and reference product for two pharmacokinetic parameters: the area under the curve (AUC) and the maximum concentration (Cmax). We assume a 2x2 cross-over design. The true ratio of the test to the reference product is assumed to be 1.02 for AUC and 1.03 for Cmax. Based on previous studies, it is assumed that the standard deviation for log(AUC) = 0.25 and the standard deviation for log(Cmax = 0.3). The equivalence limits for the ratio of means are set at 0.80 and 1.25.
 
 The significance level is set to 5\%, and the sample size is calculated to achieve 80\% power. Additionally, the correlation between AUC and Cmax is assumed to be 0.25. A difference-of-means test on the log scale is employed to determine bioequivalence.
@@ -46,7 +46,7 @@ lequi_upper <- c(AUC = log(1.25), Cmax = log(1.25))
                  list_lequi.tol = list("T_vs_R" = lequi_lower),
                  list_uequi.tol = list("T_vs_R" = lequi_upper),
                  dtype = "2x2", ctype = "DOM", distribution = "norm",
-                 adjust = "no", nsim = 5000, seed = 1234))
+                 adjust = "none", nsim = 5000, seed = 1234))
 ```
 The total sample size required is `r ss$response$n_total` subjects, which corresponds to the estimate obtained using the PASS software (n=37).
 

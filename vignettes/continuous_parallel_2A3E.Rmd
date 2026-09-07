@@ -43,7 +43,7 @@ The following sections describe strategies for determining the sample size requi
 A critical step in this process is defining the lower and upper equivalence boundaries for each endpoint. These boundaries set the acceptable ROM range within which equivalence is established. For simplicity, a consistent equivalence range of 0.8 to 1.25 is applied to all endpoints.
 
 
-## Independent Testing of Co-Primary Endpoints
+## Independent testing of co-primary endpoints
 A conservative approach to sample size calculation involves testing each pharmacokinetic (PK) measure independently. This approach assumes that endpoints are uncorrelated and that equivalence is to be demonstrated for each endpoint separately. Consequently, the overall sample size required for the trial is the sum of the sample sizes calculated for each PK measure separately.
 
 ```{r}
@@ -79,7 +79,7 @@ library(SimTOST)
 
 When testing each PK measure independently, the total sample size is `r sim_AUCinf$response$n_total` for AUCinf, `r sim_AUClast$response$n_total` for AUClast, and `r sim_Cmax$response$n_total` for Cmax. This means that we would have to enroll `r sim_AUCinf$response$n_total` + `r sim_AUClast$response$n_total` + `r sim_Cmax$response$n_total` = `r sim_AUCinf$response$n_total + sim_AUClast$response$n_total + sim_Cmax$response$n_total` patients in order to reject $H_0$. Note that the significance level of this combined test is then $0.05^3$. For context, the original trial was a randomized, single-blind, three-arm, parallel-group study conducted in 159 healthy subjects, slightly more than the `r sim_AUCinf$response$n_total + sim_AUClast$response$n_total + sim_Cmax$response$n_total` patients estimated to be necessary.
 
-## Simultaneous Testing of Independent Co-Primary Endpoints
+## Simultaneous testing of independent co-primary endpoints
 This approach focuses on simultaneous testing of PK measures while assuming independence between endpoints. Unlike the previous approach, which tested each PK measure independently, this approach integrates comparisons across multiple endpoints while directly controlling the overall Type I error rate at a pre-specified level.
 
 
@@ -128,7 +128,7 @@ We can inspect the sample size requirements in more detail as follows:
 N_ss$response
 ```
 
-## Simultaneous Testing of Correlated Co-Primary Endpoints
+## Simultaneous testing of correlated co-primary endpoints
 
 Incorporating the correlations between endpoints in sample size calculations for continuous-valued co-primary endpoints offers significant advantages [@sozu_sample_2015]. Adding more endpoints typically reduces power if such correlations are not accounted for. However, by including positive correlations in the calculations, power can be increased, and the required sample sizes may consequently be reduced.
 
@@ -156,7 +156,7 @@ If correlations differ between endpoints, they can be specified individually usi
 The required total sample size for this example is `r N_mult_corr$response$n_total`. This is `r N_ss$response$n_total - N_mult_corr$response$n_total` fewer patients than the scenario in which endpoints are assumed to be uncorrelated.
 
 # Testing multiple primary endpoints {#multiple-primary}
-## Simultaneous Testing of Primary Endpoints
+## Simultaneous testing of primary endpoints
 Imagine that we are interested in demonstrating equivalence for at least $k$ primary endpoints. Unlike the previous scenarios, in which equivalence was required for all endpoints, this scenario requires an adjustment for multiplicity to control the family-wise error rate. For example, when $k=1$, we can use the Bonferroni correction:
 
 ```{r}
@@ -225,7 +225,7 @@ When $k>1$, Bonferroni and Sidak correction methods become increasingly conserva
 ))
 ```
 
-## Hierarchical Testing of Endpoints {#hierarchical-testing}
+## Hierarchical testing of endpoints {#hierarchical-testing}
 Hierarchical testing is a structured approach that allows for a more nuanced evaluation of endpoints. Unlike a simple setup where at least $k$ endpoints must pass, hierarchical testing enforces that some endpoints are more critical and must always pass before proceeding to secondary endpoints. This ensures that primary endpoints receive higher priority, while still allowing flexibility in the evaluation of secondary endpoints.
 
 In this example, the trial follows a hierarchical testing strategy, with Cmax as the primary endpoint. Equivalence testing begins with Cmax; if established, the analysis proceeds to the secondary endpoints AUCinf and AUClast. The trial is considered successful if equivalence holds for Cmax and at least one ($k \geq 1$) of the secondary endpoints.
