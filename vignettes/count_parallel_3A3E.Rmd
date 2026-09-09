@@ -34,7 +34,8 @@ Mielke's strong k-out-of-m (`adjust = "t"`), or Šidák adjustment
 to the endpoint-wise one-sided significance level.
 
 The joint count kernel can also simulate correlated endpoints through
-the `cor_mat` argument.
+the `cor_mat` argument. This dependence is generated with a Gaussian-copula
+construction [@nelsen2006].
 
 ## Study assumptions
 
@@ -66,6 +67,8 @@ exposure <- 5
 The rate-ratio equivalence interval is 0.80 to 1.25. We use a Poisson model
 for the primary example and a one-sided significance level of 0.05 for each
 TOST component.
+The Poisson and negative-binomial planning framework follows published
+count-outcome equivalence methods [@chang_sample_2017; @zhu_sample_2017].
 
 ## Power for a fixed sample size
 
@@ -246,8 +249,8 @@ joint_sample_size
 For a three-arm allocation, the reported total is three times the selected
 number per arm. Both comparison families share the simulated test-arm counts,
 and the endpoint correlation is generated through a Gaussian-copula count
-model. This is therefore a joint count simulation rather than a maximum of
-separate comparison-specific searches.
+model [@nelsen2006]. This is therefore a joint count simulation rather than a
+maximum of separate comparison-specific searches.
 
 ## Why joint planning is important
 

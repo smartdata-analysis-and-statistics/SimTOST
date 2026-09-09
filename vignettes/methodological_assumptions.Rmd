@@ -1,6 +1,8 @@
 ---
 title: "Methodological Assumptions in SimTOST"
 output: rmarkdown::html_vignette
+bibliography: 'references.bib'
+link-citations: yes
 vignette: >
   %\VignetteIndexEntry{Methodological Assumptions in SimTOST}
   %\VignetteEngine{knitr::rmarkdown}
@@ -203,13 +205,14 @@ latent correlation.
 
 For endpoints \(j=1,\ldots,m\), the user-supplied matrix
 \(\boldsymbol{R}=\texttt{cor\_mat}\) is the correlation matrix of a latent
-standard-normal vector
+standard-normal vector using a Gaussian-copula construction [@nelsen2006]:
 
 \[
 \boldsymbol{Z}_a \sim N_m(\boldsymbol{0},\boldsymbol{R})
 \]
 
-for arm \(a\). Each component is transformed as
+for arm \(a\). Each component is then transformed using the probability
+integral transform and the inverse marginal distribution function:
 
 \[
 U_{aj}=\Phi(Z_{aj}), \qquad
@@ -220,7 +223,8 @@ where \(F_{aj}\) is the specified Poisson or negative-binomial marginal
 distribution. Thus, `cor_mat[1, 2] = 0.8` means that endpoints 1 and 2 have
 latent Gaussian correlation 0.8 before they are transformed into counts. It
 does not mean that their observed event counts will have Pearson correlation
-0.8.
+0.8. This Gaussian-copula construction is a standard way to generate
+dependent non-normal outcomes.
 
 The matrix has the following interpretation:
 
@@ -266,7 +270,11 @@ For continuous outcomes, `dtype = "2x2"` represents a balanced two-sequence,
 two-period crossover. The two treatment sequences are reference--test (RT)
 and test--reference (TR), and `n` is interpreted as the number of subjects per
 sequence before dropout. On the analysis scale, the data-generating model can
-be written for subject i, period p, and endpoint j as
+be written for subject i, period p, and endpoint j as follows. The two-period,
+two-sequence design and log-scale bioequivalence analysis are consistent with
+regulatory bioequivalence guidance. The subject, period, treatment,
+sequence, and carry-over components follow the standard AB/BA formulation
+described by Chow and Liu [@chow_liu_bioequivalence_2008].
 
 \[
   Y_{ipj} = \mu_{a(i,p),j} + E_p + C_{a(i,p),s(i)} + b_i +
@@ -332,7 +340,9 @@ where `cor_mat` is used as a latent Gaussian-copula correlation.
 For a 2x2 crossover design, the count extension uses a paired log-link rate
 analysis. Each complete participant contributes one count under the test
 treatment and one count under the reference treatment. The count-generating
-model is, conditionally on the subject effect,
+model is, conditionally on the subject effect. The rate-ratio estimand and
+Poisson/negative-binomial framework is supported by published count-outcome
+equivalence methods [@chang_sample_2017; @zhu_sample_2017].
 
 \[
 Y_{isp} \sim \begin{cases}
@@ -354,7 +364,9 @@ period effects, `Eco = c(C_R,C_T)` contains reference- and treatment-
 carry-over effects, and `sigmaB` is the standard deviation of the subject
 random intercept on the log-rate scale. The negative-binomial dispersion is
 used in the subject-period count generation through the package's
-size-parameter convention \(\operatorname{size}=1/\phi\).
+size-parameter convention \(\operatorname{size}=1/\phi\). This is the
+standard mean--dispersion parameterization used for planning negative-binomial
+rate comparisons.
 
 The analysis forms a log-rate contrast within each complete participant,
 averages the contrasts within each sequence, and then averages the two

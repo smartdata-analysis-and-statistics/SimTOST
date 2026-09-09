@@ -85,7 +85,9 @@ approximately `2 + 0.50 * 2^2 = 4`. Larger dispersion means more variation
 between participants and usually less information per participant, which can
 increase the required sample size. The dispersion should be chosen from pilot
 data or prior knowledge and examined in a sensitivity analysis; it is not a
-replacement for the event rate or the exposure.
+replacement for the event rate or the exposure. Poisson and negative-binomial
+rate equivalence planning is described by Chang et al. and Zhu
+[@chang_sample_2017; @zhu_sample_2017].
 
 The remaining planning inputs have the same meaning as for continuous
 outcomes: `power`, `alpha`, `nsim`, `seed`, and `dtype` specify the target
@@ -132,7 +134,8 @@ discrete event totals and reports a finite-sample Monte Carlo estimate.
 For this example, we utilize a two-endpoint, two-comparator count outcome
 study, which will serve as the foundation for the remainder of this vignette.
 The supplied endpoint correlation is a latent Gaussian-copula
-correlation, not the expected Pearson correlation of the observed counts.
+correlation, not the expected Pearson correlation of the observed counts
+[@nelsen2006].
 
 ```{r poisson-inputs}
 count_corr <- matrix(c(1, 0.5, 0.5, 1), nrow = 2,
@@ -182,7 +185,8 @@ The empirical rate distributions should be centered near the values in
 plot_distribution(poisson_diagnostic, estimand = "correlation",
                   arms = c("TEST", "REF"))
 ```
-The dashed line is the latent correlation supplied through `count_corr`. The
+The dashed line is the latent correlation supplied through `count_corr`
+[@nelsen2006]. The
 observed Pearson correlation can differ because the latent normal variables
 are transformed into discrete counts. The plot checks the direction and
 approximate magnitude of the generated dependence; `endpoint_corr` is the
@@ -315,4 +319,3 @@ settings but evaluates paired treatment-period data. The values above are
 illustrative; in an actual study, `sigmaB`, period effects, carry-over effects,
 and sequence-specific dropout should be justified from prior data or a
 sensitivity analysis.
-

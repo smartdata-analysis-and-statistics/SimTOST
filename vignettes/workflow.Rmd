@@ -26,7 +26,10 @@ and `R2` versus `T`.
 The important principle is that the final power calculation is the last
 step, not the first. A power result can be numerically precise while
 still being wrong if the data-generating model, estimand direction,
-correlation, or decision rule was specified incorrectly.
+correlation, or decision rule was specified incorrectly. Simulation-study
+guidance therefore recommends defining the data-generating mechanism,
+estimand, performance measures, and decision rules before interpreting the
+results [@morris_simulation_2019].
 
 The workflow therefore follows this order:
 
@@ -50,7 +53,9 @@ library(SimTOST)
 
 ## Step 1: Define the study and theoretical targets
 
-The estimand is the ratio of means (ROM). For every endpoint and
+The estimand is the ratio of means (ROM). This ratio-scale TOST formulation is
+standard in bioequivalence testing [@schuirmann_comparison_1987;
+@sozu_sample_2015]. For every endpoint and
 comparison, the equivalence hypotheses are
 
 $$H_0: \mathrm{ROM} \le L \text{ or } \mathrm{ROM} \ge U,
@@ -145,7 +150,9 @@ where applicable).
 The following plots compare trial-level means and standard deviations
 with the user-specified values. The finite-sample estimates will vary
 around the dashed line; the key question is whether they are centered
-correctly.
+correctly. This separation between the data-generating parameters and their
+finite-sample estimates is a central feature of simulation studies
+[@morris_simulation_2019].
 
 ```{r workflow-parameter-mean, eval=TRUE, fig.width=8, fig.height=5, out.width="100%", fig.align="center"}
 plot_distribution(ss_pilot, estimand = "mu")
@@ -163,9 +170,10 @@ not necessarily a bias issue.
 ### 3b. Endpoint correlations
 
 This plot checks whether the empirical within-arm endpoint correlations
-are centered near the specified value of 0.50. It checks dependence
-between endpoints in the same arm, not dependence between treatment
-arms.
+are centered near the specified value of 0.50. The simulation generates
+these dependent endpoints with a Gaussian-copula construction
+[@nelsen2006]. It checks dependence between endpoints in the same arm,
+not dependence between treatment arms.
 
 ```{r workflow-correlation, eval=TRUE, fig.width=8, fig.height=5, out.width="100%", fig.align="center"}
 plot_distribution(ss_pilot, estimand = "correlation")
@@ -227,8 +235,8 @@ This step addresses Step 4 in the workflow above: *"Is the number of
 simulations (nsim) sufficient for a stable estimate?"* It assesses precision, not model validity or
 study sample size. Every simulation estimate has Monte Carlo
 uncertainty. Simulation-study guidance recommends reporting this
-uncertainty and choosing the number of repetitions to achieve a stated
-precision [@siepe_simulation_2024].
+uncertainty and using it to judge whether the number of repetitions is
+adequate [@morris_simulation_2019].
 
 The **`plot_stability()` function** checks if the estimated rejection probability
 stabilizes as simulations accumulate. Compare the final value to the
@@ -282,13 +290,16 @@ Consider a trial with:
 
 - **Equivalence condition**: $L = 0.80, \qquad U = 1.25.$
 
-The **TOST (Two One-Sided Tests) decision** requires rejecting both:
+The **TOST (Two One-Sided Tests) decision** requires rejecting both. This
+is the standard equivalence-testing formulation [@schuirmann_comparison_1987;
+@berger1996]:
 
 $$H_{0L}: \theta \leq L \quad\text{versus}\quad H_{1L}: \theta > L,$$
 $$H_{0U}: \theta \geq U \quad\text{versus}\quad H_{1U}: \theta < U.$$
 
 For a **log-normal outcome** with `ctype = "ROM"`, the boundary is set
-on the **log-analysis scale**. Define
+on the **log-analysis scale**, consistent with log-scale bioequivalence
+analysis [@sozu_sample_2015]. Define
 
 $$\eta_a = \log(\mu_{a,y1}) - \frac{1}{2}
 \log\left(1 + \frac{\sigma_{a,y1}^2}{\mu_{a,y1}^2}\right),$$
@@ -317,7 +328,8 @@ approximately $\mu_{T,y1}=1.304387$ and an arithmetic mean ratio of
 
 A **false-equivalence event** occurs if the confidence interval for the
 estimated log-ratio falls within `(log(0.80), log(1.25))` despite the
-true ROM being `0.80` or `1.25`.
+true ROM being `0.80` or `1.25`. This confidence-interval formulation is
+equivalent to the two one-sided tests [@schuirmann_comparison_1987].
 
 Particularly, the `type1Error()` function simulates each scenario
 individually, reporting the **type I error,** i.e. the
@@ -333,8 +345,10 @@ evaluates both the lower and upper boundaries separately. With
 reports the **Type I error** for the complete trial decision, using the
 stored k values.
 
-The output table and plot display for each scenario the type I error along with **95% Monte
-Carlo confidence intervals.**
+The output table and plot display for each scenario the type I error along
+with **95% Monte Carlo confidence intervals**. Reporting uncertainty from
+the finite number of repetitions is recommended for simulation studies
+[@morris_simulation_2019].
 
 ```{r workflow-type1-one-scenario-plot, eval=TRUE, fig.width=8, fig.height=5, out.width="100%", fig.align="center"}
 ss_one <- sampleSize(
@@ -400,8 +414,9 @@ rule: when all endpoints are required (`k = m`), the global null is the
 union of the component nulls; when only `k < m` endpoints are required,
 it is a partial-conjunction null.
 
-Ristl et al. [@ristl2019] describe the least-favorable-configuration
-principle for multiple endpoints. In the all-required case, a candidate
+Ristl et al. [@ristl2019] and Mielke et al. [@mielke_sample_2018] describe
+the analysis of multiple endpoints and `k`-of-`m` decisions. In the
+all-required case, a candidate
 least-favorable configuration has one component at its null boundary and
 the other components at favorable alternatives.
 For a `k`-of-`m` rule, the corresponding minimal null has
@@ -518,9 +533,11 @@ $$2\times {3\choose2}\times 2^2=24\ \text{scenarios}.$$
 Because the decision is “at least two,” a false claim can occur when an
 interior endpoint passes and one of the two boundary endpoints passes
 falsely. Therefore, an endpoint-wise multiplicity adjustment is needed
-for `k < m`; `adjust = "bon"` is a conservative starting point, and the
-complete-trial Type I error must be checked empirically
-[@benjamini2008].
+for `k < m`; this is the partial-conjunction setting discussed by
+Benjamini and Heller and by Mielke et al. [@benjamini2008;
+@mielke_sample_2018]. `adjust = "bon"` is a conservative starting point
+[@bonferroni1936], and the complete-trial Type I error must be checked
+empirically.
 
 ```{r workflow-type1-allscenario-k2-plot, eval=TRUE, fig.width=8, fig.height=10, out.width="100%", fig.align="center"}
 type1_global_k2 <- type1Error(x = ss_pilot_k2, null = "both", joint = TRUE)
@@ -558,8 +575,8 @@ plot(type1_global_k1)
 
 This is the most permissive rule: any one boundary endpoint passing
 falsely can complete the claim. A multiplicity adjustment is therefore
-essential, and the global result should be checked using the largest
-joint Type I-error estimate and its Monte Carlo interval.
+essential [@mielke_sample_2018], and the global result should be checked
+using the largest joint Type I-error estimate and its Monte Carlo interval.
 
 For every configuration above, the simulated trial must satisfy the
 complete study decision: the required number of endpoints must pass for
@@ -571,12 +588,12 @@ Compare the global interval to the nominal value
 (**5%) line** as we did in the previous section.
 
 For `k = m`, `adjust = "none"` is generally
-appropriate for the endpoint IUT. For `k < m`, use Mielke's strong
+appropriate for the endpoint IUT [@berger1996; @quan2001]. For `k < m`, use Mielke's strong
 `adjust = "t"` calibration `alpha / (m - k + 1)` when strong control over
 partial null configurations is required. The package's `adjust = "k"` method
 uses `k * alpha / m` and is a weak complete-null calibration; it should be
-used only when that estimand is the prespecified objective. Confirm the global
-performance with `type1Error()`.
+used only when that estimand is the prespecified objective
+[@mielke_sample_2018]. Confirm the global performance with `type1Error()`.
 
 ## Step 6: Run the final sample-size calculation
 

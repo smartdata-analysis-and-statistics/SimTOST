@@ -38,6 +38,8 @@ and
 $$H_{02}: \mu_T - \mu_R \geq U
 \qquad\text{versus}\qquad
 H_{12}: \mu_T - \mu_R < U.$$
+The TOST formulation follows the standard equivalence-testing framework
+[@sozu_sample_2015; @schuirmann_comparison_1987].
 
 Equivalence is established if and only if both $H_{01}$ and $H_{02}$ are
 rejected at the chosen significance level $\alpha$. Equivalently, the
@@ -63,6 +65,10 @@ For pharmacokinetic (PK) outcomes, such as the area under the curve (AUC) and ma
 \text{Logarithmic Variance} = \log\left(1 + {\text{CV}^2}\right)
 \]
 
+The use of the logarithmic scale for bioequivalence analysis is described in
+standard sample-size and regulatory guidance [@sozu_sample_2015; @CHMP2010].
+The equation itself follows from the definition of a log-normal distribution.
+
 Equivalence limits must also be specified on the log scale to align with the transformed data.
 
 
@@ -79,6 +85,8 @@ and
 $$H_{02}: \frac{\mu_T}{\mu_R} \geq U
 \qquad\text{versus}\qquad
 H_{12}: \frac{\mu_T}{\mu_R} < U.$$
+The ratio formulation is the corresponding TOST on the ratio-of-means scale
+[@sozu_sample_2015; @schuirmann_comparison_1987].
 
 Thus, equivalence requires rejection of both $H_{01}$ and $H_{02}$, or
 equivalently:
@@ -105,7 +113,7 @@ $$
 The logarithmic mean is then calculated as:
 
 $$\text{Logarithmic Mean} = \log(\text{Arithmetic Mean}) - \frac{1}{2}(\text{Logarithmic Variance})$$
-
+These transformations use the standard log-normal parameterization.
 ## Count outcomes: event-rate ratio (RR)
 
 For count outcomes, such as the number of events observed during a specified
@@ -113,8 +121,8 @@ exposure period, SimTOST uses the event-rate ratio rather than the continuous
 outcome ratio of means. The event-rate ratio is
 
 $$RR = \frac{\lambda_T}{\lambda_R},$$
-
-where $\lambda_T$ and $\lambda_R$ are the event rates in the test and
+The event-rate ratio is the estimand used for count-outcome equivalence
+comparisons [@chang_sample_2017; @zhu_sample_2017], where $\lambda_T$ and $\lambda_R$ are the event rates in the test and
 reference groups. For lower and upper rate-ratio limits $L$ and $U$, the
 hypotheses are:
 
@@ -158,7 +166,9 @@ counts. The resulting Pearson correlation between the observed discrete
 counts is generally different and depends on the marginal count
 distributions. For normally distributed continuous outcomes, the latent
 correlation and Pearson correlation coincide because the transformation is
-linear [@chang_sample_2017].
+linear. This follows directly from the definition of Pearson correlation: a
+common linear transformation preserves the correlation, apart from a possible
+change in sign if the transformation reverses orientation.
 
 ## Regulatory requirements
 When evaluating bioequivalence, certain statistical and methodological requirements must be adhered to, as outlined in the European Medicines Agency's bioequivalence guidelines [@CHMP2010]. These requirements ensure that the test and reference products meet predefined criteria for equivalence in terms of PK parameters. The key considerations are summarized below:
@@ -185,7 +195,7 @@ A decision must be made as to whether it is desirable to
 
 ## Testing multiple co-primary endpoints
 
-When a trial defines multiple co-primary endpoints, equivalence must be demonstrated for all of them to claim overall treatment equivalence. In this setting, each endpoint is tested separately at the usual significance level ($\alpha$), and equivalence is established only if all individual tests are statistically significant. Because conclusions require rejecting all null hypotheses, a formal multiplicity adjustment is not needed to control the Type I error rate. [@cpmp_points_2002] However, as the number of co-primary endpoints ($K$) increases, the likelihood of failing to meet equivalence on at least one endpoint also rises, resulting in a higher Type II error rate (i.e., a greater risk of incorrectly concluding non-equivalence) [@mielke_sample_2018]
+When a trial defines multiple co-primary endpoints, equivalence must be demonstrated for all of them to claim overall treatment equivalence. In this setting, each endpoint is tested separately at the usual significance level ($\alpha$), and equivalence is established only if all individual tests are statistically significant. Because conclusions require rejecting all null hypotheses, the decision is an intersection--union test and a formal endpoint-wise multiplicity adjustment is not needed to control the Type I error rate [@berger1996; @hamasaki_coprimary_2018]. However, as the number of co-primary endpoints ($K$) increases, the likelihood of failing to meet equivalence on at least one endpoint also rises, resulting in a higher Type II error rate (i.e., a greater risk of incorrectly concluding non-equivalence) [@mielke_sample_2018]
 
 This has several important implications:
 
@@ -197,19 +207,26 @@ This has several important implications:
 
 ## Testing multiple primary endpoints {#multiple-primary}
 
-When a trial aims to establish equivalence for at least $k$ primary endpoints, adjustments are necessary to account for the increased risk of Type I error due to multiple hypothesis testing [@sozu_continuous_2015]. Without such adjustments, the likelihood of incorrectly concluding equivalence for at least one endpoint increases as the number of endpoints grows.
+When a trial aims to establish equivalence for at least $k$ of $m$ primary
+endpoints, the decision is a partial-conjunction test. When $k < m$, an
+endpoint-wise adjustment is generally needed to control the Type I error across
+the possible successful endpoint subsets [@benjamini2008; @mielke_sample_2018].
+The appropriate adjustment depends on the prespecified $k$-out-of-$m$ rule.
 
 For example, if a study includes $m = 3$ independent primary endpoints and uses a significance level of $\alpha = 5%$ for each test, the overall probability of falsely concluding equivalence for at least one endpoint is:
 
 $$ 1 – (1-\alpha)^m  = 1 - (1-0.05)^3 = 0.1426. $$
+This is the probability of at least one false rejection under independent
+tests [@dunn1961; @sidak1967].
 This means that the overall probability of making any false positive error, also known as the **family-wise error rate (FWER)**, increases to approximately 14%.
 
 To address this issue, adjustments to the significance level are necessary for multiple endpoint comparisons for which various methods have been proposed. In SimTOST, the following approaches are included:
 
 ### Bonferroni correction
-The most common and easiest procedure for multiplicity adjustment to control the FWER is the Bonferroni method. Each hypothesis is tested at level
+The most common and easiest procedure for multiplicity adjustment to control the FWER is the Bonferroni method [@bonferroni1936]. Each hypothesis is tested at level
 
 $$\alpha_{bon}= \alpha/m$$
+
 
 where $m$ is the total number of tests. Although simple, this method is highly conservative, particularly when tests are correlated, as it assumes all tests are independent. This conservativeness remains pronounced even for $k=1$, where only one of the $m$ hypotheses needs to be rejected. [@mielke_sample_2018]
 
@@ -217,15 +234,16 @@ In the [sampleSize()](../reference/sampleSize.html) function, the Bonferroni cor
 
 ### Sidak correction
 
-The Sidak correction is an alternative method for controlling the FWER. Like the Bonferroni correction, it assumes that tests are independent. However, the Sidak correction accounts for the joint probability of all tests being non-significant, making it mathematically less conservative than the Bonferroni method. The adjusted significance level is calculated as:
+The Sidak correction [@sidak1967] is an alternative method for controlling the FWER. Like the Bonferroni correction, it assumes that tests are independent. However, the Sidak correction accounts for the joint probability of all tests being non-significant, making it mathematically less conservative than the Bonferroni method. The adjusted significance level is calculated as:
 
 $$\alpha_{sid}= 1-(1-\alpha)^ {1/m}$$
 
+
 The Sidak correction can be implemented by specifying `adjust = "sid"` in the [sampleSize()](../reference/sampleSize.html) function.
 
-### K adjustment
+### K adjustment: Mielke's weak k-out-of-m correction
 
-This correction explicitly accounts for the scenario where equivalence is required for only $k$ out of $m$ endpoints. Unlike the Bonferroni and Sidak corrections, which assume that all  $m$ tests contribute equally to the overall Type I error rate, the *k*-adjustment directly incorporates the number of endpoints ($k$) required for equivalence into the adjustment. The adjusted significance level is calculated as:
+The K adjustment [@mielke_sample_2018] explicitly accounts for the scenario where equivalence is required for only $k$ out of $m$ endpoints. Unlike the Bonferroni and Sidak corrections, which assume that all  $m$ tests contribute equally to the overall Type I error rate, the *k*-adjustment directly incorporates the number of endpoints ($k$) required for equivalence into the adjustment. The adjusted significance level is calculated as:
 
 $$\alpha_k= \frac{k*\alpha}{m}$$
 
@@ -233,7 +251,7 @@ where $k$ is the number of endpoints required for equivalence, and $m$ is the to
 
 ### T adjustment: Mielke's strong k-out-of-m correction
 
-The `t` adjustment described below is the strong k-out-of-m procedure for
+The `t` adjustment  [@mielke_sample_2018] described below is the strong k-out-of-m procedure for
 partial-conjunction decisions and is distinct from the weak `k` adjustment.
 
 When the decision rule requires equivalence for at least `k` of `m` endpoints,
@@ -245,8 +263,7 @@ $$\alpha_{t}= \frac{\alpha}{m-k+1}$$
 
 where `m` is the number of selected endpoints and `k` is the minimum number
 that must demonstrate equivalence. This adjustment controls
-the Type I error rate for the partial-conjunction decision, including cases in
-which only some endpoints satisfy the null hypothesis [@mielke_sample_2018].
+the Type I error rate for the partial-conjunction decision, including cases in which only some endpoints satisfy the null hypothesis [@mielke_sample_2018].
 
 ## Hierarchical testing of multiple endpoints
 Hierarchical testing is an approach to multiple endpoint testing where endpoints are tested in a predefined order, typically based on their clinical or regulatory importance. A fallback testing strategy is applied, allowing sequential hypothesis testing. If a hypothesis earlier in the sequence fails to be rejected, testing stops, and subsequent hypotheses are not evaluated. [@chowdhry_finding_2024]

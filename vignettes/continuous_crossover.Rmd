@@ -18,7 +18,11 @@ doc.cache <- T #for cran; change to F
 ```
 
 
-In the example below, we illustrate the use of `SimTOST` for 2x2 cross-over trials. As a first step, we load the package.
+In the example below, we illustrate the use of `SimTOST` for 2x2 crossover
+trials. This randomized two-period, two-sequence design and its standard
+subject/period/treatment model are described by Chow and Liu
+[@chow_liu_bioequivalence_2008]. The design is also used in bioequivalence
+studies [@CHMP2010]. As a first step, we load the package.
 
 ```{r, echo = T, message=F}
 library(SimTOST)
