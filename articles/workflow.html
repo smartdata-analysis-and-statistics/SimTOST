@@ -119,7 +119,10 @@ and <code>R2</code> versus <code>T</code>.</p>
 <p>The important principle is that the final power calculation is the
 last step, not the first. A power result can be numerically precise
 while still being wrong if the data-generating model, estimand
-direction, correlation, or decision rule was specified incorrectly.</p>
+direction, correlation, or decision rule was specified incorrectly.
+Simulation-study guidance therefore recommends defining the
+data-generating mechanism, estimand, performance measures, and decision
+rules before interpreting the results <span class="citation">(<a href="#ref-morris_simulation_2019">Morris et al. 2019</a>)</span>.</p>
 <p>The workflow therefore follows this order:</p>
 <ol style="list-style-type: decimal">
 <li>define the intended study and its theoretical targets;</li>
@@ -142,8 +145,10 @@ direction, correlation, or equivalence margin.</p>
 <div class="section level3">
 <h3 id="step-1-define-the-study-and-theoretical-targets">Step 1: Define the study and theoretical targets<a class="anchor" aria-label="anchor" href="#step-1-define-the-study-and-theoretical-targets"></a>
 </h3>
-<p>The estimand is the ratio of means (ROM). For every endpoint and
-comparison, the equivalence hypotheses are</p>
+<p>The estimand is the ratio of means (ROM). This ratio-scale TOST
+formulation is standard in bioequivalence testing <span class="citation">(<a href="#ref-schuirmann_comparison_1987">Schuirmann
+1987</a>; <a href="#ref-sozu_sample_2015">Sozu et al. 2015</a>)</span>.
+For every endpoint and comparison, the equivalence hypotheses are</p>
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>H</mi><mn>0</mn></msub><mo>:</mo><mrow><mi mathvariant="normal">R</mi><mi mathvariant="normal">O</mi><mi mathvariant="normal">M</mi></mrow><mo>≤</mo><mi>L</mi><mrow><mspace width="0.333em"></mspace><mtext mathvariant="normal"> or </mtext><mspace width="0.333em"></mspace></mrow><mrow><mi mathvariant="normal">R</mi><mi mathvariant="normal">O</mi><mi mathvariant="normal">M</mi></mrow><mo>≥</mo><mi>U</mi><mo>,</mo><mspace width="2.0em"></mspace><msub><mi>H</mi><mn>1</mn></msub><mo>:</mo><mi>L</mi><mo>&lt;</mo><mrow><mi mathvariant="normal">R</mi><mi mathvariant="normal">O</mi><mi mathvariant="normal">M</mi></mrow><mo>&lt;</mo><mi>U</mi><mi>.</mi></mrow><annotation encoding="application/x-tex">H_0: \mathrm{ROM} \le L \text{ or } \mathrm{ROM} \ge U,
 \qquad
 H_1: L &lt; \mathrm{ROM} &lt; U.</annotation></semantics></math> The
@@ -237,7 +242,10 @@ plot where applicable).</p>
 <p>The following plots compare trial-level means and standard deviations
 with the user-specified values. The finite-sample estimates will vary
 around the dashed line; the key question is whether they are centered
-correctly.</p>
+correctly. This separation between the data-generating parameters and
+their finite-sample estimates is a central feature of simulation studies
+<span class="citation">(<a href="#ref-morris_simulation_2019">Morris et
+al. 2019</a>)</span>.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_distribution.html">plot_distribution</a></span><span class="op">(</span><span class="va">ss_pilot</span>, estimand <span class="op">=</span> <span class="st">"mu"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="workflow_files/figure-html/workflow-parameter-mean-1.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;"></p>
@@ -253,9 +261,11 @@ issue, not necessarily a bias issue.</p>
 <h4 id="b--endpoint-correlations">3b. Endpoint correlations<a class="anchor" aria-label="anchor" href="#b--endpoint-correlations"></a>
 </h4>
 <p>This plot checks whether the empirical within-arm endpoint
-correlations are centered near the specified value of 0.50. It checks
-dependence between endpoints in the same arm, not dependence between
-treatment arms.</p>
+correlations are centered near the specified value of 0.50. The
+simulation generates these dependent endpoints with a Gaussian-copula
+construction <span class="citation">(<a href="#ref-nelsen2006">Nelsen
+2006</a>)</span>. It checks dependence between endpoints in the same
+arm, not dependence between treatment arms.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_distribution.html">plot_distribution</a></span><span class="op">(</span><span class="va">ss_pilot</span>, estimand <span class="op">=</span> <span class="st">"correlation"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="workflow_files/figure-html/workflow-correlation-1.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;"></p>
@@ -314,8 +324,8 @@ by the power calculation; that number is <code>nsim</code>.</p>
 of simulations (nsim) sufficient for a stable estimate?”</em> It
 assesses precision, not model validity or study sample size. Every
 simulation estimate has Monte Carlo uncertainty. Simulation-study
-guidance recommends reporting this uncertainty and choosing the number
-of repetitions to achieve a stated precision <span class="citation">(<a href="#ref-siepe_simulation_2024">Siepe et al. 2024</a>)</span>.</p>
+guidance recommends reporting this uncertainty and using it to judge
+whether the number of repetitions is adequate <span class="citation">(<a href="#ref-morris_simulation_2019">Morris et al. 2019</a>)</span>.</p>
 <p>The <strong><code><a href="../reference/plot_stability.html">plot_stability()</a></code> function</strong> checks if
 the estimated rejection probability stabilizes as simulations
 accumulate. Compare the final value to the target power (0.80). By
@@ -369,11 +379,13 @@ Consider a trial with:</p>
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>L</mi><mo>=</mo><mn>0.80</mn><mo>,</mo><mspace width="2.0em"></mspace><mi>U</mi><mo>=</mo><mn>1.25</mn><mi>.</mi></mrow><annotation encoding="application/x-tex">L = 0.80, \qquad U = 1.25.</annotation></semantics></math></p></li>
 </ul>
 <p>The <strong>TOST (Two One-Sided Tests) decision</strong> requires
-rejecting both:</p>
+rejecting both. This is the standard equivalence-testing formulation
+<span class="citation">(<a href="#ref-schuirmann_comparison_1987">Schuirmann 1987</a>; <a href="#ref-berger1996">Berger and Hsu 1996</a>)</span>:</p>
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>H</mi><mrow><mn>0</mn><mi>L</mi></mrow></msub><mo>:</mo><mi>θ</mi><mo>≤</mo><mi>L</mi><mspace width="1.0em"></mspace><mtext mathvariant="normal">versus</mtext><mspace width="1.0em"></mspace><msub><mi>H</mi><mrow><mn>1</mn><mi>L</mi></mrow></msub><mo>:</mo><mi>θ</mi><mo>&gt;</mo><mi>L</mi><mo>,</mo></mrow><annotation encoding="application/x-tex">H_{0L}: \theta \leq L \quad\text{versus}\quad H_{1L}: \theta &gt; L,</annotation></semantics></math><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>H</mi><mrow><mn>0</mn><mi>U</mi></mrow></msub><mo>:</mo><mi>θ</mi><mo>≥</mo><mi>U</mi><mspace width="1.0em"></mspace><mtext mathvariant="normal">versus</mtext><mspace width="1.0em"></mspace><msub><mi>H</mi><mrow><mn>1</mn><mi>U</mi></mrow></msub><mo>:</mo><mi>θ</mi><mo>&lt;</mo><mi>U</mi><mi>.</mi></mrow><annotation encoding="application/x-tex">H_{0U}: \theta \geq U \quad\text{versus}\quad H_{1U}: \theta &lt; U.</annotation></semantics></math></p>
 <p>For a <strong>log-normal outcome</strong> with
 <code>ctype = "ROM"</code>, the boundary is set on the
-<strong>log-analysis scale</strong>. Define</p>
+<strong>log-analysis scale</strong>, consistent with log-scale
+bioequivalence analysis <span class="citation">(<a href="#ref-sozu_sample_2015">Sozu et al. 2015</a>)</span>. Define</p>
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>η</mi><mi>a</mi></msub><mo>=</mo><mrow><mi mathvariant="normal">log</mi><mo>⁡</mo></mrow><mo stretchy="false" form="prefix">(</mo><msub><mi>μ</mi><mrow><mi>a</mi><mo>,</mo><mi>y</mi><mn>1</mn></mrow></msub><mo stretchy="false" form="postfix">)</mo><mo>−</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mrow><mi mathvariant="normal">log</mi><mo>⁡</mo></mrow><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>+</mo><mfrac><msubsup><mi>σ</mi><mrow><mi>a</mi><mo>,</mo><mi>y</mi><mn>1</mn></mrow><mn>2</mn></msubsup><msubsup><mi>μ</mi><mrow><mi>a</mi><mo>,</mo><mi>y</mi><mn>1</mn></mrow><mn>2</mn></msubsup></mfrac><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo></mrow><annotation encoding="application/x-tex">\eta_a = \log(\mu_{a,y1}) - \frac{1}{2}
 \log\left(1 + \frac{\sigma_{a,y1}^2}{\mu_{a,y1}^2}\right),</annotation></semantics></math></p>
 <p>where
@@ -401,7 +413,9 @@ exactly 1.25.</p>
 <p>A <strong>false-equivalence event</strong> occurs if the confidence
 interval for the estimated log-ratio falls within
 <code>(log(0.80), log(1.25))</code> despite the true ROM being
-<code>0.80</code> or <code>1.25</code>.</p>
+<code>0.80</code> or <code>1.25</code>. This confidence-interval
+formulation is equivalent to the two one-sided tests <span class="citation">(<a href="#ref-schuirmann_comparison_1987">Schuirmann
+1987</a>)</span>.</p>
 <p>Particularly, the <code><a href="../reference/type1Error.html">type1Error()</a></code> function simulates each
 scenario individually, reporting the <strong>type I error,</strong>
 i.e. the probability that all required tests incorrectly conclude
@@ -415,7 +429,9 @@ function evaluates both the lower and upper boundaries separately. With
 combination and reports the <strong>Type I error</strong> for the
 complete trial decision, using the stored k values.</p>
 <p>The output table and plot display for each scenario the type I error
-along with <strong>95% Monte Carlo confidence intervals.</strong></p>
+along with <strong>95% Monte Carlo confidence intervals</strong>.
+Reporting uncertainty from the finite number of repetitions is
+recommended for simulation studies <span class="citation">(<a href="#ref-morris_simulation_2019">Morris et al. 2019</a>)</span>.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ss_one</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sampleSize.html">sampleSize</a></span><span class="op">(</span></span>
 <span>  power <span class="op">=</span> <span class="fl">0.80</span>, alpha <span class="op">=</span> <span class="fl">0.05</span>,</span>
@@ -495,10 +511,11 @@ global null is the union of the component nulls; when only
 <code>k &lt; m</code> endpoints are required, it is a
 partial-conjunction null.</p>
 <p>Ristl et al. <span class="citation">(<a href="#ref-ristl2019">Ristl
-et al. 2019</a>)</span> describe the least-favorable-configuration
-principle for multiple endpoints. In the all-required case, a candidate
-least-favorable configuration has one component at its null boundary and
-the other components at favorable alternatives. For a
+et al. 2019</a>)</span> and Mielke et al. <span class="citation">(<a href="#ref-mielke_sample_2018">Mielke et al. 2018</a>)</span> describe
+the analysis of multiple endpoints and <code>k</code>-of-<code>m</code>
+decisions. In the all-required case, a candidate least-favorable
+configuration has one component at its null boundary and the other
+components at favorable alternatives. For a
 <code>k</code>-of-<code>m</code> rule, the corresponding minimal null
 has
 <math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>r</mi><mo>=</mo><mi>m</mi><mo>−</mo><mi>k</mi><mo>+</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">r = m - k + 1 </annotation></semantics></math>
@@ -723,9 +740,13 @@ gives</p>
 <p>Because the decision is “at least two,” a false claim can occur when
 an interior endpoint passes and one of the two boundary endpoints passes
 falsely. Therefore, an endpoint-wise multiplicity adjustment is needed
-for <code>k &lt; m</code>; <code>adjust = "bon"</code> is a conservative
-starting point, and the complete-trial Type I error must be checked
-empirically <span class="citation">(<a href="#ref-benjamini2008">Benjamini and Heller 2008</a>)</span>.</p>
+for <code>k &lt; m</code>; this is the partial-conjunction setting
+discussed by Benjamini and Heller and by Mielke et al. <span class="citation">(<a href="#ref-benjamini2008">Benjamini and Heller
+2008</a>; <a href="#ref-mielke_sample_2018">Mielke et al.
+2018</a>)</span>. <code>adjust = "bon"</code> is a conservative starting
+point <span class="citation">(<a href="#ref-bonferroni1936">Bonferroni
+1936</a>)</span>, and the complete-trial Type I error must be checked
+empirically.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">type1_global_k2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/type1Error.html">type1Error</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">ss_pilot_k2</span>, null <span class="op">=</span> <span class="st">"both"</span>, joint <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Warning: The adjustment is applied within each comparator's selected endpoint</span></span>
@@ -895,8 +916,9 @@ gives</p>
 <p><img src="workflow_files/figure-html/workflow-type1-allscenario-k1-plot-1.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;"></p>
 <p>This is the most permissive rule: any one boundary endpoint passing
 falsely can complete the claim. A multiplicity adjustment is therefore
-essential, and the global result should be checked using the largest
-joint Type I-error estimate and its Monte Carlo interval.</p>
+essential <span class="citation">(<a href="#ref-mielke_sample_2018">Mielke et al. 2018</a>)</span>, and the
+global result should be checked using the largest joint Type I-error
+estimate and its Monte Carlo interval.</p>
 <p>For every configuration above, the simulated trial must satisfy the
 complete study decision: the required number of endpoints must pass for
 <code>T_vs_R1</code> <strong>and</strong> for <code>T_vs_R2</code> in
@@ -906,14 +928,14 @@ approximation</strong> of the worst-case scenario among the evaluated
 boundary configurations. Compare the global interval to the nominal
 value (<strong>5%) line</strong> as we did in the previous section.</p>
 <p>For <code>k = m</code>, <code>adjust = "none"</code> is generally
-appropriate for the endpoint IUT. For <code>k &lt; m</code>, use
-Mielke’s strong <code>adjust = "t"</code> calibration
-<code>alpha / (m - k + 1)</code> when strong control over partial null
-configurations is required. The package’s <code>adjust = "k"</code>
-method uses <code>k * alpha / m</code> and is a weak complete-null
-calibration; it should be used only when that estimand is the
-prespecified objective. Confirm the global performance with
-<code><a href="../reference/type1Error.html">type1Error()</a></code>.</p>
+appropriate for the endpoint IUT <span class="citation">(<a href="#ref-berger1996">Berger and Hsu 1996</a>; <a href="#ref-quan2001">Quan et al. 2001</a>)</span>. For
+<code>k &lt; m</code>, use Mielke’s strong <code>adjust = "t"</code>
+calibration <code>alpha / (m - k + 1)</code> when strong control over
+partial null configurations is required. The package’s
+<code>adjust = "k"</code> method uses <code>k * alpha / m</code> and is
+a weak complete-null calibration; it should be used only when that
+estimand is the prespecified objective <span class="citation">(<a href="#ref-mielke_sample_2018">Mielke et al. 2018</a>)</span>. Confirm
+the global performance with <code><a href="../reference/type1Error.html">type1Error()</a></code>.</p>
 </div>
 </div>
 <div class="section level3">
@@ -1047,9 +1069,28 @@ Berger, Roger L., and Jason C. Hsu. 1996. <span>“Bioequivalence Trials,
 Intersection-Union Tests and Equivalence Confidence Sets.”</span>
 <em>Statistical Science</em> 11 (4): 283–319. <a href="https://doi.org/10.1214/ss/1032280304" class="external-link">https://doi.org/10.1214/ss/1032280304</a>.
 </div>
+<div id="ref-bonferroni1936" class="csl-entry">
+Bonferroni, Carlo Emilio. 1936. <em>Teoria Statistica Delle Classi e
+Calcolo Delle Probabilità</em>. Seeber.
+</div>
 <div id="ref-lehmann2005" class="csl-entry">
 Lehmann, Erich L., and Joseph P. Romano. 2005. <em>Testing Statistical
 Hypotheses</em>. 3rd ed. Springer Texts in Statistics. Springer. <a href="https://doi.org/10.1007/0-387-27605-X" class="external-link">https://doi.org/10.1007/0-387-27605-X</a>.
+</div>
+<div id="ref-mielke_sample_2018" class="csl-entry">
+Mielke, Johanna, Byron Jones, Bernd Jilma, and Franz König. 2018.
+<span>“Sample <span>Size</span> for <span>Multiple Hypothesis
+Testing</span> in <span>Biosimilar Development</span>.”</span>
+<em>Statistics in Biopharmaceutical Research</em> 10 (1): 39–49. <a href="https://doi.org/10.1080/19466315.2017.1371071" class="external-link">https://doi.org/10.1080/19466315.2017.1371071</a>.
+</div>
+<div id="ref-morris_simulation_2019" class="csl-entry">
+Morris, Tim P., Ian R. White, and Michael J. Crowther. 2019.
+<span>“Using Simulation Studies to Evaluate Statistical Methods.”</span>
+<em>Statistics in Medicine</em> 38 (11): 2074–102. <a href="https://doi.org/10.1002/sim.8086" class="external-link">https://doi.org/10.1002/sim.8086</a>.
+</div>
+<div id="ref-nelsen2006" class="csl-entry">
+Nelsen, Roger B. 2006. <em>An Introduction to Copulas</em>. 2nd ed.
+Springer.
 </div>
 <div id="ref-quan2001" class="csl-entry">
 Quan, Hong, John Bolognese, and Wei Yuan. 2001. <span>“Assessment of
@@ -1062,12 +1103,19 @@ Ristl, Robin, Susanne Urach, Gerd Rosenkranz, and Martin Posch. 2019.
 Populations: A Review.”</span> <em>Journal of Biopharmaceutical
 Statistics</em> 29 (1): 1–29. <a href="https://doi.org/10.1080/10543406.2018.1489402" class="external-link">https://doi.org/10.1080/10543406.2018.1489402</a>.
 </div>
-<div id="ref-siepe_simulation_2024" class="csl-entry">
-Siepe, Björn S., František Bartoš, Tim P. Morris, Anne-Laure Boulesteix,
-Daniel W. Heck, and Samuel Pawel. 2024. <span>“Simulation Studies for
-Methodological Research in Psychology: A Standardized Template for
-Planning, Preregistration, and Reporting.”</span> <em>Psychological
-Methods</em>, ahead of print. <a href="https://doi.org/10.1037/met0000695" class="external-link">https://doi.org/10.1037/met0000695</a>.
+<div id="ref-schuirmann_comparison_1987" class="csl-entry">
+Schuirmann, Donald J. 1987. <span>“A Comparison of the <span>Two
+One-Sided Tests Procedure</span> and the <span>Power Approach</span> for
+Assessing the Equivalence of Average Bioavailability.”</span>
+<em>Journal of Pharmacokinetics and Biopharmaceutics</em> 15 (6):
+657–80. <a href="https://doi.org/10.1007/BF01068419" class="external-link">https://doi.org/10.1007/BF01068419</a>.
+</div>
+<div id="ref-sozu_sample_2015" class="csl-entry">
+Sozu, Takashi, Tomoyuki Sugimoto, Toshimitsu Hamasaki, and Scott R.
+Evans. 2015. <em>Sample <span>Size Determination</span> in
+<span>Clinical Trials</span> with <span>Multiple Endpoints</span></em>.
+<span>SpringerBriefs</span> in <span>Statistics</span>. Springer
+International Publishing. <a href="https://doi.org/10.1007/978-3-319-22005-5" class="external-link">https://doi.org/10.1007/978-3-319-22005-5</a>.
 </div>
 </div>
 </div>

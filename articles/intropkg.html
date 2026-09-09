@@ -113,11 +113,10 @@
 <p>In the <code>SimTOST</code> R package, which is specifically designed
 for sample size estimation for bioequivalence studies, hypothesis
 testing is based on the Two One-Sided Tests (TOST) procedure. <span class="citation">(<a href="#ref-sozu_sample_2015">Sozu et al.
-2015b</a>)</span> In TOST, the equivalence test is framed as a
-comparison between the the null hypothesis of ‘new product is worse by a
-clinically relevant quantity’ and the alternative hypothesis of
-‘difference between products is too small to be clinically
-relevant’.</p>
+2015</a>)</span> In TOST, the equivalence test is framed as a comparison
+between the the null hypothesis of ‘new product is worse by a clinically
+relevant quantity’ and the alternative hypothesis of ‘difference between
+products is too small to be clinically relevant’.</p>
 <div class="section level2">
 <h2 id="hypotheses">Hypotheses<a class="anchor" aria-label="anchor" href="#hypotheses"></a>
 </h2>
@@ -143,7 +142,10 @@ H_{11}: \mu_T - \mu_R &gt; L,</annotation></semantics></math></p>
 <p>and</p>
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>H</mi><mn>02</mn></msub><mo>:</mo><msub><mi>μ</mi><mi>T</mi></msub><mo>−</mo><msub><mi>μ</mi><mi>R</mi></msub><mo>≥</mo><mi>U</mi><mspace width="2.0em"></mspace><mtext mathvariant="normal">versus</mtext><mspace width="2.0em"></mspace><msub><mi>H</mi><mn>12</mn></msub><mo>:</mo><msub><mi>μ</mi><mi>T</mi></msub><mo>−</mo><msub><mi>μ</mi><mi>R</mi></msub><mo>&lt;</mo><mi>U</mi><mi>.</mi></mrow><annotation encoding="application/x-tex">H_{02}: \mu_T - \mu_R \geq U
 \qquad\text{versus}\qquad
-H_{12}: \mu_T - \mu_R &lt; U.</annotation></semantics></math></p>
+H_{12}: \mu_T - \mu_R &lt; U.</annotation></semantics></math> The TOST
+formulation follows the standard equivalence-testing framework <span class="citation">(<a href="#ref-sozu_sample_2015">Sozu et al. 2015</a>;
+<a href="#ref-schuirmann_comparison_1987">Schuirmann
+1987</a>)</span>.</p>
 <p>Equivalence is established if and only if both
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>H</mi><mn>01</mn></msub><annotation encoding="application/x-tex">H_{01}</annotation></semantics></math>
 and
@@ -170,6 +172,11 @@ the coefficient of variation (CV) using the formula:</p>
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">Logarithmic Variance</mtext><mo>=</mo><mrow><mi mathvariant="normal">log</mi><mo>⁡</mo></mrow><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>+</mo><msup><mtext mathvariant="normal">CV</mtext><mn>2</mn></msup><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
 \text{Logarithmic Variance} = \log\left(1 + {\text{CV}^2}\right)
 </annotation></semantics></math></p>
+<p>The use of the logarithmic scale for bioequivalence analysis is
+described in standard sample-size and regulatory guidance <span class="citation">(<a href="#ref-sozu_sample_2015">Sozu et al. 2015</a>;
+<a href="#ref-CHMP2010">Committee for Medicinal Products for Human Use
+(CHMP) 2010</a>)</span>. The equation itself follows from the definition
+of a log-normal distribution.</p>
 <p>Equivalence limits must also be specified on the log scale to align
 with the transformed data.</p>
 </div>
@@ -189,7 +196,11 @@ H_{11}: \frac{\mu_T}{\mu_R} &gt; L,</annotation></semantics></math></p>
 <p>and</p>
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>H</mi><mn>02</mn></msub><mo>:</mo><mfrac><msub><mi>μ</mi><mi>T</mi></msub><msub><mi>μ</mi><mi>R</mi></msub></mfrac><mo>≥</mo><mi>U</mi><mspace width="2.0em"></mspace><mtext mathvariant="normal">versus</mtext><mspace width="2.0em"></mspace><msub><mi>H</mi><mn>12</mn></msub><mo>:</mo><mfrac><msub><mi>μ</mi><mi>T</mi></msub><msub><mi>μ</mi><mi>R</mi></msub></mfrac><mo>&lt;</mo><mi>U</mi><mi>.</mi></mrow><annotation encoding="application/x-tex">H_{02}: \frac{\mu_T}{\mu_R} \geq U
 \qquad\text{versus}\qquad
-H_{12}: \frac{\mu_T}{\mu_R} &lt; U.</annotation></semantics></math></p>
+H_{12}: \frac{\mu_T}{\mu_R} &lt; U.</annotation></semantics></math> The
+ratio formulation is the corresponding TOST on the ratio-of-means scale
+<span class="citation">(<a href="#ref-sozu_sample_2015">Sozu et al.
+2015</a>; <a href="#ref-schuirmann_comparison_1987">Schuirmann
+1987</a>)</span>.</p>
 <p>Thus, equivalence requires rejection of both
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>H</mi><mn>01</mn></msub><annotation encoding="application/x-tex">H_{01}</annotation></semantics></math>
 and
@@ -218,16 +229,15 @@ log scale is calculated using the normalized variance formula:</p>
 \text{Logarithmic Variance} = \log\left(1 + \frac{\text{Arithmetic Variance}}{\text{Arithmetic Mean}^2}\right)
 </annotation></semantics></math></p>
 <p>The logarithmic mean is then calculated as:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">Logarithmic Mean</mtext><mo>=</mo><mrow><mi mathvariant="normal">log</mi><mo>⁡</mo></mrow><mo stretchy="false" form="prefix">(</mo><mtext mathvariant="normal">Arithmetic Mean</mtext><mo stretchy="false" form="postfix">)</mo><mo>−</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mo stretchy="false" form="prefix">(</mo><mtext mathvariant="normal">Logarithmic Variance</mtext><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">\text{Logarithmic Mean} = \log(\text{Arithmetic Mean}) - \frac{1}{2}(\text{Logarithmic Variance})</annotation></semantics></math></p>
-</div>
-<div class="section level3">
-<h3 id="count-outcomes-event-rate-ratio-rr">Count outcomes: event-rate ratio (RR)<a class="anchor" aria-label="anchor" href="#count-outcomes-event-rate-ratio-rr"></a>
-</h3>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">Logarithmic Mean</mtext><mo>=</mo><mrow><mi mathvariant="normal">log</mi><mo>⁡</mo></mrow><mo stretchy="false" form="prefix">(</mo><mtext mathvariant="normal">Arithmetic Mean</mtext><mo stretchy="false" form="postfix">)</mo><mo>−</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mo stretchy="false" form="prefix">(</mo><mtext mathvariant="normal">Logarithmic Variance</mtext><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">\text{Logarithmic Mean} = \log(\text{Arithmetic Mean}) - \frac{1}{2}(\text{Logarithmic Variance})</annotation></semantics></math>
+These transformations use the standard log-normal parameterization. ##
+Count outcomes: event-rate ratio (RR)</p>
 <p>For count outcomes, such as the number of events observed during a
 specified exposure period, SimTOST uses the event-rate ratio rather than
 the continuous outcome ratio of means. The event-rate ratio is</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi><mi>R</mi><mo>=</mo><mfrac><msub><mi>λ</mi><mi>T</mi></msub><msub><mi>λ</mi><mi>R</mi></msub></mfrac><mo>,</mo></mrow><annotation encoding="application/x-tex">RR = \frac{\lambda_T}{\lambda_R},</annotation></semantics></math></p>
-<p>where
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi><mi>R</mi><mo>=</mo><mfrac><msub><mi>λ</mi><mi>T</mi></msub><msub><mi>λ</mi><mi>R</mi></msub></mfrac><mo>,</mo></mrow><annotation encoding="application/x-tex">RR = \frac{\lambda_T}{\lambda_R},</annotation></semantics></math>
+The event-rate ratio is the estimand used for count-outcome equivalence
+comparisons <span class="citation">(<a href="#ref-chang_sample_2017">Chang et al. 2017</a>; <a href="#ref-zhu_sample_2017">Zhu 2017</a>)</span>, where
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>λ</mi><mi>T</mi></msub><annotation encoding="application/x-tex">\lambda_T</annotation></semantics></math>
 and
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>λ</mi><mi>R</mi></msub><annotation encoding="application/x-tex">\lambda_R</annotation></semantics></math>
@@ -275,8 +285,10 @@ normal variables used to generate correlated counts. The resulting
 Pearson correlation between the observed discrete counts is generally
 different and depends on the marginal count distributions. For normally
 distributed continuous outcomes, the latent correlation and Pearson
-correlation coincide because the transformation is linear <span class="citation">(<a href="#ref-chang_sample_2017">Chang et al.
-2017</a>)</span>.</p>
+correlation coincide because the transformation is linear. This follows
+directly from the definition of Pearson correlation: a common linear
+transformation preserves the correlation, apart from a possible change
+in sign if the transformation reverses orientation.</p>
 </div>
 <div class="section level3">
 <h3 id="regulatory-requirements">Regulatory requirements<a class="anchor" aria-label="anchor" href="#regulatory-requirements"></a>
@@ -316,7 +328,7 @@ reference product.</p>
 </h2>
 <p>Assessment of equivalence is often required for more than one primary
 variable. <span class="citation">(<a href="#ref-sozu_sample_2015">Sozu
-et al. 2015b</a>)</span> For example, the EMA recommends showing
+et al. 2015</a>)</span> For example, the EMA recommends showing
 equivalence both for AUC and Cmax</p>
 <p>A decision must be made as to whether it is desirable to</p>
 <ul>
@@ -346,9 +358,11 @@ significance level
 (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>α</mi><annotation encoding="application/x-tex">\alpha</annotation></semantics></math>),
 and equivalence is established only if all individual tests are
 statistically significant. Because conclusions require rejecting all
-null hypotheses, a formal multiplicity adjustment is not needed to
-control the Type I error rate. <span class="citation">(<a href="#ref-cpmp_points_2002">Committee for Propietary Medicinal Products
-(CPMP) 2002</a>)</span> However, as the number of co-primary endpoints
+null hypotheses, the decision is an intersection–union test and a formal
+endpoint-wise multiplicity adjustment is not needed to control the Type
+I error rate <span class="citation">(<a href="#ref-berger1996">Berger
+and Hsu 1996</a>; <a href="#ref-hamasaki_coprimary_2018">Hamasaki et al.
+2018</a>)</span>. However, as the number of co-primary endpoints
 (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>K</mi><annotation encoding="application/x-tex">K</annotation></semantics></math>)
 increases, the likelihood of failing to meet equivalence on at least one
 endpoint also rises, resulting in a higher Type II error rate (i.e., a
@@ -393,11 +407,16 @@ similar.</li>
 </h3>
 <p>When a trial aims to establish equivalence for at least
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>
-primary endpoints, adjustments are necessary to account for the
-increased risk of Type I error due to multiple hypothesis testing <span class="citation">(<a href="#ref-sozu_continuous_2015">Sozu et al.
-2015a</a>)</span>. Without such adjustments, the likelihood of
-incorrectly concluding equivalence for at least one endpoint increases
-as the number of endpoints grows.</p>
+of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>m</mi><annotation encoding="application/x-tex">m</annotation></semantics></math>
+primary endpoints, the decision is a partial-conjunction test. When
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi><mo>&lt;</mo><mi>m</mi></mrow><annotation encoding="application/x-tex">k &lt; m</annotation></semantics></math>,
+an endpoint-wise adjustment is generally needed to control the Type I
+error across the possible successful endpoint subsets <span class="citation">(<a href="#ref-benjamini2008">Benjamini and Heller
+2008</a>; <a href="#ref-mielke_sample_2018">Mielke et al.
+2018</a>)</span>. The appropriate adjustment depends on the prespecified
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>-out-of-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>m</mi><annotation encoding="application/x-tex">m</annotation></semantics></math>
+rule.</p>
 <p>For example, if a study includes
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi><mo>=</mo><mn>3</mn></mrow><annotation encoding="application/x-tex">m = 3</annotation></semantics></math>
 independent primary endpoints and uses a significance level of
@@ -405,9 +424,12 @@ independent primary endpoints and uses a significance level of
 for each test, the overall probability of falsely concluding equivalence
 for at least one endpoint is:</p>
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mi>–</mi><mo stretchy="false" form="prefix">(</mo><mn>1</mn><mo>−</mo><mi>α</mi><msup><mo stretchy="false" form="postfix">)</mo><mi>m</mi></msup><mo>=</mo><mn>1</mn><mo>−</mo><mo stretchy="false" form="prefix">(</mo><mn>1</mn><mo>−</mo><mn>0.05</mn><msup><mo stretchy="false" form="postfix">)</mo><mn>3</mn></msup><mo>=</mo><mn>0.1426</mn><mi>.</mi></mrow><annotation encoding="application/x-tex"> 1 – (1-\alpha)^m  = 1 - (1-0.05)^3 = 0.1426. </annotation></semantics></math>
-This means that the overall probability of making any false positive
-error, also known as the <strong>family-wise error rate (FWER)</strong>,
-increases to approximately 14%.</p>
+This is the probability of at least one false rejection under
+independent tests <span class="citation">(<a href="#ref-dunn1961">Dunn
+1961</a>; <a href="#ref-sidak1967">Sidak 1967</a>)</span>. This means
+that the overall probability of making any false positive error, also
+known as the <strong>family-wise error rate (FWER)</strong>, increases
+to approximately 14%.</p>
 <p>To address this issue, adjustments to the significance level are
 necessary for multiple endpoint comparisons for which various methods
 have been proposed. In SimTOST, the following approaches are
@@ -416,8 +438,8 @@ included:</p>
 <h4 id="bonferroni-correction">Bonferroni correction<a class="anchor" aria-label="anchor" href="#bonferroni-correction"></a>
 </h4>
 <p>The most common and easiest procedure for multiplicity adjustment to
-control the FWER is the Bonferroni method. Each hypothesis is tested at
-level</p>
+control the FWER is the Bonferroni method <span class="citation">(<a href="#ref-bonferroni1936">Bonferroni 1936</a>)</span>. Each hypothesis
+is tested at level</p>
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>α</mi><mrow><mi>b</mi><mi>o</mi><mi>n</mi></mrow></msub><mo>=</mo><mi>α</mi><mi>/</mi><mi>m</mi></mrow><annotation encoding="application/x-tex">\alpha_{bon}= \alpha/m</annotation></semantics></math></p>
 <p>where
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>m</mi><annotation encoding="application/x-tex">m</annotation></semantics></math>
@@ -435,21 +457,21 @@ function, the Bonferroni correction can be applied by setting
 <div class="section level4">
 <h4 id="sidak-correction">Sidak correction<a class="anchor" aria-label="anchor" href="#sidak-correction"></a>
 </h4>
-<p>The Sidak correction is an alternative method for controlling the
-FWER. Like the Bonferroni correction, it assumes that tests are
-independent. However, the Sidak correction accounts for the joint
-probability of all tests being non-significant, making it mathematically
-less conservative than the Bonferroni method. The adjusted significance
-level is calculated as:</p>
+<p>The Sidak correction <span class="citation">(<a href="#ref-sidak1967">Sidak 1967</a>)</span> is an alternative method
+for controlling the FWER. Like the Bonferroni correction, it assumes
+that tests are independent. However, the Sidak correction accounts for
+the joint probability of all tests being non-significant, making it
+mathematically less conservative than the Bonferroni method. The
+adjusted significance level is calculated as:</p>
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>α</mi><mrow><mi>s</mi><mi>i</mi><mi>d</mi></mrow></msub><mo>=</mo><mn>1</mn><mo>−</mo><mo stretchy="false" form="prefix">(</mo><mn>1</mn><mo>−</mo><mi>α</mi><msup><mo stretchy="false" form="postfix">)</mo><mrow><mn>1</mn><mi>/</mi><mi>m</mi></mrow></msup></mrow><annotation encoding="application/x-tex">\alpha_{sid}= 1-(1-\alpha)^ {1/m}</annotation></semantics></math></p>
 <p>The Sidak correction can be implemented by specifying
 <code>adjust = "sid"</code> in the <a href="../reference/sampleSize.html">sampleSize()</a> function.</p>
 </div>
 <div class="section level4">
-<h4 id="k-adjustment">K adjustment<a class="anchor" aria-label="anchor" href="#k-adjustment"></a>
+<h4 id="k-adjustment-mielkes-weak-k-out-of-m-correction">K adjustment: Mielke’s weak k-out-of-m correction<a class="anchor" aria-label="anchor" href="#k-adjustment-mielkes-weak-k-out-of-m-correction"></a>
 </h4>
-<p>This correction explicitly accounts for the scenario where
-equivalence is required for only
+<p>The K adjustment <span class="citation">(<a href="#ref-mielke_sample_2018">Mielke et al. 2018</a>)</span> explicitly
+accounts for the scenario where equivalence is required for only
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>
 out of
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>m</mi><annotation encoding="application/x-tex">m</annotation></semantics></math>
@@ -471,9 +493,9 @@ is the total number of endpoints evaluated.</p>
 <div class="section level4">
 <h4 id="t-adjustment-mielkes-strong-k-out-of-m-correction">T adjustment: Mielke’s strong k-out-of-m correction<a class="anchor" aria-label="anchor" href="#t-adjustment-mielkes-strong-k-out-of-m-correction"></a>
 </h4>
-<p>The <code>t</code> adjustment described below is the strong
-k-out-of-m procedure for partial-conjunction decisions and is distinct
-from the weak <code>k</code> adjustment.</p>
+<p>The <code>t</code> adjustment <span class="citation">(<a href="#ref-mielke_sample_2018">Mielke et al. 2018</a>)</span> described
+below is the strong k-out-of-m procedure for partial-conjunction
+decisions and is distinct from the weak <code>k</code> adjustment.</p>
 <p>When the decision rule requires equivalence for at least
 <code>k</code> of <code>m</code> endpoints, the null hypothesis is a
 partial-conjunction hypothesis. In this setting,
@@ -560,6 +582,19 @@ treatment arms.</p>
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
 <div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-benjamini2008" class="csl-entry">
+Benjamini, Yoav, and Ruth Heller. 2008. <span>“Screening for Partial
+Conjunction Hypotheses.”</span> <em>Biometrics</em> 64 (4): 1215–22. <a href="https://doi.org/10.1111/j.1541-0420.2007.00984.x" class="external-link">https://doi.org/10.1111/j.1541-0420.2007.00984.x</a>.
+</div>
+<div id="ref-berger1996" class="csl-entry">
+Berger, Roger L., and Jason C. Hsu. 1996. <span>“Bioequivalence Trials,
+Intersection-Union Tests and Equivalence Confidence Sets.”</span>
+<em>Statistical Science</em> 11 (4): 283–319. <a href="https://doi.org/10.1214/ss/1032280304" class="external-link">https://doi.org/10.1214/ss/1032280304</a>.
+</div>
+<div id="ref-bonferroni1936" class="csl-entry">
+Bonferroni, Carlo Emilio. 1936. <em>Teoria Statistica Delle Classi e
+Calcolo Delle Probabilità</em>. Seeber.
+</div>
 <div id="ref-chang_sample_2017" class="csl-entry">
 Chang, Yu-Wei, Yi Tsong, and Zhigen Zhao. 2017. <span>“Sample Size
 Determination for a Three-Arm Equivalence Trial of Poisson and Negative
@@ -578,11 +613,16 @@ Committee for Medicinal Products for Human Use (CHMP). 2010.
 <em>Guideline on the Investigation of Bioequivalence</em>.
 CPMP/EWP/QWP/1401/98. European Medicines Agency. <a href="https://www.ema.europa.eu/en/documents/scientific-guideline/guideline-investigation-bioequivalence-rev1_en.pdf" class="external-link">https://www.ema.europa.eu/en/documents/scientific-guideline/guideline-investigation-bioequivalence-rev1_en.pdf</a>.
 </div>
-<div id="ref-cpmp_points_2002" class="csl-entry">
-Committee for Propietary Medicinal Products (CPMP). 2002. <em>Points to
-Consider on Multiplicity Issues in Clinical Trials</em>. Scientific
-Guideline CPMP/EWP/908/99. The European Agency for the Evaluation of
-Medicinal Products.
+<div id="ref-dunn1961" class="csl-entry">
+Dunn, Olive Jean. 1961. <span>“Multiple Comparisons Among Means.”</span>
+<em>Journal of the American Statistical Association</em> 56 (293):
+52–64.
+</div>
+<div id="ref-hamasaki_coprimary_2018" class="csl-entry">
+Hamasaki, Toshimitsu, Scott R. Evans, and Koko Asakura. 2018.
+<span>“Design, Data Monitoring, and Analysis of Clinical Trials with
+Co-Primary Endpoints: A Review.”</span> <em>Journal of Biopharmaceutical
+Statistics</em> 28 (1): 28–51. <a href="https://doi.org/10.1080/10543406.2017.1378668" class="external-link">https://doi.org/10.1080/10543406.2017.1378668</a>.
 </div>
 <div id="ref-mielke_sample_2018" class="csl-entry">
 Mielke, Johanna, Byron Jones, Bernd Jilma, and Franz König. 2018.
@@ -590,18 +630,30 @@ Mielke, Johanna, Byron Jones, Bernd Jilma, and Franz König. 2018.
 Testing</span> in <span>Biosimilar Development</span>.”</span>
 <em>Statistics in Biopharmaceutical Research</em> 10 (1): 39–49. <a href="https://doi.org/10.1080/19466315.2017.1371071" class="external-link">https://doi.org/10.1080/19466315.2017.1371071</a>.
 </div>
-<div id="ref-sozu_continuous_2015" class="csl-entry">
-Sozu, Takashi, Tomoyuki Sugimoto, Toshimitsu Hamasaki, and Scott R.
-Evans. 2015a. <span>“Continuous Primary Endpoints.”</span> In <em>Sample
-Size Determination in Clinical Trials with Multiple Endpoints</em>.
-Springer International Publishing. <a href="https://doi.org/10.1007/978-3-319-22005-5_5" class="external-link">https://doi.org/10.1007/978-3-319-22005-5_5</a>.
+<div id="ref-schuirmann_comparison_1987" class="csl-entry">
+Schuirmann, Donald J. 1987. <span>“A Comparison of the <span>Two
+One-Sided Tests Procedure</span> and the <span>Power Approach</span> for
+Assessing the Equivalence of Average Bioavailability.”</span>
+<em>Journal of Pharmacokinetics and Biopharmaceutics</em> 15 (6):
+657–80. <a href="https://doi.org/10.1007/BF01068419" class="external-link">https://doi.org/10.1007/BF01068419</a>.
+</div>
+<div id="ref-sidak1967" class="csl-entry">
+Sidak, Zbyněk. 1967. <span>“Rectangular Confidence Regions for the Means
+of Multivariate Normal Distributions.”</span> <em>Journal of the
+American Statistical Association</em> 62 (318): 626–33.
 </div>
 <div id="ref-sozu_sample_2015" class="csl-entry">
 Sozu, Takashi, Tomoyuki Sugimoto, Toshimitsu Hamasaki, and Scott R.
-Evans. 2015b. <em>Sample <span>Size Determination</span> in
+Evans. 2015. <em>Sample <span>Size Determination</span> in
 <span>Clinical Trials</span> with <span>Multiple Endpoints</span></em>.
 <span>SpringerBriefs</span> in <span>Statistics</span>. Springer
 International Publishing. <a href="https://doi.org/10.1007/978-3-319-22005-5" class="external-link">https://doi.org/10.1007/978-3-319-22005-5</a>.
+</div>
+<div id="ref-zhu_sample_2017" class="csl-entry">
+Zhu, Haiyuan. 2017. <span>“Sample Size Calculation for Comparing Two
+Poisson or Negative Binomial Rates in Non-Inferiority or Equivalence
+Trials.”</span> <em>Statistics in Biopharmaceutical Research</em> 9 (1):
+107–15. <a href="https://doi.org/10.1080/19466315.2016.1225594" class="external-link">https://doi.org/10.1080/19466315.2016.1225594</a>.
 </div>
 </div>
 </div>

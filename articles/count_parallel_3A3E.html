@@ -131,7 +131,8 @@ k-out-of-m (<code>adjust = "k"</code>), Mielke’s strong k-out-of-m
 (<code>adjust = "t"</code>), or Šidák adjustment to the endpoint-wise
 one-sided significance level.</p>
 <p>The joint count kernel can also simulate correlated endpoints through
-the <code>cor_mat</code> argument.</p>
+the <code>cor_mat</code> argument. This dependence is generated with a
+Gaussian-copula construction <span class="citation">(<a href="#ref-nelsen2006">Nelsen 2006</a>)</span>.</p>
 </div>
 <div class="section level2">
 <h2 id="study-assumptions">Study assumptions<a class="anchor" aria-label="anchor" href="#study-assumptions"></a>
@@ -160,7 +161,9 @@ the <code>cor_mat</code> argument.</p>
 <span><span class="va">exposure</span> <span class="op">&lt;-</span> <span class="fl">5</span></span></code></pre></div>
 <p>The rate-ratio equivalence interval is 0.80 to 1.25. We use a Poisson
 model for the primary example and a one-sided significance level of 0.05
-for each TOST component.</p>
+for each TOST component. The Poisson and negative-binomial planning
+framework follows published count-outcome equivalence methods <span class="citation">(<a href="#ref-chang_sample_2017">Chang et al.
+2017</a>; <a href="#ref-zhu_sample_2017">Zhu 2017</a>)</span>.</p>
 </div>
 <div class="section level2">
 <h2 id="power-for-a-fixed-sample-size">Power for a fixed sample size<a class="anchor" aria-label="anchor" href="#power-for-a-fixed-sample-size"></a>
@@ -354,8 +357,9 @@ searches.</p>
 <p>For a three-arm allocation, the reported total is three times the
 selected number per arm. Both comparison families share the simulated
 test-arm counts, and the endpoint correlation is generated through a
-Gaussian-copula count model. This is therefore a joint count simulation
-rather than a maximum of separate comparison-specific searches.</p>
+Gaussian-copula count model <span class="citation">(<a href="#ref-nelsen2006">Nelsen 2006</a>)</span>. This is therefore a
+joint count simulation rather than a maximum of separate
+comparison-specific searches.</p>
 </div>
 <div class="section level2">
 <h2 id="why-joint-planning-is-important">Why joint planning is important<a class="anchor" aria-label="anchor" href="#why-joint-planning-is-important"></a>
@@ -469,6 +473,24 @@ larger values imply greater variability.</p>
 <span><span class="va">nb_sample_size</span></span>
 <span><span class="co">#&gt;   n_per_arm n_total achieved_power k adjustment dispersion</span></span>
 <span><span class="co">#&gt; 1      1482    4446            0.8 3       none        0.1</span></span></code></pre></div>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-chang_sample_2017" class="csl-entry">
+Chang, Yu-Wei, Yi Tsong, and Zhigen Zhao. 2017. <span>“Sample Size
+Determination for a Three-Arm Equivalence Trial of Poisson and Negative
+Binomial Responses.”</span> <em>Journal of Biopharmaceutical
+Statistics</em> 27 (2): 239–56. <a href="https://doi.org/10.1080/10543406.2016.1269787" class="external-link">https://doi.org/10.1080/10543406.2016.1269787</a>.
+</div>
+<div id="ref-nelsen2006" class="csl-entry">
+Nelsen, Roger B. 2006. <em>An Introduction to Copulas</em>. 2nd ed.
+Springer.
+</div>
+<div id="ref-zhu_sample_2017" class="csl-entry">
+Zhu, Haiyuan. 2017. <span>“Sample Size Calculation for Comparing Two
+Poisson or Negative Binomial Rates in Non-Inferiority or Equivalence
+Trials.”</span> <em>Statistics in Biopharmaceutical Research</em> 9 (1):
+107–15. <a href="https://doi.org/10.1080/19466315.2016.1225594" class="external-link">https://doi.org/10.1080/19466315.2016.1225594</a>.
+</div>
+</div>
 </div>
   </div>
 

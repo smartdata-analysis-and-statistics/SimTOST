@@ -182,8 +182,9 @@ variability while leaving the expected count unchanged:</p>
 between participants and usually less information per participant, which
 can increase the required sample size. The dispersion should be chosen
 from pilot data or prior knowledge and examined in a sensitivity
-analysis; it is not a replacement for the event rate or the
-exposure.</p>
+analysis; it is not a replacement for the event rate or the exposure.
+Poisson and negative-binomial rate equivalence planning is described by
+Chang et al. and Zhu <span class="citation">(<a href="#ref-chang_sample_2017">Chang et al. 2017</a>; <a href="#ref-zhu_sample_2017">Zhu 2017</a>)</span>.</p>
 <p>The remaining planning inputs have the same meaning as for continuous
 outcomes: <code>power</code>, <code>alpha</code>, <code>nsim</code>,
 <code>seed</code>, and <code>dtype</code> specify the target power,
@@ -243,7 +244,8 @@ finite-sample Monte Carlo estimate.</p>
 outcome study, which will serve as the foundation for the remainder of
 this vignette. The supplied endpoint correlation is a latent
 Gaussian-copula correlation, not the expected Pearson correlation of the
-observed counts.</p>
+observed counts <span class="citation">(<a href="#ref-nelsen2006">Nelsen
+2006</a>)</span>.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">count_corr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0.5</span>, <span class="fl">0.5</span>, <span class="fl">1</span><span class="op">)</span>, nrow <span class="op">=</span> <span class="fl">2</span>,</span>
 <span>                     dimnames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"y1"</span>, <span class="st">"y2"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"y1"</span>, <span class="st">"y2"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
@@ -305,11 +307,11 @@ in <code>count_rates</code>.</p>
 <span>                  arms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"TEST"</span>, <span class="st">"REF"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="count_files/figure-html/poisson-correlation-distribution-1.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;">
 The dashed line is the latent correlation supplied through
-<code>count_corr</code>. The observed Pearson correlation can differ
-because the latent normal variables are transformed into discrete
-counts. The plot checks the direction and approximate magnitude of the
-generated dependence; <code>endpoint_corr</code> is the exact parameter
-check.</p>
+<code>count_corr</code> <span class="citation">(<a href="#ref-nelsen2006">Nelsen 2006</a>)</span>. The observed Pearson
+correlation can differ because the latent normal variables are
+transformed into discrete counts. The plot checks the direction and
+approximate magnitude of the generated dependence;
+<code>endpoint_corr</code> is the exact parameter check.</p>
 </div>
 <div class="section level4">
 <h4 id="c--estimand-direction-and-sampling-distribution">3c. Estimand direction and sampling distribution<a class="anchor" aria-label="anchor" href="#c--estimand-direction-and-sampling-distribution"></a>
@@ -522,6 +524,16 @@ above are illustrative; in an actual study, <code>sigmaB</code>, period
 effects, carry-over effects, and sequence-specific dropout should be
 justified from prior data or a sensitivity analysis.</p>
 <div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-chang_sample_2017" class="csl-entry">
+Chang, Yu-Wei, Yi Tsong, and Zhigen Zhao. 2017. <span>“Sample Size
+Determination for a Three-Arm Equivalence Trial of Poisson and Negative
+Binomial Responses.”</span> <em>Journal of Biopharmaceutical
+Statistics</em> 27 (2): 239–56. <a href="https://doi.org/10.1080/10543406.2016.1269787" class="external-link">https://doi.org/10.1080/10543406.2016.1269787</a>.
+</div>
+<div id="ref-nelsen2006" class="csl-entry">
+Nelsen, Roger B. 2006. <em>An Introduction to Copulas</em>. 2nd ed.
+Springer.
+</div>
 <div id="ref-zhu_sample_2017" class="csl-entry">
 Zhu, Haiyuan. 2017. <span>“Sample Size Calculation for Comparing Two
 Poisson or Negative Binomial Rates in Non-Inferiority or Equivalence

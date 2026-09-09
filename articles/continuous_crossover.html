@@ -112,7 +112,12 @@ Designs with Log-Normal Data</h1>
     
     
 <p>In the example below, we illustrate the use of <code>SimTOST</code>
-for 2x2 cross-over trials. As a first step, we load the package.</p>
+for 2x2 crossover trials. This randomized two-period, two-sequence
+design and its standard subject/period/treatment model are described by
+Chow and Liu <span class="citation">(<a href="#ref-chow_liu_bioequivalence_2008">Chow and Liu 2008</a>)</span>.
+The design is also used in bioequivalence studies <span class="citation">(<a href="#ref-CHMP2010">Committee for Medicinal
+Products for Human Use (CHMP) 2010</a>)</span>. As a first step, we load
+the package.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://smartdata-analysis-and-statistics.github.io/SimTOST/" class="external-link">SimTOST</a></span><span class="op">)</span></span></code></pre></div>
 <div class="section level2">
@@ -203,6 +208,16 @@ interval through <code>fixed_power$power</code>,
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
 <div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-chow_liu_bioequivalence_2008" class="csl-entry">
+Chow, Shein-Chung, and Jen-pei Liu. 2008. <em>Design and Analysis of
+Bioavailability and Bioequivalence Studies</em>. 3rd ed. Chapman;
+Hall/CRC.
+</div>
+<div id="ref-CHMP2010" class="csl-entry">
+Committee for Medicinal Products for Human Use (CHMP). 2010.
+<em>Guideline on the Investigation of Bioequivalence</em>.
+CPMP/EWP/QWP/1401/98. European Medicines Agency. <a href="https://www.ema.europa.eu/en/documents/scientific-guideline/guideline-investigation-bioequivalence-rev1_en.pdf" class="external-link">https://www.ema.europa.eu/en/documents/scientific-guideline/guideline-investigation-bioequivalence-rev1_en.pdf</a>.
+</div>
 <div id="ref-PASSch351" class="csl-entry">
 NCSS. 2025. <span>“Bioequivalence Tests for AUC and Cmax in a 2x2
 Cross-over Design (Log-Normal Data).”</span> Chap. 351 in <em>PASS
