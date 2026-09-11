@@ -413,15 +413,77 @@ formulation described by Chow and Liu <span class="citation">(<a href="#ref-chow
   Y_{ipj} = \mu_{a(i,p),j} + E_p + C_{a(i,p),s(i)} + b_i +
   \varepsilon_{ipj},
 </annotation></semantics></math></p>
-<p>where a(i,p) is the treatment received, E_p is the period effect,
-C(a,s) is the carry-over effect determined by the preceding treatment,
-b_i is a subject-level effect, and the vector of within-subject errors
-has covariance matrix <code>SigmaW</code>. The same subject effect is
-used for both periods, which induces within-subject dependence and is
-important for the crossover comparison. <code>sigmaB</code> is the
-between-subject standard-deviation parameter on the scale used by the
-simulation kernel; <code>SigmaW</code> describes residual within-subject
-endpoint variability and correlation.</p>
+<p>Here,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Y</mi><mrow><mi>i</mi><mi>p</mi><mi>j</mi></mrow></msub><annotation encoding="application/x-tex">Y_{ipj}</annotation></semantics></math>
+is the observed outcome for subject
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>i</mi><annotation encoding="application/x-tex">i</annotation></semantics></math>,
+period
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>p</mi><annotation encoding="application/x-tex">p</annotation></semantics></math>,
+and endpoint
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>j</mi><annotation encoding="application/x-tex">j</annotation></semantics></math>.
+The other terms are:</p>
+<ul>
+<li>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>μ</mi><mrow><mi>a</mi><mo stretchy="false" form="prefix">(</mo><mi>i</mi><mo>,</mo><mi>p</mi><mo stretchy="false" form="postfix">)</mo><mo>,</mo><mi>j</mi></mrow></msub><annotation encoding="application/x-tex">\mu_{a(i,p),j}</annotation></semantics></math>
+is the mean for endpoint
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>j</mi><annotation encoding="application/x-tex">j</annotation></semantics></math>
+under the treatment received in period
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>p</mi><annotation encoding="application/x-tex">p</annotation></semantics></math>,
+where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi><mo stretchy="false" form="prefix">(</mo><mi>i</mi><mo>,</mo><mi>p</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">a(i,p)</annotation></semantics></math>
+identifies the treatment assigned to subject
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>i</mi><annotation encoding="application/x-tex">i</annotation></semantics></math>
+in that period;</li>
+<li>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>E</mi><mi>p</mi></msub><annotation encoding="application/x-tex">E_p</annotation></semantics></math>
+is the fixed effect of period
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>p</mi><annotation encoding="application/x-tex">p</annotation></semantics></math>,
+common to the subjects observed in that period;</li>
+<li>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>C</mi><mrow><mi>a</mi><mo stretchy="false" form="prefix">(</mo><mi>i</mi><mo>,</mo><mi>p</mi><mo stretchy="false" form="postfix">)</mo><mo>,</mo><mi>s</mi><mo stretchy="false" form="prefix">(</mo><mi>i</mi><mo stretchy="false" form="postfix">)</mo></mrow></msub><annotation encoding="application/x-tex">C_{a(i,p),s(i)}</annotation></semantics></math>
+is the carry-over contribution associated with the treatment received in
+the preceding period and the sequence
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>s</mi><mo stretchy="false" form="prefix">(</mo><mi>i</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">s(i)</annotation></semantics></math>.
+It is zero in period 1 because there is no preceding treatment;</li>
+<li>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>b</mi><mi>i</mi></msub><annotation encoding="application/x-tex">b_i</annotation></semantics></math>
+is a subject-specific random effect shared by both periods; and</li>
+<li>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ε</mi><mrow><mi>i</mi><mi>p</mi><mi>j</mi></mrow></msub><annotation encoding="application/x-tex">\varepsilon_{ipj}</annotation></semantics></math>
+is the residual error. The collection of residuals across periods and
+endpoints has within-subject covariance matrix <code>SigmaW</code>.</li>
+</ul>
+<p>In the package, the model components are supplied through the
+following arguments. <code>Eper = c(E_1, E_2)</code> supplies the period
+effects
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>E</mi><mi>p</mi></msub><annotation encoding="application/x-tex">E_p</annotation></semantics></math>,
+and <code>Eco = c(reference_carryover, treatment_carryover)</code>
+supplies the carry-over values. In the RT sequence, treatment in period
+2 receives the reference carry-over effect; in the TR sequence,
+reference in period 2 receives the treatment carry-over effect.
+<code>sigmaB</code> supplies the standard deviation
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>σ</mi><mi>B</mi></msub><annotation encoding="application/x-tex">\sigma_B</annotation></semantics></math>
+of the subject effect
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>b</mi><mi>i</mi></msub><annotation encoding="application/x-tex">b_i</annotation></semantics></math>
+on the selected analysis scale. Because the same
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>b</mi><mi>i</mi></msub><annotation encoding="application/x-tex">b_i</annotation></semantics></math>
+is used in both periods, it induces dependence between the two
+observations from one subject. <code>SigmaW</code> supplies the residual
+within-subject variances and endpoint correlations. Thus,
+<code>sigmaB</code> controls between-subject heterogeneity, whereas
+<code>SigmaW</code> controls residual within-subject dependence; they
+represent different sources of variability.</p>
+<p>For continuous outcomes, treatment-specific means and standard
+deviations are supplied through <code>mu_list</code> and
+<code>sigma_list</code>; <code>SigmaW</code> can be supplied directly or
+constructed from <code>sigma_list</code> and <code>cor_mat</code>. For
+count outcomes, the corresponding inputs are <code>rate_list</code>,
+<code>exposure</code>, and <code>dispersion</code>, as described below.
+The sequence structure and number of subjects per sequence are
+determined by <code>dtype = "2x2"</code> and <code>n</code>,
+respectively. These arguments define the data-generating model; the
+estimand is then obtained from the treatment contrast specified by
+<code>ctype</code> and the corresponding analysis kernel.</p>
 <p>For <code>distribution = "norm"</code> with
 <code>ctype = "DOM"</code>, the simulated outcomes are generated
 directly on the supplied continuous analysis scale. The equivalence test
@@ -452,23 +514,20 @@ effect and is independent of the residual errors; and</li>
 sequence; period-specific missing observations are not modelled by this
 continuous kernel.</li>
 </ul>
-<p><code>Eper = c(E_1, E_2)</code> specifies the two period effects.
-<code>Eco</code> is ordered as
-<code>c(reference_carryover, treatment_carryover)</code>: in the RT
-sequence, treatment in period 2 receives the reference carry-over
-effect, whereas in the TR sequence, reference in period 2 receives the
-treatment carry-over effect. Under balanced sequences and no
-differential carry-over, the treatment effect is identified after
-averaging the two sequence-specific estimates and the period effect
-cancels. Non-zero carry-over values change the simulated means and
-therefore change the estimand being evaluated; they should be
-prespecified and subjected to sensitivity analysis.</p>
+<p>Under balanced sequences and no differential carry-over, the
+treatment effect is identified after averaging the two sequence-specific
+estimates and the period effect cancels. Non-zero carry-over values
+change the simulated means and therefore change the estimand being
+evaluated; they should be prespecified and subjected to sensitivity
+analysis.</p>
 <p>Endpoint dependence for these continuous crossover simulations is
-supplied directly through <code>SigmaW</code> (or through
+supplied directly through <code>SigmaW</code> or through
 <code>sigma_list</code> and <code>cor_mat</code> when the covariance
-matrix is constructed). This differs from the count implementation,
-where <code>cor_mat</code> is used as a latent Gaussian-copula
-correlation.</p>
+matrix is constructed. This differs from the count implementation, where
+<code>cor_mat</code> is used as a latent Gaussian-copula correlation.
+Non-zero carry-over values change the simulated outcomes and therefore
+the estimand being evaluated; they should be prespecified and examined
+in sensitivity analyses.</p>
 </div>
 <div class="section level4">
 <h4 id="poisson-and-negative-binomial-outcomes">Poisson and negative-binomial outcomes<a class="anchor" aria-label="anchor" href="#poisson-and-negative-binomial-outcomes"></a>
@@ -476,10 +535,7 @@ correlation.</p>
 <p>For a 2x2 crossover design, the count extension uses a paired
 log-link rate analysis. Each complete participant contributes one count
 under the test treatment and one count under the reference treatment.
-The count-generating model is, conditionally on the subject effect. The
-rate-ratio estimand and Poisson/negative-binomial framework is supported
-by published count-outcome equivalence methods <span class="citation">(<a href="#ref-chang_sample_2017">Chang et al.
-2017</a>; <a href="#ref-zhu_sample_2017">Zhu 2017</a>)</span>.</p>
+Conditional on the subject effect, the count-generating model is</p>
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Y</mi><mrow><mi>i</mi><mi>s</mi><mi>p</mi></mrow></msub><mo>∼</mo><mrow><mo stretchy="true" form="prefix">{</mo><mtable><mtr><mtd columnalign="left" style="text-align: left"><mrow><mi mathvariant="normal">Poisson</mi><mo>⁡</mo></mrow><mo stretchy="false" form="prefix">(</mo><msub><mi>e</mi><mrow><mi>i</mi><mi>s</mi><mi>p</mi></mrow></msub><msub><mi>λ</mi><mrow><mi>i</mi><mi>s</mi><mi>p</mi></mrow></msub><mo stretchy="false" form="postfix">)</mo><mo>,</mo></mtd><mtd columnalign="left" style="text-align: left"><mtext mathvariant="normal">Poisson</mtext><mo>,</mo></mtd></mtr><mtr><mtd columnalign="left" style="text-align: left"><mrow><mi mathvariant="normal">NegBin</mi><mo>⁡</mo></mrow><mo stretchy="false" form="prefix">(</mo><msub><mi>e</mi><mrow><mi>i</mi><mi>s</mi><mi>p</mi></mrow></msub><msub><mi>λ</mi><mrow><mi>i</mi><mi>s</mi><mi>p</mi></mrow></msub><mo>,</mo><msub><mi>ϕ</mi><mrow><mi>i</mi><mi>s</mi><mi>p</mi></mrow></msub><mo stretchy="false" form="postfix">)</mo><mo>,</mo></mtd><mtd columnalign="left" style="text-align: left"><mtext mathvariant="normal">Negative Binomial</mtext><mo>,</mo></mtd></mtr></mtable></mrow></mrow><annotation encoding="application/x-tex">
 Y_{isp} \sim \begin{cases}
 \operatorname{Poisson}(e_{isp}\lambda_{isp}), &amp;\text{Poisson},\\
@@ -492,28 +548,36 @@ Y_{isp} \sim \begin{cases}
 \log(\lambda_{isp}) = \log(\lambda_{i}) + E_{p} + C_{isp} + b_{is},
 \qquad b_{is}\sim N(0,\sigma_B^2).
 </annotation></semantics></math></p>
-<p>Here, <code>exposure</code> is the offset
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>e</mi><mrow><mi>i</mi><mi>s</mi><mi>p</mi></mrow></msub><annotation encoding="application/x-tex">e_{isp}</annotation></semantics></math>,
-<code>Eper = c(E_1,E_2)</code> contains period effects,
-<code>Eco = c(C_R,C_T)</code> contains reference- and treatment-
-carry-over effects, and <code>sigmaB</code> is the standard deviation of
-the subject random intercept on the log-rate scale. The
-negative-binomial dispersion is used in the subject-period count
-generation through the package’s size-parameter convention
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mi mathvariant="normal">size</mi><mo>⁡</mo></mrow><mo>=</mo><mn>1</mn><mi>/</mi><mi>ϕ</mi></mrow><annotation encoding="application/x-tex">\operatorname{size}=1/\phi</annotation></semantics></math>.
-This is the standard mean–dispersion parameterization used for planning
-negative-binomial rate comparisons.</p>
-<p>The analysis forms a log-rate contrast within each complete
-participant, averages the contrasts within each sequence, and then
-averages the two sequence estimates. This removes the period effect
-under a balanced 2x2 design. The analysis applies the corresponding
-carry-over correction using <code>Eco</code>; therefore, nonzero
-carry-over values change both the generated counts and the estimand
-adjustment. Exposure enters the contrast as an offset rather than being
-treated as an additional treatment effect. The standard error is
-estimated from the empirical variance of the subject-level contrasts, so
-the Poisson or negative-binomial sampling variation and the effect of
-the specified dispersion are retained.</p>
+<p>Here,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Y</mi><mrow><mi>i</mi><mi>s</mi><mi>p</mi></mrow></msub><annotation encoding="application/x-tex">Y_{isp}</annotation></semantics></math>
+is the count observed for subject
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>i</mi><annotation encoding="application/x-tex">i</annotation></semantics></math>,
+sequence
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>s</mi><annotation encoding="application/x-tex">s</annotation></semantics></math>,
+and period
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>p</mi><annotation encoding="application/x-tex">p</annotation></semantics></math>,
+with conditional mean
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>e</mi><mrow><mi>i</mi><mi>s</mi><mi>p</mi></mrow></msub><msub><mi>λ</mi><mrow><mi>i</mi><mi>s</mi><mi>p</mi></mrow></msub></mrow><annotation encoding="application/x-tex">e_{isp}\lambda_{isp}</annotation></semantics></math>.
+Thus, <code>exposure</code> is the follow-up-time offset and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>λ</mi><mrow><mi>i</mi><mi>s</mi><mi>p</mi></mrow></msub><annotation encoding="application/x-tex">\lambda_{isp}</annotation></semantics></math>
+is the event rate per unit of exposure. The Poisson model has variance
+equal to its conditional mean, whereas the negative-binomial model
+permits extra-Poisson variation. For negative-binomial outcomes, the
+package uses the size-parameter convention
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mi mathvariant="normal">size</mi><mo>⁡</mo></mrow><mo>=</mo><mn>1</mn><mi>/</mi><mi>ϕ</mi></mrow><annotation encoding="application/x-tex">\operatorname{size}=1/\phi</annotation></semantics></math>;
+larger dispersion therefore produces greater variability. The common
+crossover parameters and their package arguments were defined above;
+count-specific baseline rates are supplied through
+<code>rate_list</code>. These rate-ratio and Poisson/negative-binomial
+equivalence assumptions follow published methods for count-outcome
+equivalence trials <span class="citation">(<a href="#ref-chang_sample_2017">Chang et al. 2017</a>; <a href="#ref-zhu_sample_2017">Zhu 2017</a>)</span>.</p>
+<p>Using the common crossover construction described above, the analysis
+forms a log-rate contrast within each complete participant, averages the
+contrasts within each sequence, and then averages the two sequence
+estimates. This removes the period effect under a balanced 2x2 design
+and retains the specified carry-over correction, exposure offset,
+sampling variation, and negative- binomial dispersion in the simulated
+standard error.</p>
 <p>The within-subject contrast removes the subject random intercept from
 the treatment effect. Consequently, <code>sigmaB</code> affects the
 simulated paired counts but should not be interpreted as an additional
