@@ -281,15 +281,44 @@ described by Chow and Liu [@chow_liu_bioequivalence_2008].
   \varepsilon_{ipj},
 \]
 
-where a(i,p) is the treatment received, E_p is the period effect,
-C(a,s) is the carry-over effect determined by the preceding treatment,
-b_i is a subject-level effect, and the vector of
-within-subject errors has covariance matrix `SigmaW`. The same subject effect
-is used for both periods, which induces within-subject dependence and is
-important for the crossover comparison. `sigmaB` is the between-subject
-standard-deviation parameter on the scale used by the simulation kernel;
-`SigmaW` describes residual within-subject endpoint variability and
-correlation.
+Here, \(Y_{ipj}\) is the observed outcome for subject \(i\), period \(p\), and
+endpoint \(j\). The other terms are:
+
+* \(\mu_{a(i,p),j}\) is the mean for endpoint \(j\) under the treatment received
+  in period \(p\), where \(a(i,p)\) identifies the treatment assigned to subject
+  \(i\) in that period;
+* \(E_p\) is the fixed effect of period \(p\), common to the subjects observed
+  in that period;
+* \(C_{a(i,p),s(i)}\) is the carry-over contribution associated with the
+  treatment received in the preceding period and the sequence \(s(i)\). It is
+  zero in period 1 because there is no preceding treatment;
+* \(b_i\) is a subject-specific random effect shared by both periods; and
+* \(\varepsilon_{ipj}\) is the residual error. The collection of residuals
+  across periods and endpoints has within-subject covariance matrix
+  `SigmaW`.
+
+In the package, the model components are supplied through the following
+arguments. `Eper = c(E_1, E_2)` supplies the period effects \(E_p\), and
+`Eco = c(reference_carryover, treatment_carryover)` supplies the carry-over
+values. In the RT sequence, treatment in period 2 receives the reference
+carry-over effect; in the TR sequence, reference in period 2 receives the
+treatment carry-over effect. `sigmaB` supplies the standard deviation
+\(\sigma_B\) of the subject effect \(b_i\) on the selected analysis scale.
+Because the same \(b_i\) is used in both periods, it induces dependence
+between the two observations from one subject. `SigmaW` supplies the
+residual within-subject variances and endpoint correlations. Thus, `sigmaB`
+controls between-subject heterogeneity, whereas `SigmaW` controls residual
+within-subject dependence; they represent different sources of variability.
+
+For continuous outcomes, treatment-specific means and standard deviations are
+supplied through `mu_list` and `sigma_list`; `SigmaW` can be supplied
+directly or constructed from `sigma_list` and `cor_mat`. For count
+outcomes, the corresponding inputs are `rate_list`, `exposure`, and
+`dispersion`, as described below. The sequence structure and number of
+subjects per sequence are determined by `dtype = "2x2"` and `n`,
+respectively. These arguments define the data-generating model; the estimand
+is then obtained from the treatment contrast specified by `ctype` and the
+corresponding analysis kernel.
 
 For `distribution = "norm"` with `ctype = "DOM"`, the simulated outcomes
 are generated directly on the supplied continuous analysis scale. The
@@ -320,10 +349,6 @@ The continuous 2x2 implementation assumes that:
   period-specific missing observations are not modelled by this continuous
   kernel.
 
-`Eper = c(E_1, E_2)` specifies the two period effects. `Eco` is ordered as
-`c(reference_carryover, treatment_carryover)`: in the RT sequence, treatment
-in period 2 receives the reference carry-over effect, whereas in the TR
-sequence, reference in period 2 receives the treatment carry-over effect.
 Under balanced sequences and no differential carry-over, the treatment effect
 is identified after averaging the two sequence-specific estimates and the
 period effect cancels. Non-zero carry-over values change the simulated means
@@ -331,18 +356,19 @@ and therefore change the estimand being evaluated; they should be prespecified
 and subjected to sensitivity analysis.
 
 Endpoint dependence for these continuous crossover simulations is supplied
-directly through `SigmaW` (or through `sigma_list` and `cor_mat` when the
-covariance matrix is constructed). This differs from the count implementation,
-where `cor_mat` is used as a latent Gaussian-copula correlation.
+directly through `SigmaW` or through `sigma_list` and `cor_mat` when the
+covariance matrix is constructed. This differs from the count implementation,
+where `cor_mat` is used as a latent Gaussian-copula correlation. Non-zero
+carry-over values change the simulated outcomes and therefore the estimand
+being evaluated; they should be prespecified and examined in sensitivity
+analyses.
 
 #### Poisson and negative-binomial outcomes
 
 For a 2x2 crossover design, the count extension uses a paired log-link rate
 analysis. Each complete participant contributes one count under the test
-treatment and one count under the reference treatment. The count-generating
-model is, conditionally on the subject effect. The rate-ratio estimand and
-Poisson/negative-binomial framework is supported by published count-outcome
-equivalence methods [@chang_sample_2017; @zhu_sample_2017].
+treatment and one count under the reference treatment. Conditional on the
+subject effect, the count-generating model is
 
 \[
 Y_{isp} \sim \begin{cases}
@@ -359,25 +385,25 @@ with
 \qquad b_{is}\sim N(0,\sigma_B^2).
 \]
 
-Here, `exposure` is the offset \(e_{isp}\), `Eper = c(E_1,E_2)` contains
-period effects, `Eco = c(C_R,C_T)` contains reference- and treatment-
-carry-over effects, and `sigmaB` is the standard deviation of the subject
-random intercept on the log-rate scale. The negative-binomial dispersion is
-used in the subject-period count generation through the package's
-size-parameter convention \(\operatorname{size}=1/\phi\). This is the
-standard mean--dispersion parameterization used for planning negative-binomial
-rate comparisons.
+Here, \(Y_{isp}\) is the count observed for subject \(i\), sequence \(s\), and
+period \(p\), with conditional mean \(e_{isp}\lambda_{isp}\). Thus,
+`exposure` is the follow-up-time offset and \(\lambda_{isp}\) is the event
+rate per unit of exposure. The Poisson model has variance equal to its
+conditional mean, whereas the negative-binomial model permits extra-Poisson
+variation. For negative-binomial outcomes, the package uses the size-parameter
+convention \(\operatorname{size}=1/\phi\); larger dispersion therefore produces
+greater variability. The common crossover parameters and their package
+arguments were defined above; count-specific baseline rates are supplied
+through `rate_list`. These rate-ratio and Poisson/negative-binomial
+equivalence assumptions follow published methods for count-outcome
+equivalence trials [@chang_sample_2017; @zhu_sample_2017].
 
-The analysis forms a log-rate contrast within each complete participant,
-averages the contrasts within each sequence, and then averages the two
-sequence estimates. This removes the period effect under a balanced 2x2
-design. The analysis applies the corresponding carry-over correction using
-`Eco`; therefore, nonzero carry-over values change both the generated counts
-and the estimand adjustment. Exposure enters the contrast as an offset rather
-than being treated as an additional treatment effect. The standard error is
-estimated from the empirical variance of the subject-level contrasts, so the
-Poisson or negative-binomial sampling variation and the effect of the
-specified dispersion are retained.
+Using the common crossover construction described above, the analysis forms a
+log-rate contrast within each complete participant, averages the contrasts
+within each sequence, and then averages the two sequence estimates. This
+removes the period effect under a balanced 2x2 design and retains the specified
+carry-over correction, exposure offset, sampling variation, and negative-
+binomial dispersion in the simulated standard error.
 
 The within-subject contrast removes the subject random intercept from the
 treatment effect. Consequently, `sigmaB` affects the simulated paired counts
