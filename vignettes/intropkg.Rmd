@@ -114,6 +114,7 @@ The logarithmic mean is then calculated as:
 
 $$\text{Logarithmic Mean} = \log(\text{Arithmetic Mean}) - \frac{1}{2}(\text{Logarithmic Variance})$$
 These transformations use the standard log-normal parameterization.
+
 ## Count outcomes: event-rate ratio (RR)
 
 For count outcomes, such as the number of events observed during a specified
