@@ -68,7 +68,13 @@
 <li>
   <a href="../news/index.html">Changelog</a>
 </li>
-      </ul><ul class="nav navbar-nav navbar-right"></ul></div><!--/.nav-collapse -->
+      </ul><ul class="nav navbar-nav navbar-right"><li>
+  <a href="https://github.com/smartdata-analysis-and-statistics/SimTOST/" class="external-link">
+    <span class="fab fa-github fa-lg"></span>
+
+  </a>
+</li>
+      </ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
 
@@ -78,31 +84,30 @@
   <div class="col-md-9 contents">
     <div class="page-header">
       <h1 data-toc-skip>Changelog <small></small></h1>
-
+      <small>Source: <a href="https://github.com/smartdata-analysis-and-statistics/SimTOST/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
     <div class="section level2">
 <h2 class="page-header" data-toc-text="1.1.0" id="simtost-110">SimTOST 1.1.0<a class="anchor" aria-label="anchor" href="#simtost-110"></a></h2>
 <div class="section level3">
 <h3 id="new-features-1-1-0">New features<a class="anchor" aria-label="anchor" href="#new-features-1-1-0"></a></h3>
-<ul><li>Added <code>adjust = "t"</code> for Mielke’s strong k-out-of-m adjustment.</li>
-<li>Added endpoint selection controls for diagnostic and sample-size plots.</li>
-<li>Expanded the count-outcome workflow to include Poisson and negative-binomial sensitivity analyses and additional documentation.</li>
+<ul><li>The <code>adjust = "t"</code> option now supports Mielke’s strong k-out-of-m adjustment.</li>
+<li>Diagnostic and sample-size plots now support endpoint selection.</li>
+<li>Count-outcome workflows now support Poisson and negative-binomial sensitivity analyses, with expanded documentation.</li>
 </ul></div>
 <div class="section level3">
-<h3 id="bug-fixes-1-1-0">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-1-1-0"></a></h3>
-<ul><li>Improved <code><a href="https://rdrr.io/r/stats/update.html" class="external-link">update()</a></code> handling for comparator and endpoint information, including updated means, standard deviations, and covariance inputs.</li>
-<li>Corrected negative-binomial dispersion scaling for aggregate counts in parallel designs.</li>
-<li>Improved Monte Carlo stability and precision diagnostics.</li>
+<h3 id="minor-improvements-and-fixes-1-1-0">Minor improvements and fixes<a class="anchor" aria-label="anchor" href="#minor-improvements-and-fixes-1-1-0"></a></h3>
+<ul><li>
+<code><a href="https://rdrr.io/r/stats/update.html" class="external-link">update()</a></code> now handles comparator, endpoint, mean, standard-deviation, and covariance information more consistently.</li>
+<li>Negative-binomial dispersion scaling for aggregate counts in parallel designs is now correct.</li>
+<li>Monte Carlo stability and precision diagnostics are improved.</li>
 </ul></div>
 </div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="1.0.2" id="simtost-102">SimTOST 1.0.2<small>2025-02-18</small><a class="anchor" aria-label="anchor" href="#simtost-102"></a></h2>
 <div class="section level3">
-<h3 id="bug-fixes-1-0-2">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-1-0-2"></a></h3>
-<ul><li>
-<strong>Fixed runtime error:</strong> Resolved an issue where a negative value (<code>-1</code>) was incorrectly assigned to an <code>unsigned int</code>, leading to a runtime error:<br><em>“-1 is outside the range of representable values of type ‘unsigned int’”</em>.<br>
-The fix involved replacing <code>arma::uvec</code> with <code>arma::ivec</code> to correctly handle signed integers in relevant functions.</li>
+<h3 id="bug-fixes-1-0-2">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-1-0-2"></a></h3>
+<ul><li>A negative value (<code>-1</code>) is now handled correctly in relevant C++ code, avoiding an <code>unsigned int</code> conversion error.</li>
 </ul></div>
 </div>
     <div class="section level2">
