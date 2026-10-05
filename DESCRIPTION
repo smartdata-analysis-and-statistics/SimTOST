@@ -69,5 +69,6 @@ Suggests:
 VignetteBuilder: knitr
 Config/testthat/edition: 3
 LinkingTo: Rcpp, RcppArmadillo
-URL: https://smartdata-analysis-and-statistics.github.io/SimTOST/
+URL: https://smartdata-analysis-and-statistics.github.io/SimTOST/, https://github.com/smartdata-analysis-and-statistics/SimTOST
 Config/roxygen2/version: 8.1.0
+BugReports: https://github.com/smartdata-analysis-and-statistics/SimTOST/issues
