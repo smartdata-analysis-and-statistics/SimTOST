@@ -617,12 +617,12 @@ ss <- sampleSize(
 )
 ```
 
-In this example, the final run uses more trials than the 500-trial
-pilot. If the final power decision is close to 0.80, increase this to
-5,000 trials and use the final value displayed by `plot_mc_error(ss)` as
-a stricter precision check. The appropriate choice is the smallest
-`nsim` that gives a stable estimate and a confidence interval narrow
-enough for the planned conclusion.
+For this vignette, the final run uses 500 trials to keep the example short.
+For a real analysis, increase this to 5,000 trials when the final power
+decision is close to 0.80, and use the final value displayed by
+`plot_mc_error(ss)` as a stricter precision check. The appropriate choice is
+the smallest `nsim` that gives a stable estimate and a confidence interval
+narrow enough for the planned conclusion.
 
 ## Step 7: Interpret and report the final result
 
