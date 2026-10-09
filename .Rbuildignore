@@ -13,3 +13,6 @@ README.Rmd
 ^figure$
 ^replication-output$
 ^replication\.R$
+^revdep$
+^SimTOST\.Rcheck$
+^SimTOST_[0-9].*\.tar\.gz$
