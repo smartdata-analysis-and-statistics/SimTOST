@@ -143,7 +143,7 @@ ssMielke <- sampleSize_Mielke(power = 0.8, Nmax = 1000, m = 5, k = 5, rho = 0.8,
                               sigma = 0.3, true.diff = log(1.05),
                               equi.tol = log(1.25), design = "parallel",
                               alpha = 0.05, adjust = "none", seed = 1234,
-                              nsim = 10000)
+                              nsim = 500)
 ssMielke
 ss_value <- if (is.list(ssMielke)) ssMielke$SS else unname(ssMielke["SS"])
 ```
@@ -167,7 +167,7 @@ ss <- sampleSize(power = 0.8, alpha = 0.05,
                  list_lequi.tol = list("R_vs_T" = lequi_lower),
                  list_uequi.tol = list("R_vs_T" = lequi_upper),
                  dtype = "parallel", ctype = "ROM", distribution = "lnorm",
-                 adjust = "none", ncores = 1, k = 5, nsim = 10000, seed = 1234)
+                 adjust = "none", ncores = 1, k = 5, nsim = 500, seed = 1234)
 ss
 ```
 

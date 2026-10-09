@@ -612,7 +612,7 @@ ss <- sampleSize(
   list_y_comparator = list(T_vs_R1 = endpoints, T_vs_R2 = endpoints),
   list_lequi.tol = lower, list_uequi.tol = upper,
   dtype = "parallel", ctype = "ROM", distribution = "lnorm",
-  adjust = "none", k = 3, ncores = 1, nsim = 2000, seed = 2026,
+  adjust = "none", k = 3, ncores = 1, nsim = 500, seed = 2026,
   keep_sim_data = TRUE
 )
 ```

@@ -113,7 +113,7 @@ zhu_benchmark <- simPower(
   exposure = 0.7,
   dtype = "parallel",
   alpha = 0.025,
-  nsim = 5000,
+  nsim = 500,
   seed = 2024
 )
 zhu_benchmark

@@ -12,6 +12,8 @@ This is a resubmission of version 1.1.0, updating the CRAN release 1.0.2.
 * `revdepcheck::revdep_check(num_workers = 4)` found no reverse dependencies.
 * Win-Builder R-devel Windows check (R Under development 2026-09-30,
   r90605 ucrt) passed with status OK.
+* Vignette simulation sizes were reduced to keep CRAN vignette rebuilding
+  within the check-time limit while retaining illustrative workflows.
 
 This release adds the strong k-out-of-m adjustment, improves update and
 plotting methods, and corrects negative-binomial dispersion scaling for
