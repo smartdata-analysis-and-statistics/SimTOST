@@ -310,13 +310,13 @@ parameters.</p>
 <span>                              sigma <span class="op">=</span> <span class="fl">0.3</span>, true.diff <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fl">1.05</span><span class="op">)</span>,</span>
 <span>                              equi.tol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fl">1.25</span><span class="op">)</span>, design <span class="op">=</span> <span class="st">"parallel"</span>,</span>
 <span>                              alpha <span class="op">=</span> <span class="fl">0.05</span>, adjust <span class="op">=</span> <span class="st">"none"</span>, seed <span class="op">=</span> <span class="fl">1234</span>,</span>
-<span>                              nsim <span class="op">=</span> <span class="fl">10000</span><span class="op">)</span></span>
+<span>                              nsim <span class="op">=</span> <span class="fl">500</span><span class="op">)</span></span>
 <span><span class="va">ssMielke</span></span>
 <span><span class="co">#&gt; Mielke sample-size calculation</span></span>
-<span><span class="co">#&gt; Required sample size: 52 </span></span>
-<span><span class="co">#&gt; Achieved power: 0.8031</span></span>
+<span><span class="co">#&gt; Required sample size: 53 </span></span>
+<span><span class="co">#&gt; Achieved power: 0.812</span></span>
 <span><span class="va">ss_value</span> <span class="op">&lt;-</span> <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">is.list</a></span><span class="op">(</span><span class="va">ssMielke</span><span class="op">)</span><span class="op">)</span> <span class="va">ssMielke</span><span class="op">$</span><span class="va">SS</span> <span class="kw">else</span> <span class="fu"><a href="https://rdrr.io/r/base/unname.html" class="external-link">unname</a></span><span class="op">(</span><span class="va">ssMielke</span><span class="op">[</span><span class="st">"SS"</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
-<p>For 80% power, 52 subjects per arm (104 in total) would be
+<p>For 80% power, 53 subjects per arm (106 in total) would be
 required.</p>
 </div>
 <div class="section level3">
@@ -343,7 +343,7 @@ correlation parameter <code>rho</code>.</p>
 <span>                 list_lequi.tol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"R_vs_T"</span> <span class="op">=</span> <span class="va">lequi_lower</span><span class="op">)</span>,</span>
 <span>                 list_uequi.tol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"R_vs_T"</span> <span class="op">=</span> <span class="va">lequi_upper</span><span class="op">)</span>,</span>
 <span>                 dtype <span class="op">=</span> <span class="st">"parallel"</span>, ctype <span class="op">=</span> <span class="st">"ROM"</span>, distribution <span class="op">=</span> <span class="st">"lnorm"</span>,</span>
-<span>                 adjust <span class="op">=</span> <span class="st">"none"</span>, ncores <span class="op">=</span> <span class="fl">1</span>, k <span class="op">=</span> <span class="fl">5</span>, nsim <span class="op">=</span> <span class="fl">10000</span>, seed <span class="op">=</span> <span class="fl">1234</span><span class="op">)</span></span>
+<span>                 adjust <span class="op">=</span> <span class="st">"none"</span>, ncores <span class="op">=</span> <span class="fl">1</span>, k <span class="op">=</span> <span class="fl">5</span>, nsim <span class="op">=</span> <span class="fl">500</span>, seed <span class="op">=</span> <span class="fl">1234</span><span class="op">)</span></span>
 <span><span class="va">ss</span></span>
 <span><span class="co">#&gt; Sample Size Calculation Results</span></span>
 <span><span class="co">#&gt; -------------------------------------------------------------</span></span>
@@ -355,9 +355,9 @@ correlation parameter <code>rho</code>.</p>
 <span><span class="co">#&gt;       (multiple co-primary endpoints, m =  5 )</span></span>
 <span><span class="co">#&gt; -------------------------------------------------------------</span></span>
 <span><span class="co">#&gt;                  Parameter       Value</span></span>
-<span><span class="co">#&gt;          Total Sample Size         106</span></span>
-<span><span class="co">#&gt;             Achieved Power        80.1</span></span>
-<span><span class="co">#&gt;  Power Confidence Interval 79.3 - 80.9</span></span>
+<span><span class="co">#&gt;          Total Sample Size         110</span></span>
+<span><span class="co">#&gt;             Achieved Power          80</span></span>
+<span><span class="co">#&gt;  Power Confidence Interval 76.2 - 83.4</span></span>
 <span><span class="co">#&gt; -------------------------------------------------------------</span></span></code></pre></div>
 <p>To verify the non-zero dependence assumption in this second scenario,
 retain a moderate number of simulated trials at a fixed sample size. The
